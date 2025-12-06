@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golf Game Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #87CEEB;
+    }
+    #test-canvas {
+      border: 2px solid black;
+      background: white;
+      cursor: crosshair;
+    }
+    .info {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Golf Game - Simple Test</h1>
+  <div class="info">
+    <strong>Instructions:</strong> Click and drag on the canvas to test mouse input
+  </div>
+  <div class="info" id="status">Status: Loading...</div>
+  <div class="info" id="mouse-info">Mouse: -</div>
+  <canvas id="test-canvas" width="800" height="600"></canvas>
+
+  <script>
+    console.log('Test page loaded');
+
+    const canvas = document.getElementById('test-canvas');
+    const ctx = canvas.getContext('2d');
+    const statusDiv = document.getElementById('status');
+    const mouseInfo = document.getElementById('mouse-info');
+
+    statusDiv.textContent = 'Status: Canvas initialized ✓';
+    console.log('Canvas found:', canvas);
+
+    // Draw test scene
+    ctx.fillStyle = '#90EE90';
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Draw ball
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(100, 300, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
+
+    // Draw hole
+    ctx.fillStyle = 'black';
+    ctx.beginPath();
+    ctx.arc(700, 300, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw text
+    ctx.fillStyle = 'black';
+    ctx.font = '20px Arial';
+    ctx.fillText('Ball', 100, 280);
+    ctx.fillText('Hole', 700, 280);
+
+    let isDrawing = false;
+    let startX, startY;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      const rect = canvas.getBoundingClientRect();
+      startX = e.clientX - rect.left;
+      startY = e.clientY - rect.top;
+      console.log('Mouse down at:', startX, startY);
+      mouseInfo.textContent = `Mouse: Down at (${Math.round(startX)}, ${Math.round(startY)})`;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (isDrawing) {
+        // Redraw scene
+        ctx.fillStyle = '#90EE90';
+        ctx.fillRect(0, 0, 800, 600);
+
+        // Redraw ball
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(100, 300, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        // Redraw hole
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(700, 300, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw arrow
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(100, 300);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        const dx = x - startX;
+        const dy = y - startY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        mouseInfo.textContent = `Mouse: Dragging - Distance: ${Math.round(distance)}px`;
+      }
+    });
+
+    canvas.addEventListener('mouseup', (e) => {
+      if (isDrawing) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const dx = x - startX;
+        const dy = y - startY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        console.log('Mouse up - swing distance:', distance);
+        mouseInfo.textContent = `Mouse: Released! Swing power: ${Math.round(distance)}px`;
+
+        alert(`Swing detected!\nPower: ${Math.round(distance)}px\nAngle: ${Math.round(Math.atan2(dy, dx) * 180 / Math.PI)}°`);
+
+        // Redraw scene
+        ctx.fillStyle = '#90EE90';
+        ctx.fillRect(0, 0, 800, 600);
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(100, 300, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(700, 300, 15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      isDrawing = false;
+    });
+
+    statusDiv.textContent = 'Status: Ready! Click and drag on canvas to test.';
+    console.log('All event listeners attached - ready!');
+  </script>
+</body>
+</html>

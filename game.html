@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+  <title>Cartoon Golf Chaos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #87CEEB;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      touch-action: none;
+    }
+
+    #game-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    #ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #ui-overlay > * {
+      pointer-events: auto;
+    }
+
+    #scoreboard {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #scoreboard div {
+      margin: 5px 0;
+    }
+
+    #club-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px;
+      border-radius: 12px;
+      display: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .button {
+      padding: 12px 24px;
+      margin: 5px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .button:active {
+      background: #45a049;
+    }
+
+    .button.selected {
+      background: #2196F3;
+    }
+
+    #debug-info {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: monospace;
+    }
+
+    #menu-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #menu-overlay h1 {
+      color: white;
+      font-size: 48px;
+      margin-bottom: 40px;
+    }
+
+    .menu-button {
+      padding: 16px 48px;
+      margin: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 24px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s;
+    }
+
+    .menu-button:active {
+      background: #45a049;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <div id="ui-overlay">
+    <div id="scoreboard">
+      <div>Hole: <span id="hole-number">1</span>/9</div>
+      <div>Par: <span id="hole-par">3</span></div>
+      <div>Strokes: <span id="stroke-count">0</span></div>
+      <div>Score: <span id="total-score">E</span></div>
+    </div>
+
+    <div id="club-selector">
+      <button class="button selected" data-club="driver">Driver</button>
+    </div>
+
+    <div id="debug-info" class="hidden"></div>
+  </div>
+
+  <div id="menu-overlay">
+    <h1>Cartoon Golf Chaos</h1>
+    <p style="color: white; font-size: 18px; margin: 20px; max-width: 500px; text-align: center;">
+      🖱️ Desktop: Click and drag backward from the ball, then release to swing<br>
+      📱 Touch: Drag backward from the ball, then release
+    </p>
+    <button class="menu-button" id="new-game-btn">New Game</button>
+    <button class="menu-button hidden" id="resume-game-btn">Resume Game</button>
+  </div>
+
+  <script>
+    'use strict';
+
+    // T001-T005: Basic setup complete
+    // T006-T012: Foundational modules below
+
+    // === SeededRandom Class (T006) ===
+    class SeededRandom {
+      constructor(seed = Date.now()) {
+        this.state = seed;
+      }
+
+      next() {
+        let t = this.state += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+
+      nextInt(min, max) {
+        return Math.floor(this.next() * (max - min + 1)) + min;
+      }
+
+      nextFloat(min, max) {
+        return this.next() * (max - min) + min;
+      }
+    }
+
+    // === PhysicsEngine Module (T008, T016, T017, T018) ===
+    const PhysicsEngine = {
+      gravity: 980,
+      friction: 0.98,
+      airResistance: 0.995,
+      stopThreshold: 5,
+      holeRadius: 15,
+
+      add(v1, v2) {
+        return { x: v1.x + v2.x, y: v1.y + v2.y };
+      },
+
+      subtract(v1, v2) {
+        return { x: v1.x - v2.x, y: v1.y - v2.y };
+      },
+
+      magnitude(v) {
+        return Math.sqrt(v.x * v.x + v.y * v.y);
+      },
+
+      normalize(v) {
+        const mag = this.magnitude(v);
+        if (mag === 0) return { x: 0, y: 0 };
+        return { x: v.x / mag, y: v.y / mag };
+      },
+
+      distance(p1, p2) {
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        return Math.sqrt(dx * dx + dy * dy);
+      },
+
+      applySwing(ball, swingVector) {
+        const maxVelocity = 800;
+        ball.velocityX = -Math.cos(swingVector.angle) * swingVector.power * maxVelocity;
+        ball.velocityY = -Math.sin(swingVector.angle) * swingVector.power * maxVelocity;
+        ball.isAirborne = true;
+        ball.isMoving = true;
+        ball.spin = swingVector.power * 0.5;
+      },
+
+      updateBall(ball, deltaTime, obstacles) {
+        if (!ball.isMoving) return;
+
+        // Apply friction (top-down 2D golf physics - ball rolls on ground)
+        ball.velocityX *= this.friction;
+        ball.velocityY *= this.friction;
+
+        // Update position
+        ball.x += ball.velocityX * deltaTime;
+        ball.y += ball.velocityY * deltaTime;
+
+        // Check obstacle collisions
+        if (obstacles) {
+          this.checkObstacleCollisions(ball, obstacles);
+        }
+
+        // Stop ball if moving too slowly
+        const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+        if (speed < this.stopThreshold) {
+          ball.velocityX = 0;
+          ball.velocityY = 0;
+          ball.isMoving = false;
+          ball.isAirborne = false;
+        }
+
+        ball.rotation += speed * deltaTime * 0.1;
+        ball.distanceFromHole = this.distance(ball, ball.holePosition);
+      },
+
+      checkObstacleCollisions(ball, obstacles) {
+        for (const obstacle of obstacles) {
+          if (this.checkCollision(ball, obstacle)) {
+            this.handleObstacleCollision(ball, obstacle);
+          }
+        }
+      },
+
+      checkCollision(ball, obstacle) {
+        if (obstacle.shape === 'circle') {
+          const dist = this.distance(ball, obstacle);
+          return dist < (8 + obstacle.radius);
+        } else if (obstacle.shape === 'rectangle') {
+          return ball.x >= obstacle.x && ball.x <= obstacle.x + obstacle.width &&
+                 ball.y >= obstacle.y && ball.y <= obstacle.y + obstacle.height;
+        }
+        return false;
+      },
+
+      handleObstacleCollision(ball, obstacle) {
+        if (obstacle.type === 'sand') {
+          ball.velocityX *= 0.3;
+          ball.velocityY *= 0.3;
+          ball.isMoving = ball.velocityX !== 0 || ball.velocityY !== 0;
+        } else if (obstacle.type === 'water') {
+          if (ball.lastSafePosition) {
+            ball.x = ball.lastSafePosition.x;
+            ball.y = ball.lastSafePosition.y;
+            ball.velocityX = 0;
+            ball.velocityY = 0;
+            ball.isMoving = false;
+            ball.waterPenalty = true;
+          }
+        } else if (obstacle.type === 'tree' || obstacle.type === 'rock') {
+          const dx = ball.x - obstacle.x;
+          const dy = ball.y - obstacle.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          ball.x = obstacle.x + nx * (obstacle.radius + 10);
+          ball.y = obstacle.y + ny * (obstacle.radius + 10);
+
+          const dotProduct = ball.velocityX * nx + ball.velocityY * ny;
+          ball.velocityX = (ball.velocityX - 2 * dotProduct * nx) * 0.6;
+          ball.velocityY = (ball.velocityY - 2 * dotProduct * ny) * 0.6;
+        }
+      },
+
+      isBallInHole(ball) {
+        return ball.distanceFromHole < this.holeRadius && !ball.isMoving;
+      }
+    };
+
+    // === Renderer Module (T009, T019, T020, T021) ===
+    const Renderer = {
+      canvas: null,
+      ctx: null,
+      backgroundCache: null,
+
+      init(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.backgroundCache = document.createElement('canvas');
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+      },
+
+      resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+
+        this.ctx.scale(dpr, dpr);
+
+        this.canvas.style.width = rect.width + 'px';
+        this.canvas.style.height = rect.height + 'px';
+      },
+
+      renderFrame(gameState) {
+        if (!gameState) return;
+
+        this.clearCanvas();
+
+        if (gameState.currentHole && gameState.ball) {
+          this.drawCourse(gameState.currentHole);
+          if (gameState.currentHole.obstacles) {
+            this.drawObstacles(gameState.currentHole.obstacles);
+          }
+          this.drawBall(gameState.ball);
+        }
+
+        const swingPreview = InputHandler.getSwingPreview();
+        if (swingPreview && gameState.ball && !gameState.ball.isMoving) {
+          this.drawGuideArrow(swingPreview, gameState.ball);
+        }
+      },
+
+      clearCanvas() {
+        const rect = this.canvas.getBoundingClientRect();
+        this.ctx.clearRect(0, 0, rect.width, rect.height);
+      },
+
+      clearRegion(x, y, width, height) {
+        this.ctx.clearRect(x, y, width, height);
+      },
+
+      drawCourse(hole) {
+        const ctx = this.ctx;
+
+        ctx.fillStyle = '#90EE90';
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        ctx.fillStyle = '#2E8B57';
+        ctx.fillRect(hole.teePosition.x - 40, hole.teePosition.y - 40, 80, 80);
+
+        ctx.fillStyle = '#228B22';
+        const greenRadius = 80;
+        ctx.beginPath();
+        ctx.arc(hole.greenPosition.x, hole.greenPosition.y, greenRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(hole.holePosition.x, hole.holePosition.y, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 40);
+        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 80);
+        ctx.stroke();
+
+        ctx.fillStyle = '#FF0000';
+        ctx.beginPath();
+        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 80);
+        ctx.lineTo(hole.holePosition.x + 20, hole.holePosition.y - 70);
+        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 60);
+        ctx.fill();
+      },
+
+      drawObstacles(obstacles) {
+        const ctx = this.ctx;
+
+        for (const obstacle of obstacles) {
+          if (obstacle.type === 'sand') {
+            ctx.fillStyle = '#DEB887';
+            ctx.beginPath();
+            ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(222, 184, 135, 0.5)';
+            for (let i = 0; i < 3; i++) {
+              ctx.beginPath();
+              ctx.arc(obstacle.x + (i - 1) * 8, obstacle.y + (i - 1) * 5, obstacle.radius * 0.6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          } else if (obstacle.type === 'water') {
+            const gradient = ctx.createLinearGradient(obstacle.x, obstacle.y, obstacle.x, obstacle.y + obstacle.height);
+            gradient.addColorStop(0, '#4682B4');
+            gradient.addColorStop(1, '#1E3A5F');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+            ctx.strokeStyle = '#6495ED';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < obstacle.width; i += 10) {
+              ctx.moveTo(obstacle.x + i, obstacle.y + 5);
+              ctx.quadraticCurveTo(obstacle.x + i + 5, obstacle.y, obstacle.x + i + 10, obstacle.y + 5);
+            }
+            ctx.stroke();
+          } else if (obstacle.type === 'tree') {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(obstacle.x - 5, obstacle.y, 10, 20);
+
+            const treeGradient = ctx.createRadialGradient(obstacle.x, obstacle.y - obstacle.radius / 2, 0, obstacle.x, obstacle.y - obstacle.radius / 2, obstacle.radius);
+            treeGradient.addColorStop(0, '#228B22');
+            treeGradient.addColorStop(1, '#006400');
+
+            ctx.fillStyle = treeGradient;
+            ctx.beginPath();
+            ctx.arc(obstacle.x, obstacle.y - obstacle.radius / 2, obstacle.radius, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (obstacle.type === 'rock') {
+            const rockGradient = ctx.createRadialGradient(obstacle.x - 5, obstacle.y - 5, 0, obstacle.x, obstacle.y, obstacle.radius);
+            rockGradient.addColorStop(0, '#A9A9A9');
+            rockGradient.addColorStop(1, '#696969');
+
+            ctx.fillStyle = rockGradient;
+            ctx.beginPath();
+            ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(obstacle.x + 5, obstacle.y + obstacle.radius + 2, obstacle.radius * 0.8, obstacle.radius * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      },
+
+      drawBall(ball) {
+        const ctx = this.ctx;
+
+        ctx.save();
+        ctx.translate(ball.x, ball.y);
+        ctx.rotate(ball.rotation);
+
+        const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+        gradient.addColorStop(0, '#FFFFFF');
+        gradient.addColorStop(1, '#CCCCCC');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#999999';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        ctx.restore();
+      },
+
+      drawGuideArrow(swingPreview, ball) {
+        const ctx = this.ctx;
+        const dx = swingPreview.current.x - swingPreview.start.x;
+        const dy = swingPreview.current.y - swingPreview.start.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const power = Math.min(distance / 150, 1.0);
+
+        const arrowLength = power * 100;
+        const angle = Math.atan2(dy, dx) + Math.PI;
+
+        const endX = ball.x + Math.cos(angle) * arrowLength;
+        const endY = ball.y + Math.sin(angle) * arrowLength;
+
+        ctx.strokeStyle = `rgba(255, 0, 0, ${0.3 + power * 0.5})`;
+        ctx.lineWidth = 3 + power * 3;
+        ctx.setLineDash([5, 5]);
+
+        ctx.beginPath();
+        ctx.moveTo(ball.x, ball.y);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        const arrowSize = 10 + power * 10;
+        ctx.fillStyle = `rgba(255, 0, 0, ${0.5 + power * 0.5})`;
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(
+          endX - arrowSize * Math.cos(angle - Math.PI / 6),
+          endY - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.lineTo(
+          endX - arrowSize * Math.cos(angle + Math.PI / 6),
+          endY - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.closePath();
+        ctx.fill();
+      }
+    };
+
+    // === InputHandler Module (T010 + Mouse Support) ===
+    const InputHandler = {
+      canvas: null,
+      gameEngine: null,
+      touchStartPos: null,
+      currentTouchPos: null,
+      isSwinging: false,
+
+      init(canvas, gameEngine) {
+        this.canvas = canvas;
+        this.gameEngine = gameEngine;
+
+        canvas.addEventListener('touchstart', (e) => this.onTouchStart(e), { passive: false });
+        canvas.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
+        canvas.addEventListener('touchend', (e) => this.onTouchEnd(e), { passive: false });
+
+        canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
+        canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        canvas.addEventListener('mouseup', (e) => this.onMouseUp(e));
+      },
+
+      onTouchStart(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = this.canvas.getBoundingClientRect();
+        this.touchStartPos = {
+          x: touch.clientX - rect.left,
+          y: touch.clientY - rect.top
+        };
+        this.isSwinging = true;
+      },
+
+      onTouchMove(e) {
+        e.preventDefault();
+        if (!this.isSwinging) return;
+
+        const touch = e.touches[0];
+        const rect = this.canvas.getBoundingClientRect();
+        this.currentTouchPos = {
+          x: touch.clientX - rect.left,
+          y: touch.clientY - rect.top
+        };
+      },
+
+      onTouchEnd(e) {
+        e.preventDefault();
+        if (!this.isSwinging) return;
+
+        const swingVector = this.calculateSwingVector();
+        if (swingVector && this.gameEngine) {
+          this.gameEngine.executeSwing(swingVector);
+        }
+
+        this.touchStartPos = null;
+        this.currentTouchPos = null;
+        this.isSwinging = false;
+      },
+
+      onMouseDown(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.touchStartPos = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+        this.isSwinging = true;
+      },
+
+      onMouseMove(e) {
+        if (!this.isSwinging) return;
+
+        const rect = this.canvas.getBoundingClientRect();
+        this.currentTouchPos = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      },
+
+      onMouseUp(e) {
+        if (!this.isSwinging) return;
+
+        const swingVector = this.calculateSwingVector();
+        if (swingVector && this.gameEngine) {
+          this.gameEngine.executeSwing(swingVector);
+        }
+
+        this.touchStartPos = null;
+        this.currentTouchPos = null;
+        this.isSwinging = false;
+      },
+
+      calculateSwingVector() {
+        if (!this.touchStartPos || !this.currentTouchPos) return null;
+
+        const dx = this.currentTouchPos.x - this.touchStartPos.x;
+        const dy = this.currentTouchPos.y - this.touchStartPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx);
+
+        return {
+          power: Math.min(distance / 150, 1.0),
+          angle: angle
+        };
+      },
+
+      getSwingPreview() {
+        return this.currentTouchPos && this.touchStartPos ? {
+          start: this.touchStartPos,
+          current: this.currentTouchPos
+        } : null;
+      }
+    };
+
+    // === CourseGenerator Module (T026-T029) ===
+    const CourseGenerator = {
+      holeTemplates: null,
+      rng: null,
+
+      init(seed) {
+        this.rng = new SeededRandom(seed);
+        this.holeTemplates = this.defineHoleTemplates();
+      },
+
+      defineHoleTemplates() {
+        return [
+          { holeNumber: 1, par: 3, length: 'short', distance: 300 },
+          { holeNumber: 2, par: 4, length: 'medium', distance: 450 },
+          { holeNumber: 3, par: 3, length: 'short', distance: 250 },
+          { holeNumber: 4, par: 5, length: 'long', distance: 600 },
+          { holeNumber: 5, par: 4, length: 'medium', distance: 400 },
+          { holeNumber: 6, par: 4, length: 'medium', distance: 500 },
+          { holeNumber: 7, par: 3, length: 'short', distance: 280 },
+          { holeNumber: 8, par: 5, length: 'long', distance: 650 },
+          { holeNumber: 9, par: 4, length: 'medium', distance: 480 }
+        ];
+      },
+
+      generateHole(holeNumber, canvasWidth, canvasHeight) {
+        const template = this.holeTemplates[holeNumber - 1];
+
+        const teeX = 100;
+        const teeY = canvasHeight / 2 + this.rng.nextInt(-50, 50);
+
+        const greenX = Math.min(teeX + template.distance, canvasWidth - 150);
+        const greenY = canvasHeight / 2 + this.rng.nextInt(-100, 100);
+
+        const hole = {
+          holeNumber: template.holeNumber,
+          par: template.par,
+          length: template.length,
+          teePosition: { x: teeX, y: teeY },
+          greenPosition: { x: greenX, y: greenY },
+          holePosition: { x: greenX, y: greenY },
+          obstacles: this.placeObstacles(template, teeX, teeY, greenX, greenY, canvasWidth, canvasHeight)
+        };
+
+        return hole;
+      },
+
+      placeObstacles(template, teeX, teeY, greenX, greenY, canvasWidth, canvasHeight) {
+        const obstacles = [];
+        const obstacleCount = template.length === 'short' ? this.rng.nextInt(2, 4) :
+                             template.length === 'medium' ? this.rng.nextInt(3, 5) :
+                             this.rng.nextInt(4, 6);
+
+        const midX = (teeX + greenX) / 2;
+        const midY = (teeY + greenY) / 2;
+
+        for (let i = 0; i < obstacleCount; i++) {
+          const rand = this.rng.next();
+          let type;
+          if (rand < 0.35) type = 'sand';
+          else if (rand < 0.6) type = 'tree';
+          else if (rand < 0.85) type = 'rock';
+          else type = 'water';
+
+          const offsetX = this.rng.nextInt(-200, 200);
+          const offsetY = this.rng.nextInt(-150, 150);
+          const x = midX + offsetX;
+          const y = midY + offsetY;
+
+          const distFromTee = Math.sqrt((x - teeX) ** 2 + (y - teeY) ** 2);
+          const distFromGreen = Math.sqrt((x - greenX) ** 2 + (y - greenY) ** 2);
+
+          if (distFromTee > 80 && distFromGreen > 100 && x > 50 && x < canvasWidth - 50 && y > 50 && y < canvasHeight - 50) {
+            obstacles.push({
+              type: type,
+              x: x,
+              y: y,
+              radius: type === 'tree' ? 25 : type === 'rock' ? 20 : 30,
+              width: type === 'water' ? this.rng.nextInt(60, 100) : 0,
+              height: type === 'water' ? this.rng.nextInt(40, 60) : 0,
+              shape: type === 'water' ? 'rectangle' : 'circle'
+            });
+          }
+        }
+
+        return obstacles;
+      }
+    };
+
+    // === ScoreKeeper Module (T022, T033) ===
+    const ScoreKeeper = {
+      recordStroke(round) {
+        round.currentStrokeCount++;
+        this.updateUI(round);
+      },
+
+      getCurrentStrokes(round) {
+        return round.currentStrokeCount;
+      },
+
+      updateUI(round) {
+        document.getElementById('stroke-count').textContent = round.currentStrokeCount;
+        document.getElementById('total-score').textContent = this.getScoreDisplay(round.scoreRelativeToPar);
+      },
+
+      getScoreDisplay(score) {
+        if (score === 0) return 'E';
+        if (score > 0) return `+${score}`;
+        return `${score}`;
+      }
+    };
+
+    // === GameEngine Module (T007, T011, T013-T025) ===
+    class GameEngine {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.isRunning = false;
+        this.isPaused = false;
+        this.lastFrameTime = 0;
+        this.fps = 60;
+        this.debugMode = false;
+
+        this.gameState = null;
+
+        Renderer.init(canvas);
+        InputHandler.init(canvas, this);
+
+        this.checkDebugMode();
+      }
+
+      checkDebugMode() {
+        const params = new URLSearchParams(window.location.search);
+        this.debugMode = params.get('debug') === 'true';
+        if (this.debugMode) {
+          document.getElementById('debug-info').classList.remove('hidden');
+        }
+      }
+
+      start() {
+        this.isRunning = true;
+        this.lastFrameTime = performance.now();
+        requestAnimationFrame((t) => this.update(t));
+      }
+
+      pause() {
+        this.isPaused = true;
+      }
+
+      resume() {
+        this.isPaused = false;
+        this.lastFrameTime = performance.now();
+      }
+
+      startNewRound(seed = null) {
+        const usedSeed = seed || Date.now();
+        CourseGenerator.init(usedSeed);
+
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const hole = CourseGenerator.generateHole(1, canvasRect.width, canvasRect.height);
+
+        const ball = this.createBall(hole);
+
+        this.gameState = {
+          currentHole: hole,
+          round: {
+            roundId: 'round-' + Date.now(),
+            startTime: Date.now(),
+            endTime: null,
+            currentHoleNumber: 1,
+            isComplete: false,
+            holeScores: [],
+            totalStrokes: 0,
+            totalPar: 0,
+            scoreRelativeToPar: 0,
+            currentStrokeCount: 0
+          },
+          ball: ball,
+          selectedClub: 'driver',
+          seed: usedSeed
+        };
+
+        this.updateUI();
+        document.getElementById('menu-overlay').classList.add('hidden');
+      }
+
+      createBall(hole) {
+        return {
+          x: hole.teePosition.x,
+          y: hole.teePosition.y,
+          velocityX: 0,
+          velocityY: 0,
+          spin: 0,
+          isAirborne: false,
+          isMoving: false,
+          rotation: 0,
+          groundY: hole.teePosition.y,
+          holePosition: hole.holePosition,
+          distanceFromHole: PhysicsEngine.distance(hole.teePosition, hole.holePosition),
+          lastSafePosition: { x: hole.teePosition.x, y: hole.teePosition.y },
+          waterPenalty: false
+        };
+      }
+
+      updateUI() {
+        const round = this.gameState.round;
+        const hole = this.gameState.currentHole;
+
+        document.getElementById('hole-number').textContent = round.currentHoleNumber;
+        document.getElementById('hole-par').textContent = hole.par;
+        document.getElementById('stroke-count').textContent = round.currentStrokeCount;
+        document.getElementById('total-score').textContent = ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar);
+      }
+
+      executeSwing(swingVector) {
+        if (!this.gameState || !this.gameState.ball) return;
+        if (this.gameState.ball.isMoving) return;
+
+        this.gameState.ball.lastSafePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
+        this.gameState.ball.waterPenalty = false;
+
+        PhysicsEngine.applySwing(this.gameState.ball, swingVector);
+        ScoreKeeper.recordStroke(this.gameState.round);
+
+        if (this.gameState.ball.waterPenalty) {
+          ScoreKeeper.recordStroke(this.gameState.round);
+        }
+      }
+
+      update(timestamp) {
+        if (!this.isRunning) return;
+
+        const deltaTime = (timestamp - this.lastFrameTime) / 1000;
+        this.lastFrameTime = timestamp;
+
+        if (!this.isPaused && this.gameState) {
+          this.updateFPS(deltaTime);
+
+          if (this.gameState.ball) {
+            const obstacles = this.gameState.currentHole.obstacles || [];
+            PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
+
+            if (PhysicsEngine.isBallInHole(this.gameState.ball)) {
+              this.completeHole();
+            }
+          }
+
+          Renderer.renderFrame(this.gameState);
+        }
+
+        requestAnimationFrame((t) => this.update(t));
+      }
+
+      completeHole() {
+        const round = this.gameState.round;
+        const hole = this.gameState.currentHole;
+
+        const holeScore = {
+          holeNumber: hole.holeNumber,
+          strokes: round.currentStrokeCount,
+          par: hole.par,
+          scoreRelativeToPar: round.currentStrokeCount - hole.par
+        };
+
+        round.holeScores.push(holeScore);
+        round.totalStrokes += round.currentStrokeCount;
+        round.totalPar += hole.par;
+        round.scoreRelativeToPar = round.totalStrokes - round.totalPar;
+
+        setTimeout(() => {
+          if (round.currentHoleNumber < 9) {
+            alert(`Hole ${hole.holeNumber} complete!\nStrokes: ${round.currentStrokeCount}\nPar: ${hole.par}\nScore: ${ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar)}\n\nMoving to hole ${round.currentHoleNumber + 1}...`);
+            this.advanceToNextHole();
+          } else {
+            round.isComplete = true;
+            round.endTime = Date.now();
+            this.showRoundSummary();
+          }
+        }, 500);
+      }
+
+      advanceToNextHole() {
+        const round = this.gameState.round;
+        round.currentHoleNumber++;
+        round.currentStrokeCount = 0;
+
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const hole = CourseGenerator.generateHole(round.currentHoleNumber, canvasRect.width, canvasRect.height);
+
+        this.gameState.currentHole = hole;
+        this.gameState.ball = this.createBall(hole);
+
+        this.updateUI();
+      }
+
+      showRoundSummary() {
+        const round = this.gameState.round;
+        let summary = `🏌️ ROUND COMPLETE! 🏌️\n\n`;
+        summary += `Total Strokes: ${round.totalStrokes}\n`;
+        summary += `Total Par: ${round.totalPar}\n`;
+        summary += `Final Score: ${ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar)}\n\n`;
+        summary += `Hole-by-Hole:\n`;
+
+        for (const holeScore of round.holeScores) {
+          summary += `Hole ${holeScore.holeNumber}: ${holeScore.strokes} (${ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar)})\n`;
+        }
+
+        alert(summary);
+        document.getElementById('menu-overlay').classList.remove('hidden');
+      }
+
+      updateFPS(deltaTime) {
+        this.fps = Math.round(1 / deltaTime);
+        if (this.debugMode) {
+          const debugDiv = document.getElementById('debug-info');
+          debugDiv.innerHTML = `FPS: ${this.fps}<br>Ball: (${Math.round(this.gameState.ball.x)}, ${Math.round(this.gameState.ball.y)})<br>Velocity: (${Math.round(this.gameState.ball.velocityX)}, ${Math.round(this.gameState.ball.velocityY)})<br>Moving: ${this.gameState.ball.isMoving}`;
+        }
+      }
+    }
+
+    // === Initialize Game (T005, T011, T012) ===
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM Content Loaded');
+
+      const canvas = document.getElementById('game-canvas');
+      if (!canvas) {
+        console.error('Canvas element not found!');
+        return;
+      }
+
+      console.log('Canvas found, initializing game engine...');
+
+      let gameEngine;
+      try {
+        gameEngine = new GameEngine(canvas);
+        window.gameEngine = gameEngine; // Expose for testing
+        console.log('Game engine initialized successfully');
+      } catch (error) {
+        console.error('Error initializing game engine:', error);
+        alert('Error initializing game: ' + error.message);
+        return;
+      }
+
+      const newGameBtn = document.getElementById('new-game-btn');
+      if (!newGameBtn) {
+        console.error('New game button not found!');
+        return;
+      }
+
+      newGameBtn.addEventListener('click', () => {
+        console.log('New Game button clicked');
+        try {
+          gameEngine.startNewRound();
+          gameEngine.start();
+          console.log('Game started successfully');
+        } catch (error) {
+          console.error('Error starting game:', error);
+          alert('Error starting game: ' + error.message);
+        }
+      });
+
+      document.getElementById('resume-game-btn').addEventListener('click', () => {
+        console.log('Resume game functionality pending');
+      });
+
+      console.log('Cartoon Golf Chaos - Ready!');
+    });
+  </script>
+</body>
+</html>
