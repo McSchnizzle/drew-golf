@@ -2067,6 +2067,7 @@
       executeSwing(swingVector) {
         if (!this.gameState || !this.gameState.ball) return;
         if (this.gameState.ball.isMoving) return;
+        if (this.gameState.round.isComplete) return; // Prevent strokes after round ends
 
         this.gameState.ball.lastSafePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
         this.gameState.ball.waterPenalty = false;
