@@ -384,7 +384,7 @@
 
     <div id="distance-display" class="hidden">
       <span class="label">Distance to Hole</span>
-      <span id="distance-value">---</span>m
+      <span id="distance-value">---</span>yd
     </div>
 
     <div id="round-progress" class="hidden">
@@ -1254,7 +1254,7 @@
         }
       },
 
-      // Calculate max distance for a club at 100% power
+      // Calculate max distance for a club at 100% power (in yards)
       getMaxDistance(clubId) {
         const club = this.getClub(clubId);
         const maxVelocity = 800;
@@ -1271,7 +1271,8 @@
           velocityX *= friction;
         }
 
-        return Math.round(distance);
+        // Convert meters to yards (1m = 1.09361yd)
+        return Math.round(distance * 1.09361);
       }
     };
 
@@ -1839,7 +1840,8 @@
         const club = ClubSystem.getClub(this.gameState.selectedClub);
         document.getElementById('current-club').textContent = club.name;
 
-        const distance = Math.round(this.gameState.ball.distanceFromHole);
+        // Convert distance from meters to yards (1m = 1.09361yd)
+        const distance = Math.round(this.gameState.ball.distanceFromHole * 1.09361);
         document.getElementById('distance-to-hole').textContent = distance;
 
         // Update real-time distance display in lower right
@@ -1886,7 +1888,7 @@
           button.dataset.club = club.id;
 
           const maxDistance = ClubSystem.getMaxDistance(club.id);
-          button.innerHTML = `${club.name}<br><span class="club-power-info">${maxDistance}m max</span>`;
+          button.innerHTML = `${club.name}<br><span class="club-power-info">${maxDistance}yd max</span>`;
 
           if (club.id === selectedClub) {
             button.classList.add('selected');
