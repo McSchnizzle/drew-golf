@@ -37,3 +37,4 @@ build/
 # Optional: Development source if using build process
 # Uncomment if you want to deploy only game.html and keep src/ private
 # src/
+.vercel
