@@ -72,16 +72,62 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    #club-selector {
+    #distance-display {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      color: #2196F3;
+    }
+
+    #distance-display .label {
+      font-size: 12px;
+      color: #666;
+      font-weight: normal;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    #club-selector-container {
       position: absolute;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
+      display: none;
+    }
+
+    #club-selector {
       background: rgba(255, 255, 255, 0.95);
       padding: 10px;
       border-radius: 12px;
-      display: none;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #club-selector.minimized {
+      display: none;
+    }
+
+    #club-toggle-btn {
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    #club-toggle-btn:active {
+      background: rgba(230, 230, 230, 0.95);
     }
 
     .button {
@@ -336,12 +382,20 @@
 
     <div id="ball-state">🔴 Ready</div>
 
+    <div id="distance-display" class="hidden">
+      <span class="label">Distance to Hole</span>
+      <span id="distance-value">---</span>m
+    </div>
+
     <div id="round-progress" class="hidden">
       <strong>Progress:</strong> <span id="progress-text">0/9 holes</span>
     </div>
 
-    <div id="club-selector">
-      <button class="button selected" data-club="driver">Driver</button>
+    <div id="club-selector-container">
+      <div id="club-selector">
+        <button class="button selected" data-club="driver">Driver</button>
+      </div>
+      <button id="club-toggle-btn">Hide Clubs</button>
     </div>
 
     <div id="scorecard-overlay" class="hidden">
@@ -1198,6 +1252,26 @@
         } else {
           return 'driver';
         }
+      },
+
+      // Calculate max distance for a club at 100% power
+      getMaxDistance(clubId) {
+        const club = this.getClub(clubId);
+        const maxVelocity = 800;
+        const friction = 0.98;
+        const stopThreshold = 5;
+        const deltaTime = 1/60; // 60 FPS
+
+        // Simulate ball flight
+        let velocityX = maxVelocity * club.maxPower;
+        let distance = 0;
+
+        while (Math.abs(velocityX) > stopThreshold) {
+          distance += velocityX * deltaTime;
+          velocityX *= friction;
+        }
+
+        return Math.round(distance);
       }
     };
 
@@ -1768,6 +1842,14 @@
         const distance = Math.round(this.gameState.ball.distanceFromHole);
         document.getElementById('distance-to-hole').textContent = distance;
 
+        // Update real-time distance display in lower right
+        const distanceDisplay = document.getElementById('distance-display');
+        const distanceValue = document.getElementById('distance-value');
+        if (distanceDisplay && distanceValue) {
+          distanceValue.textContent = distance;
+          distanceDisplay.classList.remove('hidden');
+        }
+
         this.updateClubSelector();
       }
 
@@ -1803,7 +1885,8 @@
           button.className = 'button';
           button.dataset.club = club.id;
 
-          button.innerHTML = `${club.name}<br><span class="club-power-info">${Math.round(club.maxPower * 100)}% power</span>`;
+          const maxDistance = ClubSystem.getMaxDistance(club.id);
+          button.innerHTML = `${club.name}<br><span class="club-power-info">${maxDistance}m max</span>`;
 
           if (club.id === selectedClub) {
             button.classList.add('selected');
@@ -1813,7 +1896,8 @@
           clubSelector.appendChild(button);
         }
 
-        clubSelector.style.display = 'block';
+        const clubContainer = document.getElementById('club-selector-container');
+        clubContainer.style.display = 'block';
 
         const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, this.gameState.currentHole.holePosition);
         const distanceFromHole = Math.round(this.gameState.ball.distanceFromHole);
@@ -2221,6 +2305,16 @@
         leaderboardBtn.addEventListener('click', async () => {
           console.log('Leaderboard button clicked');
           await GameEngine.showLeaderboard();
+        });
+      }
+
+      // Club selector toggle button handler
+      const clubToggleBtn = document.getElementById('club-toggle-btn');
+      const clubSelector = document.getElementById('club-selector');
+      if (clubToggleBtn && clubSelector) {
+        clubToggleBtn.addEventListener('click', () => {
+          clubSelector.classList.toggle('minimized');
+          clubToggleBtn.textContent = clubSelector.classList.contains('minimized') ? 'Show Clubs' : 'Hide Clubs';
         });
       }
 
