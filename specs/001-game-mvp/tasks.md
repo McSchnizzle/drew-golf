@@ -115,17 +115,17 @@
 
 ### Implementation for User Story 3
 
-- [ ] T039 [P] [US3] Create Club entity structure with id, name, maxPower, arcMultiplier, spinMultiplier in game.html
-- [ ] T040 [P] [US3] Define 11 club constants (driver, woods, irons 4-9, wedge, putter) with characteristics in game.html
-- [ ] T041 [US3] Implement ClubSystem module with getClub(clubId), getAllClubs(), getAvailableClubs() in game.html
-- [ ] T042 [US3] Implement ClubSystem.applyClubToSwing() to modify swing vector with club multipliers in game.html
-- [ ] T043 [US3] Implement ClubSystem.getRecommendedClub() based on ball position and distance to hole in game.html
-- [ ] T044 [US3] Enforce driver-only rule for first stroke of each hole in GameEngine in game.html
-- [ ] T045 [US3] Implement GameEngine.selectClub(clubId) with validation (no change while ball moving) in game.html
-- [ ] T046 [US3] Create club selector UI overlay with buttons for available clubs in game.html
-- [ ] T047 [US3] Add visual highlighting for currently selected club in UI in game.html
-- [ ] T048 [US3] Add putter recommendation logic when ball is on or near green in game.html
-- [ ] T049 [US3] Update Renderer.drawGuideArrow() to reflect club characteristics in trajectory preview in game.html
+- [X] T039 [P] [US3] Create Club entity structure with id, name, maxPower, arcMultiplier, spinMultiplier in game.html
+- [X] T040 [P] [US3] Define 11 club constants (driver, woods, irons 4-9, wedge, putter) with characteristics in game.html
+- [X] T041 [US3] Implement ClubSystem module with getClub(clubId), getAllClubs(), getAvailableClubs() in game.html
+- [X] T042 [US3] Implement ClubSystem.applyClubToSwing() to modify swing vector with club multipliers in game.html
+- [X] T043 [US3] Implement ClubSystem.getRecommendedClub() based on ball position and distance to hole in game.html
+- [X] T044 [US3] Enforce driver-only rule for first stroke of each hole in GameEngine in game.html
+- [X] T045 [US3] Implement GameEngine.selectClub(clubId) with validation (no change while ball moving) in game.html
+- [X] T046 [US3] Create club selector UI overlay with buttons for available clubs in game.html
+- [X] T047 [US3] Add visual highlighting for currently selected club in UI in game.html
+- [X] T048 [US3] Add putter recommendation logic when ball is on or near green in game.html
+- [X] T049 [US3] Update Renderer.drawGuideArrow() to reflect club characteristics in trajectory preview in game.html
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 3 should work independently (full game with club selection)
 
@@ -139,13 +139,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T050 [P] [US4] Enhance Renderer.drawGuideArrow() with power indicator (arrow length) and angle indicator in game.html
-- [ ] T051 [P] [US4] Add visual feedback on ball strike (flash effect, impact animation) in Renderer in game.html
-- [ ] T052 [P] [US4] Implement real-time guide arrow updates during touchmove events in InputHandler in game.html
-- [ ] T053 [US4] Add touch response validation (prevent swings if ball is moving) in InputHandler in game.html
-- [ ] T054 [US4] Enhance UI overlay with clear indicators for current club, hole number, par, strokes in game.html
-- [ ] T055 [US4] Add visual state indicators (ball airborne/rolling/stopped) in UI or on canvas in game.html
-- [ ] T056 [US4] Implement smooth ball arc animation with rotation matching velocity in Renderer in game.html
+- [X] T050 [P] [US4] Enhance Renderer.drawGuideArrow() with power indicator (arrow length) and angle indicator in game.html
+- [X] T051 [P] [US4] Add visual feedback on ball strike (flash effect, impact animation) in Renderer in game.html
+- [X] T052 [P] [US4] Implement real-time guide arrow updates during touchmove events in InputHandler in game.html
+- [X] T053 [US4] Add touch response validation (prevent swings if ball is moving) in InputHandler in game.html
+- [X] T054 [US4] Enhance UI overlay with clear indicators for current club, hole number, par, strokes in game.html
+- [X] T055 [US4] Add visual state indicators (ball airborne/rolling/stopped) in UI or on canvas in game.html
+- [X] T056 [US4] Implement smooth ball arc animation with rotation matching velocity in Renderer in game.html
 
 **Checkpoint**: All P2 user stories (US1-4) should be complete and independently testable
 

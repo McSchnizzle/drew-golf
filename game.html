@@ -60,6 +60,18 @@
       margin: 5px 0;
     }
 
+    #ball-state {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
     #club-selector {
       position: absolute;
       bottom: 20px;
@@ -151,11 +163,15 @@
 
   <div id="ui-overlay">
     <div id="scoreboard">
-      <div>Hole: <span id="hole-number">1</span>/9</div>
-      <div>Par: <span id="hole-par">3</span></div>
-      <div>Strokes: <span id="stroke-count">0</span></div>
-      <div>Score: <span id="total-score">E</span></div>
+      <div><strong>Hole:</strong> <span id="hole-number">1</span>/9</div>
+      <div><strong>Par:</strong> <span id="hole-par">3</span></div>
+      <div><strong>Strokes:</strong> <span id="stroke-count">0</span></div>
+      <div><strong>Score:</strong> <span id="total-score">E</span></div>
+      <div><strong>Club:</strong> <span id="current-club">Driver</span></div>
+      <div><strong>Distance:</strong> <span id="distance-to-hole">---</span>m</div>
     </div>
+
+    <div id="ball-state">🔴 Ready</div>
 
     <div id="club-selector">
       <button class="button selected" data-club="driver">Driver</button>
@@ -370,11 +386,15 @@
             this.drawObstacles(gameState.currentHole.obstacles);
           }
           this.drawBall(gameState.ball);
+
+          if (gameState.strikeFlash && gameState.strikeFlash.active) {
+            this.drawStrikeFlash(gameState.ball, gameState.strikeFlash);
+          }
         }
 
         const swingPreview = InputHandler.getSwingPreview();
         if (swingPreview && gameState.ball && !gameState.ball.isMoving) {
-          this.drawGuideArrow(swingPreview, gameState.ball);
+          this.drawGuideArrow(swingPreview, gameState.ball, gameState.selectedClub);
         }
       },
 
@@ -507,21 +527,27 @@
         ctx.restore();
       },
 
-      drawGuideArrow(swingPreview, ball) {
+      drawGuideArrow(swingPreview, ball, selectedClub) {
         const ctx = this.ctx;
         const dx = swingPreview.current.x - swingPreview.start.x;
         const dy = swingPreview.current.y - swingPreview.start.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const power = Math.min(distance / 150, 1.0);
+        const basePower = Math.min(distance / 150, 1.0);
 
-        const arrowLength = power * 100;
+        const club = ClubSystem.getClub(selectedClub || 'driver');
+        const effectivePower = basePower * club.maxPower;
+
+        const arrowLength = effectivePower * 150;
         const angle = Math.atan2(dy, dx) + Math.PI;
 
         const endX = ball.x + Math.cos(angle) * arrowLength;
         const endY = ball.y + Math.sin(angle) * arrowLength;
 
-        ctx.strokeStyle = `rgba(255, 0, 0, ${0.3 + power * 0.5})`;
-        ctx.lineWidth = 3 + power * 3;
+        const arrowColor = effectivePower > 0.8 ? [255, 100, 0] :
+                          effectivePower > 0.5 ? [255, 200, 0] : [100, 200, 255];
+
+        ctx.strokeStyle = `rgba(${arrowColor[0]}, ${arrowColor[1]}, ${arrowColor[2]}, ${0.4 + effectivePower * 0.4})`;
+        ctx.lineWidth = 3 + effectivePower * 5;
         ctx.setLineDash([5, 5]);
 
         ctx.beginPath();
@@ -531,8 +557,8 @@
 
         ctx.setLineDash([]);
 
-        const arrowSize = 10 + power * 10;
-        ctx.fillStyle = `rgba(255, 0, 0, ${0.5 + power * 0.5})`;
+        const arrowSize = 12 + effectivePower * 12;
+        ctx.fillStyle = `rgba(${arrowColor[0]}, ${arrowColor[1]}, ${arrowColor[2]}, ${0.6 + effectivePower * 0.4})`;
         ctx.beginPath();
         ctx.moveTo(endX, endY);
         ctx.lineTo(
@@ -545,6 +571,48 @@
         );
         ctx.closePath();
         ctx.fill();
+
+        ctx.font = 'bold 16px Arial';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillText(`Power: ${Math.round(effectivePower * 100)}%`, ball.x + 15, ball.y - 15);
+        ctx.fillText(`${club.name}`, ball.x + 15, ball.y - 35);
+
+        const powerBarWidth = 100;
+        const powerBarHeight = 10;
+        const powerBarX = ball.x - powerBarWidth / 2;
+        const powerBarY = ball.y - 55;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(powerBarX, powerBarY, powerBarWidth, powerBarHeight);
+
+        ctx.fillStyle = `rgba(${arrowColor[0]}, ${arrowColor[1]}, ${arrowColor[2]}, 0.8)`;
+        ctx.fillRect(powerBarX, powerBarY, powerBarWidth * effectivePower, powerBarHeight);
+
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(powerBarX, powerBarY, powerBarWidth, powerBarHeight);
+      },
+
+      drawStrikeFlash(ball, strikeFlash) {
+        const ctx = this.ctx;
+        const progress = strikeFlash.progress;
+        const alpha = 1 - progress;
+        const radius = 15 + progress * 20;
+
+        ctx.save();
+        ctx.globalAlpha = alpha * 0.6;
+
+        const gradient = ctx.createRadialGradient(ball.x, ball.y, 0, ball.x, ball.y, radius);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(0.5, 'rgba(255, 200, 0, 0.8)');
+        gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
       }
     };
 
@@ -571,6 +639,9 @@
 
       onTouchStart(e) {
         e.preventDefault();
+        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.ball && this.gameEngine.gameState.ball.isMoving) {
+          return;
+        }
         const touch = e.touches[0];
         const rect = this.canvas.getBoundingClientRect();
         this.touchStartPos = {
@@ -607,6 +678,9 @@
       },
 
       onMouseDown(e) {
+        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.ball && this.gameEngine.gameState.ball.isMoving) {
+          return;
+        }
         const rect = this.canvas.getBoundingClientRect();
         this.touchStartPos = {
           x: e.clientX - rect.left,
@@ -771,6 +845,70 @@
       }
     };
 
+    // === ClubSystem Module (T039-T043, T048-T049) ===
+    const ClubSystem = {
+      clubs: {
+        driver: { id: 'driver', name: 'Driver', maxPower: 1.0, arcMultiplier: 1.0, spinMultiplier: 1.0 },
+        wood3: { id: 'wood3', name: '3 Wood', maxPower: 0.9, arcMultiplier: 0.95, spinMultiplier: 0.95 },
+        wood5: { id: 'wood5', name: '5 Wood', maxPower: 0.85, arcMultiplier: 0.9, spinMultiplier: 0.9 },
+        iron4: { id: 'iron4', name: '4 Iron', maxPower: 0.8, arcMultiplier: 0.85, spinMultiplier: 1.1 },
+        iron5: { id: 'iron5', name: '5 Iron', maxPower: 0.75, arcMultiplier: 0.8, spinMultiplier: 1.15 },
+        iron6: { id: 'iron6', name: '6 Iron', maxPower: 0.7, arcMultiplier: 0.75, spinMultiplier: 1.2 },
+        iron7: { id: 'iron7', name: '7 Iron', maxPower: 0.65, arcMultiplier: 0.7, spinMultiplier: 1.25 },
+        iron8: { id: 'iron8', name: '8 Iron', maxPower: 0.6, arcMultiplier: 0.65, spinMultiplier: 1.3 },
+        iron9: { id: 'iron9', name: '9 Iron', maxPower: 0.55, arcMultiplier: 0.6, spinMultiplier: 1.35 },
+        wedge: { id: 'wedge', name: 'Wedge', maxPower: 0.5, arcMultiplier: 0.55, spinMultiplier: 1.5 },
+        putter: { id: 'putter', name: 'Putter', maxPower: 0.3, arcMultiplier: 0.0, spinMultiplier: 0.0 }
+      },
+
+      getClub(clubId) {
+        return this.clubs[clubId] || this.clubs.driver;
+      },
+
+      getAllClubs() {
+        return Object.values(this.clubs);
+      },
+
+      getAvailableClubs(isFirstStroke) {
+        if (isFirstStroke) {
+          return [this.clubs.driver];
+        }
+        return this.getAllClubs();
+      },
+
+      applyClubToSwing(swingVector, clubId) {
+        const club = this.getClub(clubId);
+        return {
+          power: swingVector.power * club.maxPower,
+          angle: swingVector.angle,
+          arc: club.arcMultiplier,
+          spin: club.spinMultiplier
+        };
+      },
+
+      getRecommendedClub(ball, holePosition) {
+        const distance = PhysicsEngine.distance(ball, holePosition);
+
+        if (distance < 50) {
+          return 'putter';
+        } else if (distance < 100) {
+          return 'wedge';
+        } else if (distance < 150) {
+          return 'iron9';
+        } else if (distance < 200) {
+          return 'iron7';
+        } else if (distance < 250) {
+          return 'iron5';
+        } else if (distance < 350) {
+          return 'iron4';
+        } else if (distance < 450) {
+          return 'wood5';
+        } else {
+          return 'driver';
+        }
+      }
+    };
+
     // === GameEngine Module (T007, T011, T013-T025) ===
     class GameEngine {
       constructor(canvas) {
@@ -871,6 +1009,64 @@
         document.getElementById('hole-par').textContent = hole.par;
         document.getElementById('stroke-count').textContent = round.currentStrokeCount;
         document.getElementById('total-score').textContent = ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar);
+
+        const club = ClubSystem.getClub(this.gameState.selectedClub);
+        document.getElementById('current-club').textContent = club.name;
+
+        const distance = Math.round(this.gameState.ball.distanceFromHole);
+        document.getElementById('distance-to-hole').textContent = distance;
+
+        this.updateClubSelector();
+      }
+
+      selectClub(clubId) {
+        if (!this.gameState || !this.gameState.ball) return;
+        if (this.gameState.ball.isMoving) return;
+
+        const isFirstStroke = this.gameState.round.currentStrokeCount === 0;
+        if (isFirstStroke && clubId !== 'driver') {
+          return;
+        }
+
+        this.gameState.selectedClub = clubId;
+        this.updateClubSelector();
+      }
+
+      updateClubSelector() {
+        if (!this.gameState) return;
+
+        const isFirstStroke = this.gameState.round.currentStrokeCount === 0;
+        const availableClubs = ClubSystem.getAvailableClubs(isFirstStroke);
+        const selectedClub = this.gameState.selectedClub;
+
+        const clubSelector = document.getElementById('club-selector');
+        clubSelector.innerHTML = '';
+
+        for (const club of availableClubs) {
+          const button = document.createElement('button');
+          button.className = 'button';
+          button.dataset.club = club.id;
+          button.textContent = club.name;
+
+          if (club.id === selectedClub) {
+            button.classList.add('selected');
+          }
+
+          button.addEventListener('click', () => this.selectClub(club.id));
+          clubSelector.appendChild(button);
+        }
+
+        clubSelector.style.display = 'block';
+
+        const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, this.gameState.currentHole.holePosition);
+        const distanceFromHole = Math.round(this.gameState.ball.distanceFromHole);
+
+        if (distanceFromHole < 100 && recommendedClub === 'putter' && selectedClub !== 'putter') {
+          const putterButton = clubSelector.querySelector('[data-club="putter"]');
+          if (putterButton && !isFirstStroke) {
+            putterButton.style.border = '3px solid gold';
+          }
+        }
       }
 
       executeSwing(swingVector) {
@@ -880,8 +1076,11 @@
         this.gameState.ball.lastSafePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
         this.gameState.ball.waterPenalty = false;
 
-        PhysicsEngine.applySwing(this.gameState.ball, swingVector);
+        const modifiedSwing = ClubSystem.applyClubToSwing(swingVector, this.gameState.selectedClub);
+        PhysicsEngine.applySwing(this.gameState.ball, modifiedSwing);
         ScoreKeeper.recordStroke(this.gameState.round);
+
+        this.gameState.strikeFlash = { active: true, progress: 0, startTime: performance.now() };
 
         if (this.gameState.ball.waterPenalty) {
           ScoreKeeper.recordStroke(this.gameState.round);
@@ -897,6 +1096,14 @@
         if (!this.isPaused && this.gameState) {
           this.updateFPS(deltaTime);
 
+          if (this.gameState.strikeFlash && this.gameState.strikeFlash.active) {
+            const elapsed = timestamp - this.gameState.strikeFlash.startTime;
+            this.gameState.strikeFlash.progress = Math.min(elapsed / 300, 1);
+            if (this.gameState.strikeFlash.progress >= 1) {
+              this.gameState.strikeFlash.active = false;
+            }
+          }
+
           if (this.gameState.ball) {
             const obstacles = this.gameState.currentHole.obstacles || [];
             PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
@@ -904,12 +1111,34 @@
             if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting) {
               this.completeHole();
             }
+
+            this.updateBallStateIndicator();
           }
 
           Renderer.renderFrame(this.gameState);
         }
 
         requestAnimationFrame((t) => this.update(t));
+      }
+
+      updateBallStateIndicator() {
+        const ball = this.gameState.ball;
+        const stateElement = document.getElementById('ball-state');
+        if (!stateElement) return;
+
+        if (ball.isMoving) {
+          const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+          if (speed > 100) {
+            stateElement.textContent = '🏌️ Flying';
+            stateElement.style.color = '#FF6B35';
+          } else {
+            stateElement.textContent = '⛳ Rolling';
+            stateElement.style.color = '#4ECDC4';
+          }
+        } else {
+          stateElement.textContent = '🔴 Ready';
+          stateElement.style.color = '#2E8B57';
+        }
       }
 
       completeHole() {
