@@ -159,13 +159,13 @@
 
 ### Implementation for User Story 5
 
-- [ ] T057 [P] [US5] Implement ScoreKeeper.completeHole() to finalize hole score with par difference calculation in game.html
-- [ ] T058 [P] [US5] Implement ScoreKeeper.getRoundSummary() with total strokes, total par, score relative to par in game.html
-- [ ] T059 [US5] Create scoreboard UI overlay with hole-by-hole breakdown in game.html
-- [ ] T060 [US5] Add par comparison display (+1, -2, E) for each completed hole in scoreboard in game.html
-- [ ] T061 [US5] Implement positive visual feedback for par or better scores (color change, icon) in game.html
-- [ ] T062 [US5] Implement enhanced celebration feedback for birdie or better (confetti preview) in game.html
-- [ ] T063 [US5] Add round progress indicator showing completed vs remaining holes in UI in game.html
+- [X] T057 [P] [US5] Implement ScoreKeeper.completeHole() to finalize hole score with par difference calculation in game.html
+- [X] T058 [P] [US5] Implement ScoreKeeper.getRoundSummary() with total strokes, total par, score relative to par in game.html
+- [X] T059 [US5] Create scoreboard UI overlay with hole-by-hole breakdown in game.html
+- [X] T060 [US5] Add par comparison display (+1, -2, E) for each completed hole in scoreboard in game.html
+- [X] T061 [US5] Implement positive visual feedback for par or better scores (color change, icon) in game.html
+- [X] T062 [US5] Implement enhanced celebration feedback for birdie or better (confetti preview) in game.html
+- [X] T063 [US5] Add round progress indicator showing completed vs remaining holes in UI in game.html
 
 **Checkpoint**: All P2 user stories (US1-5) complete - full playable 9-hole game with clubs and scoring
 

@@ -156,6 +156,59 @@
     .hidden {
       display: none !important;
     }
+
+    #scorecard-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.98);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #scorecard-overlay h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .scorecard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .scorecard-table th, .scorecard-table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .scorecard-table th {
+      background: #f5f5f5;
+      font-weight: bold;
+    }
+
+    .score-birdie { color: #4CAF50; font-weight: bold; }
+    .score-eagle { color: #FFD700; font-weight: bold; }
+    .score-par { color: #2196F3; }
+    .score-bogey { color: #FF9800; }
+    .score-double { color: #F44336; }
+
+    #round-progress {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 <body>
@@ -173,8 +226,18 @@
 
     <div id="ball-state">🔴 Ready</div>
 
+    <div id="round-progress" class="hidden">
+      <strong>Progress:</strong> <span id="progress-text">0/9 holes</span>
+    </div>
+
     <div id="club-selector">
       <button class="button selected" data-club="driver">Driver</button>
+    </div>
+
+    <div id="scorecard-overlay" class="hidden">
+      <h2>Scorecard</h2>
+      <div id="scorecard-content"></div>
+      <button class="button" onclick="document.getElementById('scorecard-overlay').classList.add('hidden')">Close</button>
     </div>
 
     <div id="debug-info" class="hidden"></div>
@@ -822,7 +885,7 @@
       }
     };
 
-    // === ScoreKeeper Module (T022, T033) ===
+    // === ScoreKeeper Module (T022, T033, T057-T063) ===
     const ScoreKeeper = {
       recordStroke(round) {
         round.currentStrokeCount++;
@@ -831,6 +894,33 @@
 
       getCurrentStrokes(round) {
         return round.currentStrokeCount;
+      },
+
+      completeHole(round, hole) {
+        const holeScore = {
+          holeNumber: hole.holeNumber,
+          strokes: round.currentStrokeCount,
+          par: hole.par,
+          scoreRelativeToPar: round.currentStrokeCount - hole.par
+        };
+
+        round.holeScores.push(holeScore);
+        round.totalStrokes += round.currentStrokeCount;
+        round.totalPar += hole.par;
+        round.scoreRelativeToPar = round.totalStrokes - round.totalPar;
+
+        return holeScore;
+      },
+
+      getRoundSummary(round) {
+        return {
+          totalStrokes: round.totalStrokes,
+          totalPar: round.totalPar,
+          scoreRelativeToPar: round.scoreRelativeToPar,
+          holeScores: round.holeScores,
+          completedHoles: round.holeScores.length,
+          remainingHoles: 9 - round.holeScores.length
+        };
       },
 
       updateUI(round) {
@@ -842,6 +932,24 @@
         if (score === 0) return 'E';
         if (score > 0) return `+${score}`;
         return `${score}`;
+      },
+
+      getScoreColor(scoreRelativeToPar) {
+        if (scoreRelativeToPar <= -2) return '#FFD700';
+        if (scoreRelativeToPar === -1) return '#4CAF50';
+        if (scoreRelativeToPar === 0) return '#2196F3';
+        if (scoreRelativeToPar === 1) return '#FF9800';
+        return '#F44336';
+      },
+
+      getScoreName(scoreRelativeToPar) {
+        if (scoreRelativeToPar <= -3) return 'Albatross!';
+        if (scoreRelativeToPar === -2) return 'Eagle!';
+        if (scoreRelativeToPar === -1) return 'Birdie!';
+        if (scoreRelativeToPar === 0) return 'Par';
+        if (scoreRelativeToPar === 1) return 'Bogey';
+        if (scoreRelativeToPar === 2) return 'Double Bogey';
+        return `+${scoreRelativeToPar}`;
       }
     };
 
@@ -1168,28 +1276,53 @@
 
         this.holeCompleting = true;
 
-        const holeScore = {
-          holeNumber: hole.holeNumber,
-          strokes: round.currentStrokeCount,
-          par: hole.par,
-          scoreRelativeToPar: round.currentStrokeCount - hole.par
-        };
+        const holeScore = ScoreKeeper.completeHole(round, hole);
 
-        round.holeScores.push(holeScore);
-        round.totalStrokes += round.currentStrokeCount;
-        round.totalPar += hole.par;
-        round.scoreRelativeToPar = round.totalStrokes - round.totalPar;
+        this.updateRoundProgress();
+
+        const scoreName = ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
+        const scoreColor = ScoreKeeper.getScoreColor(holeScore.scoreRelativeToPar);
 
         setTimeout(() => {
+          let message = `Hole ${hole.holeNumber} complete!\n`;
+          message += `${scoreName}\n`;
+          message += `Strokes: ${round.currentStrokeCount} (Par ${hole.par})\n`;
+          message += `Total: ${ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar)}`;
+
+          if (holeScore.scoreRelativeToPar <= -1) {
+            this.celebrateGoodScore(holeScore.scoreRelativeToPar);
+          }
+
           if (round.currentHoleNumber < 9) {
-            alert(`Hole ${hole.holeNumber} complete!\nStrokes: ${round.currentStrokeCount}\nPar: ${hole.par}\nScore: ${ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar)}\n\nMoving to hole ${round.currentHoleNumber + 1}...`);
+            message += `\n\nMoving to hole ${round.currentHoleNumber + 1}...`;
+            alert(message);
             this.advanceToNextHole();
           } else {
             round.isComplete = true;
             round.endTime = Date.now();
+            alert(message);
             this.showRoundSummary();
           }
         }, 500);
+      }
+
+      celebrateGoodScore(scoreRelativeToPar) {
+        if (scoreRelativeToPar <= -2) {
+          console.log('🎉 EAGLE OR BETTER! 🎉');
+        } else if (scoreRelativeToPar === -1) {
+          console.log('🎊 BIRDIE! 🎊');
+        }
+      }
+
+      updateRoundProgress() {
+        const summary = ScoreKeeper.getRoundSummary(this.gameState.round);
+        const progressElement = document.getElementById('round-progress');
+        const progressText = document.getElementById('progress-text');
+
+        if (progressElement && progressText) {
+          progressText.textContent = `${summary.completedHoles}/9 holes`;
+          progressElement.classList.remove('hidden');
+        }
       }
 
       advanceToNextHole() {
@@ -1211,21 +1344,44 @@
 
       showRoundSummary() {
         const round = this.gameState.round;
-        let summary = `🏌️ ROUND COMPLETE! 🏌️\n\n`;
-        summary += `Total Strokes: ${round.totalStrokes}\n`;
-        summary += `Total Par: ${round.totalPar}\n`;
-        summary += `Final Score: ${ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar)}\n\n`;
-        summary += `Hole-by-Hole:\n`;
+        const summary = ScoreKeeper.getRoundSummary(round);
+
+        let tableHTML = '<table class="scorecard-table">';
+        tableHTML += '<tr><th>Hole</th><th>Par</th><th>Strokes</th><th>Score</th></tr>';
 
         for (const holeScore of round.holeScores) {
-          summary += `Hole ${holeScore.holeNumber}: ${holeScore.strokes} (${ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar)})\n`;
+          const scoreClass = this.getScoreClass(holeScore.scoreRelativeToPar);
+          const scoreDisplay = ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar);
+
+          tableHTML += `<tr>`;
+          tableHTML += `<td>${holeScore.holeNumber}</td>`;
+          tableHTML += `<td>${holeScore.par}</td>`;
+          tableHTML += `<td>${holeScore.strokes}</td>`;
+          tableHTML += `<td class="${scoreClass}">${scoreDisplay}</td>`;
+          tableHTML += `</tr>`;
         }
 
-        alert(summary);
+        tableHTML += '</table>';
+        tableHTML += `<div style="margin-top: 20px; font-size: 18px;">`;
+        tableHTML += `<strong>Total Strokes:</strong> ${summary.totalStrokes}<br>`;
+        tableHTML += `<strong>Total Par:</strong> ${summary.totalPar}<br>`;
+        tableHTML += `<strong>Final Score:</strong> <span style="color: ${ScoreKeeper.getScoreColor(summary.scoreRelativeToPar)}; font-weight: bold; font-size: 24px;">${ScoreKeeper.getScoreDisplay(summary.scoreRelativeToPar)}</span>`;
+        tableHTML += `</div>`;
+
+        document.getElementById('scorecard-content').innerHTML = tableHTML;
+        document.getElementById('scorecard-overlay').classList.remove('hidden');
         document.getElementById('menu-overlay').classList.remove('hidden');
 
         // Reset flag for next round
         this.holeCompleting = false;
+      }
+
+      getScoreClass(scoreRelativeToPar) {
+        if (scoreRelativeToPar <= -2) return 'score-eagle';
+        if (scoreRelativeToPar === -1) return 'score-birdie';
+        if (scoreRelativeToPar === 0) return 'score-par';
+        if (scoreRelativeToPar === 1) return 'score-bogey';
+        return 'score-double';
       }
 
       updateFPS(deltaTime) {
