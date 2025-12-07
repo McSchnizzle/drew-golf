@@ -237,6 +237,88 @@
       color: #666;
       margin-top: 2px;
     }
+
+    /* === Leaderboard Styles (T077) === */
+    #leaderboard-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.98);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    #leaderboard-overlay h2 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .leaderboard-table th {
+      background: #f5f5f5;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+    }
+
+    .leaderboard-table tr:hover {
+      background: #f9f9f9;
+    }
+
+    .leaderboard-rank {
+      font-weight: bold;
+      color: #666;
+    }
+
+    .leaderboard-rank-1 { color: #FFD700; }
+    .leaderboard-rank-2 { color: #C0C0C0; }
+    .leaderboard-rank-3 { color: #CD7F32; }
+
+    .leaderboard-score-under { color: #4CAF50; font-weight: bold; }
+    .leaderboard-score-par { color: #2196F3; }
+    .leaderboard-score-over { color: #F44336; }
+
+    .leaderboard-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .new-best-indicator {
+      background: #FFD700;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+      animation: pulse 1s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
   </style>
 </head>
 <body>
@@ -268,6 +350,12 @@
       <button class="button" onclick="document.getElementById('scorecard-overlay').classList.add('hidden')">Close</button>
     </div>
 
+    <div id="leaderboard-overlay" class="hidden">
+      <h2>🏆 Leaderboard - Top 10</h2>
+      <div id="leaderboard-content"></div>
+      <button class="button" onclick="document.getElementById('leaderboard-overlay').classList.add('hidden')">Close</button>
+    </div>
+
     <div id="debug-info" class="hidden"></div>
 
     <button id="reset-shot-btn" class="hidden">Cancel Shot</button>
@@ -281,6 +369,7 @@
     </p>
     <button class="menu-button" id="new-game-btn">New Game</button>
     <button class="menu-button hidden" id="resume-game-btn">Resume Game</button>
+    <button class="menu-button" id="leaderboard-btn">Leaderboard</button>
   </div>
 
   <script>
@@ -401,11 +490,25 @@
       },
 
       handleObstacleCollision(ball, obstacle) {
+        // Track if this is a new collision to avoid repeated sounds
+        if (!ball.lastCollision || ball.lastCollision !== obstacle) {
+          ball.lastCollision = obstacle;
+          ball.collisionSoundPlayed = false;
+        }
+
         if (obstacle.type === 'sand') {
+          if (!ball.collisionSoundPlayed) {
+            AudioManager.playLandSound('sand');
+            ball.collisionSoundPlayed = true;
+          }
           ball.velocityX *= 0.3;
           ball.velocityY *= 0.3;
           ball.isMoving = ball.velocityX !== 0 || ball.velocityY !== 0;
         } else if (obstacle.type === 'water') {
+          if (!ball.collisionSoundPlayed) {
+            AudioManager.playLandSound('water');
+            ball.collisionSoundPlayed = true;
+          }
           if (ball.lastSafePosition) {
             ball.x = ball.lastSafePosition.x;
             ball.y = ball.lastSafePosition.y;
@@ -415,6 +518,10 @@
             ball.waterPenalty = true;
           }
         } else if (obstacle.type === 'tree' || obstacle.type === 'rock') {
+          if (!ball.collisionSoundPlayed) {
+            AudioManager.playLandSound('grass');
+            ball.collisionSoundPlayed = true;
+          }
           const dx = ball.x - obstacle.x;
           const dy = ball.y - obstacle.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1262,6 +1369,80 @@
           soundEnabled: true,
           debugMode: false
         };
+      },
+
+      // === Leaderboard Methods (T074-T076) ===
+      async addLeaderboardEntry(entry) {
+        try {
+          if (!this.db) {
+            await this.init();
+          }
+
+          const leaderboard = await this.getLeaderboard();
+
+          // Add new entry
+          leaderboard.push({
+            scoreRelativeToPar: entry.scoreRelativeToPar,
+            totalStrokes: entry.totalStrokes,
+            completedAt: entry.completedAt || Date.now(),
+            playerInitials: entry.playerInitials || 'YOU'
+          });
+
+          // Sort by score (lower is better)
+          leaderboard.sort((a, b) => a.scoreRelativeToPar - b.scoreRelativeToPar);
+
+          // Keep only top 10
+          const top10 = leaderboard.slice(0, 10);
+
+          // Save to IndexedDB
+          const transaction = this.db.transaction([this.storeName], 'readwrite');
+          const objectStore = transaction.objectStore(this.storeName);
+          const request = objectStore.put({
+            id: 'leaderboard',
+            entries: top10,
+            timestamp: Date.now()
+          });
+
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(top10);
+            request.onerror = () => {
+              console.error('Leaderboard save error:', request.error);
+              reject(request.error);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to add leaderboard entry:', error);
+          return [];
+        }
+      },
+
+      async getLeaderboard() {
+        try {
+          if (!this.db) {
+            await this.init();
+          }
+
+          const transaction = this.db.transaction([this.storeName], 'readonly');
+          const objectStore = transaction.objectStore(this.storeName);
+          const request = objectStore.get('leaderboard');
+
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+              if (request.result && request.result.entries) {
+                resolve(request.result.entries);
+              } else {
+                resolve([]);
+              }
+            };
+            request.onerror = () => {
+              console.error('Leaderboard load error:', request.error);
+              reject(request.error);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to load leaderboard:', error);
+          return [];
+        }
       }
     };
 
@@ -1294,6 +1475,7 @@
         source.start(0);
       },
 
+      // === T096: Enhanced club hit sounds ===
       playHitSound(power) {
         if (this.muted || !this.context) return;
 
@@ -1303,9 +1485,21 @@
         oscillator.connect(gainNode);
         gainNode.connect(this.context.destination);
 
-        const frequency = power < 0.3 ? 200 : power < 0.6 ? 300 : 400;
-        const volume = 0.1 + (power * 0.2);
-        const duration = 0.05 + (power * 0.05);
+        // Soft, medium, hard hit sounds based on power
+        let frequency, volume, duration;
+        if (power < 0.3) {
+          frequency = 180;
+          volume = 0.08;
+          duration = 0.04;
+        } else if (power < 0.6) {
+          frequency = 280;
+          volume = 0.15;
+          duration = 0.06;
+        } else {
+          frequency = 380;
+          volume = 0.22;
+          duration = 0.08;
+        }
 
         oscillator.frequency.value = frequency;
         oscillator.type = 'sine';
@@ -1317,6 +1511,70 @@
         oscillator.stop(this.context.currentTime + duration);
       },
 
+      // === T097: Landing sounds based on surface ===
+      playLandSound(surfaceType = 'grass') {
+        if (this.muted || !this.context) return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        let frequency, duration, volume;
+        switch (surfaceType) {
+          case 'sand':
+            frequency = 120;
+            duration = 0.15;
+            volume = 0.12;
+            break;
+          case 'water':
+            frequency = 200;
+            duration = 0.2;
+            volume = 0.18;
+            oscillator.type = 'triangle';
+            break;
+          case 'grass':
+          default:
+            frequency = 150;
+            duration = 0.08;
+            volume = 0.1;
+            break;
+        }
+
+        oscillator.frequency.value = frequency;
+        if (surfaceType !== 'water') oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(volume, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + duration);
+      },
+
+      // === T098: Cheer sound for exceptional shots ===
+      playCheerSound() {
+        if (this.muted || !this.context) return;
+
+        // Play a rising three-note cheer
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        notes.forEach((freq, i) => {
+          setTimeout(() => {
+            const osc = this.context.createOscillator();
+            const gain = this.context.createGain();
+            osc.connect(gain);
+            gain.connect(this.context.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.15, this.context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+            osc.start(this.context.currentTime);
+            osc.stop(this.context.currentTime + 0.3);
+          }, i * 100);
+        });
+      },
+
+      // === T099: Hole completion jingle ===
       playHoleSound() {
         if (this.muted || !this.context) return;
 
@@ -1349,6 +1607,7 @@
         }, 150);
       },
 
+      // === T094, T100: Mute toggle ===
       setMuted(muted) {
         this.muted = muted;
         const settings = StorageManager.loadSettings();
@@ -1710,11 +1969,14 @@
         }, 500);
       }
 
+      // === T098: Play cheer for exceptional shots ===
       celebrateGoodScore(scoreRelativeToPar) {
         if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
+          AudioManager.playCheerSound();
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
+          AudioManager.playCheerSound();
         }
       }
 
@@ -1748,7 +2010,7 @@
         StorageManager.saveGameState(this.gameState);
       }
 
-      showRoundSummary() {
+      async showRoundSummary() {
         const round = this.gameState.round;
         const summary = ScoreKeeper.getRoundSummary(round);
 
@@ -1778,10 +2040,84 @@
         document.getElementById('scorecard-overlay').classList.remove('hidden');
         document.getElementById('menu-overlay').classList.remove('hidden');
 
+        // === T078: Save to leaderboard ===
+        await this.saveToLeaderboard(summary);
+
         // Reset flag for next round
         this.holeCompleting = false;
 
         StorageManager.clearGameState();
+      }
+
+      // === T078, T080: Save round to leaderboard with personal best check ===
+      async saveToLeaderboard(summary) {
+        try {
+          const entry = {
+            scoreRelativeToPar: summary.scoreRelativeToPar,
+            totalStrokes: summary.totalStrokes,
+            completedAt: Date.now(),
+            playerInitials: 'YOU'
+          };
+
+          const leaderboard = await StorageManager.addLeaderboardEntry(entry);
+
+          // Check if this is a new personal best (top 3)
+          const entryRank = leaderboard.findIndex(e =>
+            e.completedAt === entry.completedAt &&
+            e.totalStrokes === entry.totalStrokes
+          ) + 1;
+
+          if (entryRank > 0 && entryRank <= 3) {
+            const medals = ['🥇', '🥈', '🥉'];
+            const message = `${medals[entryRank - 1]} NEW PERSONAL BEST! Rank #${entryRank}`;
+            console.log(message);
+          }
+        } catch (error) {
+          console.error('Failed to save to leaderboard:', error);
+        }
+      }
+
+      // === T077, T081: Display leaderboard ===
+      static async showLeaderboard() {
+        try {
+          const leaderboard = await StorageManager.getLeaderboard();
+          const content = document.getElementById('leaderboard-content');
+
+          if (!leaderboard || leaderboard.length === 0) {
+            content.innerHTML = '<div class="leaderboard-empty">No scores yet. Complete a round to get on the leaderboard!</div>';
+          } else {
+            let tableHTML = '<table class="leaderboard-table">';
+            tableHTML += '<tr><th>Rank</th><th>Player</th><th>Score</th><th>Strokes</th><th>Date</th></tr>';
+
+            leaderboard.forEach((entry, index) => {
+              const rank = index + 1;
+              const rankClass = rank <= 3 ? `leaderboard-rank-${rank}` : '';
+              let scoreClass = 'leaderboard-score-par';
+              if (entry.scoreRelativeToPar < 0) scoreClass = 'leaderboard-score-under';
+              else if (entry.scoreRelativeToPar > 0) scoreClass = 'leaderboard-score-over';
+
+              const scoreDisplay = ScoreKeeper.getScoreDisplay(entry.scoreRelativeToPar);
+              const date = new Date(entry.completedAt).toLocaleDateString();
+
+              tableHTML += `<tr>`;
+              tableHTML += `<td class="leaderboard-rank ${rankClass}">#${rank}</td>`;
+              tableHTML += `<td>${entry.playerInitials}</td>`;
+              tableHTML += `<td class="${scoreClass}">${scoreDisplay}</td>`;
+              tableHTML += `<td>${entry.totalStrokes}</td>`;
+              tableHTML += `<td>${date}</td>`;
+              tableHTML += `</tr>`;
+            });
+
+            tableHTML += '</table>';
+            content.innerHTML = tableHTML;
+          }
+
+          document.getElementById('leaderboard-overlay').classList.remove('hidden');
+        } catch (error) {
+          console.error('Failed to load leaderboard:', error);
+          const content = document.getElementById('leaderboard-content');
+          content.innerHTML = '<div class="leaderboard-empty">Error loading leaderboard</div>';
+        }
       }
 
       getScoreClass(scoreRelativeToPar) {
@@ -1878,6 +2214,15 @@
           alert('Error resuming game: ' + error.message);
         }
       });
+
+      // === T081: Leaderboard button handler ===
+      const leaderboardBtn = document.getElementById('leaderboard-btn');
+      if (leaderboardBtn) {
+        leaderboardBtn.addEventListener('click', async () => {
+          console.log('Leaderboard button clicked');
+          await GameEngine.showLeaderboard();
+        });
+      }
 
       console.log('Cartoon Golf Chaos - Ready!');
     });
