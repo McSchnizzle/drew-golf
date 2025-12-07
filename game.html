@@ -780,6 +780,7 @@
         this.lastFrameTime = 0;
         this.fps = 60;
         this.debugMode = false;
+        this.holeCompleting = false;
 
         this.gameState = null;
 
@@ -900,7 +901,7 @@
             const obstacles = this.gameState.currentHole.obstacles || [];
             PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
 
-            if (PhysicsEngine.isBallInHole(this.gameState.ball)) {
+            if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting) {
               this.completeHole();
             }
           }
@@ -919,6 +920,13 @@
         if (round.currentStrokeCount === 0) {
           return;
         }
+
+        // Prevent multiple simultaneous completions
+        if (this.holeCompleting) {
+          return;
+        }
+
+        this.holeCompleting = true;
 
         const holeScore = {
           holeNumber: hole.holeNumber,
@@ -956,6 +964,9 @@
         this.gameState.ball = this.createBall(hole);
 
         this.updateUI();
+
+        // Reset flag to allow next hole completion
+        this.holeCompleting = false;
       }
 
       showRoundSummary() {
@@ -972,6 +983,9 @@
 
         alert(summary);
         document.getElementById('menu-overlay').classList.remove('hidden');
+
+        // Reset flag for next round
+        this.holeCompleting = false;
       }
 
       updateFPS(deltaTime) {
