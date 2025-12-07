@@ -1017,6 +1017,177 @@
       }
     };
 
+    // === StorageManager Module (T064-T073) ===
+    const StorageManager = {
+      dbName: 'CartoonGolfDB',
+      dbVersion: 1,
+      storeName: 'gameStates',
+      db: null,
+
+      async init() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(this.dbName, this.dbVersion);
+
+          request.onerror = () => {
+            console.error('IndexedDB error:', request.error);
+            reject(request.error);
+          };
+
+          request.onsuccess = () => {
+            this.db = request.result;
+            resolve(this.db);
+          };
+
+          request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains(this.storeName)) {
+              const objectStore = db.createObjectStore(this.storeName, { keyPath: 'id' });
+              objectStore.createIndex('timestamp', 'timestamp', { unique: false });
+            }
+          };
+        });
+      },
+
+      async saveGameState(gameState) {
+        try {
+          if (!this.db) {
+            await this.init();
+          }
+
+          const stateToSave = {
+            id: 'current-game',
+            timestamp: Date.now(),
+            gameState: {
+              currentHole: gameState.currentHole,
+              round: gameState.round,
+              ball: {
+                x: gameState.ball.x,
+                y: gameState.ball.y,
+                velocityX: gameState.ball.velocityX,
+                velocityY: gameState.ball.velocityY,
+                spin: gameState.ball.spin,
+                isAirborne: gameState.ball.isAirborne,
+                isMoving: gameState.ball.isMoving,
+                rotation: gameState.ball.rotation,
+                groundY: gameState.ball.groundY,
+                holePosition: gameState.ball.holePosition,
+                distanceFromHole: gameState.ball.distanceFromHole,
+                lastSafePosition: gameState.ball.lastSafePosition,
+                waterPenalty: gameState.ball.waterPenalty
+              },
+              selectedClub: gameState.selectedClub,
+              seed: gameState.seed
+            }
+          };
+
+          const transaction = this.db.transaction([this.storeName], 'readwrite');
+          const objectStore = transaction.objectStore(this.storeName);
+          const request = objectStore.put(stateToSave);
+
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => {
+              console.error('Save error:', request.error);
+              reject(request.error);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to save game state:', error);
+          return false;
+        }
+      },
+
+      async loadGameState() {
+        try {
+          if (!this.db) {
+            await this.init();
+          }
+
+          const transaction = this.db.transaction([this.storeName], 'readonly');
+          const objectStore = transaction.objectStore(this.storeName);
+          const request = objectStore.get('current-game');
+
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+              if (request.result) {
+                resolve(request.result.gameState);
+              } else {
+                resolve(null);
+              }
+            };
+            request.onerror = () => {
+              console.error('Load error:', request.error);
+              reject(request.error);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to load game state:', error);
+          return null;
+        }
+      },
+
+      async clearGameState() {
+        try {
+          if (!this.db) {
+            await this.init();
+          }
+
+          const transaction = this.db.transaction([this.storeName], 'readwrite');
+          const objectStore = transaction.objectStore(this.storeName);
+          const request = objectStore.delete('current-game');
+
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => {
+              console.error('Clear error:', request.error);
+              reject(request.error);
+            };
+          });
+        } catch (error) {
+          console.error('Failed to clear game state:', error);
+          return false;
+        }
+      },
+
+      async hasSavedGame() {
+        try {
+          const savedState = await this.loadGameState();
+          return savedState !== null && !savedState.round.isComplete;
+        } catch (error) {
+          console.error('Error checking for saved game:', error);
+          return false;
+        }
+      },
+
+      saveSettings(settings) {
+        try {
+          localStorage.setItem('golf-settings', JSON.stringify(settings));
+          return true;
+        } catch (error) {
+          console.error('Failed to save settings:', error);
+          return false;
+        }
+      },
+
+      loadSettings() {
+        try {
+          const settings = localStorage.getItem('golf-settings');
+          return settings ? JSON.parse(settings) : this.getDefaultSettings();
+        } catch (error) {
+          console.error('Failed to load settings:', error);
+          return this.getDefaultSettings();
+        }
+      },
+
+      getDefaultSettings() {
+        return {
+          soundEnabled: true,
+          debugMode: false
+        };
+      }
+    };
+
     // === GameEngine Module (T007, T011, T013-T025) ===
     class GameEngine {
       constructor(canvas) {
@@ -1059,7 +1230,7 @@
         this.lastFrameTime = performance.now();
       }
 
-      startNewRound(seed = null) {
+      async startNewRound(seed = null) {
         const usedSeed = seed || Date.now();
         CourseGenerator.init(usedSeed);
 
@@ -1089,6 +1260,51 @@
 
         this.updateUI();
         document.getElementById('menu-overlay').classList.add('hidden');
+
+        await StorageManager.clearGameState();
+      }
+
+      async loadRound() {
+        try {
+          const savedState = await StorageManager.loadGameState();
+          if (!savedState) {
+            console.error('No saved game state found');
+            return false;
+          }
+
+          CourseGenerator.init(savedState.seed);
+
+          const canvasRect = this.canvas.getBoundingClientRect();
+          const hole = CourseGenerator.generateHole(
+            savedState.round.currentHoleNumber,
+            canvasRect.width,
+            canvasRect.height
+          );
+
+          this.gameState = {
+            currentHole: hole,
+            round: savedState.round,
+            ball: this.createBall(hole),
+            selectedClub: savedState.selectedClub,
+            seed: savedState.seed
+          };
+
+          this.gameState.ball.x = savedState.ball.x;
+          this.gameState.ball.y = savedState.ball.y;
+          this.gameState.ball.velocityX = savedState.ball.velocityX;
+          this.gameState.ball.velocityY = savedState.ball.velocityY;
+          this.gameState.ball.isMoving = savedState.ball.isMoving;
+          this.gameState.ball.lastSafePosition = savedState.ball.lastSafePosition;
+
+          this.updateUI();
+          this.updateRoundProgress();
+          document.getElementById('menu-overlay').classList.add('hidden');
+
+          return true;
+        } catch (error) {
+          console.error('Failed to load saved game:', error);
+          return false;
+        }
       }
 
       createBall(hole) {
@@ -1197,6 +1413,8 @@
         if (this.gameState.ball.waterPenalty) {
           ScoreKeeper.recordStroke(this.gameState.round);
         }
+
+        StorageManager.saveGameState(this.gameState);
       }
 
       update(timestamp) {
@@ -1340,6 +1558,8 @@
 
         // Reset flag to allow next hole completion
         this.holeCompleting = false;
+
+        StorageManager.saveGameState(this.gameState);
       }
 
       showRoundSummary() {
@@ -1374,6 +1594,8 @@
 
         // Reset flag for next round
         this.holeCompleting = false;
+
+        StorageManager.clearGameState();
       }
 
       getScoreClass(scoreRelativeToPar) {
@@ -1394,7 +1616,7 @@
     }
 
     // === Initialize Game (T005, T011, T012) ===
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       console.log('DOM Content Loaded');
 
       const canvas = document.getElementById('game-canvas');
@@ -1417,16 +1639,33 @@
       }
 
       const newGameBtn = document.getElementById('new-game-btn');
+      const resumeGameBtn = document.getElementById('resume-game-btn');
+
       if (!newGameBtn) {
         console.error('New game button not found!');
         return;
       }
 
-      newGameBtn.addEventListener('click', () => {
+      try {
+        await StorageManager.init();
+        const hasSavedGame = await StorageManager.hasSavedGame();
+
+        if (hasSavedGame) {
+          resumeGameBtn.classList.remove('hidden');
+        } else {
+          resumeGameBtn.classList.add('hidden');
+        }
+      } catch (error) {
+        console.error('Error checking for saved game:', error);
+        resumeGameBtn.classList.add('hidden');
+      }
+
+      newGameBtn.addEventListener('click', async () => {
         console.log('New Game button clicked');
         try {
-          gameEngine.startNewRound();
+          await gameEngine.startNewRound();
           gameEngine.start();
+          resumeGameBtn.classList.add('hidden');
           console.log('Game started successfully');
         } catch (error) {
           console.error('Error starting game:', error);
@@ -1434,8 +1673,21 @@
         }
       });
 
-      document.getElementById('resume-game-btn').addEventListener('click', () => {
-        console.log('Resume game functionality pending');
+      resumeGameBtn.addEventListener('click', async () => {
+        console.log('Resume Game button clicked');
+        try {
+          const loaded = await gameEngine.loadRound();
+          if (loaded) {
+            gameEngine.start();
+            console.log('Game resumed successfully');
+          } else {
+            alert('Failed to load saved game');
+            resumeGameBtn.classList.add('hidden');
+          }
+        } catch (error) {
+          console.error('Error resuming game:', error);
+          alert('Error resuming game: ' + error.message);
+        }
       });
 
       console.log('Cartoon Golf Chaos - Ready!');

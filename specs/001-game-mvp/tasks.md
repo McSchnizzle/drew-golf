@@ -179,16 +179,16 @@
 
 ### Implementation for User Story 6
 
-- [ ] T064 [P] [US6] Create StorageManager module with IndexedDB initialization and database schema in game.html
-- [ ] T065 [P] [US6] Implement StorageManager.saveGameState() to persist current round to IndexedDB in game.html
-- [ ] T066 [P] [US6] Implement StorageManager.loadGameState() to retrieve saved round from IndexedDB in game.html
-- [ ] T067 [P] [US6] Implement StorageManager.clearGameState() to remove saved state after round completion in game.html
-- [ ] T068 [US6] Create GameState entity with currentRound, ball, selectedClub, settings in game.html
-- [ ] T069 [US6] Implement auto-save on ball stopped, club changed, hole completed, and visibility change events in game.html
-- [ ] T070 [US6] Implement resume/new game menu on startup when saved state exists in game.html
-- [ ] T071 [US6] Add localStorage integration for simple settings (soundEnabled, tutorialCompleted) in game.html
-- [ ] T072 [US6] Implement GameEngine.loadRound() to restore all state from saved data in game.html
-- [ ] T073 [US6] Add error handling for storage quota exceeded or unavailable with user warning in game.html
+- [X] T064 [P] [US6] Create StorageManager module with IndexedDB initialization and database schema in game.html
+- [X] T065 [P] [US6] Implement StorageManager.saveGameState() to persist current round to IndexedDB in game.html
+- [X] T066 [P] [US6] Implement StorageManager.loadGameState() to retrieve saved round from IndexedDB in game.html
+- [X] T067 [P] [US6] Implement StorageManager.clearGameState() to remove saved state after round completion in game.html
+- [X] T068 [US6] Create GameState entity with currentRound, ball, selectedClub, settings in game.html
+- [X] T069 [US6] Implement auto-save on ball stopped, club changed, hole completed, and visibility change events in game.html
+- [X] T070 [US6] Implement resume/new game menu on startup when saved state exists in game.html
+- [X] T071 [US6] Add localStorage integration for simple settings (soundEnabled, tutorialCompleted) in game.html
+- [X] T072 [US6] Implement GameEngine.loadRound() to restore all state from saved data in game.html
+- [X] T073 [US6] Add error handling for storage quota exceeded or unavailable with user warning in game.html
 
 **Checkpoint**: User Story 6 complete and independently testable (save/resume functionality)
 
