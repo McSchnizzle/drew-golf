@@ -1126,6 +1126,9 @@
         const stateElement = document.getElementById('ball-state');
         if (!stateElement) return;
 
+        const wasMoving = this.ballWasMoving || false;
+        this.ballWasMoving = ball.isMoving;
+
         if (ball.isMoving) {
           const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
           if (speed > 100) {
@@ -1138,6 +1141,10 @@
         } else {
           stateElement.textContent = '🔴 Ready';
           stateElement.style.color = '#2E8B57';
+
+          if (wasMoving && !ball.isMoving) {
+            this.updateClubSelector();
+          }
         }
       }
 
