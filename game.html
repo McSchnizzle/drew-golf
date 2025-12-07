@@ -1029,6 +1029,10 @@
         }
 
         this.gameState.selectedClub = clubId;
+
+        const club = ClubSystem.getClub(clubId);
+        document.getElementById('current-club').textContent = club.name;
+
         this.updateClubSelector();
       }
 
