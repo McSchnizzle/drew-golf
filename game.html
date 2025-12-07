@@ -322,7 +322,13 @@
       },
 
       isBallInHole(ball) {
-        return ball.distanceFromHole < this.holeRadius && !ball.isMoving;
+        if (ball.distanceFromHole >= this.holeRadius) return false;
+
+        // Ball goes in if it's in the hole radius and moving slowly or stopped
+        const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+        const slowEnough = speed < 50; // Ball moving slower than 50 units/second
+
+        return slowEnough;
       }
     };
 
@@ -404,15 +410,15 @@
         ctx.strokeStyle = '#8B4513';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 40);
-        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 80);
+        ctx.moveTo(hole.holePosition.x, hole.holePosition.y);
+        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 50);
         ctx.stroke();
 
         ctx.fillStyle = '#FF0000';
         ctx.beginPath();
-        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 80);
-        ctx.lineTo(hole.holePosition.x + 20, hole.holePosition.y - 70);
-        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 60);
+        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 50);
+        ctx.lineTo(hole.holePosition.x + 20, hole.holePosition.y - 40);
+        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 30);
         ctx.fill();
       },
 
