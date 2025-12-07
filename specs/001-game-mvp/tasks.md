@@ -194,6 +194,27 @@
 
 ---
 
+## Phase 8.5: User Story 6.5 - Gameplay Polish & UX Improvements (Priority: P2)
+
+**Goal**: Enhance gameplay experience with shot cancellation, better visual feedback, improved course layout, and audio feedback
+
+**Independent Test**: Test reset button during drag, verify max power display, check hole distance and visual effects, test sound effects
+
+### Implementation for User Story 6.5
+
+- [X] T073a [P] [US6.5] Add reset/cancel button that appears during swing drag to cancel shot without executing in game.html
+- [X] T073b [P] [US6.5] Display max power value for each club in club selector UI in game.html
+- [X] T073c [P] [US6.5] Increase hole distance from tee box in CourseGenerator (increase distance values by 50-100%) in game.html
+- [X] T073d [P] [US6.5] Add permanent distance-to-hole display on screen (already exists, ensure it's visible) in game.html
+- [X] T073e [P] [US6.5] Implement ball disappear animation when ball goes in hole in Renderer in game.html
+- [X] T073f [P] [US6.5] Create or source sound effect files for ball hits (soft, medium, hard) as data URIs or external files
+- [X] T073g [P] [US6.5] Implement basic AudioManager module with play() and context initialization in game.html
+- [X] T073h [P] [US6.5] Trigger appropriate hit sound based on swing power and selected club in GameEngine in game.html
+
+**Checkpoint**: User Story 6.5 complete and independently testable (enhanced gameplay experience)
+
+---
+
 ## Phase 9: User Story 7 - Leaderboard System (Priority: P3)
 
 **Goal**: Players can view their top 10 best rounds with scores and dates

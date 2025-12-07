@@ -209,6 +209,34 @@
       font-size: 14px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
+    #reset-shot-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      background: rgba(244, 67, 54, 0.95);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      transition: background 0.2s;
+    }
+
+    #reset-shot-btn:active {
+      background: rgba(211, 47, 47, 0.95);
+    }
+
+    .club-power-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -241,6 +269,8 @@
     </div>
 
     <div id="debug-info" class="hidden"></div>
+
+    <button id="reset-shot-btn" class="hidden">Cancel Shot</button>
   </div>
 
   <div id="menu-overlay">
@@ -570,6 +600,35 @@
       drawBall(ball) {
         const ctx = this.ctx;
 
+        if (ball.inHole && ball.holeProgress !== undefined) {
+          const fadeProgress = ball.holeProgress;
+          if (fadeProgress >= 1) return;
+
+          ctx.save();
+          ctx.globalAlpha = 1 - fadeProgress;
+          ctx.translate(ball.x, ball.y);
+          ctx.rotate(ball.rotation);
+
+          const scale = 1 - (fadeProgress * 0.5);
+          ctx.scale(scale, scale);
+
+          const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+          gradient.addColorStop(0, '#FFFFFF');
+          gradient.addColorStop(1, '#CCCCCC');
+
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(0, 0, 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#999999';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+
+          ctx.restore();
+          return;
+        }
+
         ctx.save();
         ctx.translate(ball.x, ball.y);
         ctx.rotate(ball.rotation);
@@ -698,6 +757,16 @@
         canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
         canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
         canvas.addEventListener('mouseup', (e) => this.onMouseUp(e));
+
+        const resetBtn = document.getElementById('reset-shot-btn');
+        resetBtn.addEventListener('click', () => this.resetShot());
+      },
+
+      resetShot() {
+        this.touchStartPos = null;
+        this.currentTouchPos = null;
+        this.isSwinging = false;
+        document.getElementById('reset-shot-btn').classList.add('hidden');
       },
 
       onTouchStart(e) {
@@ -724,11 +793,15 @@
           x: touch.clientX - rect.left,
           y: touch.clientY - rect.top
         };
+
+        document.getElementById('reset-shot-btn').classList.remove('hidden');
       },
 
       onTouchEnd(e) {
         e.preventDefault();
         if (!this.isSwinging) return;
+
+        document.getElementById('reset-shot-btn').classList.add('hidden');
 
         const swingVector = this.calculateSwingVector();
         if (swingVector && this.gameEngine) {
@@ -760,10 +833,14 @@
           x: e.clientX - rect.left,
           y: e.clientY - rect.top
         };
+
+        document.getElementById('reset-shot-btn').classList.remove('hidden');
       },
 
       onMouseUp(e) {
         if (!this.isSwinging) return;
+
+        document.getElementById('reset-shot-btn').classList.add('hidden');
 
         const swingVector = this.calculateSwingVector();
         if (swingVector && this.gameEngine) {
@@ -809,15 +886,15 @@
 
       defineHoleTemplates() {
         return [
-          { holeNumber: 1, par: 3, length: 'short', distance: 300 },
-          { holeNumber: 2, par: 4, length: 'medium', distance: 450 },
-          { holeNumber: 3, par: 3, length: 'short', distance: 250 },
-          { holeNumber: 4, par: 5, length: 'long', distance: 600 },
-          { holeNumber: 5, par: 4, length: 'medium', distance: 400 },
-          { holeNumber: 6, par: 4, length: 'medium', distance: 500 },
-          { holeNumber: 7, par: 3, length: 'short', distance: 280 },
-          { holeNumber: 8, par: 5, length: 'long', distance: 650 },
-          { holeNumber: 9, par: 4, length: 'medium', distance: 480 }
+          { holeNumber: 1, par: 3, length: 'short', distance: 525 },
+          { holeNumber: 2, par: 4, length: 'medium', distance: 788 },
+          { holeNumber: 3, par: 3, length: 'short', distance: 438 },
+          { holeNumber: 4, par: 5, length: 'long', distance: 1050 },
+          { holeNumber: 5, par: 4, length: 'medium', distance: 700 },
+          { holeNumber: 6, par: 4, length: 'medium', distance: 875 },
+          { holeNumber: 7, par: 3, length: 'short', distance: 490 },
+          { holeNumber: 8, par: 5, length: 'long', distance: 1138 },
+          { holeNumber: 9, par: 4, length: 'medium', distance: 840 }
         ];
       },
 
@@ -1188,6 +1265,98 @@
       }
     };
 
+    // === AudioManager Module (T073f, T073g) ===
+    const AudioManager = {
+      context: null,
+      sounds: {},
+      muted: false,
+
+      init() {
+        try {
+          this.context = new (window.AudioContext || window.webkitAudioContext)();
+          this.muted = StorageManager.loadSettings().soundEnabled === false;
+        } catch (error) {
+          console.error('Web Audio API not supported:', error);
+        }
+      },
+
+      unlock() {
+        if (!this.context) return;
+
+        if (this.context.state === 'suspended') {
+          this.context.resume();
+        }
+
+        const buffer = this.context.createBuffer(1, 1, 22050);
+        const source = this.context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.context.destination);
+        source.start(0);
+      },
+
+      playHitSound(power) {
+        if (this.muted || !this.context) return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        const frequency = power < 0.3 ? 200 : power < 0.6 ? 300 : 400;
+        const volume = 0.1 + (power * 0.2);
+        const duration = 0.05 + (power * 0.05);
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(volume, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + duration);
+      },
+
+      playHoleSound() {
+        if (this.muted || !this.context) return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        oscillator.frequency.value = 523.25;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.2, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + 0.3);
+
+        setTimeout(() => {
+          const osc2 = this.context.createOscillator();
+          const gain2 = this.context.createGain();
+          osc2.connect(gain2);
+          gain2.connect(this.context.destination);
+          osc2.frequency.value = 659.25;
+          osc2.type = 'sine';
+          gain2.gain.setValueAtTime(0.2, this.context.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+          osc2.start(this.context.currentTime);
+          osc2.stop(this.context.currentTime + 0.3);
+        }, 150);
+      },
+
+      setMuted(muted) {
+        this.muted = muted;
+        const settings = StorageManager.loadSettings();
+        settings.soundEnabled = !muted;
+        StorageManager.saveSettings(settings);
+      }
+    };
+
     // === GameEngine Module (T007, T011, T013-T025) ===
     class GameEngine {
       constructor(canvas) {
@@ -1374,7 +1543,8 @@
           const button = document.createElement('button');
           button.className = 'button';
           button.dataset.club = club.id;
-          button.textContent = club.name;
+
+          button.innerHTML = `${club.name}<br><span class="club-power-info">${Math.round(club.maxPower * 100)}% power</span>`;
 
           if (club.id === selectedClub) {
             button.classList.add('selected');
@@ -1410,6 +1580,8 @@
 
         this.gameState.strikeFlash = { active: true, progress: 0, startTime: performance.now() };
 
+        AudioManager.playHitSound(swingVector.power);
+
         if (this.gameState.ball.waterPenalty) {
           ScoreKeeper.recordStroke(this.gameState.round);
         }
@@ -1439,7 +1611,21 @@
             PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
 
             if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting) {
-              this.completeHole();
+              if (!this.gameState.ball.inHole) {
+                this.gameState.ball.inHole = true;
+                this.gameState.ball.holeProgress = 0;
+                this.gameState.ball.holeStartTime = timestamp;
+                AudioManager.playHoleSound();
+              }
+            }
+
+            if (this.gameState.ball.inHole) {
+              const elapsed = timestamp - this.gameState.ball.holeStartTime;
+              this.gameState.ball.holeProgress = Math.min(elapsed / 800, 1);
+
+              if (this.gameState.ball.holeProgress >= 1 && !this.holeCompleting) {
+                this.completeHole();
+              }
             }
 
             this.updateBallStateIndicator();
@@ -1646,6 +1832,8 @@
         return;
       }
 
+      AudioManager.init();
+
       try {
         await StorageManager.init();
         const hasSavedGame = await StorageManager.hasSavedGame();
@@ -1662,6 +1850,7 @@
 
       newGameBtn.addEventListener('click', async () => {
         console.log('New Game button clicked');
+        AudioManager.unlock();
         try {
           await gameEngine.startNewRound();
           gameEngine.start();
