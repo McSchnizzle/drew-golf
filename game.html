@@ -1946,6 +1946,11 @@
           this.gameState.ball.isMoving = savedState.ball.isMoving;
           this.gameState.ball.lastSafePosition = savedState.ball.lastSafePosition;
 
+          // Ensure ball is never loaded in a "in hole" state (prevents infinite loop bug)
+          this.gameState.ball.inHole = false;
+          this.gameState.ball.holeProgress = 0;
+          delete this.gameState.ball.holeStartTime;
+
           this.updateUI();
           this.updateRoundProgress();
           document.getElementById('menu-overlay').classList.add('hidden');
@@ -2078,7 +2083,10 @@
           ScoreKeeper.recordStroke(this.gameState.round);
         }
 
-        StorageManager.saveGameState(this.gameState);
+        // Only save if ball is not in hole (prevents corrupted state on reload)
+        if (!this.gameState.ball.inHole && !this.holeCompleting) {
+          StorageManager.saveGameState(this.gameState);
+        }
       }
 
       update(timestamp) {
