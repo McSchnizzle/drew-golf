@@ -2124,7 +2124,7 @@
               const elapsed = timestamp - this.gameState.ball.holeStartTime;
               this.gameState.ball.holeProgress = Math.min(elapsed / 800, 1);
 
-              if (this.gameState.ball.holeProgress >= 1 && !this.holeCompleting) {
+              if (this.gameState.ball.holeProgress >= 1 && !this.holeCompleting && !this.gameState.round.isComplete) {
                 this.completeHole();
               }
             }
