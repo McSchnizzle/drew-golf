@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Cartoon Golf Chaos - Phase 1-4 Tests', () => {
+test.describe('Howlett Golf Chaos - Phase 1-4 Tests', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/game.html');
@@ -9,7 +9,7 @@ test.describe('Cartoon Golf Chaos - Phase 1-4 Tests', () => {
 
   test('should load the game successfully', async ({ page }) => {
     // Check page title
-    await expect(page).toHaveTitle('Cartoon Golf Chaos');
+    await expect(page).toHaveTitle('Howlett Golf Chaos');
 
     // Check main elements exist
     await expect(page.locator('#game-canvas')).toBeVisible();
