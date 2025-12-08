@@ -1,4 +1,4 @@
-# Feature Specification: Cartoon Golf Chaos - Complete Game
+# Feature Specification: Howlett Golf Chaos - Complete Game
 
 **Feature Branch**: `001-game-mvp`
 **Created**: 2025-12-06

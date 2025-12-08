@@ -1,4 +1,4 @@
-# Data Model: Cartoon Golf Chaos
+# Data Model: Howlett Golf Chaos
 
 **Feature**: 001-game-mvp
 **Date**: 2025-12-06

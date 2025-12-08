@@ -4,7 +4,7 @@ Here you go, Paul — a clean, tight PRD for your single-page, finger-controlled
 
 Product Requirements Document (PRD)
 
-Project: Single-Page iPad Golf Game ("Cartoon Golf Chaos")
+Project: Single-Page iPad Golf Game ("Howlett Golf Chaos")
 
 Platform: iPad Safari (single HTML page)
 

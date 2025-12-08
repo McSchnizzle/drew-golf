@@ -1,4 +1,4 @@
-# Implementation Plan: Cartoon Golf Chaos - Complete Game
+# Implementation Plan: Howlett Golf Chaos - Complete Game
 
 **Branch**: `001-game-mvp` | **Date**: 2025-12-06 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/001-game-mvp/spec.md`

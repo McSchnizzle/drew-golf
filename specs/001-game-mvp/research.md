@@ -1,4 +1,4 @@
-# Research: Cartoon Golf Chaos Technical Decisions
+# Research: Howlett Golf Chaos Technical Decisions
 
 **Feature**: 001-game-mvp
 **Date**: 2025-12-06
@@ -428,7 +428,7 @@ cat > game.html <<'EOF'
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cartoon Golf Chaos</title>
+  <title>Howlett Golf Chaos</title>
   <style>
 EOF
 

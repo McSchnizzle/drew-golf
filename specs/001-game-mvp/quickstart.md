@@ -1,4 +1,4 @@
-# Quickstart Guide: Cartoon Golf Chaos Development
+# Quickstart Guide: Howlett Golf Chaos Development
 
 **Feature**: 001-game-mvp
 **Date**: 2025-12-06
@@ -61,7 +61,7 @@ Save this as `game.html` to get started:
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
-  <title>Cartoon Golf Chaos</title>
+  <title>Howlett Golf Chaos</title>
   <style>
     * {
       margin: 0;
@@ -299,7 +299,7 @@ cat > "$OUTPUT" << 'EOF'
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Cartoon Golf Chaos</title>
+  <title>Howlett Golf Chaos</title>
   <style>
 EOF
 

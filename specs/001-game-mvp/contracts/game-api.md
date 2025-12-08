@@ -795,7 +795,7 @@ class TutorialManager {
 ```javascript
 const TUTORIAL_STEPS = [
   {
-    title: 'Welcome to Cartoon Golf Chaos!',
+    title: 'Welcome to Howlett Golf Chaos!',
     instruction: 'Drag your finger backward to aim and set power, then release to swing.',
     action: 'performSwing'
   },

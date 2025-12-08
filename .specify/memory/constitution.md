@@ -16,7 +16,7 @@
   Follow-up TODOs: None
 -->
 
-# Cartoon Golf Chaos Constitution
+# Howlett Golf Chaos Constitution
 
 ## Core Principles
 

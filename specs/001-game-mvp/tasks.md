@@ -1,4 +1,4 @@
-# Tasks: Cartoon Golf Chaos - Complete Game
+# Tasks: Howlett Golf Chaos - Complete Game
 
 **Input**: Design documents from `/specs/001-game-mvp/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/

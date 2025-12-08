@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Cartoon Golf Chaos - Complete Game
+# Specification Quality Checklist: Howlett Golf Chaos - Complete Game
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2025-12-06
