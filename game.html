@@ -365,6 +365,139 @@
       50% { opacity: 0.7; }
     }
 
+    /* === Hole Complete Modal Styles === */
+    #hole-complete-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1002;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translate(-50%, -40%); opacity: 0; }
+      to { transform: translate(-50%, -50%); opacity: 1; }
+    }
+
+    @keyframes scorePop {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .hole-complete-modal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      min-width: 280px;
+      max-width: 90%;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .hole-complete-header {
+      font-size: 16px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .hole-complete-number {
+      font-size: 48px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .hole-complete-score-name {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      animation: scorePop 0.5s ease-out 0.2s both;
+    }
+
+    .hole-complete-score-name.eagle { color: #FFD700; text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5); }
+    .hole-complete-score-name.birdie { color: #4CAF50; }
+    .hole-complete-score-name.par { color: #2196F3; }
+    .hole-complete-score-name.bogey { color: #FF9800; }
+    .hole-complete-score-name.double-bogey { color: #F44336; }
+
+    .hole-complete-details {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      padding: 15px 0;
+      border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .hole-complete-stat {
+      text-align: center;
+    }
+
+    .hole-complete-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .hole-complete-stat-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hole-complete-total {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    .hole-complete-total span {
+      font-weight: 700;
+    }
+
+    .hole-complete-btn {
+      padding: 14px 40px;
+      background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .hole-complete-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+    }
+
+    .hole-complete-btn:active {
+      transform: translateY(0);
+    }
+
     /* === Name Entry Modal Styles === */
     #name-entry-overlay {
       position: absolute;
@@ -696,6 +829,26 @@
     <div id="debug-info" class="hidden"></div>
 
     <button id="reset-shot-btn" class="hidden">Cancel Shot</button>
+
+    <div id="hole-complete-overlay" class="hidden">
+      <div class="hole-complete-modal">
+        <div class="hole-complete-header">Hole Complete</div>
+        <div class="hole-complete-number" id="hole-complete-number">1</div>
+        <div class="hole-complete-score-name" id="hole-complete-score-name">Par</div>
+        <div class="hole-complete-details">
+          <div class="hole-complete-stat">
+            <div class="hole-complete-stat-value" id="hole-complete-strokes">4</div>
+            <div class="hole-complete-stat-label">Strokes</div>
+          </div>
+          <div class="hole-complete-stat">
+            <div class="hole-complete-stat-value" id="hole-complete-par">4</div>
+            <div class="hole-complete-stat-label">Par</div>
+          </div>
+        </div>
+        <div class="hole-complete-total">Round Total: <span id="hole-complete-total">E</span></div>
+        <button class="hole-complete-btn" id="hole-complete-btn">Next Hole</button>
+      </div>
+    </div>
   </div>
 
   <div id="menu-overlay">
@@ -2353,29 +2506,63 @@
         this.updateRoundProgress();
 
         const scoreName = ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
-        const scoreColor = ScoreKeeper.getScoreColor(holeScore.scoreRelativeToPar);
+
+        if (holeScore.scoreRelativeToPar <= -1) {
+          this.celebrateGoodScore(holeScore.scoreRelativeToPar);
+        }
 
         setTimeout(() => {
-          let message = `Hole ${hole.holeNumber} complete!\n`;
-          message += `${scoreName}\n`;
-          message += `Strokes: ${round.currentStrokeCount} (Par ${hole.par})\n`;
-          message += `Total: ${ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar)}`;
+          this.showHoleCompleteModal(hole, round, holeScore, scoreName);
+        }, 500);
+      }
 
-          if (holeScore.scoreRelativeToPar <= -1) {
-            this.celebrateGoodScore(holeScore.scoreRelativeToPar);
-          }
+      showHoleCompleteModal(hole, round, holeScore, scoreName) {
+        // Update modal content
+        document.getElementById('hole-complete-number').textContent = hole.holeNumber;
+        document.getElementById('hole-complete-strokes').textContent = holeScore.strokes;
+        document.getElementById('hole-complete-par').textContent = hole.par;
+        document.getElementById('hole-complete-total').textContent = ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar);
 
-          if (round.currentHoleNumber < 9) {
-            message += `\n\nMoving to hole ${round.currentHoleNumber + 1}...`;
-            alert(message);
-            this.advanceToNextHole();
-          } else {
+        // Set score name and color class
+        const scoreNameEl = document.getElementById('hole-complete-score-name');
+        scoreNameEl.textContent = scoreName;
+        scoreNameEl.className = 'hole-complete-score-name';
+
+        if (holeScore.scoreRelativeToPar <= -2) {
+          scoreNameEl.classList.add('eagle');
+        } else if (holeScore.scoreRelativeToPar === -1) {
+          scoreNameEl.classList.add('birdie');
+        } else if (holeScore.scoreRelativeToPar === 0) {
+          scoreNameEl.classList.add('par');
+        } else if (holeScore.scoreRelativeToPar === 1) {
+          scoreNameEl.classList.add('bogey');
+        } else {
+          scoreNameEl.classList.add('double-bogey');
+        }
+
+        // Update button text based on whether this is the last hole
+        const btn = document.getElementById('hole-complete-btn');
+        const isLastHole = round.currentHoleNumber >= 9;
+        btn.textContent = isLastHole ? 'View Scorecard' : 'Next Hole';
+
+        // Show modal
+        document.getElementById('hole-complete-overlay').classList.remove('hidden');
+
+        // Set up button handler (remove old listener first)
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', () => {
+          document.getElementById('hole-complete-overlay').classList.add('hidden');
+
+          if (isLastHole) {
             round.isComplete = true;
             round.endTime = Date.now();
-            alert(message);
             this.showRoundSummary();
+          } else {
+            this.advanceToNextHole();
           }
-        }, 500);
+        });
       }
 
       // === T098: Play cheer for exceptional shots ===
