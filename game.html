@@ -717,9 +717,10 @@
       updateBall(ball, deltaTime, obstacles) {
         if (!ball.isMoving) return;
 
-        // Apply friction (top-down 2D golf physics - ball rolls on ground)
-        ball.velocityX *= this.friction;
-        ball.velocityY *= this.friction;
+        // Apply friction (frame-rate independent: same slowdown regardless of FPS)
+        const frictionFactor = Math.pow(this.friction, deltaTime * 60);
+        ball.velocityX *= frictionFactor;
+        ball.velocityY *= frictionFactor;
 
         // Update position
         ball.x += ball.velocityX * deltaTime;
@@ -2166,7 +2167,9 @@
       update(timestamp) {
         if (!this.isRunning) return;
 
-        const deltaTime = (timestamp - this.lastFrameTime) / 1000;
+        // Cap deltaTime to prevent physics jumps on slow devices or when resuming
+        const rawDeltaTime = (timestamp - this.lastFrameTime) / 1000;
+        const deltaTime = Math.min(rawDeltaTime, 1/30);
         this.lastFrameTime = timestamp;
 
         if (!this.isPaused && this.gameState) {
