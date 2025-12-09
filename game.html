@@ -427,6 +427,56 @@
       background: #777;
     }
 
+    /* === Ball Color Selector Styles === */
+    .ball-color-section {
+      margin: 20px 0;
+    }
+
+    .ball-color-section label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .ball-color-options {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ball-color-option {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .ball-color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .ball-color-option.selected {
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .ball-color-option::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      width: 12px;
+      height: 8px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+
     /* Mobile phone optimizations */
     @media (max-width: 480px) {
       #scoreboard {
@@ -622,6 +672,21 @@
       <h2>Enter Your Name</h2>
       <p>Your scores will appear on the global leaderboard!</p>
       <input type="text" id="player-name-input" maxlength="20" placeholder="Your name" autocomplete="off">
+
+      <div class="ball-color-section">
+        <label>Choose Your Ball</label>
+        <div class="ball-color-options" id="ball-color-options">
+          <div class="ball-color-option selected" data-color="white" style="background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 100%);"></div>
+          <div class="ball-color-option" data-color="yellow" style="background: linear-gradient(135deg, #FFEB3B 0%, #FBC02D 100%);"></div>
+          <div class="ball-color-option" data-color="orange" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);"></div>
+          <div class="ball-color-option" data-color="pink" style="background: linear-gradient(135deg, #FF69B4 0%, #DB7093 100%);"></div>
+          <div class="ball-color-option" data-color="red" style="background: linear-gradient(135deg, #F44336 0%, #C62828 100%);"></div>
+          <div class="ball-color-option" data-color="blue" style="background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);"></div>
+          <div class="ball-color-option" data-color="green" style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);"></div>
+          <div class="ball-color-option" data-color="purple" style="background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);"></div>
+        </div>
+      </div>
+
       <div class="name-entry-buttons">
         <button class="button" id="start-with-name-btn">Start Game</button>
         <button class="button cancel-btn" id="cancel-name-entry-btn">Cancel</button>
@@ -649,6 +714,18 @@
 
     // T001-T005: Basic setup complete
     // T006-T012: Foundational modules below
+
+    // === Ball Color Definitions ===
+    const BallColors = {
+      white:  { highlight: '#FFFFFF', base: '#CCCCCC', stroke: '#999999' },
+      yellow: { highlight: '#FFEB3B', base: '#FBC02D', stroke: '#F9A825' },
+      orange: { highlight: '#FF9800', base: '#F57C00', stroke: '#E65100' },
+      pink:   { highlight: '#FF69B4', base: '#DB7093', stroke: '#C71585' },
+      red:    { highlight: '#F44336', base: '#C62828', stroke: '#B71C1C' },
+      blue:   { highlight: '#2196F3', base: '#1565C0', stroke: '#0D47A1' },
+      green:  { highlight: '#4CAF50', base: '#2E7D32', stroke: '#1B5E20' },
+      purple: { highlight: '#9C27B0', base: '#6A1B9A', stroke: '#4A148C' }
+    };
 
     // === SeededRandom Class (T006) ===
     class SeededRandom {
@@ -979,6 +1056,7 @@
 
       drawBall(ball) {
         const ctx = this.ctx;
+        const colors = BallColors[ball.color] || BallColors.white;
 
         if (ball.inHole && ball.holeProgress !== undefined) {
           const fadeProgress = ball.holeProgress;
@@ -993,15 +1071,15 @@
           ctx.scale(scale, scale);
 
           const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
-          gradient.addColorStop(0, '#FFFFFF');
-          gradient.addColorStop(1, '#CCCCCC');
+          gradient.addColorStop(0, colors.highlight);
+          gradient.addColorStop(1, colors.base);
 
           ctx.fillStyle = gradient;
           ctx.beginPath();
           ctx.arc(0, 0, 8, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.strokeStyle = '#999999';
+          ctx.strokeStyle = colors.stroke;
           ctx.lineWidth = 0.5;
           ctx.stroke();
 
@@ -1014,15 +1092,15 @@
         ctx.rotate(ball.rotation);
 
         const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
-        gradient.addColorStop(0, '#FFFFFF');
-        gradient.addColorStop(1, '#CCCCCC');
+        gradient.addColorStop(0, colors.highlight);
+        gradient.addColorStop(1, colors.base);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(0, 0, 8, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = '#999999';
+        ctx.strokeStyle = colors.stroke;
         ctx.lineWidth = 0.5;
         ctx.stroke();
 
@@ -1553,10 +1631,12 @@
                 holePosition: gameState.ball.holePosition,
                 distanceFromHole: gameState.ball.distanceFromHole,
                 lastSafePosition: gameState.ball.lastSafePosition,
-                waterPenalty: gameState.ball.waterPenalty
+                waterPenalty: gameState.ball.waterPenalty,
+                color: gameState.ball.color
               },
               selectedClub: gameState.selectedClub,
-              seed: gameState.seed
+              seed: gameState.seed,
+              ballColor: gameState.ballColor
             }
           };
 
@@ -1953,14 +2033,14 @@
         this.lastFrameTime = performance.now();
       }
 
-      async startNewRound(seed = null, playerName = 'Player') {
+      async startNewRound(seed = null, playerName = 'Player', ballColor = 'white') {
         const usedSeed = seed || Date.now();
         CourseGenerator.init(usedSeed);
 
         const canvasRect = this.canvas.getBoundingClientRect();
         const hole = CourseGenerator.generateHole(1, canvasRect.width, canvasRect.height);
 
-        const ball = this.createBall(hole);
+        const ball = this.createBall(hole, ballColor);
 
         this.gameState = {
           currentHole: hole,
@@ -1979,7 +2059,8 @@
           ball: ball,
           selectedClub: 'driver',
           seed: usedSeed,
-          playerName: playerName
+          playerName: playerName,
+          ballColor: ballColor
         };
 
         this.updateUI();
@@ -2005,12 +2086,14 @@
             canvasRect.height
           );
 
+          const ballColor = savedState.ballColor || savedState.ball?.color || 'white';
           this.gameState = {
             currentHole: hole,
             round: savedState.round,
-            ball: this.createBall(hole),
+            ball: this.createBall(hole, ballColor),
             selectedClub: savedState.selectedClub,
-            seed: savedState.seed
+            seed: savedState.seed,
+            ballColor: ballColor
           };
 
           this.gameState.ball.x = savedState.ball.x;
@@ -2036,7 +2119,7 @@
         }
       }
 
-      createBall(hole) {
+      createBall(hole, color = 'white') {
         return {
           x: hole.teePosition.x,
           y: hole.teePosition.y,
@@ -2050,7 +2133,8 @@
           holePosition: hole.holePosition,
           distanceFromHole: PhysicsEngine.distance(hole.teePosition, hole.holePosition),
           lastSafePosition: { x: hole.teePosition.x, y: hole.teePosition.y },
-          waterPenalty: false
+          waterPenalty: false,
+          color: color
         };
       }
 
@@ -2325,7 +2409,7 @@
         const hole = CourseGenerator.generateHole(round.currentHoleNumber, canvasRect.width, canvasRect.height);
 
         this.gameState.currentHole = hole;
-        this.gameState.ball = this.createBall(hole);
+        this.gameState.ball = this.createBall(hole, this.gameState.ballColor || 'white');
 
         this.updateUI();
 
@@ -2546,10 +2630,36 @@
       const playerNameInput = document.getElementById('player-name-input');
       const startWithNameBtn = document.getElementById('start-with-name-btn');
       const cancelNameEntryBtn = document.getElementById('cancel-name-entry-btn');
+      const ballColorOptions = document.getElementById('ball-color-options');
 
-      // Load last used name from localStorage
+      // Load last used name and ball color from localStorage
       const lastPlayerName = localStorage.getItem('golf-player-name') || '';
+      const lastBallColor = localStorage.getItem('golf-ball-color') || 'white';
       playerNameInput.value = lastPlayerName;
+
+      // Set up ball color selection
+      let selectedBallColor = lastBallColor;
+      const colorButtons = ballColorOptions.querySelectorAll('.ball-color-option');
+
+      // Initialize selected state from saved preference
+      colorButtons.forEach(btn => {
+        if (btn.dataset.color === lastBallColor) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+
+      // Ball color click handlers
+      ballColorOptions.addEventListener('click', (e) => {
+        const colorOption = e.target.closest('.ball-color-option');
+        if (!colorOption) return;
+
+        // Update selection
+        colorButtons.forEach(btn => btn.classList.remove('selected'));
+        colorOption.classList.add('selected');
+        selectedBallColor = colorOption.dataset.color;
+      });
 
       newGameBtn.addEventListener('click', () => {
         console.log('New Game button clicked');
@@ -2563,16 +2673,17 @@
       // Handle starting game with name
       const startGameWithName = async () => {
         const playerName = playerNameInput.value.trim() || 'Player';
-        console.log('Starting game with player:', playerName);
+        console.log('Starting game with player:', playerName, 'ball color:', selectedBallColor);
 
-        // Save name for next time
+        // Save name and ball color for next time
         localStorage.setItem('golf-player-name', playerName);
+        localStorage.setItem('golf-ball-color', selectedBallColor);
 
         // Hide name entry modal
         nameEntryOverlay.classList.add('hidden');
 
         try {
-          await gameEngine.startNewRound(null, playerName);
+          await gameEngine.startNewRound(null, playerName, selectedBallColor);
           gameEngine.start();
           resumeGameBtn.classList.add('hidden');
           console.log('Game started successfully');
