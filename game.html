@@ -1035,10 +1035,10 @@
         const dx = swingPreview.current.x - swingPreview.start.x;
         const dy = swingPreview.current.y - swingPreview.start.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const basePower = Math.min(distance / 150, 1.0);
+        const swingPower = Math.min(distance / 150, 1.0); // User's swing 0-100%
 
         const club = ClubSystem.getClub(selectedClub || 'driver');
-        const effectivePower = basePower * club.maxPower;
+        const effectivePower = swingPower * club.maxPower; // Actual ball power
 
         const arrowLength = effectivePower * 150;
         const angle = Math.atan2(dy, dx) + Math.PI;
@@ -1046,8 +1046,9 @@
         const endX = ball.x + Math.cos(angle) * arrowLength;
         const endY = ball.y + Math.sin(angle) * arrowLength;
 
-        const arrowColor = effectivePower > 0.8 ? [255, 100, 0] :
-                          effectivePower > 0.5 ? [255, 200, 0] : [100, 200, 255];
+        // Color based on user's swing power (0-100%), not club-adjusted power
+        const arrowColor = swingPower > 0.8 ? [255, 100, 0] :
+                          swingPower > 0.5 ? [255, 200, 0] : [100, 200, 255];
 
         ctx.strokeStyle = `rgba(${arrowColor[0]}, ${arrowColor[1]}, ${arrowColor[2]}, ${0.4 + effectivePower * 0.4})`;
         ctx.lineWidth = 3 + effectivePower * 5;
@@ -1077,7 +1078,7 @@
 
         ctx.font = 'bold 16px Arial';
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillText(`Power: ${Math.round(effectivePower * 100)}%`, ball.x + 15, ball.y - 15);
+        ctx.fillText(`Power: ${Math.round(swingPower * 100)}%`, ball.x + 15, ball.y - 15);
         ctx.fillText(`${club.name}`, ball.x + 15, ball.y - 35);
 
         const powerBarWidth = 100;
@@ -1089,7 +1090,7 @@
         ctx.fillRect(powerBarX, powerBarY, powerBarWidth, powerBarHeight);
 
         ctx.fillStyle = `rgba(${arrowColor[0]}, ${arrowColor[1]}, ${arrowColor[2]}, 0.8)`;
-        ctx.fillRect(powerBarX, powerBarY, powerBarWidth * effectivePower, powerBarHeight);
+        ctx.fillRect(powerBarX, powerBarY, powerBarWidth * swingPower, powerBarHeight);
 
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.lineWidth = 2;
