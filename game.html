@@ -1700,9 +1700,25 @@
         const ctx = this.ctx;
         const colors = BallColors[ball.color] || BallColors.white;
 
+        // Calculate shadow properties based on airborne state
+        const baseHeight = ball.isAirborne ? 1.5 : 0;
+        const heightFactor = baseHeight + (ball.isAirborne ? Math.abs(ball.velocityY || 0) / 400 : 0);
+        const shadowOffset = 4 + heightFactor * 3;
+        const shadowScale = 1 + heightFactor * 0.5;
+        const shadowOpacity = Math.max(0.1, 0.35 - heightFactor * 0.1);
+
         if (ball.inHole && ball.holeProgress !== undefined) {
           const fadeProgress = ball.holeProgress;
           if (fadeProgress >= 1) return;
+
+          // Draw shadow (fading with ball)
+          ctx.save();
+          ctx.globalAlpha = (1 - fadeProgress) * shadowOpacity;
+          ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+          ctx.beginPath();
+          ctx.ellipse(ball.x + shadowOffset, ball.y + shadowOffset, 8 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
 
           ctx.save();
           ctx.globalAlpha = 1 - fadeProgress;
@@ -1729,6 +1745,16 @@
           return;
         }
 
+        // Draw ball shadow (ellipse offset to bottom-right for 3D effect)
+        ctx.save();
+        ctx.globalAlpha = shadowOpacity;
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.beginPath();
+        ctx.ellipse(ball.x + shadowOffset, ball.y + shadowOffset, 8 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Draw ball
         ctx.save();
         ctx.translate(ball.x, ball.y);
         ctx.rotate(ball.rotation);
