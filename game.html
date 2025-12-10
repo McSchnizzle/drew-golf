@@ -1078,13 +1078,13 @@
         this.canvas.style.height = rect.height + 'px';
       },
 
-      renderFrame(gameState) {
+      renderFrame(gameState, animationTime = 0) {
         if (!gameState) return;
 
         this.clearCanvas();
 
         if (gameState.currentHole && gameState.ball) {
-          this.drawCourse(gameState.currentHole);
+          this.drawCourse(gameState.currentHole, animationTime);
           if (gameState.currentHole.obstacles) {
             this.drawObstacles(gameState.currentHole.obstacles);
           }
@@ -1093,6 +1093,9 @@
           if (gameState.strikeFlash && gameState.strikeFlash.active) {
             this.drawStrikeFlash(gameState.ball, gameState.strikeFlash);
           }
+
+          // Draw confetti particles
+          ConfettiSystem.draw(this.ctx);
         }
 
         const swingPreview = InputHandler.getSwingPreview();
@@ -1110,7 +1113,7 @@
         this.ctx.clearRect(x, y, width, height);
       },
 
-      drawCourse(hole) {
+      drawCourse(hole, animationTime = 0) {
         const ctx = this.ctx;
 
         // Stylized fairway with gradient background
@@ -1270,17 +1273,24 @@
         ctx.lineTo(hx, hy - 75);
         ctx.stroke();
 
-        // Stylized flag with wave effect
+        // Stylized flag with animated wave effect
         ctx.save();
         ctx.translate(hx, hy - 75);
 
-        // Flag shadow
+        // Wave animation parameters
+        const waveSpeed = 3; // cycles per second
+        const waveAmplitude = 4; // pixels
+        const wave1 = Math.sin(animationTime * waveSpeed * Math.PI * 2) * waveAmplitude;
+        const wave2 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 1) * waveAmplitude;
+        const wave3 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 2) * waveAmplitude;
+
+        // Flag shadow (with wave)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.beginPath();
         ctx.moveTo(2, 2);
-        ctx.quadraticCurveTo(18, 8, 30, 4);
-        ctx.quadraticCurveTo(22, 17, 30, 27);
-        ctx.quadraticCurveTo(15, 22, 2, 27);
+        ctx.quadraticCurveTo(18, 8 + wave1 * 0.5, 30 + wave2, 4 + wave1);
+        ctx.quadraticCurveTo(22, 17 + wave2 * 0.5, 30 + wave3, 27 + wave2);
+        ctx.quadraticCurveTo(15, 22 + wave3 * 0.5, 2, 27);
         ctx.closePath();
         ctx.fill();
 
@@ -1292,9 +1302,9 @@
         ctx.fillStyle = flagGradient;
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.quadraticCurveTo(15, 5, 28, 2);
-        ctx.quadraticCurveTo(20, 15, 28, 25);
-        ctx.quadraticCurveTo(12, 20, 0, 25);
+        ctx.quadraticCurveTo(15, 5 + wave1 * 0.5, 28 + wave2, 2 + wave1);
+        ctx.quadraticCurveTo(20, 15 + wave2 * 0.5, 28 + wave3, 25 + wave2);
+        ctx.quadraticCurveTo(12, 20 + wave3 * 0.5, 0, 25);
         ctx.closePath();
         ctx.fill();
 
@@ -1303,12 +1313,12 @@
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Flag highlight
+        // Flag highlight (with wave)
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.beginPath();
         ctx.moveTo(3, 3);
-        ctx.quadraticCurveTo(12, 6, 20, 4);
-        ctx.quadraticCurveTo(14, 10, 8, 12);
+        ctx.quadraticCurveTo(12, 6 + wave1 * 0.3, 20 + wave2 * 0.5, 4 + wave1 * 0.5);
+        ctx.quadraticCurveTo(14, 10 + wave2 * 0.3, 8, 12);
         ctx.quadraticCurveTo(5, 8, 3, 3);
         ctx.fill();
 
@@ -2644,6 +2654,80 @@
       }
     };
 
+    // === ConfettiSystem Module (T102-T105: Visual Polish) ===
+    const ConfettiSystem = {
+      particles: [],
+
+      // Color palettes for different score types
+      colors: {
+        standard: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'],
+        birdie: ['#4CAF50', '#8BC34A', '#CDDC39', '#FFD700'],
+        eagle: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#9370DB', '#00CED1']
+      },
+
+      spawn(x, y, count, colorPalette = 'standard') {
+        const palette = this.colors[colorPalette] || this.colors.standard;
+
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.5;
+          const speed = 150 + Math.random() * 200;
+
+          this.particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 100, // Bias upward
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 10,
+            color: palette[Math.floor(Math.random() * palette.length)],
+            size: 4 + Math.random() * 6,
+            life: 1.0, // 1.0 = full life, 0 = dead
+            gravity: 300
+          });
+        }
+      },
+
+      update(deltaTime) {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+
+          // Apply physics
+          p.vy += p.gravity * deltaTime;
+          p.x += p.vx * deltaTime;
+          p.y += p.vy * deltaTime;
+          p.rotation += p.rotationSpeed * deltaTime;
+
+          // Apply drag
+          p.vx *= 0.99;
+          p.vy *= 0.99;
+
+          // Decay life
+          p.life -= deltaTime * 0.5;
+
+          // Remove dead particles
+          if (p.life <= 0) {
+            this.particles.splice(i, 1);
+          }
+        }
+      },
+
+      draw(ctx) {
+        for (const p of this.particles) {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.globalAlpha = Math.min(p.life, 1);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+          ctx.restore();
+        }
+      },
+
+      clear() {
+        this.particles = [];
+      }
+    };
+
     // === GameEngine Module (T007, T011, T013-T025) ===
     class GameEngine {
       constructor(canvas) {
@@ -2654,6 +2738,7 @@
         this.fps = 60;
         this.debugMode = false;
         this.holeCompleting = false;
+        this.animationTime = 0; // Global animation time for visual effects
 
         this.gameState = null;
 
@@ -2912,6 +2997,9 @@
         if (!this.isPaused && this.gameState) {
           this.updateFPS(deltaTime);
 
+          // Update animation time for visual effects
+          this.animationTime += deltaTime;
+
           if (this.gameState.strikeFlash && this.gameState.strikeFlash.active) {
             const elapsed = timestamp - this.gameState.strikeFlash.startTime;
             this.gameState.strikeFlash.progress = Math.min(elapsed / 300, 1);
@@ -2945,7 +3033,10 @@
             this.updateBallStateIndicator();
           }
 
-          Renderer.renderFrame(this.gameState);
+          // Update confetti particles
+          ConfettiSystem.update(deltaTime);
+
+          Renderer.renderFrame(this.gameState, this.animationTime);
         }
 
         requestAnimationFrame((t) => this.update(t));
@@ -3007,8 +3098,13 @@
 
         const scoreName = ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
 
+        // Spawn confetti at hole position for any completion
+        const holeX = hole.holePosition.x;
+        const holeY = hole.holePosition.y;
+        ConfettiSystem.spawn(holeX, holeY, 25, 'standard');
+
         if (holeScore.scoreRelativeToPar <= -1) {
-          this.celebrateGoodScore(holeScore.scoreRelativeToPar);
+          this.celebrateGoodScore(holeScore.scoreRelativeToPar, holeX, holeY);
         }
 
         setTimeout(() => {
@@ -3066,13 +3162,17 @@
       }
 
       // === T098: Play cheer for exceptional shots ===
-      celebrateGoodScore(scoreRelativeToPar) {
+      celebrateGoodScore(scoreRelativeToPar, holeX, holeY) {
         if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
           AudioManager.playCheerSound();
+          // Extra confetti burst for eagle or better
+          ConfettiSystem.spawn(holeX, holeY, 60, 'eagle');
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
           AudioManager.playCheerSound();
+          // Extra confetti for birdie
+          ConfettiSystem.spawn(holeX, holeY, 40, 'birdie');
         }
       }
 
