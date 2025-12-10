@@ -560,6 +560,74 @@
       background: #777;
     }
 
+    /* === Tutorial Styles === */
+    #tutorial-overlay,
+    #tutorial-prompt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1002;
+    }
+
+    .tutorial-modal {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .tutorial-modal h2 {
+      color: #333;
+      margin: 0 0 15px 0;
+      font-size: 28px;
+    }
+
+    .tutorial-modal p {
+      color: #555;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 0 0 25px 0;
+    }
+
+    .tutorial-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tutorial-buttons .menu-button {
+      padding: 12px 30px;
+      font-size: 18px;
+    }
+
+    #tutorial-progress {
+      margin-top: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .tutorial-highlight {
+      position: relative;
+      box-shadow: 0 0 0 4px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5) !important;
+      animation: tutorialPulse 1.5s ease-in-out infinite;
+      z-index: 100;
+    }
+
+    @keyframes tutorialPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(255, 165, 0, 1), 0 0 30px rgba(255, 165, 0, 0.7); }
+    }
+
     /* === Ball Color Selector Styles === */
     .ball-color-section {
       margin: 20px 0;
@@ -851,6 +919,31 @@
     </div>
   </div>
 
+  <!-- Tutorial Overlay -->
+  <div id="tutorial-overlay" class="hidden">
+    <div class="tutorial-modal">
+      <h2 id="tutorial-title">Welcome!</h2>
+      <p id="tutorial-text">Tutorial text here</p>
+      <div class="tutorial-buttons">
+        <button id="tutorial-next-btn" class="menu-button">Next</button>
+        <button id="tutorial-skip-btn" class="menu-button cancel-btn">Skip Tutorial</button>
+      </div>
+      <div id="tutorial-progress">Step 1 of 5</div>
+    </div>
+  </div>
+
+  <!-- Tutorial Prompt Overlay -->
+  <div id="tutorial-prompt-overlay" class="hidden">
+    <div class="tutorial-modal">
+      <h2>First Time Playing?</h2>
+      <p>Would you like a quick tutorial to learn how to play?</p>
+      <div class="tutorial-buttons">
+        <button id="tutorial-yes-btn" class="menu-button">Yes, Show Me!</button>
+        <button id="tutorial-no-btn" class="menu-button cancel-btn">No Thanks</button>
+      </div>
+    </div>
+  </div>
+
   <div id="menu-overlay">
     <h1>Howlett Golf Chaos</h1>
     <p style="color: white; font-size: 18px; margin: 20px; max-width: 500px; text-align: center;">
@@ -860,6 +953,7 @@
     <button class="menu-button" id="new-game-btn">New Game</button>
     <button class="menu-button hidden" id="resume-game-btn">Resume Game</button>
     <button class="menu-button" id="leaderboard-btn">Leaderboard</button>
+    <button class="menu-button" id="tutorial-btn" style="background: #9C27B0;">Tutorial</button>
   </div>
 
   <script>
@@ -2405,7 +2499,8 @@
       getDefaultSettings() {
         return {
           soundEnabled: true,
-          debugMode: false
+          debugMode: false,
+          tutorialCompleted: false
         };
       },
 
@@ -2725,6 +2820,105 @@
 
       clear() {
         this.particles = [];
+      }
+    };
+
+    // === TutorialManager Module (T082-T089: Tutorial System) ===
+    const TutorialManager = {
+      steps: [
+        {
+          title: "Welcome to Howlett Golf Chaos!",
+          text: "Let's learn how to play. This quick tutorial will show you the basics.",
+          highlight: null
+        },
+        {
+          title: "Making a Swing",
+          text: "Drag backward from the ball to aim your shot. The direction you drag determines where the ball goes - drag opposite to your target!",
+          highlight: 'game-canvas'
+        },
+        {
+          title: "Power Control",
+          text: "The longer you drag, the more power! Watch the guide arrow - it shows your shot direction and strength.",
+          highlight: 'game-canvas'
+        },
+        {
+          title: "Club Selection",
+          text: "Tap any club to switch. Driver hits far, Irons for mid-range, Putter for short shots on the green. First shot is always Driver!",
+          highlight: 'club-selector'
+        },
+        {
+          title: "You're Ready!",
+          text: "Complete 9 holes and try to score under par. Good luck and have fun!",
+          highlight: null
+        }
+      ],
+
+      currentStep: 0,
+      isActive: false,
+
+      start() {
+        this.currentStep = 0;
+        this.isActive = true;
+        this.showStep();
+        document.getElementById('tutorial-overlay').classList.remove('hidden');
+      },
+
+      showStep() {
+        const step = this.steps[this.currentStep];
+        document.getElementById('tutorial-title').textContent = step.title;
+        document.getElementById('tutorial-text').textContent = step.text;
+        document.getElementById('tutorial-progress').textContent =
+          `Step ${this.currentStep + 1} of ${this.steps.length}`;
+
+        // Update button text for last step
+        const nextBtn = document.getElementById('tutorial-next-btn');
+        nextBtn.textContent = this.currentStep === this.steps.length - 1 ? "Let's Play!" : "Next";
+
+        // Handle highlighting
+        this.unhighlightAll();
+        if (step.highlight) {
+          this.highlightElement(step.highlight);
+        }
+      },
+
+      nextStep() {
+        this.unhighlightAll();
+        this.currentStep++;
+
+        if (this.currentStep >= this.steps.length) {
+          this.complete();
+        } else {
+          this.showStep();
+        }
+      },
+
+      skip() {
+        this.unhighlightAll();
+        this.complete();
+      },
+
+      complete() {
+        this.isActive = false;
+        this.currentStep = 0;
+        document.getElementById('tutorial-overlay').classList.add('hidden');
+
+        // Mark tutorial as completed
+        const settings = StorageManager.loadSettings();
+        settings.tutorialCompleted = true;
+        StorageManager.saveSettings(settings);
+      },
+
+      highlightElement(id) {
+        const element = document.getElementById(id);
+        if (element) {
+          element.classList.add('tutorial-highlight');
+        }
+      },
+
+      unhighlightAll() {
+        document.querySelectorAll('.tutorial-highlight').forEach(el => {
+          el.classList.remove('tutorial-highlight');
+        });
       }
     };
 
@@ -3519,6 +3713,59 @@
           console.log('Leaderboard button clicked');
           await GameEngine.showLeaderboard();
         });
+      }
+
+      // === T082-T089: Tutorial handlers ===
+      const tutorialBtn = document.getElementById('tutorial-btn');
+      const tutorialNextBtn = document.getElementById('tutorial-next-btn');
+      const tutorialSkipBtn = document.getElementById('tutorial-skip-btn');
+      const tutorialYesBtn = document.getElementById('tutorial-yes-btn');
+      const tutorialNoBtn = document.getElementById('tutorial-no-btn');
+      const tutorialPromptOverlay = document.getElementById('tutorial-prompt-overlay');
+
+      // Tutorial button in menu (manual replay)
+      if (tutorialBtn) {
+        tutorialBtn.addEventListener('click', () => {
+          console.log('Tutorial button clicked');
+          TutorialManager.start();
+        });
+      }
+
+      // Tutorial navigation buttons
+      if (tutorialNextBtn) {
+        tutorialNextBtn.addEventListener('click', () => {
+          TutorialManager.nextStep();
+        });
+      }
+
+      if (tutorialSkipBtn) {
+        tutorialSkipBtn.addEventListener('click', () => {
+          TutorialManager.skip();
+        });
+      }
+
+      // First-time tutorial prompt handlers
+      if (tutorialYesBtn) {
+        tutorialYesBtn.addEventListener('click', () => {
+          tutorialPromptOverlay.classList.add('hidden');
+          TutorialManager.start();
+        });
+      }
+
+      if (tutorialNoBtn) {
+        tutorialNoBtn.addEventListener('click', () => {
+          tutorialPromptOverlay.classList.add('hidden');
+          // Mark as completed so we don't ask again
+          const settings = StorageManager.loadSettings();
+          settings.tutorialCompleted = true;
+          StorageManager.saveSettings(settings);
+        });
+      }
+
+      // Check if first-time user and show tutorial prompt
+      const settings = StorageManager.loadSettings();
+      if (!settings.tutorialCompleted) {
+        tutorialPromptOverlay.classList.remove('hidden');
       }
 
       // Club selector toggle button handler
