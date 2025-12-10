@@ -1919,41 +1919,131 @@
 
       placeObstacles(template, teeX, teeY, greenX, greenY, canvasWidth, canvasHeight) {
         const obstacles = [];
-        const obstacleCount = template.length === 'short' ? this.rng.nextInt(2, 4) :
-                             template.length === 'medium' ? this.rng.nextInt(3, 5) :
-                             this.rng.nextInt(4, 6);
+        const obstacleCount = template.length === 'short' ? this.rng.nextInt(2, 3) :
+                             template.length === 'medium' ? this.rng.nextInt(3, 4) :
+                             this.rng.nextInt(3, 5);
 
-        const midX = (teeX + greenX) / 2;
-        const midY = (teeY + greenY) / 2;
+        // Calculate fairway direction and perpendicular
+        const fairwayDx = greenX - teeX;
+        const fairwayDy = greenY - teeY;
+        const fairwayLength = Math.sqrt(fairwayDx * fairwayDx + fairwayDy * fairwayDy);
+        const fairwayNormX = fairwayDx / fairwayLength;
+        const fairwayNormY = fairwayDy / fairwayLength;
 
-        for (let i = 0; i < obstacleCount; i++) {
-          const rand = this.rng.next();
-          let type;
-          if (rand < 0.35) type = 'sand';
-          else if (rand < 0.6) type = 'tree';
-          else if (rand < 0.85) type = 'rock';
-          else type = 'water';
+        // Perpendicular direction (for placing obstacles to sides of fairway)
+        const perpX = -fairwayNormY;
+        const perpY = fairwayNormX;
 
-          const offsetX = this.rng.nextInt(-200, 200);
-          const offsetY = this.rng.nextInt(-150, 150);
-          const x = midX + offsetX;
-          const y = midY + offsetY;
+        // Define zones along the fairway for strategic placement
+        // Zone 1: Near tee (20-35% of distance) - trees/rocks on sides
+        // Zone 2: Mid fairway (40-60%) - main hazards
+        // Zone 3: Approach (65-85%) - sand traps near green
 
+        const zones = [
+          { minDist: 0.20, maxDist: 0.35, types: ['tree', 'rock'], sideOnly: true },
+          { minDist: 0.40, maxDist: 0.60, types: ['tree', 'rock', 'water'], sideOnly: false },
+          { minDist: 0.65, maxDist: 0.85, types: ['sand', 'sand', 'rock'], sideOnly: false }
+        ];
+
+        // Helper to check if position overlaps existing obstacles
+        const overlapsExisting = (x, y, radius) => {
+          for (const obs of obstacles) {
+            const obsRadius = obs.shape === 'rectangle'
+              ? Math.max(obs.width, obs.height) / 2 + 10
+              : obs.radius + 10;
+            const dist = Math.sqrt((x - obs.x) ** 2 + (y - obs.y) ** 2);
+            const minDist = radius + obsRadius + 20; // 20px buffer between obstacles
+            if (dist < minDist) return true;
+          }
+          return false;
+        };
+
+        // Helper to check if position is valid (not too close to tee/green, on screen)
+        const isValidPosition = (x, y, radius) => {
           const distFromTee = Math.sqrt((x - teeX) ** 2 + (y - teeY) ** 2);
           const distFromGreen = Math.sqrt((x - greenX) ** 2 + (y - greenY) ** 2);
+          const margin = 60;
+          return distFromTee > 90 &&
+                 distFromGreen > 110 &&
+                 x > margin && x < canvasWidth - margin &&
+                 y > margin && y < canvasHeight - margin;
+        };
 
-          if (distFromTee > 80 && distFromGreen > 100 && x > 50 && x < canvasWidth - 50 && y > 50 && y < canvasHeight - 50) {
+        let placed = 0;
+        let attempts = 0;
+        const maxAttempts = 50;
+
+        while (placed < obstacleCount && attempts < maxAttempts) {
+          attempts++;
+
+          // Pick a zone based on distribution
+          const zoneRand = this.rng.next();
+          const zone = zoneRand < 0.3 ? zones[0] : zoneRand < 0.7 ? zones[1] : zones[2];
+
+          // Pick obstacle type from zone's allowed types
+          const typeIndex = this.rng.nextInt(0, zone.types.length - 1);
+          const type = zone.types[typeIndex];
+
+          // Calculate position along fairway
+          const distAlongFairway = zone.minDist + this.rng.next() * (zone.maxDist - zone.minDist);
+          const baseX = teeX + fairwayDx * distAlongFairway;
+          const baseY = teeY + fairwayDy * distAlongFairway;
+
+          // Offset perpendicular to fairway
+          let perpOffset;
+          if (zone.sideOnly) {
+            // Force to sides of fairway
+            perpOffset = (this.rng.next() < 0.5 ? -1 : 1) * (80 + this.rng.nextInt(0, 60));
+          } else {
+            // Can be anywhere across fairway width
+            perpOffset = this.rng.nextInt(-120, 120);
+          }
+
+          const x = baseX + perpX * perpOffset;
+          const y = baseY + perpY * perpOffset;
+
+          // Determine size based on type
+          let radius, width, height, shape;
+          if (type === 'water') {
+            width = this.rng.nextInt(70, 100);
+            height = this.rng.nextInt(45, 65);
+            radius = Math.max(width, height) / 2;
+            shape = 'rectangle';
+          } else if (type === 'sand') {
+            radius = this.rng.nextInt(28, 38);
+            width = 0;
+            height = 0;
+            shape = 'circle';
+          } else if (type === 'tree') {
+            radius = this.rng.nextInt(22, 30);
+            width = 0;
+            height = 0;
+            shape = 'circle';
+          } else { // rock
+            radius = this.rng.nextInt(15, 25);
+            width = 0;
+            height = 0;
+            shape = 'circle';
+          }
+
+          // Check validity and overlaps
+          if (isValidPosition(x, y, radius) && !overlapsExisting(x, y, radius)) {
             obstacles.push({
               type: type,
               x: x,
               y: y,
-              radius: type === 'tree' ? 25 : type === 'rock' ? 20 : 30,
-              width: type === 'water' ? this.rng.nextInt(60, 100) : 0,
-              height: type === 'water' ? this.rng.nextInt(40, 60) : 0,
-              shape: type === 'water' ? 'rectangle' : 'circle'
+              radius: radius,
+              width: width,
+              height: height,
+              shape: shape
             });
+            placed++;
           }
         }
+
+        // Sort obstacles for proper draw order (water first, then sand, then trees/rocks)
+        const typeOrder = { water: 0, sand: 1, rock: 2, tree: 3 };
+        obstacles.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
 
         return obstacles;
       }
@@ -3281,6 +3371,7 @@
 
       resumeGameBtn.addEventListener('click', async () => {
         console.log('Resume Game button clicked');
+        AudioManager.unlock();
         try {
           const loaded = await gameEngine.loadRound();
           if (loaded) {
