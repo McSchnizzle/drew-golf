@@ -1190,6 +1190,9 @@
 
           // Draw confetti particles
           ConfettiSystem.draw(this.ctx);
+
+          // Draw streaker (random event)
+          RandomEventManager.draw(this.ctx);
         }
 
         const swingPreview = InputHandler.getSwingPreview();
@@ -2849,6 +2852,221 @@
       }
     };
 
+    // === RandomEventManager Module (T108-T115: Random Events & Humor) ===
+    const RandomEventManager = {
+      streaker: null,
+      cooldownTimer: 0,
+      minCooldown: 15, // Minimum seconds between events
+      triggerChance: 0.08, // 8% chance per stroke check
+
+      // Streaker configuration
+      streakerConfig: {
+        speed: 600, // pixels per second
+        size: 40,
+        color: '#FFD6B3', // Skin tone silhouette
+        trailColor: 'rgba(255, 214, 179, 0.3)'
+      },
+
+      reset() {
+        this.streaker = null;
+        this.cooldownTimer = 0;
+      },
+
+      // Check if we should trigger an event (called after each stroke)
+      checkTrigger(seededRandom) {
+        // Don't trigger during cooldown
+        if (this.cooldownTimer > 0) return false;
+
+        // Don't trigger if streaker already active
+        if (this.streaker) return false;
+
+        // Random chance to trigger
+        const roll = seededRandom ? seededRandom.next() : Math.random();
+        if (roll < this.triggerChance) {
+          this.spawnStreaker();
+          return true;
+        }
+        return false;
+      },
+
+      spawnStreaker() {
+        const canvas = document.getElementById('game-canvas');
+        const height = canvas.height;
+        const width = canvas.width;
+
+        // Randomly choose direction (left-to-right or right-to-left)
+        const goingRight = Math.random() > 0.5;
+
+        // Vertical position - somewhere in the middle area
+        const yPos = height * 0.3 + Math.random() * height * 0.4;
+
+        this.streaker = {
+          x: goingRight ? -60 : width + 60,
+          y: yPos,
+          targetX: goingRight ? width + 60 : -60,
+          direction: goingRight ? 1 : -1,
+          animationPhase: 0,
+          trail: []
+        };
+
+        // Play sound
+        AudioManager.play('swing'); // Reuse swing sound for now (whoosh effect)
+
+        // Set cooldown
+        this.cooldownTimer = this.minCooldown + Math.random() * 10;
+      },
+
+      update(deltaTime) {
+        // Update cooldown
+        if (this.cooldownTimer > 0) {
+          this.cooldownTimer -= deltaTime;
+        }
+
+        // Update streaker if active
+        if (this.streaker) {
+          const s = this.streaker;
+          const config = this.streakerConfig;
+
+          // Move streaker
+          s.x += config.speed * s.direction * deltaTime;
+
+          // Animate running (bobbing motion)
+          s.animationPhase += deltaTime * 15;
+
+          // Add trail position
+          s.trail.push({ x: s.x, y: s.y, alpha: 1 });
+
+          // Limit trail length
+          if (s.trail.length > 8) {
+            s.trail.shift();
+          }
+
+          // Fade trail
+          for (const t of s.trail) {
+            t.alpha *= 0.85;
+          }
+
+          // Check if streaker has exited screen
+          if ((s.direction > 0 && s.x > s.targetX) ||
+              (s.direction < 0 && s.x < s.targetX)) {
+            this.streaker = null;
+          }
+        }
+      },
+
+      draw(ctx) {
+        if (!this.streaker) return;
+
+        const s = this.streaker;
+        const config = this.streakerConfig;
+
+        // Draw trail first
+        for (const t of s.trail) {
+          ctx.save();
+          ctx.globalAlpha = t.alpha * 0.5;
+          ctx.fillStyle = config.trailColor;
+          ctx.beginPath();
+          ctx.ellipse(t.x, t.y, config.size * 0.3, config.size * 0.6, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Running animation - bobbing up/down + arm/leg motion
+        const bob = Math.sin(s.animationPhase) * 5;
+        const armSwing = Math.sin(s.animationPhase) * 0.5;
+        const legSwing = Math.sin(s.animationPhase + Math.PI) * 0.4;
+
+        ctx.save();
+        ctx.translate(s.x, s.y + bob);
+
+        // Flip if going left
+        if (s.direction < 0) {
+          ctx.scale(-1, 1);
+        }
+
+        // Draw silhouette style figure (PG-friendly!)
+        const bodyColor = config.color;
+        const outlineColor = '#CC9966';
+
+        // Body (oval)
+        ctx.fillStyle = bodyColor;
+        ctx.strokeStyle = outlineColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, config.size * 0.25, config.size * 0.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(0, -config.size * 0.55, config.size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Arms (swinging)
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = bodyColor;
+
+        // Back arm
+        ctx.save();
+        ctx.rotate(armSwing - 0.3);
+        ctx.beginPath();
+        ctx.moveTo(0, -config.size * 0.2);
+        ctx.lineTo(-config.size * 0.35, config.size * 0.1);
+        ctx.stroke();
+        ctx.restore();
+
+        // Front arm
+        ctx.save();
+        ctx.rotate(-armSwing + 0.3);
+        ctx.beginPath();
+        ctx.moveTo(0, -config.size * 0.2);
+        ctx.lineTo(config.size * 0.35, config.size * 0.1);
+        ctx.stroke();
+        ctx.restore();
+
+        // Legs (running)
+        ctx.strokeStyle = bodyColor;
+
+        // Back leg
+        ctx.save();
+        ctx.rotate(legSwing);
+        ctx.beginPath();
+        ctx.moveTo(0, config.size * 0.25);
+        ctx.lineTo(-config.size * 0.15, config.size * 0.6);
+        ctx.stroke();
+        ctx.restore();
+
+        // Front leg
+        ctx.save();
+        ctx.rotate(-legSwing);
+        ctx.beginPath();
+        ctx.moveTo(0, config.size * 0.25);
+        ctx.lineTo(config.size * 0.15, config.size * 0.6);
+        ctx.stroke();
+        ctx.restore();
+
+        // Funny detail - wild hair
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-config.size * 0.1, -config.size * 0.7);
+        ctx.lineTo(-config.size * 0.2, -config.size * 0.85);
+        ctx.moveTo(0, -config.size * 0.75);
+        ctx.lineTo(0, -config.size * 0.9);
+        ctx.moveTo(config.size * 0.1, -config.size * 0.7);
+        ctx.lineTo(config.size * 0.15, -config.size * 0.85);
+        ctx.stroke();
+
+        ctx.restore();
+      },
+
+      isActive() {
+        return this.streaker !== null;
+      }
+    };
+
     // === TutorialManager Module (T082-T089: Tutorial System) ===
     const TutorialManager = {
       steps: [
@@ -3023,6 +3241,9 @@
 
         this.updateUI();
         document.getElementById('menu-overlay').classList.add('hidden');
+
+        // Reset random events for new round
+        RandomEventManager.reset();
 
         await StorageManager.clearGameState();
       }
@@ -3200,6 +3421,9 @@
           ScoreKeeper.recordStroke(this.gameState.round);
         }
 
+        // Check for random event trigger (streaker)
+        RandomEventManager.checkTrigger(this.seededRandom);
+
         // Only save if ball is not in hole (prevents corrupted state on reload)
         if (!this.gameState.ball.inHole && !this.holeCompleting) {
           StorageManager.saveGameState(this.gameState);
@@ -3255,6 +3479,9 @@
 
           // Update confetti particles
           ConfettiSystem.update(deltaTime);
+
+          // Update random events (streaker)
+          RandomEventManager.update(deltaTime);
 
           Renderer.renderFrame(this.gameState, this.animationTime);
         }
