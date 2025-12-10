@@ -1113,36 +1113,215 @@
       drawCourse(hole) {
         const ctx = this.ctx;
 
-        ctx.fillStyle = '#90EE90';
+        // Stylized fairway with gradient background
+        const fairwayGradient = ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        fairwayGradient.addColorStop(0, '#7BC96F');
+        fairwayGradient.addColorStop(0.5, '#5DBE4C');
+        fairwayGradient.addColorStop(1, '#4CAF50');
+        ctx.fillStyle = fairwayGradient;
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        ctx.fillStyle = '#2E8B57';
-        ctx.fillRect(hole.teePosition.x - 40, hole.teePosition.y - 40, 80, 80);
+        // Add grass stripe pattern for cartoon effect
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        for (let y = 0; y < this.canvas.height; y += 30) {
+          ctx.fillRect(0, y, this.canvas.width, 15);
+        }
 
-        ctx.fillStyle = '#228B22';
-        const greenRadius = 80;
+        // Add subtle grass texture dots (using deterministic positions based on canvas size)
+        ctx.fillStyle = 'rgba(34, 139, 34, 0.3)';
+        for (let i = 0; i < 100; i++) {
+          // Use deterministic pseudo-random based on index
+          const seed1 = (i * 7919 + 1) % 997;
+          const seed2 = (i * 6271 + 3) % 991;
+          const x = (seed1 / 997) * this.canvas.width;
+          const y = (seed2 / 991) * this.canvas.height;
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Stylized tee box - oval shape with stripes
+        ctx.save();
+        ctx.translate(hole.teePosition.x, hole.teePosition.y);
+
+        // Tee box shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.beginPath();
-        ctx.arc(hole.greenPosition.x, hole.greenPosition.y, greenRadius, 0, Math.PI * 2);
+        ctx.ellipse(4, 6, 55, 35, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#000000';
+        // Tee box base
+        const teeGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
+        teeGradient.addColorStop(0, '#3CB371');
+        teeGradient.addColorStop(1, '#2E8B57');
+        ctx.fillStyle = teeGradient;
         ctx.beginPath();
-        ctx.arc(hole.holePosition.x, hole.holePosition.y, 15, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, 50, 30, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = '#8B4513';
+        // Tee box outline
+        ctx.strokeStyle = '#228B22';
         ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(hole.holePosition.x, hole.holePosition.y);
-        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 50);
         ctx.stroke();
 
-        ctx.fillStyle = '#FF0000';
+        // Tee markers (cartoon style)
+        ctx.fillStyle = '#FF6B6B';
         ctx.beginPath();
-        ctx.moveTo(hole.holePosition.x, hole.holePosition.y - 50);
-        ctx.lineTo(hole.holePosition.x + 20, hole.holePosition.y - 40);
-        ctx.lineTo(hole.holePosition.x, hole.holePosition.y - 30);
+        ctx.arc(-20, -5, 6, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = '#CC5555';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#FF6B6B';
+        ctx.beginPath();
+        ctx.arc(20, -5, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Stylized putting green with contours
+        ctx.save();
+        ctx.translate(hole.greenPosition.x, hole.greenPosition.y);
+
+        // Green shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.beginPath();
+        ctx.ellipse(5, 8, 95, 75, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Outer fringe
+        ctx.fillStyle = '#32CD32';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 100, 85, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#228B22';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Main green with gradient
+        const greenGradient = ctx.createRadialGradient(-20, -20, 0, 0, 0, 80);
+        greenGradient.addColorStop(0, '#90EE90');
+        greenGradient.addColorStop(0.7, '#3CB371');
+        greenGradient.addColorStop(1, '#2E8B57');
+        ctx.fillStyle = greenGradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 85, 70, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Putting surface (smoothest part)
+        const puttingGradient = ctx.createRadialGradient(-10, -10, 0, 0, 0, 50);
+        puttingGradient.addColorStop(0, '#98FB98');
+        puttingGradient.addColorStop(1, '#7CCD7C');
+        ctx.fillStyle = puttingGradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 55, 45, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        // Stylized hole
+        const hx = hole.holePosition.x;
+        const hy = hole.holePosition.y;
+
+        // Hole shadow/depth
+        ctx.fillStyle = '#1a1a1a';
+        ctx.beginPath();
+        ctx.ellipse(hx, hy + 2, 18, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hole opening with gradient for depth
+        const holeGradient = ctx.createRadialGradient(hx, hy, 0, hx, hy, 15);
+        holeGradient.addColorStop(0, '#000000');
+        holeGradient.addColorStop(0.7, '#1a1a1a');
+        holeGradient.addColorStop(1, '#333333');
+        ctx.fillStyle = holeGradient;
+        ctx.beginPath();
+        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hole rim (white cup edge)
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Stylized flagstick with cartoon 3D effect
+        // Flagstick shadow
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(hx + 3, hy);
+        ctx.lineTo(hx + 3, hy - 70);
+        ctx.stroke();
+
+        // Main flagstick
+        const poleGradient = ctx.createLinearGradient(hx - 3, 0, hx + 3, 0);
+        poleGradient.addColorStop(0, '#FFE4B5');
+        poleGradient.addColorStop(0.5, '#FAFAD2');
+        poleGradient.addColorStop(1, '#DAA520');
+        ctx.strokeStyle = poleGradient;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx, hy - 75);
+        ctx.stroke();
+
+        // Stylized flag with wave effect
+        ctx.save();
+        ctx.translate(hx, hy - 75);
+
+        // Flag shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.beginPath();
+        ctx.moveTo(2, 2);
+        ctx.quadraticCurveTo(18, 8, 30, 4);
+        ctx.quadraticCurveTo(22, 17, 30, 27);
+        ctx.quadraticCurveTo(15, 22, 2, 27);
+        ctx.closePath();
+        ctx.fill();
+
+        // Flag main color with gradient
+        const flagGradient = ctx.createLinearGradient(0, 0, 28, 25);
+        flagGradient.addColorStop(0, '#FF4757');
+        flagGradient.addColorStop(0.5, '#FF6B81');
+        flagGradient.addColorStop(1, '#EE3B4D');
+        ctx.fillStyle = flagGradient;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(15, 5, 28, 2);
+        ctx.quadraticCurveTo(20, 15, 28, 25);
+        ctx.quadraticCurveTo(12, 20, 0, 25);
+        ctx.closePath();
+        ctx.fill();
+
+        // Flag outline
+        ctx.strokeStyle = '#CC2936';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Flag highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.beginPath();
+        ctx.moveTo(3, 3);
+        ctx.quadraticCurveTo(12, 6, 20, 4);
+        ctx.quadraticCurveTo(14, 10, 8, 12);
+        ctx.quadraticCurveTo(5, 8, 3, 3);
+        ctx.fill();
+
+        // Ball on top of flagstick
+        ctx.beginPath();
+        ctx.arc(0, -3, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
+        ctx.strokeStyle = '#DAA520';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.restore();
       },
 
       drawObstacles(obstacles) {
@@ -1150,59 +1329,265 @@
 
         for (const obstacle of obstacles) {
           if (obstacle.type === 'sand') {
-            ctx.fillStyle = '#DEB887';
+            // Stylized sand bunker with organic shape
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
+
+            // Bunker shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.beginPath();
-            ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI * 2);
+            ctx.ellipse(4, 5, obstacle.radius * 1.1, obstacle.radius * 0.85, 0.1, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = 'rgba(222, 184, 135, 0.5)';
-            for (let i = 0; i < 3; i++) {
+            // Bunker rim (darker edge)
+            ctx.fillStyle = '#C4A35A';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, obstacle.radius * 1.05, obstacle.radius * 0.8, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Main sand with gradient
+            const sandGradient = ctx.createRadialGradient(-5, -5, 0, 0, 0, obstacle.radius);
+            sandGradient.addColorStop(0, '#F5DEB3');
+            sandGradient.addColorStop(0.5, '#E6D5A8');
+            sandGradient.addColorStop(1, '#D4B896');
+            ctx.fillStyle = sandGradient;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, obstacle.radius * 0.95, obstacle.radius * 0.7, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Sand texture - small dots (deterministic positions)
+            ctx.fillStyle = 'rgba(139, 119, 101, 0.4)';
+            for (let i = 0; i < 12; i++) {
+              const seed = (i * 137 + Math.floor(obstacle.x)) % 100;
+              const angle = (seed / 100) * Math.PI * 2;
+              const dist = ((i * 73) % 70) / 100 * obstacle.radius * 0.7;
+              const dotX = Math.cos(angle) * dist;
+              const dotY = Math.sin(angle) * dist * 0.7;
+              const dotSize = 2 + (i % 3);
               ctx.beginPath();
-              ctx.arc(obstacle.x + (i - 1) * 8, obstacle.y + (i - 1) * 5, obstacle.radius * 0.6, 0, Math.PI * 2);
+              ctx.arc(dotX, dotY, dotSize, 0, Math.PI * 2);
               ctx.fill();
             }
+
+            // Highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(-obstacle.radius * 0.3, -obstacle.radius * 0.2, obstacle.radius * 0.4, obstacle.radius * 0.25, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
           } else if (obstacle.type === 'water') {
-            const gradient = ctx.createLinearGradient(obstacle.x, obstacle.y, obstacle.x, obstacle.y + obstacle.height);
-            gradient.addColorStop(0, '#4682B4');
-            gradient.addColorStop(1, '#1E3A5F');
+            // Stylized water hazard with cartoon look
+            ctx.save();
 
-            ctx.fillStyle = gradient;
-            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            const cx = obstacle.x + obstacle.width / 2;
+            const cy = obstacle.y + obstacle.height / 2;
 
-            ctx.strokeStyle = '#6495ED';
+            // Water shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(cx + 4, cy + 5, obstacle.width / 2 + 5, obstacle.height / 2 + 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Water base with gradient
+            const waterGradient = ctx.createRadialGradient(cx - 10, cy - 10, 0, cx, cy, obstacle.width / 2);
+            waterGradient.addColorStop(0, '#5BC0EB');
+            waterGradient.addColorStop(0.6, '#3498DB');
+            waterGradient.addColorStop(1, '#2171A5');
+            ctx.fillStyle = waterGradient;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, obstacle.width / 2, obstacle.height / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Water outline
+            ctx.strokeStyle = '#1A5276';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Cartoon sparkle/reflection
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(cx - obstacle.width * 0.2, cy - obstacle.height * 0.15, obstacle.width * 0.15, obstacle.height * 0.1, -0.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Small sparkle
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(cx - obstacle.width * 0.25, cy - obstacle.height * 0.2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ripple lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            for (let i = 0; i < obstacle.width; i += 10) {
-              ctx.moveTo(obstacle.x + i, obstacle.y + 5);
-              ctx.quadraticCurveTo(obstacle.x + i + 5, obstacle.y, obstacle.x + i + 10, obstacle.y + 5);
-            }
+            ctx.ellipse(cx + 5, cy + 5, obstacle.width * 0.25, obstacle.height * 0.15, 0, 0, Math.PI * 2);
             ctx.stroke();
+
+            ctx.restore();
+
           } else if (obstacle.type === 'tree') {
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(obstacle.x - 5, obstacle.y, 10, 20);
+            // Stylized cartoon tree
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
 
-            const treeGradient = ctx.createRadialGradient(obstacle.x, obstacle.y - obstacle.radius / 2, 0, obstacle.x, obstacle.y - obstacle.radius / 2, obstacle.radius);
-            treeGradient.addColorStop(0, '#228B22');
-            treeGradient.addColorStop(1, '#006400');
+            const r = obstacle.radius;
 
-            ctx.fillStyle = treeGradient;
+            // Tree shadow on ground
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
             ctx.beginPath();
-            ctx.arc(obstacle.x, obstacle.y - obstacle.radius / 2, obstacle.radius, 0, Math.PI * 2);
+            ctx.ellipse(8, 15, r * 0.8, r * 0.3, 0, 0, Math.PI * 2);
             ctx.fill();
+
+            // Trunk shadow
+            ctx.fillStyle = '#5D4037';
+            ctx.beginPath();
+            ctx.moveTo(8, 5);
+            ctx.lineTo(12, 30);
+            ctx.lineTo(4, 30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Main trunk with gradient
+            const trunkGradient = ctx.createLinearGradient(-8, 0, 8, 0);
+            trunkGradient.addColorStop(0, '#8B5A2B');
+            trunkGradient.addColorStop(0.3, '#A0522D');
+            trunkGradient.addColorStop(0.7, '#8B4513');
+            trunkGradient.addColorStop(1, '#654321');
+            ctx.fillStyle = trunkGradient;
+            ctx.beginPath();
+            ctx.moveTo(-6, 0);
+            ctx.lineTo(-10, 28);
+            ctx.lineTo(10, 28);
+            ctx.lineTo(6, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Trunk outline
+            ctx.strokeStyle = '#3E2723';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Trunk detail lines
+            ctx.strokeStyle = 'rgba(62, 39, 35, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-2, 5);
+            ctx.lineTo(-3, 25);
+            ctx.moveTo(3, 8);
+            ctx.lineTo(4, 22);
+            ctx.stroke();
+
+            // Foliage layers (back to front for depth)
+            // Back layer
+            const foliageGradient1 = ctx.createRadialGradient(-5, -r - 5, 0, 0, -r / 2, r * 1.2);
+            foliageGradient1.addColorStop(0, '#43A047');
+            foliageGradient1.addColorStop(1, '#1B5E20');
+            ctx.fillStyle = foliageGradient1;
+            ctx.beginPath();
+            ctx.arc(-8, -r * 0.6, r * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(10, -r * 0.5, r * 0.65, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Middle layer
+            const foliageGradient2 = ctx.createRadialGradient(-3, -r - 3, 0, 0, -r / 2, r);
+            foliageGradient2.addColorStop(0, '#66BB6A');
+            foliageGradient2.addColorStop(1, '#2E7D32');
+            ctx.fillStyle = foliageGradient2;
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.8, r * 0.85, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Front layer (brightest)
+            const foliageGradient3 = ctx.createRadialGradient(-5, -r - 8, 0, 0, -r * 0.7, r * 0.7);
+            foliageGradient3.addColorStop(0, '#81C784');
+            foliageGradient3.addColorStop(1, '#4CAF50');
+            ctx.fillStyle = foliageGradient3;
+            ctx.beginPath();
+            ctx.arc(-3, -r, r * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Foliage outline
+            ctx.strokeStyle = '#1B5E20';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.8, r * 0.85, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Highlight spots
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+            ctx.beginPath();
+            ctx.arc(-r * 0.3, -r * 1.1, r * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
           } else if (obstacle.type === 'rock') {
-            const rockGradient = ctx.createRadialGradient(obstacle.x - 5, obstacle.y - 5, 0, obstacle.x, obstacle.y, obstacle.radius);
-            rockGradient.addColorStop(0, '#A9A9A9');
-            rockGradient.addColorStop(1, '#696969');
+            // Stylized cartoon rock
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
 
-            ctx.fillStyle = rockGradient;
-            ctx.beginPath();
-            ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI * 2);
-            ctx.fill();
+            const r = obstacle.radius;
 
+            // Rock shadow
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.beginPath();
-            ctx.ellipse(obstacle.x + 5, obstacle.y + obstacle.radius + 2, obstacle.radius * 0.8, obstacle.radius * 0.3, 0, 0, Math.PI * 2);
+            ctx.ellipse(5, r * 0.8, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
             ctx.fill();
+
+            // Main rock shape (irregular polygon for cartoon look)
+            const rockGradient = ctx.createRadialGradient(-r * 0.3, -r * 0.3, 0, 0, 0, r * 1.2);
+            rockGradient.addColorStop(0, '#9E9E9E');
+            rockGradient.addColorStop(0.5, '#757575');
+            rockGradient.addColorStop(1, '#424242');
+            ctx.fillStyle = rockGradient;
+
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.8, r * 0.3);
+            ctx.lineTo(-r * 0.9, -r * 0.2);
+            ctx.lineTo(-r * 0.5, -r * 0.7);
+            ctx.lineTo(r * 0.1, -r * 0.8);
+            ctx.lineTo(r * 0.7, -r * 0.5);
+            ctx.lineTo(r * 0.9, r * 0.1);
+            ctx.lineTo(r * 0.6, r * 0.6);
+            ctx.lineTo(-r * 0.2, r * 0.7);
+            ctx.closePath();
+            ctx.fill();
+
+            // Rock outline
+            ctx.strokeStyle = '#212121';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Rock highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.5, -r * 0.4);
+            ctx.lineTo(-r * 0.2, -r * 0.6);
+            ctx.lineTo(r * 0.2, -r * 0.5);
+            ctx.lineTo(r * 0.1, -r * 0.2);
+            ctx.lineTo(-r * 0.3, -r * 0.1);
+            ctx.closePath();
+            ctx.fill();
+
+            // Crack details
+            ctx.strokeStyle = 'rgba(33, 33, 33, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.2, -r * 0.3);
+            ctx.lineTo(r * 0.1, r * 0.2);
+            ctx.lineTo(r * 0.3, r * 0.1);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(r * 0.3, -r * 0.3);
+            ctx.lineTo(r * 0.4, r * 0.1);
+            ctx.stroke();
+
+            ctx.restore();
           }
         }
       },
