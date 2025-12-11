@@ -2880,9 +2880,11 @@
         // Don't trigger if streaker already active
         if (this.streaker) return false;
 
-        // Random chance to trigger
-        const roll = seededRandom ? seededRandom.next() : Math.random();
+        // Random chance to trigger (use Math.random for unpredictability)
+        const roll = Math.random();
+        console.log('Streaker check - roll:', roll, 'chance:', this.triggerChance);
         if (roll < this.triggerChance) {
+          console.log('SPAWNING STREAKER!');
           this.spawnStreaker();
           return true;
         }
