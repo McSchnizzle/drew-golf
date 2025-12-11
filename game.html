@@ -2897,8 +2897,8 @@
         // Randomly choose direction (left-to-right or right-to-left)
         const goingRight = Math.random() > 0.5;
 
-        // Vertical position - somewhere in the middle area
-        const yPos = height * 0.3 + Math.random() * height * 0.4;
+        // Vertical position - center of screen
+        const yPos = height * 0.5;
 
         this.streaker = {
           x: goingRight ? -60 : width + 60,
