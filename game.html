@@ -2873,18 +2873,15 @@
       },
 
       // Check if we should trigger an event (called after each stroke)
-      checkTrigger(seededRandom) {
+      checkTrigger() {
         // Don't trigger during cooldown
         if (this.cooldownTimer > 0) return false;
 
         // Don't trigger if streaker already active
         if (this.streaker) return false;
 
-        // Random chance to trigger (use Math.random for unpredictability)
-        const roll = Math.random();
-        console.log('Streaker check - roll:', roll, 'chance:', this.triggerChance);
-        if (roll < this.triggerChance) {
-          console.log('SPAWNING STREAKER!');
+        // Random chance to trigger
+        if (Math.random() < this.triggerChance) {
           this.spawnStreaker();
           return true;
         }
@@ -2911,8 +2908,8 @@
           trail: []
         };
 
-        // Play sound
-        AudioManager.play('swing'); // Reuse swing sound for now (whoosh effect)
+        // Play sound (use cheer sound for comedic effect)
+        AudioManager.playCheerSound();
 
         // Set cooldown
         this.cooldownTimer = this.minCooldown + Math.random() * 10;
@@ -3424,7 +3421,7 @@
         }
 
         // Check for random event trigger (streaker)
-        RandomEventManager.checkTrigger(this.seededRandom);
+        RandomEventManager.checkTrigger();
 
         // Only save if ball is not in hole (prevents corrupted state on reload)
         if (!this.gameState.ball.inHole && !this.holeCompleting) {
