@@ -272,17 +272,58 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      /* Golf course scene background */
+      background:
+        /* Clouds */
+        radial-gradient(ellipse 80px 40px at 15% 12%, rgba(255,255,255,0.9) 0%, transparent 70%),
+        radial-gradient(ellipse 100px 50px at 50% 8%, rgba(255,255,255,0.85) 0%, transparent 70%),
+        radial-gradient(ellipse 70px 35px at 80% 15%, rgba(255,255,255,0.9) 0%, transparent 70%),
+        /* Sun glow */
+        radial-gradient(circle at 85% 20%, rgba(255,220,100,0.3) 0%, transparent 25%),
+        /* Distant trees silhouettes */
+        linear-gradient(to bottom, transparent 32%, #3d6b3d 32%, #3d6b3d 34%, transparent 34%),
+        /* Rolling hills */
+        linear-gradient(to bottom, transparent 28%, #5a8f5a 28%, #5a8f5a 35%, transparent 35%),
+        linear-gradient(to bottom, transparent 25%, #6ba36b 25%, #6ba36b 30%, transparent 30%),
+        /* Sky gradient */
+        linear-gradient(to bottom,
+          #87CEEB 0%,
+          #98D8EF 15%,
+          #B0E0E6 25%,
+          #c8e6c8 35%,
+          #5DBE4C 35%,
+          #4CAF50 60%,
+          #3d8b3d 100%
+        );
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
     }
 
+    /* Grass stripe overlay for menu */
+    #menu-overlay::before {
+      content: '';
+      position: absolute;
+      top: 35%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 20px,
+        rgba(255,255,255,0.08) 20px,
+        rgba(255,255,255,0.08) 40px
+      );
+      pointer-events: none;
+    }
+
     #menu-overlay h1 {
       color: white;
       font-size: 48px;
       margin-bottom: 40px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
 
     .menu-button {
