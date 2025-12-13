@@ -2769,6 +2769,67 @@
         }, 150);
       },
 
+      playStreakerSound() {
+        if (this.muted || !this.context) return;
+
+        // Create a funny "AAAHHHH!" scream sound
+        const duration = 1.2;
+        const now = this.context.currentTime;
+
+        // Main scream oscillator - starts high, wobbles
+        const screamOsc = this.context.createOscillator();
+        const screamGain = this.context.createGain();
+        const vibrato = this.context.createOscillator();
+        const vibratoGain = this.context.createGain();
+
+        // Vibrato for wobbly scream effect
+        vibrato.frequency.value = 12; // Fast wobble
+        vibratoGain.gain.value = 50; // Amount of pitch wobble
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(screamOsc.frequency);
+
+        screamOsc.connect(screamGain);
+        screamGain.connect(this.context.destination);
+
+        // Scream starts high and drops slightly
+        screamOsc.frequency.setValueAtTime(800, now);
+        screamOsc.frequency.linearRampToValueAtTime(600, now + 0.3);
+        screamOsc.frequency.linearRampToValueAtTime(700, now + 0.6);
+        screamOsc.frequency.linearRampToValueAtTime(500, now + duration);
+
+        screamOsc.type = 'sawtooth'; // Harsh, scream-like
+
+        // Volume envelope - loud start, sustain, fade
+        screamGain.gain.setValueAtTime(0, now);
+        screamGain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        screamGain.gain.setValueAtTime(0.12, now + 0.3);
+        screamGain.gain.linearRampToValueAtTime(0.08, now + 0.8);
+        screamGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+        vibrato.start(now);
+        screamOsc.start(now);
+        vibrato.stop(now + duration);
+        screamOsc.stop(now + duration);
+
+        // Add a second higher harmonic for more "voice" quality
+        const harmonic = this.context.createOscillator();
+        const harmonicGain = this.context.createGain();
+        harmonic.connect(harmonicGain);
+        harmonicGain.connect(this.context.destination);
+
+        harmonic.frequency.setValueAtTime(1200, now);
+        harmonic.frequency.linearRampToValueAtTime(900, now + 0.3);
+        harmonic.frequency.linearRampToValueAtTime(1000, now + duration);
+        harmonic.type = 'sine';
+
+        harmonicGain.gain.setValueAtTime(0, now);
+        harmonicGain.gain.linearRampToValueAtTime(0.05, now + 0.05);
+        harmonicGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+        harmonic.start(now);
+        harmonic.stop(now + duration);
+      },
+
       // === T094, T100: Mute toggle ===
       setMuted(muted) {
         this.muted = muted;
@@ -2908,8 +2969,8 @@
           trail: []
         };
 
-        // Play sound (use cheer sound for comedic effect)
-        AudioManager.playCheerSound();
+        // Play scream sound
+        AudioManager.playStreakerSound();
 
         // Set cooldown
         this.cooldownTimer = this.minCooldown + Math.random() * 10;
