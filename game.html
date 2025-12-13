@@ -4152,8 +4152,10 @@
 
       spawnEvent(type) {
         const canvas = document.getElementById('game-canvas');
-        const height = canvas.height;
-        const width = canvas.width;
+        // Use visual dimensions, not scaled pixel dimensions
+        const rect = canvas.getBoundingClientRect();
+        const height = rect.height;
+        const width = rect.width;
         const config = this.configs[type];
 
         const goingRight = Math.random() > 0.5;
@@ -4219,6 +4221,10 @@
 
         const e = this.activeEvent;
         const canvas = ctx.canvas;
+        // Use visual dimensions for positioning
+        const rect = canvas.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
 
         // Warning phase
         if (e.warningTimer > 0) {
@@ -4228,12 +4234,12 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-          ctx.fillText(e.config.warning, canvas.width / 2 + 3, canvas.height / 2 + 3);
+          ctx.fillText(e.config.warning, centerX + 3, centerY + 3);
           ctx.fillStyle = '#FF4444';
-          ctx.fillText(e.config.warning, canvas.width / 2, canvas.height / 2);
+          ctx.fillText(e.config.warning, centerX, centerY);
           ctx.strokeStyle = '#FFFFFF';
           ctx.lineWidth = 2;
-          ctx.strokeText(e.config.warning, canvas.width / 2, canvas.height / 2);
+          ctx.strokeText(e.config.warning, centerX, centerY);
           ctx.restore();
           return;
         }
