@@ -2918,6 +2918,27 @@
         });
       },
 
+      // UI click sound for menu buttons
+      playClickSound() {
+        if (this.muted || !this.context) return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        // Short, snappy click
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.15, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.05);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + 0.05);
+      },
+
       // === T099: Hole completion jingle ===
       playHoleSound() {
         if (this.muted || !this.context) return;
@@ -4283,6 +4304,13 @@
       }
 
       AudioManager.init();
+
+      // Add click sound to all menu buttons
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('menu-button')) {
+          AudioManager.playClickSound();
+        }
+      });
 
       try {
         await StorageManager.init();
