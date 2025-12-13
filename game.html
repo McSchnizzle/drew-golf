@@ -4308,6 +4308,7 @@
       // Add click sound to all menu buttons
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('menu-button')) {
+          AudioManager.unlock(); // Ensure audio is unlocked
           AudioManager.playClickSound();
         }
       });
