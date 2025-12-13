@@ -2966,11 +2966,10 @@
           targetX: goingRight ? width + 60 : -60,
           direction: goingRight ? 1 : -1,
           animationPhase: 0,
-          trail: []
+          trail: [],
+          warningTimer: 1.0, // Show warning for 1 second before running
+          started: false
         };
-
-        // Play scream sound
-        AudioManager.playStreakerSound();
 
         // Set cooldown
         this.cooldownTimer = this.minCooldown + Math.random() * 10;
@@ -2986,6 +2985,17 @@
         if (this.streaker) {
           const s = this.streaker;
           const config = this.streakerConfig;
+
+          // Warning phase - show text before streaker runs
+          if (s.warningTimer > 0) {
+            s.warningTimer -= deltaTime;
+            if (s.warningTimer <= 0) {
+              s.started = true;
+              // Play scream when streaker starts running
+              AudioManager.playStreakerSound();
+            }
+            return; // Don't move streaker during warning
+          }
 
           // Move streaker
           s.x += config.speed * s.direction * deltaTime;
@@ -3019,6 +3029,36 @@
 
         const s = this.streaker;
         const config = this.streakerConfig;
+        const canvas = ctx.canvas;
+
+        // During warning phase, show big text
+        if (s.warningTimer > 0) {
+          ctx.save();
+
+          // Pulsing effect
+          const pulse = 1 + Math.sin(s.warningTimer * 15) * 0.1;
+
+          // Big bold text
+          ctx.font = `bold ${60 * pulse}px Arial`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          // Text shadow
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+          ctx.fillText('STREAKER INCOMING!', canvas.width / 2 + 3, canvas.height / 2 + 3);
+
+          // Main text - red/orange gradient feel
+          ctx.fillStyle = '#FF4444';
+          ctx.fillText('STREAKER INCOMING!', canvas.width / 2, canvas.height / 2);
+
+          // White stroke for visibility
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+          ctx.strokeText('STREAKER INCOMING!', canvas.width / 2, canvas.height / 2);
+
+          ctx.restore();
+          return; // Don't draw streaker yet
+        }
 
         // Draw trail first
         for (const t of s.trail) {
