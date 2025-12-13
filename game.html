@@ -692,6 +692,42 @@
       transform: scale(1.1);
     }
 
+    /* Music prompt button */
+    #music-prompt-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-radius: 25px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+      animation: musicPulse 2s ease-in-out infinite;
+    }
+
+    #music-prompt-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    #music-prompt-btn.playing {
+      background: linear-gradient(135deg, #4CAF50, #388E3C);
+      animation: none;
+    }
+
+    @keyframes musicPulse {
+      0%, 100% { box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4); }
+      50% { box-shadow: 0 4px 20px rgba(156, 39, 176, 0.7); }
+    }
+
     .menu-icon-btn:active {
       transform: scale(0.95);
     }
@@ -1576,6 +1612,8 @@
     <button class="menu-button hidden" id="resume-game-btn">Resume Game</button>
     <button class="menu-button" id="leaderboard-btn">Leaderboard</button>
     <button class="menu-button" id="tutorial-btn" style="background: #9C27B0;">Tutorial</button>
+
+    <button id="music-prompt-btn">🎵 Tap for Music</button>
 
     <div class="menu-bottom-buttons">
       <button class="menu-icon-btn" id="achievements-btn" title="Achievements">🏆</button>
@@ -5659,6 +5697,37 @@
         });
       }
 
+      // === Music prompt button handler ===
+      const musicPromptBtn = document.getElementById('music-prompt-btn');
+      if (musicPromptBtn) {
+        // Check if music is already playing (from settings)
+        const settings = StorageManager.loadSettings();
+        if (AudioManager.musicPlaying) {
+          musicPromptBtn.innerHTML = '🎵 Music Playing';
+          musicPromptBtn.classList.add('playing');
+        }
+
+        musicPromptBtn.addEventListener('click', () => {
+          AudioManager.unlock();
+          const settings = StorageManager.loadSettings();
+
+          if (AudioManager.musicPlaying) {
+            // Stop music
+            AudioManager.stopBackgroundMusic();
+            musicPromptBtn.innerHTML = '🎵 Tap for Music';
+            musicPromptBtn.classList.remove('playing');
+          } else {
+            // Start music (if enabled in settings)
+            if (settings.musicEnabled !== false) {
+              AudioManager.startBackgroundMusic();
+              musicPromptBtn.innerHTML = '🎵 Music Playing';
+              musicPromptBtn.classList.add('playing');
+            }
+          }
+          AudioManager.playClickSound();
+        });
+      }
+
       // === Settings button handler ===
       const settingsBtn = document.getElementById('settings-btn');
       const settingsOverlay = document.getElementById('settings-overlay');
@@ -5713,8 +5782,16 @@
           StorageManager.saveSettings(settings);
           if (settingMusic.checked) {
             AudioManager.startBackgroundMusic();
+            if (musicPromptBtn) {
+              musicPromptBtn.innerHTML = '🎵 Music Playing';
+              musicPromptBtn.classList.add('playing');
+            }
           } else {
             AudioManager.stopBackgroundMusic();
+            if (musicPromptBtn) {
+              musicPromptBtn.innerHTML = '🎵 Tap for Music';
+              musicPromptBtn.classList.remove('playing');
+            }
           }
         });
       }
