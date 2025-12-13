@@ -95,39 +95,142 @@
 
     #club-selector-container {
       position: absolute;
-      bottom: 20px;
+      bottom: 15px;
       left: 50%;
       transform: translateX(-50%);
       display: none;
     }
 
     #club-selector {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 10px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      padding: 15px 20px 10px 20px;
+      background: linear-gradient(to bottom, #8B4513 0%, #654321 50%, #3d2817 100%);
+      border-radius: 20px 20px 8px 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255,255,255,0.1);
+      border: 3px solid #2d1810;
+      position: relative;
+    }
+
+    #club-selector::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 15px;
+      right: 15px;
+      height: 4px;
+      background: linear-gradient(to right, transparent, rgba(255,215,0,0.3), transparent);
+      border-radius: 2px;
     }
 
     #club-selector.minimized {
       display: none;
     }
 
-    #club-toggle-btn {
-      background: rgba(255, 255, 255, 0.95);
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: bold;
+    .club-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-top: 10px;
+      transition: transform 0.15s ease;
+      padding: 5px;
+      border-radius: 8px;
+    }
+
+    .club-slot:hover {
+      transform: translateY(-5px);
+    }
+
+    .club-slot.selected {
+      transform: translateY(-12px);
+    }
+
+    .club-slot.selected .club-head {
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .club-shaft {
+      width: 4px;
+      height: 35px;
+      background: linear-gradient(to right, #888, #ccc, #888);
+      border-radius: 2px;
+      box-shadow: 1px 0 2px rgba(0,0,0,0.3);
+    }
+
+    .club-head {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 11px;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.3);
+      transition: box-shadow 0.15s ease;
+    }
+
+    .club-head.driver {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .club-head.wood {
+      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    }
+
+    .club-head.iron {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+
+    .club-head.wedge {
+      background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+      color: #333;
+      text-shadow: none;
+    }
+
+    .club-head.putter {
+      background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    }
+
+    .club-distance {
+      font-size: 9px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 3px;
+      text-align: center;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    }
+
+    .club-slot.recommended .club-head {
+      animation: pulse-gold 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 3px 6px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 3px 6px rgba(0,0,0,0.3); }
+    }
+
+    #club-toggle-btn {
+      background: linear-gradient(to bottom, #5a3d2b, #3d2817);
+      border: 2px solid #2d1810;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #f4e4bc;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      margin-top: 8px;
       width: 100%;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
 
     #club-toggle-btn:active {
-      background: rgba(230, 230, 230, 0.95);
+      background: linear-gradient(to bottom, #4a3020, #2d1810);
     }
 
     .button {
@@ -713,22 +816,40 @@
       }
 
       #club-selector-container {
-        bottom: 10px;
-        max-width: calc(100% - 20px);
+        bottom: 8px;
+        max-width: calc(100% - 16px);
       }
 
       #club-selector {
-        padding: 5px;
-        max-width: 100%;
+        padding: 10px 12px 8px 12px;
+        gap: 2px;
         overflow-x: auto;
-        overflow-y: hidden;
-        white-space: nowrap;
         -webkit-overflow-scrolling: touch;
+        border-radius: 15px 15px 6px 6px;
+      }
+
+      .club-slot {
+        padding: 3px;
+      }
+
+      .club-head {
+        width: 38px;
+        height: 38px;
+        font-size: 10px;
+      }
+
+      .club-shaft {
+        height: 25px;
+        width: 3px;
+      }
+
+      .club-distance {
+        font-size: 8px;
       }
 
       #club-toggle-btn {
-        padding: 8px 16px;
-        font-size: 14px;
+        padding: 6px 14px;
+        font-size: 12px;
         margin-top: 5px;
       }
 
@@ -737,10 +858,6 @@
         margin: 3px;
         font-size: 13px;
         border-radius: 6px;
-      }
-
-      .club-power-info {
-        font-size: 10px;
       }
 
       #menu-container {
@@ -804,24 +921,31 @@
       }
 
       #club-selector-container {
-        bottom: 15px;
-        max-width: calc(100% - 30px);
+        bottom: 12px;
+        max-width: calc(100% - 24px);
       }
 
       #club-selector {
+        padding: 12px 16px 8px 16px;
+        gap: 3px;
         overflow-x: auto;
-        white-space: nowrap;
         -webkit-overflow-scrolling: touch;
+      }
+
+      .club-head {
+        width: 42px;
+        height: 42px;
+        font-size: 11px;
+      }
+
+      .club-shaft {
+        height: 30px;
       }
 
       .button {
         padding: 10px 20px;
         margin: 4px;
         font-size: 15px;
-      }
-
-      .club-power-info {
-        font-size: 11px;
       }
     }
   </style>
@@ -3471,34 +3595,58 @@
         const clubSelector = document.getElementById('club-selector');
         clubSelector.innerHTML = '';
 
-        for (const club of availableClubs) {
-          const button = document.createElement('button');
-          button.className = 'button';
-          button.dataset.club = club.id;
+        const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, this.gameState.currentHole.holePosition);
 
+        // Helper to get club type for styling
+        const getClubType = (clubId) => {
+          if (clubId === 'driver') return 'driver';
+          if (clubId.includes('wood')) return 'wood';
+          if (clubId === 'wedge') return 'wedge';
+          if (clubId === 'putter') return 'putter';
+          return 'iron';
+        };
+
+        // Helper to get short label for club head
+        const getClubLabel = (club) => {
+          if (club.id === 'driver') return 'D';
+          if (club.id === '3wood') return '3W';
+          if (club.id === '5wood') return '5W';
+          if (club.id === 'wedge') return 'W';
+          if (club.id === 'putter') return 'P';
+          // Irons: extract number
+          const match = club.id.match(/iron(\d)/);
+          return match ? match[1] : club.name.charAt(0);
+        };
+
+        for (const club of availableClubs) {
           const maxDistance = ClubSystem.getMaxDistance(club.id);
-          button.innerHTML = `${club.name}<br><span class="club-power-info">${maxDistance}yd max</span>`;
+          const clubType = getClubType(club.id);
+          const label = getClubLabel(club);
+
+          const slot = document.createElement('div');
+          slot.className = 'club-slot';
+          slot.dataset.club = club.id;
 
           if (club.id === selectedClub) {
-            button.classList.add('selected');
+            slot.classList.add('selected');
           }
 
-          button.addEventListener('click', () => this.selectClub(club.id));
-          clubSelector.appendChild(button);
+          if (club.id === recommendedClub && !isFirstStroke) {
+            slot.classList.add('recommended');
+          }
+
+          slot.innerHTML = `
+            <div class="club-head ${clubType}">${label}</div>
+            <div class="club-shaft"></div>
+            <div class="club-distance">${maxDistance}yd</div>
+          `;
+
+          slot.addEventListener('click', () => this.selectClub(club.id));
+          clubSelector.appendChild(slot);
         }
 
         const clubContainer = document.getElementById('club-selector-container');
         clubContainer.style.display = 'block';
-
-        const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, this.gameState.currentHole.holePosition);
-        const distanceFromHole = Math.round(this.gameState.ball.distanceFromHole);
-
-        if (distanceFromHole < 100 && recommendedClub === 'putter' && selectedClub !== 'putter') {
-          const putterButton = clubSelector.querySelector('[data-club="putter"]');
-          if (putterButton && !isFirstStroke) {
-            putterButton.style.border = '3px solid gold';
-          }
-        }
       }
 
       executeSwing(swingVector) {
