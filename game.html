@@ -421,50 +421,23 @@
       left: 0;
       width: 100%;
       height: 100%;
-      /* Golf course scene background */
-      background:
-        /* Clouds */
-        radial-gradient(ellipse 80px 40px at 15% 12%, rgba(255,255,255,0.9) 0%, transparent 70%),
-        radial-gradient(ellipse 100px 50px at 50% 8%, rgba(255,255,255,0.85) 0%, transparent 70%),
-        radial-gradient(ellipse 70px 35px at 80% 15%, rgba(255,255,255,0.9) 0%, transparent 70%),
-        /* Sun glow */
-        radial-gradient(circle at 85% 20%, rgba(255,220,100,0.3) 0%, transparent 25%),
-        /* Distant trees silhouettes */
-        linear-gradient(to bottom, transparent 32%, #3d6b3d 32%, #3d6b3d 34%, transparent 34%),
-        /* Rolling hills */
-        linear-gradient(to bottom, transparent 28%, #5a8f5a 28%, #5a8f5a 35%, transparent 35%),
-        linear-gradient(to bottom, transparent 25%, #6ba36b 25%, #6ba36b 30%, transparent 30%),
-        /* Sky gradient */
-        linear-gradient(to bottom,
-          #87CEEB 0%,
-          #98D8EF 15%,
-          #B0E0E6 25%,
-          #c8e6c8 35%,
-          #5DBE4C 35%,
-          #4CAF50 60%,
-          #3d8b3d 100%
-        );
+      /* Golf course background image */
+      background: url('menu-background.png') center center / cover no-repeat;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
     }
 
-    /* Grass stripe overlay for menu */
+    /* Slight darkening overlay for better text readability */
     #menu-overlay::before {
       content: '';
       position: absolute;
-      top: 35%;
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 20px,
-        rgba(255,255,255,0.08) 20px,
-        rgba(255,255,255,0.08) 40px
-      );
+      background: rgba(0, 0, 0, 0.15);
       pointer-events: none;
     }
 
@@ -4726,6 +4699,13 @@
         }
       },
 
+      // Check if ball is allowed to go in hole (only on the "Sink the Ball!" step)
+      canBallEnterHole() {
+        if (!this.isActive) return true; // Not in tutorial, allow
+        // Step 6 (index 6) is "Sink the Ball!" step that waits for holeComplete
+        return this.currentStep >= 6;
+      },
+
       nextStep() {
         this.unhighlightAll();
         this.currentStep++;
@@ -5135,7 +5115,9 @@
             const obstacles = this.gameState.currentHole.obstacles || [];
             PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
 
-            if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting) {
+            // Check if ball can enter hole (tutorial blocks until "Sink the Ball!" step)
+            const canEnterHole = TutorialManager.canBallEnterHole();
+            if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting && canEnterHole) {
               if (!this.gameState.ball.inHole) {
                 this.gameState.ball.inHole = true;
                 this.gameState.ball.holeProgress = 0;
