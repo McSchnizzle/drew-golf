@@ -1697,11 +1697,10 @@
       baseStopThreshold: 5,
       holeRadius: 15,
 
-      // Scaled stop threshold based on screen size
+      // Stop threshold scaled to screen size (in yards, converted to pixels)
       get stopThreshold() {
-        const basePixelsPerYard = 1.4;
-        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
-        return this.baseStopThreshold * Math.max(0.5, scaleFactor);
+        const thresholdYards = 2; // Ball stops when moving less than 2 yards/sec
+        return thresholdYards * ScreenScale.pixelsPerYard;
       },
 
       add(v1, v2) {
@@ -1729,13 +1728,10 @@
       },
 
       applySwing(ball, swingVector) {
-        // Scale max velocity based on screen size
-        // Driver at 100% power should travel ~280 yards
-        // This formula gives consistent yardage across all screen sizes
-        const baseMaxVelocity = 800; // Base velocity for reference screen
-        const basePixelsPerYard = 1.4; // Reference: 1120px screen / 800 velocity ≈ 280 yards
-        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
-        const maxVelocity = baseMaxVelocity * scaleFactor;
+        // Fixed max velocity - clubs always hit the same distance in yards
+        // This is converted to screen-appropriate pixels via ScreenScale
+        const maxVelocityYards = 280; // Driver at 100% = 280 yards
+        const maxVelocity = maxVelocityYards * ScreenScale.pixelsPerYard;
 
         ball.velocityX = -Math.cos(swingVector.angle) * swingVector.power * maxVelocity;
         ball.velocityY = -Math.sin(swingVector.angle) * swingVector.power * maxVelocity;
@@ -3479,14 +3475,13 @@
       getMaxDistance(clubId) {
         const club = this.getClub(clubId);
 
-        // Use scaled velocity just like applySwing does
-        const baseMaxVelocity = 800;
-        const basePixelsPerYard = 1.4;
-        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
-        const maxVelocity = baseMaxVelocity * scaleFactor;
+        // Fixed max velocity in yards - clubs always hit same distance
+        const maxVelocityYards = 280; // Driver at 100% = 280 yards
+        const maxVelocity = maxVelocityYards * ScreenScale.pixelsPerYard;
 
         const friction = 0.98;
-        const stopThreshold = 5 * scaleFactor; // Scale threshold too
+        const thresholdYards = 2;
+        const stopThreshold = thresholdYards * ScreenScale.pixelsPerYard;
         const deltaTime = 1/60; // 60 FPS
 
         // Simulate ball flight (in pixels)
@@ -3498,8 +3493,8 @@
           velocityX *= friction;
         }
 
-        // Convert pixels to yards
-        return Math.round(distancePixels * PIXELS_TO_YARDS);
+        // Convert pixels to yards using ScreenScale
+        return Math.round(distancePixels / ScreenScale.pixelsPerYard);
       }
     };
 
