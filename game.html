@@ -662,6 +662,224 @@
       50% { opacity: 0.7; }
     }
 
+    /* === Menu Bottom Buttons (Settings/Achievements) === */
+    .menu-bottom-buttons {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .menu-icon-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .menu-icon-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+      transform: scale(1.1);
+    }
+
+    .menu-icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* === Settings Overlay === */
+    #settings-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 90%;
+      z-index: 1001;
+    }
+
+    #settings-overlay h2 {
+      margin: 0 0 25px 0;
+      color: #333;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .settings-group {
+      margin-bottom: 20px;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-label {
+      font-size: 16px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-label .icon {
+      font-size: 20px;
+    }
+
+    /* Toggle switch */
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 28px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #4CAF50;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .settings-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+    }
+
+    /* === Achievements Overlay === */
+    #achievements-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 1001;
+    }
+
+    #achievements-overlay h2 {
+      margin: 0 0 20px 0;
+      color: #333;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .achievement-card {
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 15px 10px;
+      text-align: center;
+      border: 2px solid #e0e0e0;
+      transition: all 0.2s;
+    }
+
+    .achievement-card.unlocked {
+      background: linear-gradient(145deg, #fff9e6 0%, #fff3cd 100%);
+      border-color: #FFD700;
+    }
+
+    .achievement-card.locked {
+      opacity: 0.5;
+      filter: grayscale(100%);
+    }
+
+    .achievement-card .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .achievement-card .name {
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .achievement-card .desc {
+      font-size: 10px;
+      color: #666;
+    }
+
+    .achievements-progress {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: 8px;
+    }
+
+    .achievements-buttons {
+      display: flex;
+      justify-content: center;
+    }
+
     /* === Hole Complete Modal Styles === */
     #hole-complete-overlay {
       position: absolute;
@@ -1223,6 +1441,56 @@
       <button class="button" onclick="document.getElementById('leaderboard-overlay').classList.add('hidden')">Close</button>
     </div>
 
+    <div id="settings-overlay" class="hidden">
+      <h2>⚙️ Settings</h2>
+      <div class="settings-group">
+        <div class="settings-row">
+          <span class="settings-label"><span class="icon">🔊</span> Sound Effects</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-sound" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label"><span class="icon">🎵</span> Background Music</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-music" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label"><span class="icon">💨</span> Ball Trails</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-trails" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label"><span class="icon">🌪️</span> Random Events</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-events" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label"><span class="icon">📖</span> Reset Tutorial</span>
+          <button class="button" id="reset-tutorial-btn" style="padding: 8px 16px; font-size: 14px;">Reset</button>
+        </div>
+      </div>
+      <div class="settings-buttons">
+        <button class="button" id="close-settings-btn">Close</button>
+      </div>
+    </div>
+
+    <div id="achievements-overlay" class="hidden">
+      <h2>🏆 Achievements</h2>
+      <div class="achievements-progress" id="achievements-progress">0 / 0 unlocked</div>
+      <div class="achievements-grid" id="achievements-grid"></div>
+      <div class="achievements-buttons">
+        <button class="button" id="close-achievements-btn">Close</button>
+      </div>
+    </div>
+
     <div id="name-entry-overlay" class="hidden">
       <h2>Enter Your Name</h2>
       <p>Your scores will appear on the global leaderboard!</p>
@@ -1308,6 +1576,11 @@
     <button class="menu-button hidden" id="resume-game-btn">Resume Game</button>
     <button class="menu-button" id="leaderboard-btn">Leaderboard</button>
     <button class="menu-button" id="tutorial-btn" style="background: #9C27B0;">Tutorial</button>
+
+    <div class="menu-bottom-buttons">
+      <button class="menu-icon-btn" id="achievements-btn" title="Achievements">🏆</button>
+      <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
+    </div>
   </div>
 
   <script>
@@ -1557,9 +1830,12 @@
             this.drawObstacles(gameState.currentHole.obstacles);
           }
 
-          // Update and draw ball trail
-          BallTrail.update(gameState.ball);
-          BallTrail.draw(this.ctx);
+          // Update and draw ball trail (if enabled)
+          const trailsEnabled = StorageManager.loadSettings().trailsEnabled !== false;
+          if (trailsEnabled) {
+            BallTrail.update(gameState.ball);
+            BallTrail.draw(this.ctx);
+          }
 
           this.drawBall(gameState.ball);
 
@@ -2593,8 +2869,21 @@
 
       popupQueue: [],
       isShowing: false,
+      popupTimeout: null,
 
       init() {
+        // Ensure popup is hidden on init
+        const popup = document.getElementById('achievement-popup');
+        if (popup) {
+          popup.classList.remove('show');
+        }
+        this.isShowing = false;
+        this.popupQueue = [];
+        if (this.popupTimeout) {
+          clearTimeout(this.popupTimeout);
+          this.popupTimeout = null;
+        }
+
         // Load unlocked achievements from localStorage
         const saved = localStorage.getItem('golf-achievements');
         if (saved) {
@@ -2648,15 +2937,25 @@
         const achievement = this.popupQueue.shift();
 
         const popup = document.getElementById('achievement-popup');
+        if (!popup) {
+          this.isShowing = false;
+          return;
+        }
+
         popup.querySelector('.achievement-icon').textContent = achievement.icon;
         popup.querySelector('.achievement-name').textContent = achievement.name;
         popup.querySelector('.achievement-desc').textContent = achievement.desc;
 
         popup.classList.add('show');
 
-        setTimeout(() => {
+        // Clear any existing timeout
+        if (this.popupTimeout) {
+          clearTimeout(this.popupTimeout);
+        }
+
+        this.popupTimeout = setTimeout(() => {
           popup.classList.remove('show');
-          setTimeout(() => this.showNextPopup(), 500);
+          this.popupTimeout = setTimeout(() => this.showNextPopup(), 500);
         }, 3000);
       },
 
@@ -3278,6 +3577,9 @@
       getDefaultSettings() {
         return {
           soundEnabled: true,
+          musicEnabled: true,
+          trailsEnabled: true,
+          eventsEnabled: true,
           debugMode: false,
           tutorialCompleted: false
         };
@@ -4746,8 +5048,9 @@
           ScoreKeeper.recordStroke(this.gameState.round);
         }
 
-        // Check for random event trigger (streaker) - not during tutorial
-        if (!this.gameState.isTutorial) {
+        // Check for random event trigger (streaker) - not during tutorial, only if events enabled
+        const eventsEnabled = StorageManager.loadSettings().eventsEnabled !== false;
+        if (!this.gameState.isTutorial && eventsEnabled) {
           RandomEventManager.checkTrigger();
         }
 
@@ -5353,6 +5656,141 @@
         leaderboardBtn.addEventListener('click', async () => {
           console.log('Leaderboard button clicked');
           await GameEngine.showLeaderboard();
+        });
+      }
+
+      // === Settings button handler ===
+      const settingsBtn = document.getElementById('settings-btn');
+      const settingsOverlay = document.getElementById('settings-overlay');
+      const closeSettingsBtn = document.getElementById('close-settings-btn');
+      const resetTutorialBtn = document.getElementById('reset-tutorial-btn');
+
+      // Settings toggles
+      const settingSound = document.getElementById('setting-sound');
+      const settingMusic = document.getElementById('setting-music');
+      const settingTrails = document.getElementById('setting-trails');
+      const settingEvents = document.getElementById('setting-events');
+
+      // Load current settings into toggles
+      function loadSettingsIntoUI() {
+        const settings = StorageManager.loadSettings();
+        settingSound.checked = settings.soundEnabled !== false;
+        settingMusic.checked = settings.musicEnabled !== false;
+        settingTrails.checked = settings.trailsEnabled !== false;
+        settingEvents.checked = settings.eventsEnabled !== false;
+      }
+
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+          loadSettingsIntoUI();
+          settingsOverlay.classList.remove('hidden');
+          AudioManager.playClickSound();
+        });
+      }
+
+      if (closeSettingsBtn) {
+        closeSettingsBtn.addEventListener('click', () => {
+          settingsOverlay.classList.add('hidden');
+          AudioManager.playClickSound();
+        });
+      }
+
+      // Sound toggle
+      if (settingSound) {
+        settingSound.addEventListener('change', () => {
+          const settings = StorageManager.loadSettings();
+          settings.soundEnabled = settingSound.checked;
+          StorageManager.saveSettings(settings);
+          AudioManager.setMuted(!settingSound.checked);
+        });
+      }
+
+      // Music toggle
+      if (settingMusic) {
+        settingMusic.addEventListener('change', () => {
+          const settings = StorageManager.loadSettings();
+          settings.musicEnabled = settingMusic.checked;
+          StorageManager.saveSettings(settings);
+          if (settingMusic.checked) {
+            AudioManager.startBackgroundMusic();
+          } else {
+            AudioManager.stopBackgroundMusic();
+          }
+        });
+      }
+
+      // Trails toggle
+      if (settingTrails) {
+        settingTrails.addEventListener('change', () => {
+          const settings = StorageManager.loadSettings();
+          settings.trailsEnabled = settingTrails.checked;
+          StorageManager.saveSettings(settings);
+        });
+      }
+
+      // Events toggle
+      if (settingEvents) {
+        settingEvents.addEventListener('change', () => {
+          const settings = StorageManager.loadSettings();
+          settings.eventsEnabled = settingEvents.checked;
+          StorageManager.saveSettings(settings);
+        });
+      }
+
+      // Reset tutorial button
+      if (resetTutorialBtn) {
+        resetTutorialBtn.addEventListener('click', () => {
+          const settings = StorageManager.loadSettings();
+          settings.tutorialCompleted = false;
+          StorageManager.saveSettings(settings);
+          resetTutorialBtn.textContent = 'Done!';
+          setTimeout(() => {
+            resetTutorialBtn.textContent = 'Reset';
+          }, 1500);
+          AudioManager.playClickSound();
+        });
+      }
+
+      // === Achievements button handler ===
+      const achievementsBtn = document.getElementById('achievements-btn');
+      const achievementsOverlay = document.getElementById('achievements-overlay');
+      const closeAchievementsBtn = document.getElementById('close-achievements-btn');
+      const achievementsGrid = document.getElementById('achievements-grid');
+      const achievementsProgress = document.getElementById('achievements-progress');
+
+      function populateAchievements() {
+        const achievements = AchievementManager.achievements;
+        const ids = Object.keys(achievements);
+        const unlocked = ids.filter(id => achievements[id].unlocked).length;
+
+        achievementsProgress.textContent = `${unlocked} / ${ids.length} unlocked`;
+
+        achievementsGrid.innerHTML = '';
+        ids.forEach(id => {
+          const a = achievements[id];
+          const card = document.createElement('div');
+          card.className = `achievement-card ${a.unlocked ? 'unlocked' : 'locked'}`;
+          card.innerHTML = `
+            <div class="icon">${a.icon}</div>
+            <div class="name">${a.name}</div>
+            <div class="desc">${a.desc}</div>
+          `;
+          achievementsGrid.appendChild(card);
+        });
+      }
+
+      if (achievementsBtn) {
+        achievementsBtn.addEventListener('click', () => {
+          populateAchievements();
+          achievementsOverlay.classList.remove('hidden');
+          AudioManager.playClickSound();
+        });
+      }
+
+      if (closeAchievementsBtn) {
+        closeAchievementsBtn.addEventListener('click', () => {
+          achievementsOverlay.classList.add('hidden');
+          AudioManager.playClickSound();
         });
       }
 
