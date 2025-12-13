@@ -49,55 +49,122 @@
       position: absolute;
       top: 20px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 20px;
-      border-radius: 12px;
-      font-size: 18px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 255, 248, 0.95));
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      min-width: 140px;
     }
 
-    #scoreboard div {
-      margin: 5px 0;
+    #scoreboard .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    #scoreboard .hole-info {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2E7D32;
+    }
+
+    #scoreboard .par-info {
+      font-size: 12px;
+      color: #666;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    #scoreboard .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 4px 0;
+    }
+
+    #scoreboard .score-label {
+      color: #666;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #scoreboard .score-value {
+      font-weight: bold;
+      color: #333;
+      font-size: 14px;
+    }
+
+    #scoreboard .score-value.score-good { color: #4CAF50; }
+    #scoreboard .score-value.score-bad { color: #f44336; }
+
+    #scoreboard .club-info {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #scoreboard .club-name {
+      font-weight: bold;
+      color: #1976D2;
+      font-size: 14px;
+    }
+
+    #scoreboard .distance-info {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
     }
 
     #ball-state {
       position: absolute;
       top: 20px;
       right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-size: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 245, 0.95));
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
       font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.8);
     }
 
     #wind-indicator {
       position: absolute;
-      top: 60px;
+      top: 65px;
       right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 12px 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 248, 255, 0.95));
+      padding: 10px 14px;
       border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
       text-align: center;
-      min-width: 80px;
+      min-width: 70px;
+      border: 2px solid rgba(135, 206, 250, 0.5);
     }
 
     #wind-indicator .wind-label {
-      font-size: 11px;
+      font-size: 10px;
       color: #666;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
 
     #wind-indicator .wind-arrow {
-      font-size: 28px;
+      font-size: 24px;
       line-height: 1;
       transition: transform 0.3s ease;
     }
 
     #wind-indicator .wind-speed {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       color: #333;
       margin-top: 2px;
@@ -1095,12 +1162,22 @@
 
   <div id="ui-overlay">
     <div id="scoreboard">
-      <div><strong>Hole:</strong> <span id="hole-number">1</span>/9</div>
-      <div><strong>Par:</strong> <span id="hole-par">3</span></div>
-      <div><strong>Strokes:</strong> <span id="stroke-count">0</span></div>
-      <div><strong>Score:</strong> <span id="total-score">E</span></div>
-      <div><strong>Club:</strong> <span id="current-club">Driver</span></div>
-      <div><strong>Distance:</strong> <span id="distance-to-hole">---</span>m</div>
+      <div class="score-header">
+        <span class="hole-info">Hole <span id="hole-number">1</span></span>
+        <span class="par-info">Par <span id="hole-par">3</span></span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Strokes</span>
+        <span class="score-value" id="stroke-count">0</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Score</span>
+        <span class="score-value" id="total-score">E</span>
+      </div>
+      <div class="club-info">
+        <div class="club-name" id="current-club">Driver</div>
+        <div class="distance-info"><span id="distance-to-hole">---</span> yds to hole</div>
+      </div>
     </div>
 
     <div id="ball-state">🔴 Ready</div>
@@ -1672,16 +1749,31 @@
         ctx.lineTo(hx, hy - 75);
         ctx.stroke();
 
-        // Stylized flag with animated wave effect
+        // Stylized flag with animated wave effect - follows wind direction
         ctx.save();
         ctx.translate(hx, hy - 75);
 
+        // Get wind direction and flip flag accordingly
+        const windDir = WindSystem.direction || 0;
+        const windSpeed = WindSystem.speed || 0;
+        const windX = Math.cos(windDir);
+        const flipFlag = windX < 0; // Flip if wind blowing left
+
+        // Scale wave amplitude by wind speed (more wind = more wave)
+        const baseAmplitude = 2;
+        const windAmplitude = Math.min(windSpeed / 5, 3); // Max extra 3px from wind
+        const waveAmplitude = baseAmplitude + windAmplitude;
+
         // Wave animation parameters
-        const waveSpeed = 3; // cycles per second
-        const waveAmplitude = 4; // pixels
+        const waveSpeed = 3 + windSpeed * 0.2; // Faster wave with more wind
         const wave1 = Math.sin(animationTime * waveSpeed * Math.PI * 2) * waveAmplitude;
         const wave2 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 1) * waveAmplitude;
         const wave3 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 2) * waveAmplitude;
+
+        // Flip flag based on wind direction
+        if (flipFlag) {
+          ctx.scale(-1, 1);
+        }
 
         // Flag shadow (with wave)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
