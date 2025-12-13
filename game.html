@@ -3315,43 +3315,43 @@
           waitForAction: false
         },
         {
-          title: "Step 1: Take Your First Swing!",
-          text: "Drag BACKWARD from the ball toward the bottom of the screen, then release to shoot FORWARD toward the hole. Try it now!",
+          title: "Step 1: The Tee Shot",
+          text: "Your FIRST shot of every hole must use the Driver - it's the golf rule! Notice the Driver is already selected. Now drag BACKWARD from the ball and release to shoot FORWARD!",
           highlight: 'game-canvas',
           action: 'swing',
           waitForAction: true
         },
         {
-          title: "Great Shot!",
-          text: "You did it! The ball moves opposite to your drag direction. The longer you drag, the more power!",
+          title: "Nice Drive!",
+          text: "Great job! The ball moves opposite to your drag direction. The longer you drag, the more power!",
           highlight: null,
           action: null,
           waitForAction: false
         },
         {
-          title: "Step 2: Choose a Club",
-          text: "Now pick a different club! Tap on any club in the bag below. Each club has a different max distance - choose wisely!",
+          title: "Step 2: Choose Your Club",
+          text: "After your tee shot, you can pick ANY club! Tap a different club in the bag below. The GLOWING one is recommended for your distance.",
           highlight: 'club-selector',
           action: 'selectClub',
           waitForAction: true
         },
         {
-          title: "Nice Choice!",
-          text: "The glowing club is recommended for your distance. Driver hits far, Irons for mid-range, Putter for the green!",
+          title: "Smart Choice!",
+          text: "Driver hits far (274 yds), Woods/Irons for mid-range, Wedge for short shots, and Putter on the green. Use the right club for the distance!",
           highlight: 'club-selector',
           action: null,
           waitForAction: false
         },
         {
           title: "Step 3: Sink the Ball!",
-          text: "Keep hitting until you get the ball in the hole! Watch the distance display and use the right club.",
+          text: "Keep hitting until you get the ball in the hole! Watch the distance display and switch clubs as needed.",
           highlight: null,
           action: 'holeComplete',
           waitForAction: true
         },
         {
           title: "Hole Complete!",
-          text: "Awesome! You scored on the practice hole. Now you're ready for the real game!",
+          text: "Awesome! Remember: First shot = Driver only, then switch clubs based on distance. Now you're ready for the real game!",
           highlight: null,
           action: null,
           waitForAction: false
@@ -3379,32 +3379,19 @@
       startPracticeHole() {
         if (!this.gameEngine) return;
 
-        // Create a simple short practice hole
         const canvas = this.gameEngine.canvas;
         const canvasRect = canvas.getBoundingClientRect();
 
-        // Simple short par 3 hole
-        const practiceHole = {
-          holeNumber: 0,
-          par: 3,
-          teePosition: { x: canvasRect.width * 0.2, y: canvasRect.height * 0.7 },
-          holePosition: { x: canvasRect.width * 0.75, y: canvasRect.height * 0.35 },
-          greenRadius: 60,
-          fairwayWidth: 120,
-          obstacles: [] // No obstacles for practice
-        };
+        // Use the real course generator to create a proper hole
+        CourseGenerator.init(12345); // Fixed seed for consistent tutorial
 
-        const ball = {
-          x: practiceHole.teePosition.x,
-          y: practiceHole.teePosition.y,
-          velocityX: 0,
-          velocityY: 0,
-          rotation: 0,
-          isMoving: false,
-          isAirborne: false,
-          inHole: false,
-          color: 'white'
-        };
+        // Generate hole 1 (a short par 3) but clear obstacles for easier practice
+        const practiceHole = CourseGenerator.generateHole(1, canvasRect.width, canvasRect.height);
+        practiceHole.obstacles = []; // Remove obstacles for tutorial
+        practiceHole.holeNumber = 0; // Mark as tutorial hole
+
+        // Use the engine's createBall method for proper ball setup
+        const ball = this.gameEngine.createBall(practiceHole, 'white');
 
         this.gameEngine.gameState = {
           currentHole: practiceHole,
@@ -3422,7 +3409,7 @@
           },
           ball: ball,
           selectedClub: 'driver',
-          seed: Date.now(),
+          seed: 12345,
           playerName: 'Student',
           isTutorial: true
         };
