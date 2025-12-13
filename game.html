@@ -2441,25 +2441,25 @@
       },
 
       getRecommendedClub(ball, holePosition) {
-        const distance = PhysicsEngine.distance(ball, holePosition);
+        // Convert pixel distance to yards (same conversion as getMaxDistance)
+        const pixelDistance = PhysicsEngine.distance(ball, holePosition);
+        const distanceYards = pixelDistance * 1.09361;
 
-        if (distance < 50) {
-          return 'putter';
-        } else if (distance < 100) {
-          return 'wedge';
-        } else if (distance < 150) {
-          return 'iron9';
-        } else if (distance < 200) {
-          return 'iron7';
-        } else if (distance < 250) {
-          return 'iron5';
-        } else if (distance < 350) {
-          return 'iron4';
-        } else if (distance < 450) {
-          return 'wood5';
-        } else {
-          return 'driver';
+        // Get all clubs sorted by max distance (shortest first)
+        const allClubs = ['putter', 'wedge', 'iron9', 'iron8', 'iron7', 'iron6', 'iron5', 'iron4', '5wood', '3wood', 'driver'];
+
+        // Find the club with the shortest max distance that can still reach the hole
+        let bestClub = 'driver'; // Default to driver if nothing else works
+
+        for (const clubId of allClubs) {
+          const maxDistance = this.getMaxDistance(clubId);
+          if (maxDistance >= distanceYards) {
+            bestClub = clubId;
+            break; // Found the shortest club that can reach
+          }
         }
+
+        return bestClub;
       },
 
       // Calculate max distance for a club at 100% power (in yards)
@@ -3296,39 +3296,130 @@
       steps: [
         {
           title: "Welcome to Howlett Golf Chaos!",
-          text: "Let's learn how to play. This quick tutorial will show you the basics.",
-          highlight: null
+          text: "Let's learn by playing a practice hole! Tap 'Next' to begin.",
+          highlight: null,
+          action: null,
+          waitForAction: false
         },
         {
-          title: "Making a Swing",
-          text: "Drag backward from the ball to aim your shot. The direction you drag determines where the ball goes - drag opposite to your target!",
-          highlight: 'game-canvas'
+          title: "Step 1: Take Your First Swing!",
+          text: "Drag BACKWARD from the ball toward the bottom of the screen, then release to shoot FORWARD toward the hole. Try it now!",
+          highlight: 'game-canvas',
+          action: 'swing',
+          waitForAction: true
         },
         {
-          title: "Power Control",
-          text: "The longer you drag, the more power! Watch the guide arrow - it shows your shot direction and strength.",
-          highlight: 'game-canvas'
+          title: "Great Shot!",
+          text: "You did it! The ball moves opposite to your drag direction. The longer you drag, the more power!",
+          highlight: null,
+          action: null,
+          waitForAction: false
         },
         {
-          title: "Club Selection",
-          text: "Tap any club to switch. Driver hits far, Irons for mid-range, Putter for short shots on the green. First shot is always Driver!",
-          highlight: 'club-selector'
+          title: "Step 2: Choose a Club",
+          text: "Now pick a different club! Tap on any club in the bag below. Each club has a different max distance - choose wisely!",
+          highlight: 'club-selector',
+          action: 'selectClub',
+          waitForAction: true
         },
         {
-          title: "You're Ready!",
-          text: "Complete 9 holes and try to score under par. Good luck and have fun!",
-          highlight: null
+          title: "Nice Choice!",
+          text: "The glowing club is recommended for your distance. Driver hits far, Irons for mid-range, Putter for the green!",
+          highlight: 'club-selector',
+          action: null,
+          waitForAction: false
+        },
+        {
+          title: "Step 3: Sink the Ball!",
+          text: "Keep hitting until you get the ball in the hole! Watch the distance display and use the right club.",
+          highlight: null,
+          action: 'holeComplete',
+          waitForAction: true
+        },
+        {
+          title: "Hole Complete!",
+          text: "Awesome! You scored on the practice hole. Now you're ready for the real game!",
+          highlight: null,
+          action: null,
+          waitForAction: false
         }
       ],
 
       currentStep: 0,
       isActive: false,
+      gameEngine: null,
+      waitingForAction: false,
 
-      start() {
+      start(gameEngine) {
+        this.gameEngine = gameEngine;
         this.currentStep = 0;
         this.isActive = true;
+        this.waitingForAction = false;
+
+        // Start a tutorial practice hole
+        this.startPracticeHole();
+
         this.showStep();
         document.getElementById('tutorial-overlay').classList.remove('hidden');
+      },
+
+      startPracticeHole() {
+        if (!this.gameEngine) return;
+
+        // Create a simple short practice hole
+        const canvas = this.gameEngine.canvas;
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // Simple short par 3 hole
+        const practiceHole = {
+          holeNumber: 0,
+          par: 3,
+          teePosition: { x: canvasRect.width * 0.2, y: canvasRect.height * 0.7 },
+          holePosition: { x: canvasRect.width * 0.75, y: canvasRect.height * 0.35 },
+          greenRadius: 60,
+          fairwayWidth: 120,
+          obstacles: [] // No obstacles for practice
+        };
+
+        const ball = {
+          x: practiceHole.teePosition.x,
+          y: practiceHole.teePosition.y,
+          velocityX: 0,
+          velocityY: 0,
+          rotation: 0,
+          isMoving: false,
+          isAirborne: false,
+          inHole: false,
+          color: 'white'
+        };
+
+        this.gameEngine.gameState = {
+          currentHole: practiceHole,
+          round: {
+            roundId: 'tutorial',
+            startTime: Date.now(),
+            endTime: null,
+            currentHoleNumber: 0,
+            isComplete: false,
+            holeScores: [],
+            totalStrokes: 0,
+            totalPar: 0,
+            scoreRelativeToPar: 0,
+            currentStrokeCount: 0
+          },
+          ball: ball,
+          selectedClub: 'driver',
+          seed: Date.now(),
+          playerName: 'Student',
+          isTutorial: true
+        };
+
+        this.gameEngine.updateUI();
+        this.gameEngine.updateClubSelector();
+
+        // Hide menu, show game
+        document.getElementById('menu-overlay').classList.add('hidden');
+        document.getElementById('club-selector-container').style.display = 'block';
       },
 
       showStep() {
@@ -3338,14 +3429,36 @@
         document.getElementById('tutorial-progress').textContent =
           `Step ${this.currentStep + 1} of ${this.steps.length}`;
 
-        // Update button text for last step
+        // Update button visibility based on whether we're waiting for action
         const nextBtn = document.getElementById('tutorial-next-btn');
-        nextBtn.textContent = this.currentStep === this.steps.length - 1 ? "Let's Play!" : "Next";
+        const skipBtn = document.getElementById('tutorial-skip-btn');
+
+        if (step.waitForAction) {
+          nextBtn.style.display = 'none';
+          this.waitingForAction = true;
+        } else {
+          nextBtn.style.display = 'inline-block';
+          nextBtn.textContent = this.currentStep === this.steps.length - 1 ? "Start Game!" : "Next";
+          this.waitingForAction = false;
+        }
 
         // Handle highlighting
         this.unhighlightAll();
         if (step.highlight) {
           this.highlightElement(step.highlight);
+        }
+      },
+
+      // Called by game when player performs an action
+      onAction(actionType) {
+        if (!this.isActive || !this.waitingForAction) return;
+
+        const step = this.steps[this.currentStep];
+        if (step.action === actionType) {
+          // Action completed! Move to next step
+          setTimeout(() => {
+            this.nextStep();
+          }, actionType === 'holeComplete' ? 1500 : 500);
         }
       },
 
@@ -3368,12 +3481,21 @@
       complete() {
         this.isActive = false;
         this.currentStep = 0;
+        this.waitingForAction = false;
         document.getElementById('tutorial-overlay').classList.add('hidden');
+        document.getElementById('tutorial-next-btn').style.display = 'inline-block';
 
         // Mark tutorial as completed
         const settings = StorageManager.loadSettings();
         settings.tutorialCompleted = true;
         StorageManager.saveSettings(settings);
+
+        // Return to main menu
+        if (this.gameEngine) {
+          this.gameEngine.gameState = null;
+          document.getElementById('menu-overlay').classList.remove('hidden');
+          document.getElementById('club-selector-container').style.display = 'none';
+        }
       },
 
       highlightElement(id) {
@@ -3583,6 +3705,11 @@
         document.getElementById('current-club').textContent = club.name;
 
         this.updateClubSelector();
+
+        // Notify tutorial of club selection
+        if (TutorialManager.isActive) {
+          TutorialManager.onAction('selectClub');
+        }
       }
 
       updateClubSelector() {
@@ -3669,11 +3796,18 @@
           ScoreKeeper.recordStroke(this.gameState.round);
         }
 
-        // Check for random event trigger (streaker)
-        RandomEventManager.checkTrigger();
+        // Check for random event trigger (streaker) - not during tutorial
+        if (!this.gameState.isTutorial) {
+          RandomEventManager.checkTrigger();
+        }
+
+        // Notify tutorial of swing
+        if (TutorialManager.isActive) {
+          TutorialManager.onAction('swing');
+        }
 
         // Only save if ball is not in hole (prevents corrupted state on reload)
-        if (!this.gameState.ball.inHole && !this.holeCompleting) {
+        if (!this.gameState.ball.inHole && !this.holeCompleting && !this.gameState.isTutorial) {
           StorageManager.saveGameState(this.gameState);
         }
       }
@@ -3786,6 +3920,14 @@
         }
 
         this.holeCompleting = true;
+
+        // Notify tutorial of hole completion
+        if (TutorialManager.isActive) {
+          TutorialManager.onAction('holeComplete');
+          // Skip the normal hole complete flow for tutorial
+          this.holeCompleting = false;
+          return;
+        }
 
         const holeScore = ScoreKeeper.completeHole(round, hole);
 
@@ -4228,7 +4370,8 @@
       if (tutorialBtn) {
         tutorialBtn.addEventListener('click', () => {
           console.log('Tutorial button clicked');
-          TutorialManager.start();
+          gameEngine.start(); // Make sure game engine is running
+          TutorialManager.start(gameEngine);
         });
       }
 
@@ -4249,7 +4392,8 @@
       if (tutorialYesBtn) {
         tutorialYesBtn.addEventListener('click', () => {
           tutorialPromptOverlay.classList.add('hidden');
-          TutorialManager.start();
+          gameEngine.start(); // Make sure game engine is running
+          TutorialManager.start(gameEngine);
         });
       }
 
