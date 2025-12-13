@@ -3337,7 +3337,7 @@
         },
         {
           title: "Smart Choice!",
-          text: "Driver hits far (274 yds), Woods/Irons for mid-range, Wedge for short shots, and Putter on the green. Use the right club for the distance!",
+          text: "Driver hits farthest, Woods/Irons for mid-range, Wedge for short shots, and Putter on the green. Use the right club for the distance!",
           highlight: 'club-selector',
           action: null,
           waitForAction: false
@@ -4035,7 +4035,11 @@
         this.gameState.currentHole = hole;
         this.gameState.ball = this.createBall(hole, this.gameState.ballColor || 'white');
 
+        // Auto-select driver for the new hole's tee shot
+        this.gameState.selectedClub = 'driver';
+
         this.updateUI();
+        this.updateClubSelector();
 
         // Reset flag to allow next hole completion
         this.holeCompleting = false;
