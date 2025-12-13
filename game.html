@@ -72,6 +72,88 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    #wind-indicator {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      min-width: 80px;
+    }
+
+    #wind-indicator .wind-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    #wind-indicator .wind-arrow {
+      font-size: 28px;
+      line-height: 1;
+      transition: transform 0.3s ease;
+    }
+
+    #wind-indicator .wind-speed {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-top: 2px;
+    }
+
+    #wind-indicator.wind-calm .wind-arrow { color: #4CAF50; }
+    #wind-indicator.wind-light .wind-arrow { color: #8BC34A; }
+    #wind-indicator.wind-moderate .wind-arrow { color: #FFC107; }
+    #wind-indicator.wind-strong .wind-arrow { color: #FF9800; }
+    #wind-indicator.wind-extreme .wind-arrow { color: #f44336; }
+
+    /* Achievement notification popup */
+    #achievement-popup {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      padding: 15px 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      z-index: 2000;
+      transition: top 0.5s ease-out;
+      text-align: center;
+      min-width: 250px;
+    }
+
+    #achievement-popup.show {
+      top: 20px;
+    }
+
+    #achievement-popup .achievement-icon {
+      font-size: 40px;
+      margin-bottom: 5px;
+    }
+
+    #achievement-popup .achievement-title {
+      font-size: 14px;
+      color: #333;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #achievement-popup .achievement-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #000;
+      margin: 5px 0;
+    }
+
+    #achievement-popup .achievement-desc {
+      font-size: 12px;
+      color: #555;
+    }
+
     #distance-display {
       position: absolute;
       bottom: 20px;
@@ -1023,6 +1105,19 @@
 
     <div id="ball-state">🔴 Ready</div>
 
+    <div id="wind-indicator" class="hidden wind-calm">
+      <div class="wind-label">WIND</div>
+      <div class="wind-arrow">➤</div>
+      <div class="wind-speed">0 mph</div>
+    </div>
+
+    <div id="achievement-popup">
+      <div class="achievement-icon">🏆</div>
+      <div class="achievement-title">Achievement Unlocked!</div>
+      <div class="achievement-name"></div>
+      <div class="achievement-desc"></div>
+    </div>
+
     <div id="distance-display" class="hidden">
       <span class="label">Distance to Hole</span>
       <span id="distance-value">---</span>yd
@@ -1178,6 +1273,12 @@
       }
     }
 
+    // === Distance Conversion ===
+    // Scale factor: pixels to yards for realistic golf distances
+    // Driver max ~663px should be ~280 yards
+    // This gives realistic hole yardages (par 3: 185-220, par 4: 295-370, par 5: 440-480)
+    const PIXELS_TO_YARDS = 0.42;
+
     // === PhysicsEngine Module (T008, T016, T017, T018) ===
     const PhysicsEngine = {
       gravity: 980,
@@ -1221,6 +1322,11 @@
 
       updateBall(ball, deltaTime, obstacles) {
         if (!ball.isMoving) return;
+
+        // Apply wind force
+        const wind = WindSystem.getWindForce();
+        ball.velocityX += wind.x * deltaTime;
+        ball.velocityY += wind.y * deltaTime;
 
         // Apply friction (frame-rate independent: same slowdown regardless of FPS)
         const frictionFactor = Math.pow(this.friction, deltaTime * 60);
@@ -1283,6 +1389,8 @@
           ball.velocityX *= 0.3;
           ball.velocityY *= 0.3;
           ball.isMoving = ball.velocityX !== 0 || ball.velocityY !== 0;
+          // Track for achievements
+          AchievementManager.stats.hadSand = true;
         } else if (obstacle.type === 'water') {
           if (!ball.collisionSoundPlayed) {
             AudioManager.playLandSound('water');
@@ -1295,6 +1403,8 @@
             ball.velocityY = 0;
             ball.isMoving = false;
             ball.waterPenalty = true;
+            // Track for achievements
+            AchievementManager.stats.hadWater = true;
           }
         } else if (obstacle.type === 'tree' || obstacle.type === 'rock') {
           if (!ball.collisionSoundPlayed) {
@@ -1364,6 +1474,11 @@
           if (gameState.currentHole.obstacles) {
             this.drawObstacles(gameState.currentHole.obstacles);
           }
+
+          // Update and draw ball trail
+          BallTrail.update(gameState.ball);
+          BallTrail.draw(this.ctx);
+
           this.drawBall(gameState.ball);
 
           if (gameState.strikeFlash && gameState.strikeFlash.active) {
@@ -2186,6 +2301,363 @@
       }
     };
 
+    // === WindSystem Module ===
+    const WindSystem = {
+      direction: 0,      // Angle in radians (0 = right, PI/2 = down, PI = left, etc)
+      speed: 0,          // Wind speed in mph
+      gustTimer: 0,      // Timer for wind gusts
+      gustIntensity: 0,  // Current gust multiplier
+
+      // Generate new wind for a hole
+      generateWind(holeNumber) {
+        // Wind gets stronger on later holes
+        const baseSpeed = 2 + (holeNumber * 0.8);
+        const maxSpeed = Math.min(5 + holeNumber * 1.5, 25);
+
+        this.speed = baseSpeed + Math.random() * (maxSpeed - baseSpeed);
+        this.direction = Math.random() * Math.PI * 2;
+        this.gustTimer = 0;
+        this.gustIntensity = 0;
+
+        this.updateUI();
+      },
+
+      // Update wind (called each frame for gusts)
+      update(deltaTime) {
+        // Random gusts
+        this.gustTimer -= deltaTime;
+        if (this.gustTimer <= 0) {
+          this.gustTimer = 2 + Math.random() * 4; // Gust every 2-6 seconds
+          this.gustIntensity = Math.random() * 0.5; // Up to 50% stronger
+        }
+
+        // Decay gust
+        this.gustIntensity *= 0.95;
+      },
+
+      // Get wind force to apply to ball
+      getWindForce() {
+        const effectiveSpeed = this.speed * (1 + this.gustIntensity);
+        // Convert mph to pixels/second force (tuned for gameplay)
+        const force = effectiveSpeed * 3;
+
+        return {
+          x: Math.cos(this.direction) * force,
+          y: Math.sin(this.direction) * force
+        };
+      },
+
+      // Update the wind indicator UI
+      updateUI() {
+        const indicator = document.getElementById('wind-indicator');
+        if (!indicator) return;
+
+        indicator.classList.remove('hidden');
+
+        // Update arrow rotation (rotate to point in wind direction)
+        const arrow = indicator.querySelector('.wind-arrow');
+        const degrees = (this.direction * 180 / Math.PI);
+        arrow.style.transform = `rotate(${degrees}deg)`;
+
+        // Update speed text
+        const speedEl = indicator.querySelector('.wind-speed');
+        speedEl.textContent = `${Math.round(this.speed)} mph`;
+
+        // Update color class based on speed
+        indicator.classList.remove('wind-calm', 'wind-light', 'wind-moderate', 'wind-strong', 'wind-extreme');
+        if (this.speed < 5) {
+          indicator.classList.add('wind-calm');
+        } else if (this.speed < 10) {
+          indicator.classList.add('wind-light');
+        } else if (this.speed < 15) {
+          indicator.classList.add('wind-moderate');
+        } else if (this.speed < 20) {
+          indicator.classList.add('wind-strong');
+        } else {
+          indicator.classList.add('wind-extreme');
+        }
+      },
+
+      // Hide wind indicator
+      hide() {
+        const indicator = document.getElementById('wind-indicator');
+        if (indicator) indicator.classList.add('hidden');
+      }
+    };
+
+    // === BallTrail System ===
+    const BallTrail = {
+      positions: [],
+      maxLength: 20,
+      lastBallPos: null,
+
+      update(ball) {
+        if (!ball || !ball.isMoving) {
+          // Clear trail when ball stops
+          this.positions = [];
+          this.lastBallPos = null;
+          return;
+        }
+
+        // Only add position if ball moved enough
+        const minDist = 8;
+        if (this.lastBallPos) {
+          const dx = ball.x - this.lastBallPos.x;
+          const dy = ball.y - this.lastBallPos.y;
+          if (dx * dx + dy * dy < minDist * minDist) {
+            return;
+          }
+        }
+
+        this.positions.push({
+          x: ball.x,
+          y: ball.y,
+          age: 0,
+          color: ball.color || 'white'
+        });
+
+        // Trim to max length
+        if (this.positions.length > this.maxLength) {
+          this.positions.shift();
+        }
+
+        this.lastBallPos = { x: ball.x, y: ball.y };
+
+        // Age all positions
+        for (const pos of this.positions) {
+          pos.age++;
+        }
+      },
+
+      draw(ctx) {
+        if (this.positions.length < 2) return;
+
+        ctx.save();
+
+        for (let i = 0; i < this.positions.length; i++) {
+          const pos = this.positions[i];
+          const progress = i / this.positions.length;
+
+          // Fade out and shrink based on age
+          const alpha = progress * 0.6;
+          const radius = 4 + progress * 6;
+
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = pos.color === 'white' ? '#ffffff' : pos.color;
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      },
+
+      clear() {
+        this.positions = [];
+        this.lastBallPos = null;
+      }
+    };
+
+    // === Achievement System ===
+    const AchievementManager = {
+      achievements: {
+        // Scoring achievements
+        firstBirdie: { name: 'First Birdie!', desc: 'Score your first birdie', icon: '🐦', unlocked: false },
+        firstEagle: { name: 'Soaring Eagle', desc: 'Score an eagle or better', icon: '🦅', unlocked: false },
+        holeInOne: { name: 'ACE!', desc: 'Get a hole in one', icon: '🎯', unlocked: false },
+        parStreak: { name: 'Par for the Course', desc: 'Get par or better on 3 holes in a row', icon: '⭐', unlocked: false },
+        underPar: { name: 'Under Pressure', desc: 'Finish a round under par', icon: '🏆', unlocked: false },
+
+        // Progress achievements
+        firstHole: { name: 'Getting Started', desc: 'Complete your first hole', icon: '⛳', unlocked: false },
+        halfway: { name: 'Halfway There', desc: 'Complete 5 holes', icon: '🌟', unlocked: false },
+        fullRound: { name: 'Full Round', desc: 'Complete all 9 holes', icon: '🎉', unlocked: false },
+
+        // Special achievements
+        longDrive: { name: 'Big Hitter', desc: 'Hit a drive over 280 yards', icon: '💪', unlocked: false },
+        sandSave: { name: 'Sandy Save', desc: 'Get par after landing in a bunker', icon: '🏖️', unlocked: false },
+        waterRecovery: { name: 'Water Walker', desc: 'Get par after a water hazard', icon: '🌊', unlocked: false },
+
+        // Streak achievements
+        threePutts: { name: 'Putting Pro', desc: 'One-putt 3 greens in a round', icon: '🎱', unlocked: false },
+        noDouble: { name: 'Steady Eddie', desc: 'Complete a round with no double bogeys', icon: '🛡️', unlocked: false }
+      },
+
+      // Track stats for achievements
+      stats: {
+        parStreak: 0,
+        holesCompleted: 0,
+        onePutts: 0,
+        hadWater: false,
+        hadSand: false,
+        hasDoubleBogey: false,
+        longestDrive: 0
+      },
+
+      popupQueue: [],
+      isShowing: false,
+
+      init() {
+        // Load unlocked achievements from localStorage
+        const saved = localStorage.getItem('golf-achievements');
+        if (saved) {
+          try {
+            const unlocked = JSON.parse(saved);
+            for (const id of unlocked) {
+              if (this.achievements[id]) {
+                this.achievements[id].unlocked = true;
+              }
+            }
+          } catch (e) {
+            console.error('Failed to load achievements:', e);
+          }
+        }
+      },
+
+      resetRoundStats() {
+        this.stats.parStreak = 0;
+        this.stats.holesCompleted = 0;
+        this.stats.onePutts = 0;
+        this.stats.hadWater = false;
+        this.stats.hadSand = false;
+        this.stats.hasDoubleBogey = false;
+      },
+
+      unlock(achievementId) {
+        const achievement = this.achievements[achievementId];
+        if (!achievement || achievement.unlocked) return false;
+
+        achievement.unlocked = true;
+        this.saveToStorage();
+        this.queuePopup(achievement);
+        AudioManager.playAchievement();
+        return true;
+      },
+
+      queuePopup(achievement) {
+        this.popupQueue.push(achievement);
+        if (!this.isShowing) {
+          this.showNextPopup();
+        }
+      },
+
+      showNextPopup() {
+        if (this.popupQueue.length === 0) {
+          this.isShowing = false;
+          return;
+        }
+
+        this.isShowing = true;
+        const achievement = this.popupQueue.shift();
+
+        const popup = document.getElementById('achievement-popup');
+        popup.querySelector('.achievement-icon').textContent = achievement.icon;
+        popup.querySelector('.achievement-name').textContent = achievement.name;
+        popup.querySelector('.achievement-desc').textContent = achievement.desc;
+
+        popup.classList.add('show');
+
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => this.showNextPopup(), 500);
+        }, 3000);
+      },
+
+      saveToStorage() {
+        const unlocked = Object.keys(this.achievements)
+          .filter(id => this.achievements[id].unlocked);
+        localStorage.setItem('golf-achievements', JSON.stringify(unlocked));
+      },
+
+      // Called when a hole is completed
+      onHoleComplete(holeNumber, strokes, par, wasInWater, wasInSand, putts) {
+        const score = strokes - par;
+
+        // First hole
+        if (!this.achievements.firstHole.unlocked) {
+          this.unlock('firstHole');
+        }
+
+        this.stats.holesCompleted++;
+
+        // Halfway
+        if (this.stats.holesCompleted >= 5) {
+          this.unlock('halfway');
+        }
+
+        // Full round
+        if (this.stats.holesCompleted >= 9) {
+          this.unlock('fullRound');
+        }
+
+        // Hole in one
+        if (strokes === 1) {
+          this.unlock('holeInOne');
+        }
+
+        // Eagle or better
+        if (score <= -2) {
+          this.unlock('firstEagle');
+        }
+
+        // Birdie
+        if (score === -1) {
+          this.unlock('firstBirdie');
+        }
+
+        // Par streak
+        if (score <= 0) {
+          this.stats.parStreak++;
+          if (this.stats.parStreak >= 3) {
+            this.unlock('parStreak');
+          }
+        } else {
+          this.stats.parStreak = 0;
+        }
+
+        // Double bogey check
+        if (score >= 2) {
+          this.stats.hasDoubleBogey = true;
+        }
+
+        // One putt tracking
+        if (putts === 1) {
+          this.stats.onePutts++;
+          if (this.stats.onePutts >= 3) {
+            this.unlock('threePutts');
+          }
+        }
+
+        // Water/Sand recovery
+        if (wasInWater && score <= 0) {
+          this.unlock('waterRecovery');
+        }
+        if (wasInSand && score <= 0) {
+          this.unlock('sandSave');
+        }
+      },
+
+      // Called when a drive is hit
+      onDriveHit(distanceYards) {
+        if (distanceYards > this.stats.longestDrive) {
+          this.stats.longestDrive = distanceYards;
+        }
+        if (distanceYards >= 280) {
+          this.unlock('longDrive');
+        }
+      },
+
+      // Called when round is complete
+      onRoundComplete(totalScore) {
+        if (totalScore < 0) {
+          this.unlock('underPar');
+        }
+        if (!this.stats.hasDoubleBogey) {
+          this.unlock('noDouble');
+        }
+      }
+    };
+
     // === CourseGenerator Module (T026-T029) ===
     const CourseGenerator = {
       holeTemplates: null,
@@ -2482,9 +2954,8 @@
       },
 
       getAvailableClubs(isFirstStroke) {
-        if (isFirstStroke) {
-          return [this.clubs.driver];
-        }
+        // All clubs available on all shots (including tee shots)
+        // On par 3s, players should use irons, not driver
         return this.getAllClubs();
       },
 
@@ -2499,9 +2970,9 @@
       },
 
       getRecommendedClub(ball, holePosition) {
-        // Convert pixel distance to yards (same conversion as getMaxDistance)
+        // Convert pixel distance to yards
         const pixelDistance = PhysicsEngine.distance(ball, holePosition);
-        const distanceYards = pixelDistance * 1.09361;
+        const distanceYards = pixelDistance * PIXELS_TO_YARDS;
 
         // Get all clubs sorted by max distance (shortest first)
         const allClubs = ['putter', 'wedge', 'iron9', 'iron8', 'iron7', 'iron6', 'iron5', 'iron4', '5wood', '3wood', 'driver'];
@@ -2528,17 +2999,17 @@
         const stopThreshold = 5;
         const deltaTime = 1/60; // 60 FPS
 
-        // Simulate ball flight
+        // Simulate ball flight (in pixels)
         let velocityX = maxVelocity * club.maxPower;
-        let distance = 0;
+        let distancePixels = 0;
 
         while (Math.abs(velocityX) > stopThreshold) {
-          distance += velocityX * deltaTime;
+          distancePixels += velocityX * deltaTime;
           velocityX *= friction;
         }
 
-        // Convert meters to yards (1m = 1.09361yd)
-        return Math.round(distance * 1.09361);
+        // Convert pixels to yards
+        return Math.round(distancePixels * PIXELS_TO_YARDS);
       }
     };
 
@@ -2795,6 +3266,9 @@
       context: null,
       sounds: {},
       muted: false,
+      musicPlaying: false,
+      musicGain: null,
+      musicNodes: [],
 
       init() {
         try {
@@ -2817,6 +3291,103 @@
         source.buffer = buffer;
         source.connect(this.context.destination);
         source.start(0);
+      },
+
+      // Background music - chill golf course ambience
+      startBackgroundMusic() {
+        if (this.muted || !this.context || this.musicPlaying) return;
+
+        this.musicPlaying = true;
+
+        // Create master gain for music
+        this.musicGain = this.context.createGain();
+        this.musicGain.gain.value = 0.08; // Quiet background
+        this.musicGain.connect(this.context.destination);
+
+        // Peaceful chord progression (C - Am - F - G)
+        const chords = [
+          [261.63, 329.63, 392.00], // C major
+          [220.00, 261.63, 329.63], // A minor
+          [174.61, 220.00, 261.63], // F major
+          [196.00, 246.94, 293.66]  // G major
+        ];
+
+        let chordIndex = 0;
+
+        const playChord = () => {
+          if (!this.musicPlaying || this.muted) return;
+
+          const chord = chords[chordIndex];
+          const now = this.context.currentTime;
+
+          chord.forEach((freq, i) => {
+            const osc = this.context.createOscillator();
+            const gain = this.context.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.3);
+            gain.gain.linearRampToValueAtTime(0.15, now + 1.5);
+            gain.gain.linearRampToValueAtTime(0, now + 2.8);
+
+            osc.connect(gain);
+            gain.connect(this.musicGain);
+
+            osc.start(now);
+            osc.stop(now + 3);
+
+            this.musicNodes.push(osc);
+          });
+
+          chordIndex = (chordIndex + 1) % chords.length;
+
+          // Schedule next chord
+          this.musicTimeout = setTimeout(playChord, 3000);
+        };
+
+        // Add ambient bird chirps
+        const playBird = () => {
+          if (!this.musicPlaying || this.muted) return;
+
+          const now = this.context.currentTime;
+          const osc = this.context.createOscillator();
+          const gain = this.context.createGain();
+
+          osc.type = 'sine';
+          const baseFreq = 1800 + Math.random() * 800;
+
+          osc.frequency.setValueAtTime(baseFreq, now);
+          osc.frequency.linearRampToValueAtTime(baseFreq * 1.2, now + 0.05);
+          osc.frequency.linearRampToValueAtTime(baseFreq * 0.9, now + 0.1);
+
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.03, now + 0.02);
+          gain.gain.linearRampToValueAtTime(0, now + 0.15);
+
+          osc.connect(gain);
+          gain.connect(this.musicGain);
+
+          osc.start(now);
+          osc.stop(now + 0.2);
+
+          // Random interval for next bird
+          this.birdTimeout = setTimeout(playBird, 4000 + Math.random() * 8000);
+        };
+
+        playChord();
+        setTimeout(playBird, 2000);
+      },
+
+      stopBackgroundMusic() {
+        this.musicPlaying = false;
+        if (this.musicTimeout) clearTimeout(this.musicTimeout);
+        if (this.birdTimeout) clearTimeout(this.birdTimeout);
+        this.musicNodes.forEach(node => {
+          try { node.stop(); } catch (e) {}
+        });
+        this.musicNodes = [];
       },
 
       // === T096: Enhanced club hit sounds ===
@@ -2937,6 +3508,35 @@
 
         oscillator.start(this.context.currentTime);
         oscillator.stop(this.context.currentTime + 0.05);
+      },
+
+      // Achievement unlock sound - triumphant fanfare
+      playAchievement() {
+        if (this.muted || !this.context) return;
+
+        // Play a triumphant 3-note fanfare
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        const durations = [0.15, 0.15, 0.4];
+        let startTime = this.context.currentTime;
+
+        notes.forEach((freq, i) => {
+          const osc = this.context.createOscillator();
+          const gain = this.context.createGain();
+
+          osc.connect(gain);
+          gain.connect(this.context.destination);
+
+          osc.frequency.value = freq;
+          osc.type = 'triangle';
+
+          gain.gain.setValueAtTime(0.25, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, startTime + durations[i]);
+
+          osc.start(startTime);
+          osc.stop(startTime + durations[i]);
+
+          startTime += durations[i] * 0.7; // Slight overlap
+        });
       },
 
       // === T099: Hole completion jingle ===
@@ -3118,255 +3718,397 @@
 
     // === RandomEventManager Module (T108-T115: Random Events & Humor) ===
     const RandomEventManager = {
-      streaker: null,
+      activeEvent: null,
       cooldownTimer: 0,
-      minCooldown: 8, // Minimum seconds between events
-      triggerChance: 0.25, // 25% chance per stroke check
+      minCooldown: 8,
+      triggerChance: 0.25,
 
-      // Streaker configuration
-      streakerConfig: {
-        speed: 600, // pixels per second
-        size: 40,
-        color: '#FFD6B3', // Skin tone silhouette
-        trailColor: 'rgba(255, 214, 179, 0.3)'
+      // Event types with their configs
+      eventTypes: ['streaker', 'golfCart', 'ufo', 'squirrel'],
+
+      configs: {
+        streaker: { speed: 600, size: 40, color: '#FFD6B3', warning: 'STREAKER INCOMING!' },
+        golfCart: { speed: 450, size: 60, color: '#FFFFFF', warning: 'RUNAWAY GOLF CART!' },
+        ufo: { speed: 200, size: 50, color: '#88FF88', warning: '👽 UFO SIGHTING!' },
+        squirrel: { speed: 800, size: 25, color: '#8B4513', warning: 'SQUIRREL ATTACK!' }
       },
 
       reset() {
-        this.streaker = null;
+        this.activeEvent = null;
         this.cooldownTimer = 0;
       },
 
-      // Check if we should trigger an event (called after each stroke)
       checkTrigger() {
-        // Don't trigger during cooldown
         if (this.cooldownTimer > 0) return false;
+        if (this.activeEvent) return false;
 
-        // Don't trigger if streaker already active
-        if (this.streaker) return false;
-
-        // Random chance to trigger
         if (Math.random() < this.triggerChance) {
-          this.spawnStreaker();
+          // Pick random event type
+          const eventType = this.eventTypes[Math.floor(Math.random() * this.eventTypes.length)];
+          this.spawnEvent(eventType);
           return true;
         }
         return false;
       },
 
-      spawnStreaker() {
+      spawnEvent(type) {
         const canvas = document.getElementById('game-canvas');
         const height = canvas.height;
         const width = canvas.width;
+        const config = this.configs[type];
 
-        // Randomly choose direction (left-to-right or right-to-left)
         const goingRight = Math.random() > 0.5;
+        let yPos = height * 0.5;
 
-        // Vertical position - center of screen
-        const yPos = height * 0.5;
+        // UFO flies higher, squirrel lower
+        if (type === 'ufo') yPos = height * 0.25;
+        if (type === 'squirrel') yPos = height * 0.7;
 
-        this.streaker = {
-          x: goingRight ? -60 : width + 60,
+        this.activeEvent = {
+          type: type,
+          x: goingRight ? -80 : width + 80,
           y: yPos,
-          targetX: goingRight ? width + 60 : -60,
+          targetX: goingRight ? width + 80 : -80,
           direction: goingRight ? 1 : -1,
           animationPhase: 0,
           trail: [],
-          warningTimer: 1.0, // Show warning for 1 second before running
-          started: false
+          warningTimer: 1.0,
+          started: false,
+          config: config
         };
 
-        // Set cooldown
         this.cooldownTimer = this.minCooldown + Math.random() * 10;
       },
 
       update(deltaTime) {
-        // Update cooldown
         if (this.cooldownTimer > 0) {
           this.cooldownTimer -= deltaTime;
         }
 
-        // Update streaker if active
-        if (this.streaker) {
-          const s = this.streaker;
-          const config = this.streakerConfig;
+        if (this.activeEvent) {
+          const e = this.activeEvent;
 
-          // Warning phase - show text before streaker runs
-          if (s.warningTimer > 0) {
-            s.warningTimer -= deltaTime;
-            if (s.warningTimer <= 0) {
-              s.started = true;
-              // Play scream when streaker starts running
-              AudioManager.playStreakerSound();
+          // Warning phase
+          if (e.warningTimer > 0) {
+            e.warningTimer -= deltaTime;
+            if (e.warningTimer <= 0) {
+              e.started = true;
+              if (e.type === 'streaker') AudioManager.playStreakerSound();
             }
-            return; // Don't move streaker during warning
+            return;
           }
 
-          // Move streaker
-          s.x += config.speed * s.direction * deltaTime;
+          // Move event
+          e.x += e.config.speed * e.direction * deltaTime;
+          e.animationPhase += deltaTime * 15;
 
-          // Animate running (bobbing motion)
-          s.animationPhase += deltaTime * 15;
+          // Trail
+          e.trail.push({ x: e.x, y: e.y, alpha: 1 });
+          if (e.trail.length > 8) e.trail.shift();
+          for (const t of e.trail) t.alpha *= 0.85;
 
-          // Add trail position
-          s.trail.push({ x: s.x, y: s.y, alpha: 1 });
-
-          // Limit trail length
-          if (s.trail.length > 8) {
-            s.trail.shift();
-          }
-
-          // Fade trail
-          for (const t of s.trail) {
-            t.alpha *= 0.85;
-          }
-
-          // Check if streaker has exited screen
-          if ((s.direction > 0 && s.x > s.targetX) ||
-              (s.direction < 0 && s.x < s.targetX)) {
-            this.streaker = null;
+          // Check exit
+          if ((e.direction > 0 && e.x > e.targetX) ||
+              (e.direction < 0 && e.x < e.targetX)) {
+            this.activeEvent = null;
           }
         }
       },
 
       draw(ctx) {
-        if (!this.streaker) return;
+        if (!this.activeEvent) return;
 
-        const s = this.streaker;
-        const config = this.streakerConfig;
+        const e = this.activeEvent;
         const canvas = ctx.canvas;
 
-        // During warning phase, show big text
-        if (s.warningTimer > 0) {
+        // Warning phase
+        if (e.warningTimer > 0) {
           ctx.save();
-
-          // Pulsing effect
-          const pulse = 1 + Math.sin(s.warningTimer * 15) * 0.1;
-
-          // Big bold text
-          ctx.font = `bold ${60 * pulse}px Arial`;
+          const pulse = 1 + Math.sin(e.warningTimer * 15) * 0.1;
+          ctx.font = `bold ${50 * pulse}px Arial`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-
-          // Text shadow
           ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-          ctx.fillText('STREAKER INCOMING!', canvas.width / 2 + 3, canvas.height / 2 + 3);
-
-          // Main text - red/orange gradient feel
+          ctx.fillText(e.config.warning, canvas.width / 2 + 3, canvas.height / 2 + 3);
           ctx.fillStyle = '#FF4444';
-          ctx.fillText('STREAKER INCOMING!', canvas.width / 2, canvas.height / 2);
-
-          // White stroke for visibility
+          ctx.fillText(e.config.warning, canvas.width / 2, canvas.height / 2);
           ctx.strokeStyle = '#FFFFFF';
           ctx.lineWidth = 2;
-          ctx.strokeText('STREAKER INCOMING!', canvas.width / 2, canvas.height / 2);
-
+          ctx.strokeText(e.config.warning, canvas.width / 2, canvas.height / 2);
           ctx.restore();
-          return; // Don't draw streaker yet
+          return;
         }
 
-        // Draw trail first
-        for (const t of s.trail) {
+        // Draw trail
+        for (const t of e.trail) {
           ctx.save();
-          ctx.globalAlpha = t.alpha * 0.5;
-          ctx.fillStyle = config.trailColor;
+          ctx.globalAlpha = t.alpha * 0.4;
+          ctx.fillStyle = e.config.color;
           ctx.beginPath();
-          ctx.ellipse(t.x, t.y, config.size * 0.3, config.size * 0.6, 0, 0, Math.PI * 2);
+          ctx.arc(t.x, t.y, e.config.size * 0.3, 0, Math.PI * 2);
           ctx.fill();
           ctx.restore();
         }
 
-        // Running animation - bobbing up/down + arm/leg motion
-        const bob = Math.sin(s.animationPhase) * 5;
-        const armSwing = Math.sin(s.animationPhase) * 0.5;
-        const legSwing = Math.sin(s.animationPhase + Math.PI) * 0.4;
-
         ctx.save();
-        ctx.translate(s.x, s.y + bob);
+        const bob = Math.sin(e.animationPhase) * 5;
+        ctx.translate(e.x, e.y + (e.type !== 'ufo' ? bob : 0));
+        if (e.direction < 0) ctx.scale(-1, 1);
 
-        // Flip if going left
-        if (s.direction < 0) {
-          ctx.scale(-1, 1);
+        // Draw based on type
+        if (e.type === 'streaker') {
+          this.drawStreaker(ctx, e);
+        } else if (e.type === 'golfCart') {
+          this.drawGolfCart(ctx, e);
+        } else if (e.type === 'ufo') {
+          this.drawUFO(ctx, e);
+        } else if (e.type === 'squirrel') {
+          this.drawSquirrel(ctx, e);
         }
 
-        // Draw silhouette style figure (PG-friendly!)
-        const bodyColor = config.color;
-        const outlineColor = '#CC9966';
+        ctx.restore();
+      },
 
-        // Body (oval)
-        ctx.fillStyle = bodyColor;
-        ctx.strokeStyle = outlineColor;
+      drawStreaker(ctx, e) {
+        const size = e.config.size;
+        const color = e.config.color;
+        const armSwing = Math.sin(e.animationPhase) * 0.5;
+        const legSwing = Math.sin(e.animationPhase + Math.PI) * 0.4;
+
+        // Body
+        ctx.fillStyle = color;
+        ctx.strokeStyle = '#CC9966';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.ellipse(0, 0, config.size * 0.25, config.size * 0.4, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, size * 0.25, size * 0.4, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
         // Head
         ctx.beginPath();
-        ctx.arc(0, -config.size * 0.55, config.size * 0.2, 0, Math.PI * 2);
+        ctx.arc(0, -size * 0.55, size * 0.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        // Arms (swinging)
+        // Arms & legs
         ctx.lineWidth = 6;
         ctx.lineCap = 'round';
-        ctx.strokeStyle = bodyColor;
+        ctx.strokeStyle = color;
 
-        // Back arm
         ctx.save();
         ctx.rotate(armSwing - 0.3);
         ctx.beginPath();
-        ctx.moveTo(0, -config.size * 0.2);
-        ctx.lineTo(-config.size * 0.35, config.size * 0.1);
+        ctx.moveTo(0, -size * 0.2);
+        ctx.lineTo(-size * 0.35, size * 0.1);
         ctx.stroke();
         ctx.restore();
 
-        // Front arm
         ctx.save();
         ctx.rotate(-armSwing + 0.3);
         ctx.beginPath();
-        ctx.moveTo(0, -config.size * 0.2);
-        ctx.lineTo(config.size * 0.35, config.size * 0.1);
+        ctx.moveTo(0, -size * 0.2);
+        ctx.lineTo(size * 0.35, size * 0.1);
         ctx.stroke();
         ctx.restore();
 
-        // Legs (running)
-        ctx.strokeStyle = bodyColor;
-
-        // Back leg
         ctx.save();
         ctx.rotate(legSwing);
         ctx.beginPath();
-        ctx.moveTo(0, config.size * 0.25);
-        ctx.lineTo(-config.size * 0.15, config.size * 0.6);
+        ctx.moveTo(0, size * 0.25);
+        ctx.lineTo(-size * 0.15, size * 0.6);
         ctx.stroke();
         ctx.restore();
 
-        // Front leg
         ctx.save();
         ctx.rotate(-legSwing);
         ctx.beginPath();
-        ctx.moveTo(0, config.size * 0.25);
-        ctx.lineTo(config.size * 0.15, config.size * 0.6);
+        ctx.moveTo(0, size * 0.25);
+        ctx.lineTo(size * 0.15, size * 0.6);
         ctx.stroke();
         ctx.restore();
 
-        // Funny detail - wild hair
+        // Wild hair
         ctx.strokeStyle = '#8B4513';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(-config.size * 0.1, -config.size * 0.7);
-        ctx.lineTo(-config.size * 0.2, -config.size * 0.85);
-        ctx.moveTo(0, -config.size * 0.75);
-        ctx.lineTo(0, -config.size * 0.9);
-        ctx.moveTo(config.size * 0.1, -config.size * 0.7);
-        ctx.lineTo(config.size * 0.15, -config.size * 0.85);
+        ctx.moveTo(-size * 0.1, -size * 0.7);
+        ctx.lineTo(-size * 0.2, -size * 0.85);
+        ctx.moveTo(0, -size * 0.75);
+        ctx.lineTo(0, -size * 0.9);
         ctx.stroke();
+      },
 
+      drawGolfCart(ctx, e) {
+        const size = e.config.size;
+
+        // Cart body
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+
+        // Main body
+        ctx.fillRect(-size * 0.5, -size * 0.3, size, size * 0.5);
+        ctx.strokeRect(-size * 0.5, -size * 0.3, size, size * 0.5);
+
+        // Roof
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(-size * 0.45, -size * 0.6, size * 0.9, size * 0.3);
+
+        // Wheels (spinning)
+        ctx.fillStyle = '#333';
+        const wheelSpin = e.animationPhase * 2;
+        [-size * 0.35, size * 0.35].forEach(wx => {
+          ctx.beginPath();
+          ctx.arc(wx, size * 0.2, size * 0.15, 0, Math.PI * 2);
+          ctx.fill();
+          // Spokes
+          ctx.strokeStyle = '#666';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 4; i++) {
+            const angle = wheelSpin + i * Math.PI / 2;
+            ctx.beginPath();
+            ctx.moveTo(wx, size * 0.2);
+            ctx.lineTo(wx + Math.cos(angle) * size * 0.12, size * 0.2 + Math.sin(angle) * size * 0.12);
+            ctx.stroke();
+          }
+        });
+
+        // Driver (panicked)
+        ctx.fillStyle = '#FFD6B3';
+        ctx.beginPath();
+        ctx.arc(0, -size * 0.15, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Panicked expression
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(-size * 0.05, -size * 0.18, 3, 0, Math.PI * 2);
+        ctx.arc(size * 0.05, -size * 0.18, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Open mouth (screaming)
+        ctx.beginPath();
+        ctx.ellipse(0, -size * 0.08, 5, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+      },
+
+      drawUFO(ctx, e) {
+        const size = e.config.size;
+        const hover = Math.sin(e.animationPhase * 0.5) * 3;
+
+        ctx.translate(0, hover);
+
+        // Beam
+        ctx.fillStyle = 'rgba(136, 255, 136, 0.2)';
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.2, size * 0.2);
+        ctx.lineTo(size * 0.2, size * 0.2);
+        ctx.lineTo(size * 0.5, size * 1.2);
+        ctx.lineTo(-size * 0.5, size * 1.2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Saucer bottom
+        ctx.fillStyle = '#666';
+        ctx.beginPath();
+        ctx.ellipse(0, size * 0.1, size * 0.6, size * 0.15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Saucer top
+        ctx.fillStyle = '#88FF88';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size * 0.5, size * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dome
+        ctx.fillStyle = 'rgba(150, 255, 150, 0.7)';
+        ctx.beginPath();
+        ctx.arc(0, -size * 0.1, size * 0.25, Math.PI, 0);
+        ctx.fill();
+
+        // Lights (blinking)
+        const blink = Math.sin(e.animationPhase * 3) > 0;
+        ctx.fillStyle = blink ? '#FF0' : '#F80';
+        [-size * 0.35, 0, size * 0.35].forEach(lx => {
+          ctx.beginPath();
+          ctx.arc(lx, size * 0.05, 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Alien eyes
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.08, -size * 0.15, 4, 6, 0, 0, Math.PI * 2);
+        ctx.ellipse(size * 0.08, -size * 0.15, 4, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      },
+
+      drawSquirrel(ctx, e) {
+        const size = e.config.size;
+        const legMove = Math.sin(e.animationPhase * 2) * 0.3;
+
+        // Body
+        ctx.fillStyle = e.config.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size * 0.4, size * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(size * 0.35, -size * 0.1, size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ears
+        ctx.beginPath();
+        ctx.arc(size * 0.3, -size * 0.3, size * 0.08, 0, Math.PI * 2);
+        ctx.arc(size * 0.45, -size * 0.28, size * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fluffy tail
+        ctx.beginPath();
+        ctx.arc(-size * 0.5, -size * 0.3, size * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eye
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(size * 0.42, -size * 0.12, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Legs (running fast!)
+        ctx.strokeStyle = e.config.color;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+
+        // Front legs
+        ctx.save();
+        ctx.rotate(legMove);
+        ctx.beginPath();
+        ctx.moveTo(size * 0.2, size * 0.15);
+        ctx.lineTo(size * 0.25, size * 0.35);
+        ctx.stroke();
         ctx.restore();
+
+        // Back legs
+        ctx.save();
+        ctx.rotate(-legMove);
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.2, size * 0.15);
+        ctx.lineTo(-size * 0.25, size * 0.35);
+        ctx.stroke();
+        ctx.restore();
+
+        // Acorn in mouth
+        ctx.fillStyle = '#DEB887';
+        ctx.beginPath();
+        ctx.ellipse(size * 0.55, -size * 0.05, size * 0.1, size * 0.08, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(size * 0.5, -size * 0.15, size * 0.08, size * 0.06);
       },
 
       isActive() {
-        return this.streaker !== null;
+        return this.activeEvent !== null;
       }
     };
 
@@ -3381,35 +4123,35 @@
           waitForAction: false
         },
         {
-          title: "Step 1: The Tee Shot",
-          text: "Your FIRST shot of every hole must use the Driver - it's the golf rule! Notice the Driver is already selected. Now drag BACKWARD from the ball and release to shoot FORWARD!",
+          title: "Step 1: Choose Your Club",
+          text: "The GLOWING club in your bag is recommended for the distance. On short holes like par 3s, use irons instead of driver! You can change clubs anytime.",
+          highlight: 'club-selector',
+          action: null,
+          waitForAction: false
+        },
+        {
+          title: "Step 2: The Tee Shot",
+          text: "Now drag BACKWARD from the ball and release to shoot FORWARD! The longer you drag, the more power.",
           highlight: 'game-canvas',
           action: 'swing',
           waitForAction: true
         },
         {
-          title: "Nice Drive!",
-          text: "Great job! The ball moves opposite to your drag direction. The longer you drag, the more power!",
+          title: "Nice Shot!",
+          text: "Great job! The ball moves opposite to your drag direction. Notice how the recommended club changed based on your new distance.",
           highlight: null,
           action: null,
           waitForAction: false
         },
         {
-          title: "Step 2: Choose Your Club",
-          text: "After your tee shot, you can pick ANY club! Tap a different club in the bag below. The GLOWING one is recommended for your distance.",
+          title: "Step 3: Switch Clubs",
+          text: "Tap a different club to select it. Driver hits farthest, Woods/Irons for mid-range, Wedge for short shots, Putter on the green.",
           highlight: 'club-selector',
           action: 'selectClub',
           waitForAction: true
         },
         {
-          title: "Smart Choice!",
-          text: "Driver hits farthest, Woods/Irons for mid-range, Wedge for short shots, and Putter on the green. Use the right club for the distance!",
-          highlight: 'club-selector',
-          action: null,
-          waitForAction: false
-        },
-        {
-          title: "Step 3: Sink the Ball!",
+          title: "Step 4: Sink the Ball!",
           text: "Keep hitting until you get the ball in the hole! Watch the distance display and switch clubs as needed.",
           highlight: null,
           action: 'holeComplete',
@@ -3417,7 +4159,7 @@
         },
         {
           title: "Hole Complete!",
-          text: "Awesome! Remember: First shot = Driver only, then switch clubs based on distance. Now you're ready for the real game!",
+          text: "Awesome! Remember: Choose the right club for each shot based on distance. The glowing club is your best choice. Now you're ready for the real game!",
           highlight: null,
           action: null,
           waitForAction: false
@@ -3459,6 +4201,9 @@
         // Use the engine's createBall method for proper ball setup
         const ball = this.gameEngine.createBall(practiceHole, 'white');
 
+        // Get recommended club for the tutorial hole distance
+        const recommendedClub = ClubSystem.getRecommendedClub(ball, practiceHole.holePosition);
+
         this.gameEngine.gameState = {
           currentHole: practiceHole,
           round: {
@@ -3474,7 +4219,7 @@
             currentStrokeCount: 0
           },
           ball: ball,
-          selectedClub: 'driver',
+          selectedClub: recommendedClub,
           seed: 12345,
           playerName: 'Student',
           isTutorial: true
@@ -3630,6 +4375,9 @@
 
         const ball = this.createBall(hole, ballColor);
 
+        // Get recommended club for the tee shot based on hole distance
+        const recommendedClub = ClubSystem.getRecommendedClub(ball, hole.holePosition);
+
         this.gameState = {
           currentHole: hole,
           round: {
@@ -3645,7 +4393,7 @@
             currentStrokeCount: 0
           },
           ball: ball,
-          selectedClub: 'driver',
+          selectedClub: recommendedClub,
           seed: usedSeed,
           playerName: playerName,
           ballColor: ballColor
@@ -3656,6 +4404,15 @@
 
         // Reset random events for new round
         RandomEventManager.reset();
+
+        // Reset achievement stats for new round
+        AchievementManager.resetRoundStats();
+
+        // Generate wind for hole 1
+        WindSystem.generateWind(1);
+
+        // Start background music
+        AudioManager.startBackgroundMusic();
 
         await StorageManager.clearGameState();
       }
@@ -3741,8 +4498,8 @@
         const club = ClubSystem.getClub(this.gameState.selectedClub);
         document.getElementById('current-club').textContent = club.name;
 
-        // Convert distance from meters to yards (1m = 1.09361yd)
-        const distance = Math.round(this.gameState.ball.distanceFromHole * 1.09361);
+        // Convert distance from pixels to yards
+        const distance = Math.round(this.gameState.ball.distanceFromHole * PIXELS_TO_YARDS);
         document.getElementById('distance-to-hole').textContent = distance;
 
         // Update real-time distance display in lower right
@@ -3824,7 +4581,7 @@
             slot.classList.add('selected');
           }
 
-          if (club.id === recommendedClub && !isFirstStroke) {
+          if (club.id === recommendedClub) {
             slot.classList.add('recommended');
           }
 
@@ -3846,6 +4603,12 @@
         if (!this.gameState || !this.gameState.ball) return;
         if (this.gameState.ball.isMoving) return;
         if (this.gameState.round.isComplete) return; // Prevent strokes after round ends
+
+        // Track tee shot position for long drive achievement
+        const isTeeShot = this.gameState.round.currentStrokeCount === 0;
+        if (isTeeShot) {
+          this.gameState.ball.teePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
+        }
 
         this.gameState.ball.lastSafePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
         this.gameState.ball.waterPenalty = false;
@@ -3928,6 +4691,9 @@
           // Update confetti particles
           ConfettiSystem.update(deltaTime);
 
+          // Update wind gusts
+          WindSystem.update(deltaTime);
+
           // Update random events (streaker)
           RandomEventManager.update(deltaTime);
 
@@ -3946,7 +4712,7 @@
         this.ballWasMoving = ball.isMoving;
 
         // Update distance display in real-time
-        const distance = Math.round(ball.distanceFromHole * 1.09361); // Convert to yards
+        const distance = Math.round(ball.distanceFromHole * PIXELS_TO_YARDS); // Convert to yards
         const distanceValue = document.getElementById('distance-value');
         if (distanceValue) {
           distanceValue.textContent = distance;
@@ -3967,6 +4733,16 @@
 
           if (wasMoving && !ball.isMoving) {
             this.updateClubSelector();
+
+            // Check for long drive achievement (after tee shot)
+            if (ball.teePosition && this.gameState.round.currentStrokeCount === 1) {
+              const dx = ball.x - ball.teePosition.x;
+              const dy = ball.y - ball.teePosition.y;
+              const distancePixels = Math.sqrt(dx * dx + dy * dy);
+              const distanceYards = Math.round(distancePixels * PIXELS_TO_YARDS);
+              AchievementManager.onDriveHit(distanceYards);
+              ball.teePosition = null; // Clear after checking
+            }
           }
         }
       }
@@ -4000,6 +4776,20 @@
         this.updateRoundProgress();
 
         const scoreName = ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
+
+        // Notify achievement system
+        AchievementManager.onHoleComplete(
+          hole.holeNumber,
+          holeScore.strokes,
+          hole.par,
+          AchievementManager.stats.hadWater,
+          AchievementManager.stats.hadSand,
+          0 // putts not tracked
+        );
+
+        // Reset hazard tracking for next hole
+        AchievementManager.stats.hadWater = false;
+        AchievementManager.stats.hadSand = false;
 
         // Spawn confetti at hole position for any completion
         const holeX = hole.holePosition.x;
@@ -4057,6 +4847,8 @@
           if (isLastHole) {
             round.isComplete = true;
             round.endTime = Date.now();
+            // Notify achievement system of round completion
+            AchievementManager.onRoundComplete(round.scoreRelativeToPar);
             this.showRoundSummary();
           } else {
             this.advanceToNextHole();
@@ -4101,8 +4893,12 @@
         this.gameState.currentHole = hole;
         this.gameState.ball = this.createBall(hole, this.gameState.ballColor || 'white');
 
-        // Auto-select driver for the new hole's tee shot
-        this.gameState.selectedClub = 'driver';
+        // Auto-select recommended club for the new hole's tee shot based on distance
+        const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, hole.holePosition);
+        this.gameState.selectedClub = recommendedClub;
+
+        // Generate new wind for this hole
+        WindSystem.generateWind(round.currentHoleNumber);
 
         this.updateUI();
         this.updateClubSelector();
@@ -4304,6 +5100,7 @@
       }
 
       AudioManager.init();
+      AchievementManager.init();
 
       // Add click sound to all menu buttons
       document.addEventListener('click', (e) => {
