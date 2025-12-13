@@ -327,20 +327,24 @@
     }
 
     .menu-button {
-      padding: 16px 48px;
+      padding: 18px 52px;
       margin: 10px;
-      background: #4CAF50;
+      background: linear-gradient(to bottom, #4CAF50, #3d8b40);
       color: white;
-      border: none;
+      border: 3px solid #2d6b30;
       border-radius: 12px;
-      font-size: 24px;
+      font-size: 26px;
       cursor: pointer;
-      font-weight: 700;
-      transition: background 0.2s;
+      font-weight: 800;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
 
     .menu-button:active {
-      background: #45a049;
+      background: linear-gradient(to bottom, #3d8b40, #2d6b30);
+      transform: translateY(2px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
     .hidden {
