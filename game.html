@@ -1662,18 +1662,47 @@
     }
 
     // === Distance Conversion ===
-    // Scale factor: pixels to yards for realistic golf distances
-    // Driver max ~663px should be ~280 yards
-    // This gives realistic hole yardages (par 3: 185-220, par 4: 295-370, par 5: 440-480)
-    const PIXELS_TO_YARDS = 0.42;
+    // ScreenScale manages consistent yardage across all screen sizes
+    // Holes are defined in YARDS and scaled to fit the screen
+    const ScreenScale = {
+      pixelsPerYard: 1, // Will be calculated based on screen size
+
+      // Initialize scale based on canvas size
+      // Longest hole (par 5) is ~480 yards, should use ~85% of screen width
+      init(canvasWidth) {
+        const longestHoleYards = 480;
+        const usableWidth = canvasWidth * 0.85; // Leave margins
+        this.pixelsPerYard = usableWidth / longestHoleYards;
+      },
+
+      // Convert yards to pixels
+      yardsToPixels(yards) {
+        return yards * this.pixelsPerYard;
+      },
+
+      // Convert pixels to yards
+      pixelsToYards(pixels) {
+        return pixels / this.pixelsPerYard;
+      }
+    };
+
+    // Legacy constant for backwards compatibility (will be overwritten by ScreenScale)
+    let PIXELS_TO_YARDS = 0.42;
 
     // === PhysicsEngine Module (T008, T016, T017, T018) ===
     const PhysicsEngine = {
       gravity: 980,
       friction: 0.98,
       airResistance: 0.995,
-      stopThreshold: 5,
+      baseStopThreshold: 5,
       holeRadius: 15,
+
+      // Scaled stop threshold based on screen size
+      get stopThreshold() {
+        const basePixelsPerYard = 1.4;
+        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
+        return this.baseStopThreshold * Math.max(0.5, scaleFactor);
+      },
 
       add(v1, v2) {
         return { x: v1.x + v2.x, y: v1.y + v2.y };
@@ -1700,7 +1729,14 @@
       },
 
       applySwing(ball, swingVector) {
-        const maxVelocity = 800;
+        // Scale max velocity based on screen size
+        // Driver at 100% power should travel ~280 yards
+        // This formula gives consistent yardage across all screen sizes
+        const baseMaxVelocity = 800; // Base velocity for reference screen
+        const basePixelsPerYard = 1.4; // Reference: 1120px screen / 800 velocity ≈ 280 yards
+        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
+        const maxVelocity = baseMaxVelocity * scaleFactor;
+
         ball.velocityX = -Math.cos(swingVector.angle) * swingVector.power * maxVelocity;
         ball.velocityY = -Math.sin(swingVector.angle) * swingVector.power * maxVelocity;
         ball.isAirborne = true;
@@ -3103,32 +3139,46 @@
       },
 
       defineHoleTemplates() {
+        // Distances are now in YARDS (real golf distances)
+        // Par 3: 150-220 yards, Par 4: 300-450 yards, Par 5: 450-550 yards
         return [
-          { holeNumber: 1, par: 3, length: 'short', distance: 525 },
-          { holeNumber: 2, par: 4, length: 'medium', distance: 788 },
-          { holeNumber: 3, par: 3, length: 'short', distance: 438 },
-          { holeNumber: 4, par: 5, length: 'long', distance: 1050 },
-          { holeNumber: 5, par: 4, length: 'medium', distance: 700 },
-          { holeNumber: 6, par: 4, length: 'medium', distance: 875 },
-          { holeNumber: 7, par: 3, length: 'short', distance: 490 },
-          { holeNumber: 8, par: 5, length: 'long', distance: 1138 },
-          { holeNumber: 9, par: 4, length: 'medium', distance: 840 }
+          { holeNumber: 1, par: 3, length: 'short', distanceYards: 185 },
+          { holeNumber: 2, par: 4, length: 'medium', distanceYards: 340 },
+          { holeNumber: 3, par: 3, length: 'short', distanceYards: 165 },
+          { holeNumber: 4, par: 5, length: 'long', distanceYards: 480 },
+          { holeNumber: 5, par: 4, length: 'medium', distanceYards: 295 },
+          { holeNumber: 6, par: 4, length: 'medium', distanceYards: 370 },
+          { holeNumber: 7, par: 3, length: 'short', distanceYards: 200 },
+          { holeNumber: 8, par: 5, length: 'long', distanceYards: 465 },
+          { holeNumber: 9, par: 4, length: 'medium', distanceYards: 355 }
         ];
       },
 
       generateHole(holeNumber, canvasWidth, canvasHeight) {
         const template = this.holeTemplates[holeNumber - 1];
 
-        const teeX = 100;
+        // Initialize screen scale if not already done
+        ScreenScale.init(canvasWidth);
+        // Update legacy constant for backwards compatibility
+        PIXELS_TO_YARDS = 1 / ScreenScale.pixelsPerYard;
+
+        // Convert yards to pixels for positioning
+        const distancePixels = ScreenScale.yardsToPixels(template.distanceYards);
+
+        // Scale tee position margin based on screen size
+        const teeMargin = Math.max(50, canvasWidth * 0.05);
+        const teeX = teeMargin;
         const teeY = canvasHeight / 2 + this.rng.nextInt(-50, 50);
 
-        const greenX = Math.min(teeX + template.distance, canvasWidth - 150);
+        // Green position based on yardage
+        const greenX = Math.min(teeX + distancePixels, canvasWidth - teeMargin);
         const greenY = canvasHeight / 2 + this.rng.nextInt(-100, 100);
 
         const hole = {
           holeNumber: template.holeNumber,
           par: template.par,
           length: template.length,
+          distanceYards: template.distanceYards, // Store actual yardage
           teePosition: { x: teeX, y: teeY },
           greenPosition: { x: greenX, y: greenY },
           holePosition: { x: greenX, y: greenY },
@@ -3428,9 +3478,15 @@
       // Calculate max distance for a club at 100% power (in yards)
       getMaxDistance(clubId) {
         const club = this.getClub(clubId);
-        const maxVelocity = 800;
+
+        // Use scaled velocity just like applySwing does
+        const baseMaxVelocity = 800;
+        const basePixelsPerYard = 1.4;
+        const scaleFactor = ScreenScale.pixelsPerYard / basePixelsPerYard;
+        const maxVelocity = baseMaxVelocity * scaleFactor;
+
         const friction = 0.98;
-        const stopThreshold = 5;
+        const stopThreshold = 5 * scaleFactor; // Scale threshold too
         const deltaTime = 1/60; // 60 FPS
 
         // Simulate ball flight (in pixels)
