@@ -1323,10 +1323,15 @@
       updateBall(ball, deltaTime, obstacles) {
         if (!ball.isMoving) return;
 
-        // Apply wind force
-        const wind = WindSystem.getWindForce();
-        ball.velocityX += wind.x * deltaTime;
-        ball.velocityY += wind.y * deltaTime;
+        // Apply wind force only when ball is moving fast enough (not when nearly stopped)
+        const currentSpeed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+        if (currentSpeed > 20) {
+          const wind = WindSystem.getWindForce();
+          // Scale wind effect by speed - less effect when slowing down
+          const windScale = Math.min(1, currentSpeed / 100);
+          ball.velocityX += wind.x * deltaTime * windScale;
+          ball.velocityY += wind.y * deltaTime * windScale;
+        }
 
         // Apply friction (frame-rate independent: same slowdown regardless of FPS)
         const frictionFactor = Math.pow(this.friction, deltaTime * 60);
@@ -4144,6 +4149,13 @@
           waitForAction: false
         },
         {
+          title: "Watch the Wind!",
+          text: "See the WIND indicator in the top-right? The arrow shows wind direction and speed. Strong winds will push your ball off course - aim to compensate!",
+          highlight: 'wind-indicator',
+          action: null,
+          waitForAction: false
+        },
+        {
           title: "Step 3: Switch Clubs",
           text: "Tap a different club to select it. Driver hits farthest, Woods/Irons for mid-range, Wedge for short shots, Putter on the green.",
           highlight: 'club-selector',
@@ -4228,6 +4240,9 @@
         this.gameEngine.updateUI();
         this.gameEngine.updateClubSelector();
 
+        // Generate wind for tutorial (moderate wind so it's noticeable)
+        WindSystem.generateWind(3); // Use hole 3 params for moderate wind
+
         // Hide menu, show game
         document.getElementById('menu-overlay').classList.add('hidden');
         document.getElementById('club-selector-container').style.display = 'block';
@@ -4301,11 +4316,25 @@
         settings.tutorialCompleted = true;
         StorageManager.saveSettings(settings);
 
-        // Return to main menu
+        // Return to main menu - hide all game UI first, then show menu
         if (this.gameEngine) {
-          this.gameEngine.gameState = null;
-          document.getElementById('menu-overlay').classList.remove('hidden');
+          // Hide all game UI elements
           document.getElementById('club-selector-container').style.display = 'none';
+          document.getElementById('scoreboard').style.display = 'none';
+          document.getElementById('ball-state').style.display = 'none';
+          document.getElementById('wind-indicator').classList.add('hidden');
+          document.getElementById('distance-display').classList.add('hidden');
+
+          // Clear game state
+          this.gameEngine.gameState = null;
+
+          // Show menu after a brief delay to prevent flicker
+          setTimeout(() => {
+            document.getElementById('menu-overlay').classList.remove('hidden');
+            // Restore UI element display for next game
+            document.getElementById('scoreboard').style.display = '';
+            document.getElementById('ball-state').style.display = '';
+          }, 100);
         }
       },
 
@@ -5102,11 +5131,13 @@
       AudioManager.init();
       AchievementManager.init();
 
-      // Add click sound to all menu buttons
+      // Add click sound to all menu buttons and start music on first interaction
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('menu-button')) {
           AudioManager.unlock(); // Ensure audio is unlocked
           AudioManager.playClickSound();
+          // Start background music on first menu interaction (will be ignored if already playing)
+          AudioManager.startBackgroundMusic();
         }
       });
 
