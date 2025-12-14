@@ -567,6 +567,96 @@
       transform: scale(1.02);
     }
 
+    /* Ball skins section */
+    #shop-balls-section {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .shop-section-title {
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #shop-balls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .shop-ball-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .shop-ball-card:hover {
+      transform: translateY(-4px);
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+    }
+    .shop-ball-card.owned {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .shop-ball-card.animated {
+      border-color: #9B59B6;
+    }
+    .shop-ball-card.animated:hover {
+      border-color: #E91E63;
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.3);
+    }
+    .shop-ball-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    .shop-ball-preview::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      width: 12px;
+      height: 8px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+    .animated-indicator {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      font-size: 12px;
+    }
+    .shop-ball-name {
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .shop-ball-price {
+      color: #81C784;
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .shop-ball-card.owned .shop-ball-price {
+      color: #4CAF50;
+    }
+    .shop-ball-card .shop-buy-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+
     /* Menu balance display */
     #menu-balance {
       position: absolute;
@@ -719,13 +809,15 @@
       text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
     }
 
+    /* Recommended club - green pulsing outline */
     .club-slot.recommended .club-head {
-      animation: pulse-gold 1s ease-in-out infinite;
+      outline: 3px solid #4CAF50;
+      outline-offset: 2px;
+      animation: rec-outline-pulse 1.2s ease-in-out infinite;
     }
-
-    @keyframes pulse-gold {
-      0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 3px 6px rgba(0,0,0,0.3); }
-      50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 3px 6px rgba(0,0,0,0.3); }
+    @keyframes rec-outline-pulse {
+      0%, 100% { outline-color: #4CAF50; outline-offset: 2px; }
+      50% { outline-color: #81C784; outline-offset: 4px; }
     }
 
     /* Tier-based club styling */
@@ -733,46 +825,90 @@
       position: relative;
     }
 
-    /* Tier 1 - Basic: normal look, no special effects */
+    /* Tier 1 - Basic: gray color */
     .club-slot.tier-1 .club-head {
       border-color: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #3a3a3a 100%) !important;
+    }
+    .club-slot.tier-1 .club-shaft {
+      background: linear-gradient(to right, #5a5a5a, #888, #5a5a5a);
     }
 
-    /* Tier 2 - Standard: blue glow */
+    /* Tier 2 - Standard: blue glow with pulsing animation */
     .club-slot.tier-2 .club-head {
-      border-color: #64B5F6;
-      box-shadow: 0 0 8px rgba(100, 181, 246, 0.5), 0 3px 6px rgba(0,0,0,0.3);
+      border: 3px solid #64B5F6;
+      animation: tier2-pulse 2s ease-in-out infinite;
+      background: linear-gradient(135deg, #5a9fd4 0%, #3a7cb8 50%, #2a5c8a 100%) !important;
+    }
+    @keyframes tier2-pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(100, 181, 246, 0.6), 0 0 20px rgba(100, 181, 246, 0.3), 0 3px 6px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 15px rgba(100, 181, 246, 0.9), 0 0 30px rgba(100, 181, 246, 0.5), 0 3px 6px rgba(0,0,0,0.3); }
     }
     .club-slot.tier-2 .club-distance {
       color: #90CAF9;
+      font-weight: bold;
     }
     .club-slot.tier-2::after {
       content: '★';
       position: absolute;
-      top: -4px;
-      right: -4px;
-      font-size: 10px;
-      color: #64B5F6;
-      text-shadow: 0 0 3px rgba(0,0,0,0.5);
+      top: -8px;
+      right: -8px;
+      font-size: 14px;
+      color: #fff;
+      background: linear-gradient(135deg, #64B5F6, #1976D2);
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      border: 2px solid #fff;
+    }
+    .club-slot.tier-2 .club-shaft {
+      background: linear-gradient(to right, #5a8bc7, #8ab8e8, #5a8bc7);
     }
 
-    /* Tier 3 - Pro: gold glow with double star */
+    /* Tier 3 - Pro: gold glow with intense pulsing + sparkle */
     .club-slot.tier-3 .club-head {
-      border-color: #FFD700;
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 3px 6px rgba(0,0,0,0.3);
+      border: 3px solid #FFD700;
+      animation: tier3-pulse 1.5s ease-in-out infinite;
+      background: linear-gradient(135deg, #e6b800 0%, #cc9900 50%, #a67c00 100%) !important;
+    }
+    @keyframes tier3-pulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 165, 0, 0.4), 0 3px 6px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 45px rgba(255, 165, 0, 0.6), 0 3px 6px rgba(0,0,0,0.3); }
     }
     .club-slot.tier-3 .club-distance {
       color: #FFD700;
+      font-weight: bold;
+      text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
     }
     .club-slot.tier-3::after {
       content: '★★';
       position: absolute;
-      top: -5px;
-      right: -8px;
-      font-size: 10px;
-      color: #FFD700;
-      text-shadow: 0 0 4px rgba(0,0,0,0.5);
-      letter-spacing: -2px;
+      top: -10px;
+      right: -10px;
+      font-size: 12px;
+      letter-spacing: -3px;
+      color: #fff;
+      background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.6), 0 2px 4px rgba(0,0,0,0.3);
+      border: 2px solid #fff;
+      animation: tier3-badge-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes tier3-badge-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .club-slot.tier-3 .club-shaft {
+      background: linear-gradient(to right, #B8860B, #FFD700, #B8860B);
     }
 
     #club-toggle-btn {
@@ -1616,6 +1752,34 @@
       box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
+    .ball-color-option.animated-ball {
+      animation: rainbow-border 2s linear infinite;
+    }
+
+    .ball-color-option.animated-ball.selected {
+      animation: rainbow-border-selected 2s linear infinite;
+    }
+
+    @keyframes rainbow-border {
+      0% { box-shadow: 0 0 8px #ff0000, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      16% { box-shadow: 0 0 8px #ff8800, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      33% { box-shadow: 0 0 8px #ffff00, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      50% { box-shadow: 0 0 8px #00ff00, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      66% { box-shadow: 0 0 8px #0088ff, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      83% { box-shadow: 0 0 8px #8800ff, 0 2px 4px rgba(0, 0, 0, 0.2); }
+      100% { box-shadow: 0 0 8px #ff0000, 0 2px 4px rgba(0, 0, 0, 0.2); }
+    }
+
+    @keyframes rainbow-border-selected {
+      0% { box-shadow: 0 0 12px #ff0000, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      16% { box-shadow: 0 0 12px #ff8800, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      33% { box-shadow: 0 0 12px #ffff00, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      50% { box-shadow: 0 0 12px #00ff00, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      66% { box-shadow: 0 0 12px #0088ff, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      83% { box-shadow: 0 0 12px #8800ff, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+      100% { box-shadow: 0 0 12px #ff0000, 0 0 0 3px rgba(76, 175, 80, 0.3); border-color: #4CAF50; }
+    }
+
     .ball-color-option::after {
       content: '';
       position: absolute;
@@ -1939,6 +2103,12 @@
             <div class="tier-item pro"><span class="tier-stars">★★★</span> Pro (100%)</div>
           </div>
           <div id="shop-clubs-grid"></div>
+
+          <!-- Ball Skins Section -->
+          <div id="shop-balls-section">
+            <h3 class="shop-section-title">🎱 Ball Skins</h3>
+            <div id="shop-balls-grid"></div>
+          </div>
         </div>
         <div id="shop-footer">
           <button id="shop-close-btn">Close Shop</button>
@@ -1954,14 +2124,7 @@
       <div class="ball-color-section">
         <label>Choose Your Ball</label>
         <div class="ball-color-options" id="ball-color-options">
-          <div class="ball-color-option selected" data-color="white" style="background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 100%);"></div>
-          <div class="ball-color-option" data-color="yellow" style="background: linear-gradient(135deg, #FFEB3B 0%, #FBC02D 100%);"></div>
-          <div class="ball-color-option" data-color="orange" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);"></div>
-          <div class="ball-color-option" data-color="pink" style="background: linear-gradient(135deg, #FF69B4 0%, #DB7093 100%);"></div>
-          <div class="ball-color-option" data-color="red" style="background: linear-gradient(135deg, #F44336 0%, #C62828 100%);"></div>
-          <div class="ball-color-option" data-color="blue" style="background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);"></div>
-          <div class="ball-color-option" data-color="green" style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);"></div>
-          <div class="ball-color-option" data-color="purple" style="background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);"></div>
+          <!-- Dynamically populated based on owned skins -->
         </div>
       </div>
 
@@ -2058,6 +2221,20 @@
       blue:   { highlight: '#2196F3', base: '#1565C0', stroke: '#0D47A1' },
       green:  { highlight: '#4CAF50', base: '#2E7D32', stroke: '#1B5E20' },
       purple: { highlight: '#9C27B0', base: '#6A1B9A', stroke: '#4A148C' }
+    };
+
+    // Premium ball colors (purchasable in shop)
+    const PremiumBallColors = {
+      // Solid premium colors
+      gold:     { highlight: '#FFD700', base: '#B8860B', stroke: '#8B6914' },
+      chrome:   { highlight: '#E8E8E8', base: '#A8A8A8', stroke: '#787878' },
+      neon:     { highlight: '#39FF14', base: '#32CD32', stroke: '#228B22' },
+      midnight: { highlight: '#1a1a40', base: '#0d0d20', stroke: '#000010' },
+      rose:     { highlight: '#FFB6C1', base: '#FF69B4', stroke: '#DB7093' },
+      // Animated/special effects
+      galaxy:   { highlight: '#9B59B6', base: '#8E44AD', stroke: '#6C3483', animated: 'galaxy' },
+      fire:     { highlight: '#FF4500', base: '#FF6347', stroke: '#DC143C', animated: 'fire' },
+      rainbow:  { highlight: '#FF0000', base: '#FF7F00', stroke: '#FFFF00', animated: 'rainbow' }
     };
 
     // === SeededRandom Class (T006) ===
@@ -3203,7 +3380,9 @@
 
       drawBall(ball) {
         const ctx = this.ctx;
-        const colors = BallColors[ball.color] || BallColors.white;
+        // Check both standard and premium colors
+        const colors = BallColors[ball.color] || PremiumBallColors[ball.color] || BallColors.white;
+        const isAnimated = PremiumBallColors[ball.color]?.animated;
 
         // Calculate shadow properties based on airborne state
         const baseHeight = ball.isAirborne ? 1.5 : 0;
@@ -3233,11 +3412,34 @@
           const scale = 1 - (fadeProgress * 0.5);
           ctx.scale(scale, scale);
 
-          const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
-          gradient.addColorStop(0, colors.highlight);
-          gradient.addColorStop(1, colors.base);
+          let holeGradient;
+          if (isAnimated) {
+            const time = Date.now() / 1000;
+            if (isAnimated === 'galaxy') {
+              holeGradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+              const hue = (time * 30) % 360;
+              holeGradient.addColorStop(0, `hsl(${hue}, 70%, 70%)`);
+              holeGradient.addColorStop(0.5, `hsl(${(hue + 60) % 360}, 80%, 40%)`);
+              holeGradient.addColorStop(1, `hsl(${(hue + 120) % 360}, 90%, 20%)`);
+            } else if (isAnimated === 'fire') {
+              const flicker = Math.sin(time * 10) * 0.2 + 0.8;
+              holeGradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+              holeGradient.addColorStop(0, `rgba(255, 255, 100, ${flicker})`);
+              holeGradient.addColorStop(0.4, '#FF6347');
+              holeGradient.addColorStop(1, '#8B0000');
+            } else if (isAnimated === 'rainbow') {
+              const hue = (time * 50) % 360;
+              holeGradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+              holeGradient.addColorStop(0, `hsl(${hue}, 100%, 80%)`);
+              holeGradient.addColorStop(1, `hsl(${(hue + 180) % 360}, 100%, 50%)`);
+            }
+          } else {
+            holeGradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+            holeGradient.addColorStop(0, colors.highlight);
+            holeGradient.addColorStop(1, colors.base);
+          }
 
-          ctx.fillStyle = gradient;
+          ctx.fillStyle = holeGradient;
           ctx.beginPath();
           ctx.arc(0, 0, 8, 0, Math.PI * 2);
           ctx.fill();
@@ -3264,9 +3466,37 @@
         ctx.translate(ball.x, ball.y);
         ctx.rotate(ball.rotation);
 
-        const gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
-        gradient.addColorStop(0, colors.highlight);
-        gradient.addColorStop(1, colors.base);
+        let gradient;
+        if (isAnimated) {
+          // Animated ball effects
+          const time = Date.now() / 1000;
+          if (isAnimated === 'galaxy') {
+            // Rotating galaxy swirl effect
+            gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+            const hue = (time * 30) % 360;
+            gradient.addColorStop(0, `hsl(${hue}, 70%, 70%)`);
+            gradient.addColorStop(0.5, `hsl(${(hue + 60) % 360}, 80%, 40%)`);
+            gradient.addColorStop(1, `hsl(${(hue + 120) % 360}, 90%, 20%)`);
+          } else if (isAnimated === 'fire') {
+            // Flickering fire effect
+            const flicker = Math.sin(time * 10) * 0.2 + 0.8;
+            gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+            gradient.addColorStop(0, `rgba(255, 255, 100, ${flicker})`);
+            gradient.addColorStop(0.4, '#FF6347');
+            gradient.addColorStop(1, '#8B0000');
+          } else if (isAnimated === 'rainbow') {
+            // Shifting rainbow
+            const hue = (time * 50) % 360;
+            gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+            gradient.addColorStop(0, `hsl(${hue}, 100%, 80%)`);
+            gradient.addColorStop(1, `hsl(${(hue + 180) % 360}, 100%, 50%)`);
+          }
+        } else {
+          // Standard ball gradient
+          gradient = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+          gradient.addColorStop(0, colors.highlight);
+          gradient.addColorStop(1, colors.base);
+        }
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
@@ -3705,6 +3935,29 @@
         putter: 'Putter'
       },
 
+      // Ball skins - free colors are always owned
+      ownedBallSkins: ['white', 'yellow', 'orange', 'pink', 'red', 'blue', 'green', 'purple'],
+
+      // Ball skin prices (only premium colors)
+      ballSkinPrices: {
+        gold: 200,
+        chrome: 150,
+        neon: 175,
+        midnight: 225,
+        rose: 175,
+        galaxy: 500,
+        fire: 500,
+        rainbow: 750
+      },
+
+      // Ball skin display names
+      ballSkinNames: {
+        white: 'White', yellow: 'Yellow', orange: 'Orange', pink: 'Pink',
+        red: 'Red', blue: 'Blue', green: 'Green', purple: 'Purple',
+        gold: 'Gold', chrome: 'Chrome', neon: 'Neon Green', midnight: 'Midnight',
+        rose: 'Rose', galaxy: 'Galaxy Swirl', fire: 'Fire Trail', rainbow: 'Rainbow Shift'
+      },
+
       init() {
         this.load();
       },
@@ -3715,6 +3968,10 @@
           const parsed = JSON.parse(data);
           this.golfBucks = parsed.golfBucks || 0;
           this.ownedClubs = parsed.ownedClubs || {};
+          // Load owned ball skins, default to free colors
+          if (parsed.ownedBallSkins && parsed.ownedBallSkins.length > 0) {
+            this.ownedBallSkins = parsed.ownedBallSkins;
+          }
         }
         // Initialize all clubs to tier 1 if not owned
         const allClubIds = Object.keys(this.clubPrices);
@@ -3729,7 +3986,8 @@
       save() {
         localStorage.setItem('golf-shop-data', JSON.stringify({
           golfBucks: this.golfBucks,
-          ownedClubs: this.ownedClubs
+          ownedClubs: this.ownedClubs,
+          ownedBallSkins: this.ownedBallSkins
         }));
       },
 
@@ -3790,7 +4048,7 @@
         if (this.spendBucks(price)) {
           this.ownedClubs[clubId] = nextTier;
           this.save();
-          AudioManager.playSound('achievement');
+          if (AudioManager.playAchievement) AudioManager.playAchievement();
 
           // Show upgrade notification
           const tierName = nextTier === 2 ? 'Standard' : 'Pro';
@@ -3799,6 +4057,20 @@
           return true;
         }
         return false;
+      },
+
+      // Called directly from button onclick
+      upgradeClub(clubId) {
+        if (this.purchaseClub(clubId)) {
+          this.renderShop();
+        }
+      },
+
+      // Called directly from button onclick
+      buyBallSkin(skinId) {
+        if (this.purchaseBallSkin(skinId)) {
+          this.renderShop();
+        }
       },
 
       showUpgradePopup(clubName, tierName) {
@@ -3827,6 +4099,47 @@
           popup.classList.remove('show');
           setTimeout(() => popup.remove(), 500);
         }, 2000);
+      },
+
+      // Ball skin methods
+      ownsBallSkin(skinId) {
+        return this.ownedBallSkins.includes(skinId);
+      },
+
+      getBallSkinPrice(skinId) {
+        return this.ballSkinPrices[skinId] || 0;
+      },
+
+      purchaseBallSkin(skinId) {
+        if (this.ownsBallSkin(skinId)) return false; // Already owned
+
+        const price = this.getBallSkinPrice(skinId);
+        if (price === 0) return false; // Invalid skin or free
+
+        if (this.spendBucks(price)) {
+          this.ownedBallSkins.push(skinId);
+          this.save();
+          if (AudioManager.playAchievement) AudioManager.playAchievement();
+
+          // Show unlock notification
+          const skinName = this.ballSkinNames[skinId] || skinId;
+          this.showBallSkinUnlockPopup(skinName);
+          return true;
+        }
+        return false;
+      },
+
+      showBallSkinUnlockPopup(skinName) {
+        const popup = document.createElement('div');
+        popup.className = 'upgrade-popup';
+        popup.innerHTML = `<span>🎱</span> Unlocked <strong>${skinName}</strong> ball!`;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 500);
+        }, 2500);
       },
 
       updateBalanceDisplay() {
@@ -3887,22 +4200,13 @@
             <div class="shop-club-tier">${stars}</div>
             <div class="shop-club-distance">${currentDist} yds</div>
             <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' GB'}</div>
-            ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'}>Upgrade</button>`}
+            ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.upgradeClub('${clubId}')">Upgrade</button>`}
           `;
 
           container.appendChild(card);
         }
 
-        // Add click handlers for buy buttons
-        container.querySelectorAll('.shop-buy-btn:not(.disabled)').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const clubId = e.target.dataset.club;
-            if (this.purchaseClub(clubId)) {
-              this.lastUpgradedClub = clubId;
-              this.renderShop(); // Re-render to update UI
-            }
-          });
-        });
+        // Click handlers are set up via event delegation in main init
 
         // Add animation to just-upgraded club
         if (this.lastUpgradedClub) {
@@ -3917,9 +4221,67 @@
         }
 
         this.updateBalanceDisplay();
+        this.renderBallSkins();
       },
 
-      lastUpgradedClub: null
+      renderBallSkins() {
+        const container = document.getElementById('shop-balls-grid');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // All ball skins: free colors first, then premium
+        const freeSkins = ['white', 'yellow', 'orange', 'pink', 'red', 'blue', 'green', 'purple'];
+        const premiumSkins = Object.keys(this.ballSkinPrices);
+        const allSkins = [...freeSkins, ...premiumSkins];
+
+        for (const skinId of allSkins) {
+          const isFree = freeSkins.includes(skinId);
+          const isOwned = this.ownsBallSkin(skinId);
+          const price = isFree ? 0 : this.getBallSkinPrice(skinId);
+          const canBuy = !isOwned && this.canAfford(price);
+          const isAnimated = PremiumBallColors[skinId]?.animated;
+
+          const card = document.createElement('div');
+          let cardClass = 'shop-ball-card';
+          if (isOwned) cardClass += ' owned';
+          if (isAnimated) cardClass += ' animated';
+          card.className = cardClass;
+          card.dataset.skin = skinId;
+
+          // Get colors for preview
+          const colors = PremiumBallColors[skinId] || BallColors[skinId] || BallColors.white;
+          const gradientStyle = `background: radial-gradient(circle at 30% 30%, ${colors.highlight}, ${colors.base})`;
+
+          const name = this.ballSkinNames[skinId] || skinId;
+
+          card.innerHTML = `
+            <div class="shop-ball-preview" style="${gradientStyle}">
+              ${isAnimated ? '<div class="animated-indicator">✨</div>' : ''}
+            </div>
+            <div class="shop-ball-name">${name}</div>
+            <div class="shop-ball-price">${isOwned ? '✓ OWNED' : (isFree ? 'FREE' : price + ' GB')}</div>
+            ${!isOwned && !isFree ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-skin="${skinId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyBallSkin('${skinId}')">Buy</button>` : ''}
+          `;
+
+          container.appendChild(card);
+        }
+
+        // Click handlers are set up via event delegation in main init
+
+        // Add animation to just-unlocked skin
+        if (this.lastUnlockedSkin) {
+          const unlockedCard = container.querySelector(`[data-skin="${this.lastUnlockedSkin}"]`);
+          if (unlockedCard) {
+            unlockedCard.classList.add('just-upgraded');
+            setTimeout(() => unlockedCard.classList.remove('just-upgraded'), 600);
+          }
+          this.lastUnlockedSkin = null;
+        }
+      },
+
+      lastUpgradedClub: null,
+      lastUnlockedSkin: null
     };
 
     // === Achievement System ===
@@ -7122,6 +7484,45 @@
       ShopSystem.init();
       ShopSystem.updateBalanceDisplay();
 
+      // Set up shop click handlers using event delegation (handles dynamically created buttons)
+      const shopOverlayEl = document.getElementById('shop-overlay');
+
+      document.getElementById('shop-clubs-grid').addEventListener('click', function(e) {
+        if (e.target.classList.contains('shop-buy-btn') && !e.target.disabled) {
+          const clubId = e.target.dataset.club;
+          e.target.disabled = true;
+          e.target.textContent = '...';
+
+          if (ShopSystem.purchaseClub(clubId)) {
+            // Literally close and reopen shop to force refresh
+            shopOverlayEl.classList.add('hidden');
+            ShopSystem.renderShop();
+            shopOverlayEl.classList.remove('hidden');
+          } else {
+            e.target.disabled = false;
+            e.target.textContent = 'Upgrade';
+          }
+        }
+      });
+
+      document.getElementById('shop-balls-grid').addEventListener('click', function(e) {
+        if (e.target.classList.contains('shop-buy-btn') && !e.target.disabled) {
+          const skinId = e.target.dataset.skin;
+          e.target.disabled = true;
+          e.target.textContent = '...';
+
+          if (ShopSystem.purchaseBallSkin(skinId)) {
+            // Literally close and reopen shop to force refresh
+            shopOverlayEl.classList.add('hidden');
+            ShopSystem.renderShop();
+            shopOverlayEl.classList.remove('hidden');
+          } else {
+            e.target.disabled = false;
+            e.target.textContent = 'Buy';
+          }
+        }
+      });
+
       // Add click sound to all menu buttons and start music on first interaction
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('menu-button')) {
@@ -7155,29 +7556,47 @@
 
       // Load last used name and ball color from localStorage
       const lastPlayerName = localStorage.getItem('golf-player-name') || '';
-      const lastBallColor = localStorage.getItem('golf-ball-color') || 'white';
+      let lastBallColor = localStorage.getItem('golf-ball-color') || 'white';
       playerNameInput.value = lastPlayerName;
 
       // Set up ball color selection
       let selectedBallColor = lastBallColor;
-      const colorButtons = ballColorOptions.querySelectorAll('.ball-color-option');
 
-      // Initialize selected state from saved preference
-      colorButtons.forEach(btn => {
-        if (btn.dataset.color === lastBallColor) {
-          btn.classList.add('selected');
-        } else {
-          btn.classList.remove('selected');
+      // Function to dynamically render ball color options based on owned skins
+      function renderBallColorPicker() {
+        ballColorOptions.innerHTML = '';
+        const ownedSkins = ShopSystem.ownedBallSkins;
+
+        // If selected color is not owned, reset to white
+        if (!ownedSkins.includes(selectedBallColor)) {
+          selectedBallColor = 'white';
+          lastBallColor = 'white';
         }
-      });
 
-      // Ball color click handlers
+        for (const skinId of ownedSkins) {
+          const colors = BallColors[skinId] || PremiumBallColors[skinId] || BallColors.white;
+          const isAnimated = PremiumBallColors[skinId]?.animated;
+
+          const option = document.createElement('div');
+          option.className = 'ball-color-option' + (skinId === selectedBallColor ? ' selected' : '');
+          if (isAnimated) option.classList.add('animated-ball');
+          option.dataset.color = skinId;
+          option.style.background = `linear-gradient(135deg, ${colors.highlight} 0%, ${colors.base} 100%)`;
+
+          ballColorOptions.appendChild(option);
+        }
+      }
+
+      // Initial render
+      renderBallColorPicker();
+
+      // Ball color click handlers (using event delegation)
       ballColorOptions.addEventListener('click', (e) => {
         const colorOption = e.target.closest('.ball-color-option');
         if (!colorOption) return;
 
         // Update selection
-        colorButtons.forEach(btn => btn.classList.remove('selected'));
+        ballColorOptions.querySelectorAll('.ball-color-option').forEach(btn => btn.classList.remove('selected'));
         colorOption.classList.add('selected');
         selectedBallColor = colorOption.dataset.color;
       });
@@ -7185,6 +7604,8 @@
       newGameBtn.addEventListener('click', () => {
         console.log('New Game button clicked');
         AudioManager.unlock();
+        // Re-render ball picker to show any newly purchased skins
+        renderBallColorPicker();
         // Show name entry modal instead of starting immediately
         nameEntryOverlay.classList.remove('hidden');
         playerNameInput.focus();
