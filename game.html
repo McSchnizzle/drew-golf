@@ -1095,6 +1095,89 @@
       background: rgba(211, 47, 47, 0.95);
     }
 
+    /* Pro Swing Timing Meter */
+    #timing-meter-overlay {
+      position: absolute;
+      bottom: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1001;
+      pointer-events: auto;
+    }
+
+    .timing-meter-container {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 15px 25px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFD700;
+    }
+
+    .timing-meter-label {
+      color: #FFD700;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      animation: pulse-text 0.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-text {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .timing-meter-bar {
+      width: 280px;
+      height: 30px;
+      background: linear-gradient(to right,
+        #ff4444 0%,
+        #ff8844 15%,
+        #ffcc44 30%,
+        #44ff44 45%,
+        #44ff44 55%,
+        #ffcc44 70%,
+        #ff8844 85%,
+        #ff4444 100%
+      );
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .timing-meter-sweet-spot {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 100%;
+      border: 3px solid #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .timing-meter-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 40px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.5);
+      left: 0%;
+    }
+
+    .timing-meter-hint {
+      color: #aaa;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
     .club-power-info {
       font-size: 12px;
       color: #666;
@@ -1353,6 +1436,57 @@
       display: flex;
       justify-content: center;
       margin-top: 25px;
+    }
+
+    /* Swing Mode Selector */
+    .swing-mode-selector {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .swing-mode-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background: #f5f5f5;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .swing-mode-btn:hover {
+      border-color: #aaa;
+      background: #eee;
+    }
+
+    .swing-mode-btn.active {
+      border-color: #4CAF50;
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+
+    .swing-mode-btn .mode-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .swing-mode-btn .mode-desc {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .swing-mode-btn.active .mode-name {
+      color: #2E7D32;
+    }
+
+    .swing-mode-btn.active .mode-desc {
+      color: #388E3C;
     }
 
     /* === Achievements Overlay === */
@@ -2062,6 +2196,19 @@
           <span class="settings-label"><span class="icon">📖</span> Reset Tutorial</span>
           <button class="button" id="reset-tutorial-btn" style="padding: 8px 16px; font-size: 14px;">Reset</button>
         </div>
+        <div class="settings-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+          <span class="settings-label"><span class="icon">🏌️</span> Swing Mode</span>
+          <div class="swing-mode-selector" id="swing-mode-selector">
+            <button class="swing-mode-btn active" data-mode="easy">
+              <span class="mode-name">Easy</span>
+              <span class="mode-desc">Drag & release</span>
+            </button>
+            <button class="swing-mode-btn" data-mode="pro">
+              <span class="mode-name">Pro</span>
+              <span class="mode-desc">Timing meter (+25% 💵)</span>
+            </button>
+          </div>
+        </div>
       </div>
       <div class="settings-buttons">
         <button class="button" id="close-settings-btn">Close</button>
@@ -2137,6 +2284,18 @@
     <div id="debug-info" class="hidden"></div>
 
     <button id="reset-shot-btn" class="hidden">Cancel Shot</button>
+
+    <!-- Pro Swing Timing Meter -->
+    <div id="timing-meter-overlay" class="hidden">
+      <div class="timing-meter-container">
+        <div class="timing-meter-label">TAP FOR ACCURACY!</div>
+        <div class="timing-meter-bar">
+          <div class="timing-meter-sweet-spot"></div>
+          <div class="timing-meter-marker"></div>
+        </div>
+        <div class="timing-meter-hint">Perfect timing = straight shot</div>
+      </div>
+    </div>
 
     <div id="hole-complete-overlay" class="hidden">
       <div class="hole-complete-modal">
@@ -3600,6 +3759,114 @@
       }
     };
 
+    // === Pro Swing Timing Meter Module ===
+    const TimingMeter = {
+      overlay: null,
+      marker: null,
+      isActive: false,
+      animationId: null,
+      markerPosition: 0,
+      markerDirection: 1,
+      markerSpeed: 2.5, // Percentage per frame
+      pendingSwing: null,
+      gameEngine: null,
+      onComplete: null,
+
+      init(gameEngine) {
+        this.gameEngine = gameEngine;
+        this.overlay = document.getElementById('timing-meter-overlay');
+        this.marker = this.overlay.querySelector('.timing-meter-marker');
+
+        // Listen for tap/click to confirm timing
+        this.overlay.addEventListener('click', (e) => this.onTap(e));
+        this.overlay.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          this.onTap(e);
+        }, { passive: false });
+      },
+
+      show(swingVector, onComplete) {
+        this.pendingSwing = swingVector;
+        this.onComplete = onComplete;
+        this.markerPosition = 0;
+        this.markerDirection = 1;
+        this.isActive = true;
+        this.overlay.classList.remove('hidden');
+        this.animate();
+      },
+
+      hide() {
+        this.isActive = false;
+        this.overlay.classList.add('hidden');
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+        }
+      },
+
+      animate() {
+        if (!this.isActive) return;
+
+        // Move marker back and forth (0 to 100)
+        this.markerPosition += this.markerDirection * this.markerSpeed;
+
+        if (this.markerPosition >= 100) {
+          this.markerPosition = 100;
+          this.markerDirection = -1;
+        } else if (this.markerPosition <= 0) {
+          this.markerPosition = 0;
+          this.markerDirection = 1;
+        }
+
+        // Update marker visual position
+        this.marker.style.left = this.markerPosition + '%';
+
+        this.animationId = requestAnimationFrame(() => this.animate());
+      },
+
+      onTap(e) {
+        if (!this.isActive || !this.pendingSwing) return;
+
+        // Calculate accuracy based on marker position
+        // Sweet spot is at 50% (center), perfect = 0 deviation
+        const distanceFromCenter = Math.abs(this.markerPosition - 50);
+        const accuracy = 1 - (distanceFromCenter / 50); // 1 = perfect, 0 = worst
+
+        // Calculate angle deviation based on accuracy
+        // Miss left (< 50) = hook, miss right (> 50) = slice
+        const maxDeviation = Math.PI / 6; // 30 degrees max deviation
+        let angleDeviation = 0;
+
+        if (accuracy < 1) {
+          const deviationAmount = (1 - accuracy) * maxDeviation;
+          // Left of center = positive deviation (hook), right = negative (slice)
+          angleDeviation = this.markerPosition < 50 ? deviationAmount : -deviationAmount;
+        }
+
+        // Also reduce power slightly for bad timing
+        const powerMultiplier = 0.7 + (accuracy * 0.3); // 70% to 100% power
+
+        // Modify the swing vector
+        const modifiedSwing = {
+          power: this.pendingSwing.power * powerMultiplier,
+          angle: this.pendingSwing.angle + angleDeviation,
+          timingAccuracy: accuracy
+        };
+
+        this.hide();
+
+        // Execute the swing with modified values
+        if (this.onComplete) {
+          this.onComplete(modifiedSwing);
+        }
+      },
+
+      isProMode() {
+        const settings = StorageManager.loadSettings();
+        return settings.swingMode === 'pro';
+      }
+    };
+
     // === InputHandler Module (T010 + Mouse Support) ===
     const InputHandler = {
       canvas: null,
@@ -3607,10 +3874,14 @@
       touchStartPos: null,
       currentTouchPos: null,
       isSwinging: false,
+      waitingForTiming: false,
 
       init(canvas, gameEngine) {
         this.canvas = canvas;
         this.gameEngine = gameEngine;
+
+        // Initialize timing meter
+        TimingMeter.init(gameEngine);
 
         canvas.addEventListener('touchstart', (e) => this.onTouchStart(e), { passive: false });
         canvas.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
@@ -3667,7 +3938,16 @@
 
         const swingVector = this.calculateSwingVector();
         if (swingVector && this.gameEngine) {
-          this.gameEngine.executeSwing(swingVector);
+          // Check if pro mode - show timing meter instead of immediate swing
+          if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial) {
+            this.waitingForTiming = true;
+            TimingMeter.show(swingVector, (modifiedSwing) => {
+              this.waitingForTiming = false;
+              this.gameEngine.executeSwing(modifiedSwing);
+            });
+          } else {
+            this.gameEngine.executeSwing(swingVector);
+          }
         }
 
         this.touchStartPos = null;
@@ -3706,7 +3986,16 @@
 
         const swingVector = this.calculateSwingVector();
         if (swingVector && this.gameEngine) {
-          this.gameEngine.executeSwing(swingVector);
+          // Check if pro mode - show timing meter instead of immediate swing
+          if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial) {
+            this.waitingForTiming = true;
+            TimingMeter.show(swingVector, (modifiedSwing) => {
+              this.waitingForTiming = false;
+              this.gameEngine.executeSwing(modifiedSwing);
+            });
+          } else {
+            this.gameEngine.executeSwing(swingVector);
+          }
         }
 
         this.touchStartPos = null;
@@ -3996,9 +4285,18 @@
       },
 
       addBucks(amount, reason = '') {
-        this.golfBucks += amount;
+        // Apply 25% bonus for Pro swing mode
+        const settings = StorageManager.loadSettings();
+        let finalAmount = amount;
+        let bonusText = '';
+        if (settings.swingMode === 'pro') {
+          const bonus = Math.floor(amount * 0.25);
+          finalAmount = amount + bonus;
+          bonusText = ' (+25% Pro)';
+        }
+        this.golfBucks += finalAmount;
         this.save();
-        this.showEarningsPopup(amount, reason);
+        this.showEarningsPopup(finalAmount, reason + bonusText);
         this.updateBalanceDisplay();
       },
 
@@ -5281,7 +5579,8 @@
           trailsEnabled: true,
           eventsEnabled: true,
           debugMode: false,
-          tutorialCompleted: false
+          tutorialCompleted: false,
+          swingMode: 'easy' // 'easy' or 'pro'
         };
       },
 
@@ -7726,6 +8025,12 @@
         settingMusic.checked = settings.musicEnabled !== false;
         settingTrails.checked = settings.trailsEnabled !== false;
         settingEvents.checked = settings.eventsEnabled !== false;
+
+        // Update swing mode buttons
+        const swingMode = settings.swingMode || 'easy';
+        document.querySelectorAll('.swing-mode-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === swingMode);
+        });
       }
 
       if (settingsBtn) {
@@ -7813,6 +8118,27 @@
           setTimeout(() => {
             resetTutorialBtn.textContent = 'Reset';
           }, 1500);
+          AudioManager.playClickSound();
+        });
+      }
+
+      // Swing mode selector
+      const swingModeSelector = document.getElementById('swing-mode-selector');
+      if (swingModeSelector) {
+        swingModeSelector.addEventListener('click', (e) => {
+          const btn = e.target.closest('.swing-mode-btn');
+          if (!btn) return;
+
+          const mode = btn.dataset.mode;
+          const settings = StorageManager.loadSettings();
+          settings.swingMode = mode;
+          StorageManager.saveSettings(settings);
+
+          // Update button states
+          document.querySelectorAll('.swing-mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === mode);
+          });
+
           AudioManager.playClickSound();
         });
       }
