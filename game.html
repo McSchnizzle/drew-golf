@@ -5923,7 +5923,7 @@
             <div class="shop-club-tier">${stars}</div>
             <div class="shop-club-distance">${currentDist} yds</div>
             <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' Golf Bucks'}</div>
-            ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.upgradeClub('${clubId}')">Upgrade</button>`}
+            ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'}>Upgrade</button>`}
           `;
 
           container.appendChild(card);
