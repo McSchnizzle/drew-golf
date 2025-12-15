@@ -303,102 +303,189 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.92);
       z-index: 1500;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px;
       box-sizing: border-box;
+      backdrop-filter: blur(5px);
     }
     #shop-overlay.hidden {
       display: none;
     }
 
     #shop-modal {
-      background: linear-gradient(180deg, #1a472a 0%, #0d2818 100%);
-      border: 3px solid #4CAF50;
-      border-radius: 20px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
       padding: 0;
-      max-width: 600px;
+      max-width: 500px;
       width: 100%;
-      max-height: 90vh;
+      max-height: 85vh;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
     }
 
     #shop-header {
-      background: linear-gradient(135deg, #2E7D32, #1B5E20);
-      padding: 20px 25px;
+      background: linear-gradient(135deg, #1B5E20, #0d3810);
+      padding: 16px 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      gap: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     #shop-header h2 {
       margin: 0;
       color: #fff;
-      font-size: 26px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 20px;
+      flex: 1;
+      font-weight: 600;
     }
     #shop-balance-display {
-      background: linear-gradient(135deg, #FFD700, #FFA000);
-      padding: 10px 18px;
-      border-radius: 25px;
+      background: linear-gradient(135deg, #FFD700, #FF9500);
+      padding: 8px 16px;
+      border-radius: 20px;
       color: #1a1a1a;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+    .shop-close-x {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .shop-close-x:hover {
+      background: rgba(255, 100, 100, 0.3);
+    }
+
+    /* Shop Tabs */
+    #shop-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .shop-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      padding: 14px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 3px solid transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .shop-tab:hover {
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .shop-tab.active {
+      color: #4CAF50;
+      border-bottom-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    /* Tab Content */
+    .shop-tab-content {
+      display: none;
+    }
+    .shop-tab-content.active {
+      display: block;
+    }
+    .shop-tab-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .shop-tab-header h3 {
+      color: #fff;
       font-size: 18px;
-      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+      margin: 0 0 6px 0;
+      font-weight: 600;
+    }
+    .shop-tab-header p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      margin: 0;
     }
 
     #shop-content {
-      padding: 20px 25px;
-      max-height: calc(90vh - 180px);
+      padding: 20px;
+      max-height: calc(85vh - 120px);
       overflow-y: auto;
+    }
+    #shop-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    #shop-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    #shop-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
     }
 
     /* Info section */
     #shop-info {
-      background: rgba(255, 255, 255, 0.08);
+      background: transparent;
       border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    #shop-info h3 {
-      color: #FFD700;
-      margin: 0 0 10px 0;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #shop-info p {
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0 0 8px 0;
-      font-size: 13px;
-      line-height: 1.5;
+      padding: 0;
     }
     #shop-info .earn-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      margin-top: 10px;
+      gap: 8px;
     }
     #shop-info .earn-item {
-      background: rgba(76, 175, 80, 0.2);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      color: #81C784;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
       display: flex;
       justify-content: space-between;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
     #shop-info .earn-item span:last-child {
-      color: #FFD700;
+      color: #4CAF50;
       font-weight: bold;
+    }
+    .shop-tips {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .shop-tips h4 {
+      color: #FFD700;
+      margin: 0 0 12px 0;
+      font-size: 14px;
+    }
+    .shop-tips ul {
+      margin: 0;
+      padding-left: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      line-height: 1.8;
     }
 
     /* Tier legend */
@@ -406,24 +493,25 @@
       display: flex;
       justify-content: center;
       gap: 20px;
-      margin-bottom: 15px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.2);
+      margin-bottom: 16px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
       border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .tier-item {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
     }
     .tier-item .tier-stars {
-      color: #FFD700;
+      font-size: 10px;
     }
-    .tier-item.basic { color: #888; }
-    .tier-item.standard { color: #90CAF9; }
-    .tier-item.pro { color: #FFD700; }
+    .tier-item.basic .tier-stars { color: #888; }
+    .tier-item.standard .tier-stars { color: #64B5F6; }
+    .tier-item.pro .tier-stars { color: #FFD700; }
 
     #shop-clubs-grid {
       display: grid;
@@ -543,42 +631,7 @@
       100% { transform: scale(1); }
     }
 
-    #shop-footer {
-      padding: 15px 25px 20px;
-      background: rgba(0, 0, 0, 0.2);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    #shop-close-btn {
-      display: block;
-      width: 100%;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 12px 30px;
-      border-radius: 25px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    #shop-close-btn:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
-      transform: scale(1.02);
-    }
-
-    /* Ball skins section */
-    #shop-balls-section {
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .shop-section-title {
-      color: #fff;
-      font-size: 16px;
-      margin-bottom: 12px;
-      text-align: center;
-    }
+    /* Ball skins grid */
     #shop-balls-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
@@ -655,6 +708,754 @@
     .shop-ball-card .shop-buy-btn {
       font-size: 10px;
       padding: 4px 8px;
+    }
+
+    /* Club Skins Section */
+    .shop-section-desc {
+      color: #aaa;
+      font-size: 12px;
+      margin: -10px 0 15px 0;
+      text-align: center;
+    }
+    #shop-club-skins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .shop-club-skin-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .shop-club-skin-card:hover {
+      transform: translateY(-4px);
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+    }
+    .shop-club-skin-card.owned {
+      border-color: #64B5F6;
+      background: rgba(100, 181, 246, 0.1);
+    }
+    .shop-club-skin-card.selected {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    }
+    .shop-club-skin-card.animated {
+      border-color: #9B59B6;
+    }
+    .shop-club-skin-card.animated:hover {
+      border-color: #E91E63;
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.3);
+    }
+    .shop-club-skin-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .club-skin-shaft-preview {
+      width: 6px;
+      height: 30px;
+      border-radius: 3px;
+      position: absolute;
+      bottom: -12px;
+    }
+    .shop-club-skin-name {
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 3px;
+      margin-top: 10px;
+    }
+    .skin-animated-badge {
+      display: block;
+      color: #E91E63;
+      font-size: 9px;
+      margin-bottom: 3px;
+    }
+    .shop-club-skin-price {
+      color: #81C784;
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .shop-club-skin-card.selected .shop-club-skin-price {
+      color: #4CAF50;
+    }
+    .shop-club-skin-card .shop-buy-btn,
+    .shop-club-skin-card .shop-equip-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+    .shop-equip-btn {
+      background: #64B5F6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .shop-equip-btn:hover {
+      background: #42A5F5;
+    }
+
+    /* Animated club skin previews */
+    .shop-club-skin-preview.anim-fire {
+      animation: preview-fire 0.5s ease-in-out infinite;
+    }
+    @keyframes preview-fire {
+      0%, 100% { box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6600; }
+      50% { box-shadow: 0 0 20px #ff6600, 0 0 35px #ff8c00; }
+    }
+    .shop-club-skin-preview.anim-ice {
+      animation: preview-ice 2s ease-in-out infinite;
+    }
+    @keyframes preview-ice {
+      0%, 100% { box-shadow: 0 0 10px #87ceeb, 0 0 20px #b0e0e6; }
+      50% { box-shadow: 0 0 15px #e0ffff, 0 0 30px #ffffff; }
+    }
+    .shop-club-skin-preview.anim-lightning {
+      animation: preview-lightning 0.3s ease-in-out infinite;
+    }
+    @keyframes preview-lightning {
+      0%, 90% { box-shadow: 0 0 8px #ffd700; }
+      95% { box-shadow: 0 0 30px #ffff00, 0 0 50px #ffffff; }
+    }
+    .shop-club-skin-preview.anim-galaxy {
+      animation: preview-galaxy 3s linear infinite;
+    }
+    @keyframes preview-galaxy {
+      0% { box-shadow: 0 0 15px #4b0082, 0 0 25px #8a2be2; filter: hue-rotate(0deg); }
+      50% { box-shadow: 0 0 20px #9400d3, 0 0 35px #ff69b4; }
+      100% { box-shadow: 0 0 15px #4b0082, 0 0 25px #8a2be2; filter: hue-rotate(360deg); }
+    }
+
+    /* Course Themes Section */
+    #shop-themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+    .shop-theme-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .shop-theme-card:hover {
+      transform: translateY(-4px);
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+    }
+    .shop-theme-card.owned {
+      border-color: #64B5F6;
+      background: rgba(100, 181, 246, 0.1);
+    }
+    .shop-theme-card.selected {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    }
+    .shop-theme-preview {
+      width: 100%;
+      height: 60px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-preview-rough {
+      position: absolute;
+      inset: 0;
+    }
+    .theme-preview-fairway {
+      position: absolute;
+      bottom: 10px;
+      left: 10%;
+      width: 80%;
+      height: 25px;
+      border-radius: 12px;
+    }
+    .theme-preview-green {
+      position: absolute;
+      bottom: 8px;
+      right: 15%;
+      width: 25px;
+      height: 20px;
+      border-radius: 50%;
+    }
+    .shop-theme-name {
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .shop-theme-physics {
+      color: #aaa;
+      font-size: 9px;
+      margin-bottom: 6px;
+    }
+    .shop-theme-price {
+      color: #81C784;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .shop-theme-card.selected .shop-theme-price {
+      color: #4CAF50;
+    }
+    .shop-theme-card .shop-buy-btn,
+    .shop-theme-card .shop-equip-btn {
+      font-size: 10px;
+      padding: 5px 10px;
+    }
+
+    /* Daily Challenges */
+    .daily-challenge-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .daily-challenge-popup.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .daily-challenge-popup-content {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 3px solid #FFD700;
+      border-radius: 20px;
+      padding: 30px 40px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+    }
+    .daily-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .daily-text {
+      color: #FFD700;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .daily-name {
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .daily-reward {
+      color: #4CAF50;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #daily-challenges-panel {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.98), rgba(10, 10, 30, 0.98));
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      border-radius: 16px;
+      padding: 15px 18px;
+      width: 280px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.1);
+      z-index: 5;
+    }
+    .daily-challenges-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .daily-challenge-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+    .daily-challenge-item:last-child {
+      margin-bottom: 0;
+    }
+    .daily-challenge-item.completed {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+    .daily-challenge-icon {
+      font-size: 24px;
+    }
+    .daily-challenge-info {
+      flex: 1;
+    }
+    .daily-challenge-name {
+      color: #fff;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .daily-challenge-desc {
+      color: #aaa;
+      font-size: 10px;
+    }
+    .daily-challenge-reward {
+      color: #81C784;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .daily-challenge-item.completed .daily-challenge-reward {
+      color: #4CAF50;
+    }
+
+    /* Tournament System Styles */
+    #tournament-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #tournament-overlay.hidden { display: none; }
+
+    #tournament-modal {
+      background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 450px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    #tournament-modal h2 {
+      color: #FFD700;
+      text-align: center;
+      margin: 0 0 20px 0;
+      font-size: 24px;
+    }
+
+    .tournament-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tournament-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 215, 0, 0.5);
+      transform: translateY(-2px);
+    }
+    .tournament-card.locked {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .tournament-name {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .tournament-details {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+    }
+    .tournament-prizes {
+      color: #4CAF50;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .tournament-entry {
+      color: #FFD700;
+      font-weight: bold;
+    }
+
+    .tournament-progress {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .tournament-progress h3 {
+      color: #FFD700;
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+    .tournament-round-info {
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .tournament-score-display {
+      color: #4CAF50;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .tournament-results {
+      text-align: center;
+      padding: 20px;
+    }
+    .tournament-results h3 {
+      color: #FFD700;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .tournament-position {
+      font-size: 48px;
+      font-weight: bold;
+      color: #fff;
+      margin: 10px 0;
+    }
+    .tournament-position.gold { color: #FFD700; }
+    .tournament-position.silver { color: #C0C0C0; }
+    .tournament-position.bronze { color: #CD7F32; }
+    .tournament-prize {
+      color: #4CAF50;
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .tournament-leaderboard {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 16px;
+    }
+    .tournament-leaderboard h4 {
+      color: #FFD700;
+      margin: 0 0 10px 0;
+      font-size: 14px;
+    }
+    .leaderboard-entry {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 8px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      border-radius: 4px;
+    }
+    .leaderboard-entry.player {
+      background: rgba(255, 215, 0, 0.2);
+      color: #FFD700;
+      font-weight: bold;
+    }
+    .leaderboard-entry:nth-child(odd) {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tournament-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tournament-btn.primary {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+    }
+    .tournament-btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    .tournament-btn.danger {
+      background: rgba(244, 67, 54, 0.3);
+      color: #ff6b6b;
+    }
+    .tournament-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tournament indicator in game */
+    #tournament-indicator {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.9));
+      padding: 8px 20px;
+      border-radius: 20px;
+      color: #1a1a1a;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    }
+    #tournament-indicator.hidden { display: none; }
+
+    /* Tournament scorecard elements */
+    .tournament-round-complete,
+    .tournament-complete-banner {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15));
+      border: 2px solid rgba(255, 215, 0, 0.4);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .tournament-round-complete h3,
+    .tournament-complete-banner h3 {
+      color: #FFD700;
+      margin: 0 0 10px 0;
+    }
+    .tournament-cumulative {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      margin: 10px 0;
+    }
+    .tournament-next-round-btn {
+      background: linear-gradient(135deg, #FFD700, #FFA000) !important;
+      color: #1a1a1a !important;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    .tournament-final-position {
+      font-size: 36px;
+      font-weight: bold;
+      color: #FFD700;
+    }
+    .tournament-final-details {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 10px;
+    }
+    .tournament-prize-won {
+      font-size: 24px;
+      color: #4CAF50;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .tournament-lost-entry {
+      font-size: 16px;
+      color: #ff6b6b;
+      margin-top: 10px;
+    }
+    .view-leaderboard-btn {
+      margin-top: 15px;
+      background: linear-gradient(135deg, #4169E1, #1E3A8A) !important;
+    }
+
+    /* Queue UI Styles */
+    .tournament-queue {
+      text-align: center;
+      padding: 20px;
+    }
+    .tournament-queue h3 {
+      color: #FFD700;
+      margin-bottom: 5px;
+    }
+    .queue-course {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .queue-animation {
+      margin: 25px 0;
+    }
+    .queue-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 215, 0, 0.2);
+      border-top-color: #FFD700;
+      border-radius: 50%;
+      margin: 0 auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .queue-status {
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+      margin: 15px 0;
+    }
+    .queue-status span {
+      color: #FFD700;
+    }
+    .queue-message {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .queue-entry-info {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+    }
+
+    /* Tournament Ready Screen */
+    .tournament-ready {
+      text-align: center;
+      padding: 20px;
+    }
+    .ready-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .tournament-ready h3 {
+      color: #FFD700;
+      margin-bottom: 5px;
+    }
+    .ready-message {
+      color: #4CAF50;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .ready-details {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      margin: 15px 0;
+    }
+    .ready-details div {
+      margin: 5px 0;
+    }
+    .ready-prizes {
+      color: #FFD700;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* Tournament Info Banner */
+    .tournament-info-banner {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      color: #FFD700;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .tournament-pool {
+      color: #4CAF50;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .tournament-prizes-mini {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      margin: 3px 0;
+    }
+    .tournament-warning {
+      color: rgba(255, 100, 100, 0.8);
+      font-size: 10px;
+      margin-top: 5px;
+    }
+    .tournament-card:first-of-type .tournament-warning {
+      color: rgba(100, 255, 100, 0.8);
+    }
+    .tournament-course-theme {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    .tournament-players-info {
+      color: rgba(255, 215, 0, 0.8);
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    .tournament-info-text {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    /* Leaderboard Scroll */
+    .leaderboard-scroll {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .leaderboard-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .leaderboard-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    .leaderboard-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.5);
+      border-radius: 3px;
+    }
+    .leaderboard-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+    .leaderboard-entry.in-money {
+      background: rgba(76, 175, 80, 0.15);
+    }
+    .leaderboard-entry.out-money {
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .leaderboard-entry.player {
+      background: rgba(255, 215, 0, 0.3) !important;
+      color: #FFD700 !important;
+      font-weight: bold;
+    }
+    .lb-rank { width: 30px; }
+    .lb-name { flex: 1; }
+    .lb-score { width: 50px; text-align: center; }
+    .lb-prize { width: 60px; text-align: right; color: #4CAF50; font-size: 12px; }
+    .leaderboard-entry.out-money .lb-prize { color: rgba(255, 255, 255, 0.3); }
+
+    .tournament-lost {
+      color: #ff6b6b;
+      font-size: 14px;
+      margin-top: 10px;
     }
 
     /* Menu balance display */
@@ -909,6 +1710,41 @@
     }
     .club-slot.tier-3 .club-shaft {
       background: linear-gradient(to right, #B8860B, #FFD700, #B8860B);
+    }
+
+    /* Club Skin Animations */
+    .club-slot.skin-fire .club-head {
+      animation: club-fire 0.5s ease-in-out infinite;
+    }
+    @keyframes club-fire {
+      0%, 100% { box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6600, 0 3px 6px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 20px #ff6600, 0 0 35px #ff8c00, 0 3px 6px rgba(0,0,0,0.3); }
+    }
+
+    .club-slot.skin-ice .club-head {
+      animation: club-ice 2s ease-in-out infinite;
+    }
+    @keyframes club-ice {
+      0%, 100% { box-shadow: 0 0 10px #87ceeb, 0 0 20px #b0e0e6, 0 3px 6px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 15px #e0ffff, 0 0 30px #ffffff, 0 3px 6px rgba(0,0,0,0.3); }
+    }
+
+    .club-slot.skin-lightning .club-head {
+      animation: club-lightning 0.3s ease-in-out infinite;
+    }
+    @keyframes club-lightning {
+      0%, 90% { box-shadow: 0 0 8px #ffd700, 0 3px 6px rgba(0,0,0,0.3); }
+      95% { box-shadow: 0 0 30px #ffff00, 0 0 50px #ffffff, 0 3px 6px rgba(0,0,0,0.3); }
+      100% { box-shadow: 0 0 8px #ffd700, 0 3px 6px rgba(0,0,0,0.3); }
+    }
+
+    .club-slot.skin-galaxy .club-head {
+      animation: club-galaxy 3s linear infinite;
+    }
+    @keyframes club-galaxy {
+      0% { box-shadow: 0 0 15px #4b0082, 0 0 25px #8a2be2, 0 3px 6px rgba(0,0,0,0.3); filter: hue-rotate(0deg); }
+      50% { box-shadow: 0 0 20px #9400d3, 0 0 35px #ff69b4, 0 3px 6px rgba(0,0,0,0.3); }
+      100% { box-shadow: 0 0 15px #4b0082, 0 0 25px #8a2be2, 0 3px 6px rgba(0,0,0,0.3); filter: hue-rotate(360deg); }
     }
 
     #club-toggle-btn {
@@ -2228,37 +3064,86 @@
     <div id="shop-overlay" class="hidden">
       <div id="shop-modal">
         <div id="shop-header">
-          <h2>🛒 Club Shop</h2>
-          <div id="shop-balance-display">💵 <span id="shop-balance">0</span> Golf Bucks</div>
+          <h2>Pro Shop</h2>
+          <div id="shop-balance-display"><span id="shop-balance">0</span> Golf Bucks</div>
+          <button id="shop-close-btn" class="shop-close-x">&times;</button>
+        </div>
+        <div id="shop-tabs">
+          <button class="shop-tab active" data-tab="clubs">Clubs</button>
+          <button class="shop-tab" data-tab="balls">Balls</button>
+          <button class="shop-tab" data-tab="skins">Skins</button>
+          <button class="shop-tab" data-tab="themes">Themes</button>
+          <button class="shop-tab" data-tab="info">Info</button>
         </div>
         <div id="shop-content">
-          <div id="shop-info">
-            <h3>💰 How to Earn Golf Bucks</h3>
-            <p>Upgrade your clubs to hit farther! Better clubs = lower scores.</p>
-            <div class="earn-list">
-              <div class="earn-item"><span>Birdie</span><span>+50 GB</span></div>
-              <div class="earn-item"><span>Eagle</span><span>+150 GB</span></div>
-              <div class="earn-item"><span>Hole-in-One</span><span>+500 GB</span></div>
-              <div class="earn-item"><span>Complete Round</span><span>+100 GB</span></div>
-              <div class="earn-item"><span>Under Par Bonus</span><span>+50/stroke</span></div>
-              <div class="earn-item"><span>Achievement</span><span>+200 GB</span></div>
+          <!-- Clubs Tab -->
+          <div id="shop-tab-clubs" class="shop-tab-content active">
+            <div class="shop-tab-header">
+              <h3>Club Upgrades</h3>
+              <p>Upgrade your clubs to hit farther and score better</p>
             </div>
+            <div id="shop-tier-legend">
+              <div class="tier-item basic"><span class="tier-stars">★☆☆</span> Basic</div>
+              <div class="tier-item standard"><span class="tier-stars">★★☆</span> Standard</div>
+              <div class="tier-item pro"><span class="tier-stars">★★★</span> Pro</div>
+            </div>
+            <div id="shop-clubs-grid"></div>
           </div>
-          <div id="shop-tier-legend">
-            <div class="tier-item basic"><span class="tier-stars">★☆☆</span> Basic (70%)</div>
-            <div class="tier-item standard"><span class="tier-stars">★★☆</span> Standard (85%)</div>
-            <div class="tier-item pro"><span class="tier-stars">★★★</span> Pro (100%)</div>
-          </div>
-          <div id="shop-clubs-grid"></div>
 
-          <!-- Ball Skins Section -->
-          <div id="shop-balls-section">
-            <h3 class="shop-section-title">🎱 Ball Skins</h3>
+          <!-- Balls Tab -->
+          <div id="shop-tab-balls" class="shop-tab-content">
+            <div class="shop-tab-header">
+              <h3>Ball Collection</h3>
+              <p>Customize your ball style on the course</p>
+            </div>
             <div id="shop-balls-grid"></div>
           </div>
-        </div>
-        <div id="shop-footer">
-          <button id="shop-close-btn">Close Shop</button>
+
+          <!-- Skins Tab -->
+          <div id="shop-tab-skins" class="shop-tab-content">
+            <div class="shop-tab-header">
+              <h3>Club Skins</h3>
+              <p>Cosmetic skins that apply to all your clubs</p>
+            </div>
+            <div id="shop-club-skins-grid"></div>
+          </div>
+
+          <!-- Themes Tab -->
+          <div id="shop-tab-themes" class="shop-tab-content">
+            <div class="shop-tab-header">
+              <h3>Course Themes</h3>
+              <p>Unlock new visual themes with unique physics</p>
+            </div>
+            <div id="shop-themes-grid"></div>
+          </div>
+
+          <!-- Info Tab -->
+          <div id="shop-tab-info" class="shop-tab-content">
+            <div class="shop-tab-header">
+              <h3>How to Earn Golf Bucks</h3>
+              <p>Play well to unlock more items!</p>
+            </div>
+            <div id="shop-info">
+              <div class="earn-list">
+                <div class="earn-item"><span>Birdie</span><span>+50 Golf Bucks</span></div>
+                <div class="earn-item"><span>Eagle</span><span>+150 Golf Bucks</span></div>
+                <div class="earn-item"><span>Hole-in-One</span><span>+500 Golf Bucks</span></div>
+                <div class="earn-item"><span>Complete Round</span><span>+100 Golf Bucks</span></div>
+                <div class="earn-item"><span>Under Par Bonus</span><span>+50/stroke</span></div>
+                <div class="earn-item"><span>Achievement</span><span>+200 Golf Bucks</span></div>
+                <div class="earn-item"><span>Daily Challenge</span><span>+25-200 Golf Bucks</span></div>
+              </div>
+              <div class="shop-tips">
+                <h4>Tips</h4>
+                <ul>
+                  <li>Upgrade clubs to increase your distance</li>
+                  <li>Pro swing mode gives 25% bonus Golf Bucks</li>
+                  <li>Complete daily challenges for easy rewards</li>
+                  <li>Themed courses add fun obstacles</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2354,14 +3239,37 @@
     <button class="menu-button" id="leaderboard-btn">Leaderboard</button>
     <button class="menu-button" id="tutorial-btn" style="background: #9C27B0;">Tutorial</button>
 
+    <div id="daily-challenges-panel">
+      <div class="daily-challenges-header">
+        <span>📅 Daily Challenges</span>
+        <span id="daily-timer"></span>
+      </div>
+      <div id="daily-challenges-list"></div>
+    </div>
+
     <button id="music-prompt-btn">🎵 Tap for Music</button>
 
     <div class="menu-bottom-buttons">
+      <button class="menu-icon-btn" id="tournament-btn" title="Tournaments">🏅</button>
       <button class="menu-icon-btn" id="shop-btn" title="Shop">🛒</button>
       <button class="menu-icon-btn" id="achievements-btn" title="Achievements">🏆</button>
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
-    <div id="menu-balance">0 GB</div>
+    <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
+  </div>
+
+  <!-- Tournament Overlay -->
+  <div id="tournament-overlay" class="hidden">
+    <div id="tournament-modal">
+      <h2>Tournaments</h2>
+      <div id="tournament-content"></div>
+      <button class="tournament-btn secondary" id="tournament-close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Tournament Indicator (shown during tournament play) -->
+  <div id="tournament-indicator" class="hidden">
+    <span id="tournament-indicator-text"></span>
   </div>
 
   <script>
@@ -2450,6 +3358,8 @@
     const PhysicsEngine = {
       gravity: 980,
       friction: 0.98,
+      roughFrictionMultiplier: 0.80, // 20% more friction in rough
+      roughPowerMultiplier: 0.80, // 20% less power when hitting from rough
       airResistance: 0.995,
       baseStopThreshold: 5,
       holeRadius: 15,
@@ -2484,6 +3394,46 @@
         return Math.sqrt(dx * dx + dy * dy);
       },
 
+      // Check if ball is in rough (not on fairway, green, sand, or water)
+      isInRough(ball, hole) {
+        if (!hole) return false;
+
+        // Check if on green (within 90 pixels of green center)
+        const greenDist = this.distance(ball, hole.greenPosition);
+        if (greenDist < 90) return false;
+
+        // Check if in sand (handled separately)
+        if (ball.inSand) return false;
+
+        // Check if on fairway - point must be within fairwayWidth of the path
+        const path = hole.fairwayPath;
+        const fairwayWidth = 70; // Half-width of fairway
+
+        for (let i = 0; i < path.length - 1; i++) {
+          const p1 = path[i];
+          const p2 = path[i + 1];
+
+          // Find closest point on line segment
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len2 = dx * dx + dy * dy;
+
+          let t = Math.max(0, Math.min(1, ((ball.x - p1.x) * dx + (ball.y - p1.y) * dy) / len2));
+          const closestX = p1.x + t * dx;
+          const closestY = p1.y + t * dy;
+
+          const distToFairway = Math.sqrt((ball.x - closestX) ** 2 + (ball.y - closestY) ** 2);
+          if (distToFairway < fairwayWidth) return false; // On fairway
+        }
+
+        // Check if on tee box (within 50 pixels of tee)
+        const teeDist = this.distance(ball, hole.teePosition);
+        if (teeDist < 50) return false;
+
+        // Not on fairway, green, or tee - must be in rough
+        return true;
+      },
+
       applySwing(ball, swingVector) {
         // Fixed max distance - clubs always hit the same distance in yards
         // Calculate velocity needed to travel 280 yards after friction
@@ -2500,7 +3450,7 @@
         ball.spin = swingVector.power * 0.5;
       },
 
-      updateBall(ball, deltaTime, obstacles) {
+      updateBall(ball, deltaTime, obstacles, hole = null) {
         if (!ball.isMoving) return;
 
         // Apply wind force only when ball is moving fast enough (not when nearly stopped)
@@ -2513,8 +3463,21 @@
           ball.velocityY += wind.y * deltaTime * windScale;
         }
 
+        // Check if ball is in rough
+        const inRough = hole && this.isInRough(ball, hole);
+        ball.inRough = inRough; // Store for swing penalty
+
         // Apply friction (frame-rate independent: same slowdown regardless of FPS)
-        const frictionFactor = Math.pow(this.friction, deltaTime * 60);
+        // Theme physics modifier affects friction - lower frictionMod = more sliding
+        const theme = ShopSystem.getSelectedTheme();
+        let adjustedFriction = 1 - (1 - this.friction) * theme.physics.frictionMod;
+
+        // Extra friction in rough - ball slows down 20% faster
+        if (inRough) {
+          adjustedFriction = 1 - (1 - adjustedFriction) / this.roughFrictionMultiplier;
+        }
+
+        const frictionFactor = Math.pow(adjustedFriction, deltaTime * 60);
         ball.velocityX *= frictionFactor;
         ball.velocityY *= frictionFactor;
 
@@ -2597,16 +3560,19 @@
 
           // Slow the ball and redirect toward center (simulating rolling into depression)
           const currentSpeed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
-          if (dist > 10 && currentSpeed > 5) {
-            // Roll toward center with reduced speed
-            const rollSpeed = Math.min(currentSpeed * 0.3, 80);
-            ball.velocityX = (dx / dist) * rollSpeed;
-            ball.velocityY = (dy / dist) * rollSpeed;
-          } else {
-            // Close to center or very slow - stop
+
+          // Only stop if very close to center of bunker
+          if (dist < 15) {
+            // Close to center - stop the ball
             ball.velocityX = 0;
             ball.velocityY = 0;
             ball.isMoving = false;
+          } else {
+            // Roll toward center with minimum speed to ensure ball reaches center
+            const minRollSpeed = 25;
+            const rollSpeed = Math.max(Math.min(currentSpeed * 0.4, 60), minRollSpeed);
+            ball.velocityX = (dx / dist) * rollSpeed;
+            ball.velocityY = (dy / dist) * rollSpeed;
           }
 
           ball.inSand = true;  // Flag for reduced power on next shot
@@ -2642,9 +3608,69 @@
           ball.x = obstacle.x + nx * (obstacle.radius + 10);
           ball.y = obstacle.y + ny * (obstacle.radius + 10);
 
+          // Apply bounce with theme modifier
+          const theme = ShopSystem.getSelectedTheme();
+          const bounceCoeff = 0.6 * theme.physics.bounceMod;
           const dotProduct = ball.velocityX * nx + ball.velocityY * ny;
-          ball.velocityX = (ball.velocityX - 2 * dotProduct * nx) * 0.6;
-          ball.velocityY = (ball.velocityY - 2 * dotProduct * ny) * 0.6;
+          ball.velocityX = (ball.velocityX - 2 * dotProduct * nx) * bounceCoeff;
+          ball.velocityY = (ball.velocityY - 2 * dotProduct * ny) * bounceCoeff;
+        } else if (obstacle.type === 'windmill') {
+          // Windmill deflects ball based on blade angle
+          if (!ball.collisionSoundPlayed) {
+            AudioManager.playLandSound('grass');
+            ball.collisionSoundPlayed = true;
+          }
+          // Get current blade angle
+          const bladeAngle = obstacle.angle || 0;
+          // Deflect ball perpendicular to the blade that hit it
+          const deflectAngle = bladeAngle + Math.PI / 2;
+          const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+          ball.velocityX = Math.cos(deflectAngle) * speed * 0.8;
+          ball.velocityY = Math.sin(deflectAngle) * speed * 0.8;
+          // Push ball away from windmill center
+          const dx = ball.x - obstacle.x;
+          const dy = ball.y - obstacle.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 0) {
+            ball.x = obstacle.x + (dx / dist) * (obstacle.radius + 15);
+            ball.y = obstacle.y + (dy / dist) * (obstacle.radius + 15);
+          }
+        } else if (obstacle.type === 'movingRock') {
+          // Moving rock behaves like regular rock - bounce off
+          if (!ball.collisionSoundPlayed) {
+            AudioManager.playLandSound('grass');
+            ball.collisionSoundPlayed = true;
+          }
+          const dx = ball.x - obstacle.x;
+          const dy = ball.y - obstacle.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          ball.x = obstacle.x + nx * (obstacle.radius + 10);
+          ball.y = obstacle.y + ny * (obstacle.radius + 10);
+
+          const theme = ShopSystem.getSelectedTheme();
+          const bounceCoeff = 0.7 * theme.physics.bounceMod; // Slightly bouncier
+          const dotProduct = ball.velocityX * nx + ball.velocityY * ny;
+          ball.velocityX = (ball.velocityX - 2 * dotProduct * nx) * bounceCoeff;
+          ball.velocityY = (ball.velocityY - 2 * dotProduct * ny) * bounceCoeff;
+        } else if (obstacle.type === 'teleporter') {
+          // Teleporter - teleport to paired portal
+          if (obstacle.pairedWith && !ball.justTeleported) {
+            if (!ball.collisionSoundPlayed) {
+              AudioManager.playAchievement(); // Fun teleport sound
+              ball.collisionSoundPlayed = true;
+            }
+            // Find the paired teleporter
+            const paired = obstacle.pairedWith;
+            // Teleport ball to paired location with same velocity
+            ball.x = paired.x;
+            ball.y = paired.y;
+            ball.justTeleported = true; // Prevent instant re-teleport
+            // Reset after a short delay
+            setTimeout(() => { ball.justTeleported = false; }, 500);
+          }
         }
       },
 
@@ -2738,34 +3764,36 @@
         const canvasW = this.canvas.width;
         const canvasH = this.canvas.height;
 
-        // === ROUGH (brown-ish dried grass with visible long grass texture) ===
-        // Base rough color - yellow-brown tinge
+        // Get current theme colors
+        const theme = ShopSystem.getSelectedTheme();
+
+        // === ROUGH (themed background) ===
         const roughGradient = ctx.createLinearGradient(0, 0, canvasW, canvasH);
-        roughGradient.addColorStop(0, '#5A7A42');   // Olive green
-        roughGradient.addColorStop(0.4, '#6B8850'); // Yellow-green
-        roughGradient.addColorStop(0.7, '#5A7540'); // Darker olive
-        roughGradient.addColorStop(1, '#4A6535');   // Brown-green
+        roughGradient.addColorStop(0, theme.rough.gradient[0]);
+        roughGradient.addColorStop(0.4, theme.rough.gradient[1]);
+        roughGradient.addColorStop(0.7, theme.rough.gradient[2]);
+        roughGradient.addColorStop(1, theme.rough.gradient[3]);
         ctx.fillStyle = roughGradient;
         ctx.fillRect(0, 0, canvasW, canvasH);
 
-        // Long grass blade texture - MORE VISIBLE
-        ctx.lineWidth = 2;  // Thicker lines
-        for (let i = 0; i < 800; i++) {  // More grass blades
+        // Long grass blade texture - themed
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 800; i++) {
           const seed1 = (i * 7919 + 1) % 997;
           const seed2 = (i * 6271 + 3) % 991;
           const seed3 = (i * 3571 + 7) % 983;
           const x = (seed1 / 997) * canvasW;
           const y = (seed2 / 991) * canvasH;
-          const len = 8 + (seed3 % 10);  // Longer blades: 8-17px
-          const lean = ((seed3 % 7) - 3) * 0.8; // More lean variation
+          const len = 8 + (seed3 % 10);
+          const lean = ((seed3 % 7) - 3) * 0.8;
 
-          // More visible colors - darker strokes
+          // Themed grass colors
           if (seed3 % 4 === 0) {
-            ctx.strokeStyle = 'rgba(50, 70, 30, 0.7)';  // Dark grass
+            ctx.strokeStyle = theme.rough.grassDark;
           } else if (seed3 % 4 === 1) {
-            ctx.strokeStyle = 'rgba(70, 90, 40, 0.6)';  // Medium grass
+            ctx.strokeStyle = theme.rough.grassMed;
           } else {
-            ctx.strokeStyle = 'rgba(85, 105, 50, 0.5)'; // Light grass
+            ctx.strokeStyle = theme.rough.grassLight;
           }
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -2792,7 +3820,7 @@
         const perpY = dirX;
 
         // First cut connector from tee to fairway
-        ctx.fillStyle = '#4A9A40';  // Same as fringe
+        ctx.fillStyle = theme.fairway.fringe;
         ctx.beginPath();
         const fringeW = (fairwayWidth + fringeWidth * 2) / 2;
         // Start behind tee box, end past where fairway rounded end will be
@@ -2804,7 +3832,7 @@
         ctx.fill();
 
         // Main fairway connector
-        ctx.fillStyle = '#5DBF50';  // Same as fairway
+        ctx.fillStyle = theme.fairway.main;
         ctx.beginPath();
         const fairwayW = fairwayWidth / 2;
         ctx.moveTo(teePos.x - dirX * 55 + perpX * fairwayW, teePos.y - dirY * 55 + perpY * fairwayW);
@@ -2879,12 +3907,12 @@
         };
 
         // Fringe / first-cut (medium green border)
-        ctx.fillStyle = '#4A9A40';  // Medium green - between rough and fairway
+        ctx.fillStyle = theme.fairway.fringe;
         buildSmoothFairwayPath(fairwayWidth + fringeWidth * 2);
         ctx.fill();
 
         // Main fairway (bright green)
-        ctx.fillStyle = '#5DBF50';  // Bright maintained grass
+        ctx.fillStyle = theme.fairway.main;
         buildSmoothFairwayPath(fairwayWidth);
         ctx.fill();
 
@@ -2912,7 +3940,7 @@
             const cy = p1.y + dy * t;
 
             // Lighter stripe - more visible
-            ctx.fillStyle = 'rgba(130, 220, 110, 0.4)';
+            ctx.fillStyle = theme.fairway.stripe;
             ctx.beginPath();
             ctx.moveTo(cx + perp.x * 100, cy + perp.y * 100);
             ctx.lineTo(cx - perp.x * 100, cy - perp.y * 100);
@@ -2936,28 +3964,28 @@
 
         // Tee box base
         const teeGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
-        teeGradient.addColorStop(0, '#3CB371');
-        teeGradient.addColorStop(1, '#2E8B57');
+        teeGradient.addColorStop(0, theme.tee.gradient[0]);
+        teeGradient.addColorStop(1, theme.tee.gradient[1]);
         ctx.fillStyle = teeGradient;
         ctx.beginPath();
         ctx.ellipse(0, 0, 50, 30, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Tee box outline
-        ctx.strokeStyle = '#228B22';
+        ctx.strokeStyle = theme.tee.outline;
         ctx.lineWidth = 3;
         ctx.stroke();
 
         // Tee markers (cartoon style)
-        ctx.fillStyle = '#FF6B6B';
+        ctx.fillStyle = theme.tee.markers;
         ctx.beginPath();
         ctx.arc(-20, -5, 6, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#CC5555';
+        ctx.strokeStyle = theme.tee.markerOutline;
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = '#FF6B6B';
+        ctx.fillStyle = theme.tee.markers;
         ctx.beginPath();
         ctx.arc(20, -5, 6, 0, Math.PI * 2);
         ctx.fill();
@@ -2974,7 +4002,7 @@
         // First cut collar extending from fairway to green
         ctx.save();
         ctx.translate(hole.greenPosition.x, hole.greenPosition.y);
-        ctx.fillStyle = '#4A9A40';  // Same as fringe/first-cut color
+        ctx.fillStyle = theme.fairway.fringe;
         ctx.beginPath();
         // Draw an extended ellipse in the direction the fairway comes from
         const collarExtend = 40;
@@ -2998,19 +4026,19 @@
         ctx.fill();
 
         // Outer fringe - larger to overlap with collar
-        ctx.fillStyle = '#32CD32';
+        ctx.fillStyle = theme.fairway.fringe;
         ctx.beginPath();
         ctx.ellipse(0, 0, 105, 90, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#228B22';
+        ctx.strokeStyle = theme.tee.outline;
         ctx.lineWidth = 3;
         ctx.stroke();
 
         // Main green with gradient
         const greenGradient = ctx.createRadialGradient(-20, -20, 0, 0, 0, 80);
-        greenGradient.addColorStop(0, '#90EE90');
-        greenGradient.addColorStop(0.7, '#3CB371');
-        greenGradient.addColorStop(1, '#2E8B57');
+        greenGradient.addColorStop(0, theme.green.light);
+        greenGradient.addColorStop(0.7, theme.green.main);
+        greenGradient.addColorStop(1, theme.tee.gradient[1]);
         ctx.fillStyle = greenGradient;
         ctx.beginPath();
         ctx.ellipse(0, 0, 85, 70, 0, 0, Math.PI * 2);
@@ -3018,8 +4046,8 @@
 
         // Putting surface (smoothest part)
         const puttingGradient = ctx.createRadialGradient(-10, -10, 0, 0, 0, 50);
-        puttingGradient.addColorStop(0, '#98FB98');
-        puttingGradient.addColorStop(1, '#7CCD7C');
+        puttingGradient.addColorStop(0, theme.green.light);
+        puttingGradient.addColorStop(1, theme.green.main);
         ctx.fillStyle = puttingGradient;
         ctx.beginPath();
         ctx.ellipse(0, 0, 55, 45, 0, 0, Math.PI * 2);
@@ -3223,10 +4251,11 @@
 
       drawObstacles(obstacles) {
         const ctx = this.ctx;
+        const theme = ShopSystem.getSelectedTheme();
 
         for (const obstacle of obstacles) {
           if (obstacle.type === 'sand') {
-            // Stylized sand bunker with organic shape (original style)
+            // Stylized sand bunker with organic shape - uses theme colors
             ctx.save();
             ctx.translate(obstacle.x, obstacle.y);
 
@@ -3237,16 +4266,16 @@
             ctx.fill();
 
             // Bunker rim (darker edge)
-            ctx.fillStyle = '#C4A35A';
+            ctx.fillStyle = theme.sand.dark;
             ctx.beginPath();
             ctx.ellipse(0, 0, obstacle.radius * 1.05, obstacle.radius * 0.8, 0.1, 0, Math.PI * 2);
             ctx.fill();
 
             // Main sand with gradient
             const sandGradient = ctx.createRadialGradient(-5, -5, 0, 0, 0, obstacle.radius);
-            sandGradient.addColorStop(0, '#F5DEB3');
-            sandGradient.addColorStop(0.5, '#E6D5A8');
-            sandGradient.addColorStop(1, '#D4B896');
+            sandGradient.addColorStop(0, theme.sand.light);
+            sandGradient.addColorStop(0.5, theme.sand.main);
+            sandGradient.addColorStop(1, theme.sand.dark);
             ctx.fillStyle = sandGradient;
             ctx.beginPath();
             ctx.ellipse(0, 0, obstacle.radius * 0.95, obstacle.radius * 0.7, 0.1, 0, Math.PI * 2);
@@ -3275,7 +4304,7 @@
             ctx.restore();
 
           } else if (obstacle.type === 'water') {
-            // Stylized water hazard with cartoon look
+            // Stylized water hazard with cartoon look - uses theme colors
             ctx.save();
 
             const cx = obstacle.x + obstacle.width / 2;
@@ -3287,23 +4316,23 @@
             ctx.ellipse(cx + 4, cy + 5, obstacle.width / 2 + 5, obstacle.height / 2 + 3, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Water base with gradient
+            // Water base with gradient - uses theme water colors
             const waterGradient = ctx.createRadialGradient(cx - 10, cy - 10, 0, cx, cy, obstacle.width / 2);
-            waterGradient.addColorStop(0, '#5BC0EB');
-            waterGradient.addColorStop(0.6, '#3498DB');
-            waterGradient.addColorStop(1, '#2171A5');
+            waterGradient.addColorStop(0, theme.water.light);
+            waterGradient.addColorStop(0.6, theme.water.main);
+            waterGradient.addColorStop(1, theme.water.dark);
             ctx.fillStyle = waterGradient;
             ctx.beginPath();
             ctx.ellipse(cx, cy, obstacle.width / 2, obstacle.height / 2, 0, 0, Math.PI * 2);
             ctx.fill();
 
             // Water outline
-            ctx.strokeStyle = '#1A5276';
+            ctx.strokeStyle = theme.water.dark;
             ctx.lineWidth = 3;
             ctx.stroke();
 
             // Cartoon sparkle/reflection
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillStyle = theme.water.highlight;
             ctx.beginPath();
             ctx.ellipse(cx - obstacle.width * 0.2, cy - obstacle.height * 0.15, obstacle.width * 0.15, obstacle.height * 0.1, -0.4, 0, Math.PI * 2);
             ctx.fill();
@@ -3315,7 +4344,7 @@
             ctx.fill();
 
             // Ripple lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.strokeStyle = theme.water.highlight;
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.ellipse(cx + 5, cy + 5, obstacle.width * 0.25, obstacle.height * 0.15, 0, 0, Math.PI * 2);
@@ -3531,6 +4560,195 @@
             ctx.moveTo(r * 0.25, -r * 0.35);
             ctx.lineTo(r * 0.35, r * 0.05);
             ctx.stroke();
+
+            ctx.restore();
+
+          } else if (obstacle.type === 'windmill') {
+            // Windmill obstacle with rotating blades
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
+
+            const r = obstacle.radius;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(5, 8, r * 0.6, r * 0.25, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Base/stand
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.moveTo(-8, 0);
+            ctx.lineTo(-12, 25);
+            ctx.lineTo(12, 25);
+            ctx.lineTo(8, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#5D3010';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Center hub
+            ctx.fillStyle = '#D4A574';
+            ctx.beginPath();
+            ctx.arc(0, 0, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Rotating blades
+            const bladeAngle = obstacle.angle || 0;
+            ctx.save();
+            ctx.rotate(bladeAngle);
+
+            // Draw 4 blades
+            for (let i = 0; i < 4; i++) {
+              ctx.save();
+              ctx.rotate((i * Math.PI) / 2);
+
+              // Blade
+              ctx.fillStyle = '#E8D4B8';
+              ctx.beginPath();
+              ctx.moveTo(-4, -8);
+              ctx.lineTo(-6, -r);
+              ctx.lineTo(0, -r - 5);
+              ctx.lineTo(6, -r);
+              ctx.lineTo(4, -8);
+              ctx.closePath();
+              ctx.fill();
+
+              // Blade outline
+              ctx.strokeStyle = '#8B4513';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+
+              // Blade detail lines
+              ctx.strokeStyle = '#C4A574';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(0, -12);
+              ctx.lineTo(0, -r);
+              ctx.stroke();
+
+              ctx.restore();
+            }
+            ctx.restore();
+
+            // Center bolt
+            ctx.fillStyle = '#4A4A4A';
+            ctx.beginPath();
+            ctx.arc(0, 0, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+          } else if (obstacle.type === 'movingRock') {
+            // Moving rock - glowing rock that moves
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
+
+            const r = obstacle.radius;
+
+            // Glow effect
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.3)';
+            ctx.beginPath();
+            ctx.arc(0, 0, r * 1.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(4, r * 0.6, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Rock body with reddish tint
+            const rockGrad = ctx.createRadialGradient(-r * 0.2, -r * 0.2, 0, 0, 0, r);
+            rockGrad.addColorStop(0, '#B85450');
+            rockGrad.addColorStop(0.5, '#8B3A36');
+            rockGrad.addColorStop(1, '#5C2622');
+            ctx.fillStyle = rockGrad;
+
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.7, r * 0.3);
+            ctx.lineTo(-r * 0.85, -r * 0.2);
+            ctx.lineTo(-r * 0.4, -r * 0.7);
+            ctx.lineTo(r * 0.3, -r * 0.75);
+            ctx.lineTo(r * 0.8, -r * 0.2);
+            ctx.lineTo(r * 0.7, r * 0.4);
+            ctx.lineTo(0, r * 0.5);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#3D1815';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Motion lines
+            const moveDir = obstacle.moveDir || 1;
+            ctx.strokeStyle = 'rgba(255, 150, 150, 0.5)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+              const lineX = -moveDir * (r + 5 + i * 6);
+              ctx.beginPath();
+              ctx.moveTo(lineX, -r * 0.3 + i * r * 0.3);
+              ctx.lineTo(lineX - moveDir * 8, -r * 0.3 + i * r * 0.3);
+              ctx.stroke();
+            }
+
+            ctx.restore();
+
+          } else if (obstacle.type === 'teleporter') {
+            // Teleporter portal
+            ctx.save();
+            ctx.translate(obstacle.x, obstacle.y);
+
+            const r = obstacle.radius;
+            const time = Date.now() / 1000;
+
+            // Outer glow
+            const glowSize = r * 1.5 + Math.sin(time * 3) * 5;
+            const portalColor = obstacle.portalColor || '#8B5CF6';
+            ctx.fillStyle = `${portalColor}33`;
+            ctx.beginPath();
+            ctx.arc(0, 0, glowSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Portal ring
+            ctx.strokeStyle = portalColor;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner swirl effect
+            const innerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+            innerGrad.addColorStop(0, `${portalColor}CC`);
+            innerGrad.addColorStop(0.5, `${portalColor}66`);
+            innerGrad.addColorStop(1, `${portalColor}00`);
+            ctx.fillStyle = innerGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, r - 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Spinning particles
+            ctx.fillStyle = '#FFFFFF';
+            for (let i = 0; i < 6; i++) {
+              const angle = time * 2 + (i * Math.PI) / 3;
+              const dist = r * 0.6;
+              const px = Math.cos(angle) * dist;
+              const py = Math.sin(angle) * dist;
+              ctx.beginPath();
+              ctx.arc(px, py, 3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+
+            // Center dot
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(0, 0, 4, 0, Math.PI * 2);
+            ctx.fill();
 
             ctx.restore();
           }
@@ -4247,6 +5465,51 @@
         rose: 'Rose', galaxy: 'Galaxy Swirl', fire: 'Fire Trail', rainbow: 'Rainbow Shift'
       },
 
+      // Club skins - default is always owned
+      ownedClubSkins: ['default'],
+      selectedClubSkin: 'default',
+
+      // Club skin prices
+      clubSkinPrices: {
+        carbon: 300,
+        camo: 250,
+        chrome: 350,
+        redsteel: 275,
+        ocean: 300,
+        fire: 600,
+        ice: 600,
+        lightning: 750,
+        galaxy: 800
+      },
+
+      // Club skin display names
+      clubSkinNames: {
+        default: 'Default',
+        carbon: 'Carbon Fiber',
+        camo: 'Camo',
+        chrome: 'Chrome',
+        redsteel: 'Red Steel',
+        ocean: 'Ocean Blue',
+        fire: 'Inferno',
+        ice: 'Frost',
+        lightning: 'Lightning',
+        galaxy: 'Galaxy'
+      },
+
+      // Club skin visual definitions
+      clubSkinStyles: {
+        default: { type: 'solid', headColor: null, shaftColor: null }, // Uses tier colors
+        carbon: { type: 'pattern', pattern: 'carbon', headColor: '#1a1a1a', shaftColor: '#2d2d2d', accent: '#444' },
+        camo: { type: 'pattern', pattern: 'camo', headColor: '#4a5d23', shaftColor: '#3d4d1f', accent: '#6b7d3a' },
+        chrome: { type: 'solid', headColor: '#c0c0c0', shaftColor: '#a8a8a8', accent: '#e8e8e8', shine: true },
+        redsteel: { type: 'solid', headColor: '#8b0000', shaftColor: '#5c0000', accent: '#ff4444' },
+        ocean: { type: 'gradient', headColors: ['#006994', '#00ced1'], shaftColor: '#005577', accent: '#40e0d0' },
+        fire: { type: 'animated', animation: 'fire', headColors: ['#ff4500', '#ff6600', '#ff8c00'], shaftColor: '#cc3300', accent: '#ffcc00' },
+        ice: { type: 'animated', animation: 'ice', headColors: ['#87ceeb', '#b0e0e6', '#e0ffff'], shaftColor: '#5f9ea0', accent: '#ffffff' },
+        lightning: { type: 'animated', animation: 'lightning', headColors: ['#ffff00', '#ffd700', '#ffffff'], shaftColor: '#4169e1', accent: '#00ffff' },
+        galaxy: { type: 'animated', animation: 'galaxy', headColors: ['#4b0082', '#8a2be2', '#9400d3'], shaftColor: '#2e0854', accent: '#ff69b4' }
+      },
+
       init() {
         this.load();
       },
@@ -4260,6 +5523,20 @@
           // Load owned ball skins, default to free colors
           if (parsed.ownedBallSkins && parsed.ownedBallSkins.length > 0) {
             this.ownedBallSkins = parsed.ownedBallSkins;
+          }
+          // Load club skins
+          if (parsed.ownedClubSkins && parsed.ownedClubSkins.length > 0) {
+            this.ownedClubSkins = parsed.ownedClubSkins;
+          }
+          if (parsed.selectedClubSkin) {
+            this.selectedClubSkin = parsed.selectedClubSkin;
+          }
+          // Load course themes
+          if (parsed.ownedThemes && parsed.ownedThemes.length > 0) {
+            this.ownedThemes = parsed.ownedThemes;
+          }
+          if (parsed.selectedTheme) {
+            this.selectedTheme = parsed.selectedTheme;
           }
         }
         // Initialize all clubs to tier 1 if not owned
@@ -4276,7 +5553,11 @@
         localStorage.setItem('golf-shop-data', JSON.stringify({
           golfBucks: this.golfBucks,
           ownedClubs: this.ownedClubs,
-          ownedBallSkins: this.ownedBallSkins
+          ownedBallSkins: this.ownedBallSkins,
+          ownedClubSkins: this.ownedClubSkins,
+          selectedClubSkin: this.selectedClubSkin,
+          ownedThemes: this.ownedThemes,
+          selectedTheme: this.selectedTheme
         }));
       },
 
@@ -4388,7 +5669,7 @@
         // Create a brief popup showing earnings
         const popup = document.createElement('div');
         popup.className = 'golf-bucks-popup';
-        popup.innerHTML = `+${amount} GB${reason ? '<br><small>' + reason + '</small>' : ''}`;
+        popup.innerHTML = `+${amount} Golf Bucks${reason ? '<br><small>' + reason + '</small>' : ''}`;
         document.body.appendChild(popup);
 
         // Animate and remove
@@ -4440,14 +5721,116 @@
         }, 2500);
       },
 
+      // Club skin methods
+      ownsClubSkin(skinId) {
+        return this.ownedClubSkins.includes(skinId);
+      },
+
+      getClubSkinPrice(skinId) {
+        return this.clubSkinPrices[skinId] || 0;
+      },
+
+      purchaseClubSkin(skinId) {
+        if (this.ownsClubSkin(skinId)) return false;
+
+        const price = this.getClubSkinPrice(skinId);
+        if (price === 0) return false;
+
+        if (this.spendBucks(price)) {
+          this.ownedClubSkins.push(skinId);
+          this.selectedClubSkin = skinId; // Auto-select on purchase
+          this.lastUnlockedClubSkin = skinId; // For animation
+          this.save();
+          if (AudioManager.playAchievement) AudioManager.playAchievement();
+
+          const skinName = this.clubSkinNames[skinId] || skinId;
+          this.showClubSkinUnlockPopup(skinName);
+          return true;
+        }
+        return false;
+      },
+
+      buyClubSkin(skinId) {
+        if (this.purchaseClubSkin(skinId)) {
+          this.renderShop();
+        }
+      },
+
+      selectClubSkin(skinId) {
+        if (this.ownsClubSkin(skinId)) {
+          this.selectedClubSkin = skinId;
+          this.save();
+          this.renderShop();
+          // Update in-game club visuals if playing
+          this.updateClubSelectorSkins();
+        }
+      },
+
+      showClubSkinUnlockPopup(skinName) {
+        const popup = document.createElement('div');
+        popup.className = 'upgrade-popup';
+        popup.innerHTML = `<span>🏌️</span> Unlocked <strong>${skinName}</strong> club skin!`;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 500);
+        }, 2500);
+      },
+
+      getSelectedClubSkinStyle() {
+        return this.clubSkinStyles[this.selectedClubSkin] || this.clubSkinStyles.default;
+      },
+
+      updateClubSelectorSkins() {
+        // This will be called to refresh club visuals when skin changes
+        const clubSlots = document.querySelectorAll('.club-slot');
+        clubSlots.forEach(slot => {
+          this.applyClubSkinToElement(slot);
+        });
+      },
+
+      applyClubSkinToElement(slotElement) {
+        const skinStyle = this.getSelectedClubSkinStyle();
+        const clubHead = slotElement.querySelector('.club-head');
+        const clubShaft = slotElement.querySelector('.club-shaft');
+        if (!clubHead || !clubShaft) return;
+
+        // Remove any existing skin classes
+        slotElement.classList.remove('skin-animated', 'skin-fire', 'skin-ice', 'skin-lightning', 'skin-galaxy');
+
+        if (skinStyle.type === 'solid' && skinStyle.headColor === null) {
+          // Default skin - clear custom styles, let tier colors show
+          clubHead.style.removeProperty('background');
+          clubShaft.style.removeProperty('background');
+          return;
+        }
+
+        // Apply skin colors/effects
+        if (skinStyle.type === 'animated') {
+          slotElement.classList.add('skin-animated', `skin-${this.selectedClubSkin}`);
+        }
+
+        if (skinStyle.headColor) {
+          clubHead.style.setProperty('background', `linear-gradient(135deg, ${skinStyle.accent || skinStyle.headColor} 0%, ${skinStyle.headColor} 50%, ${skinStyle.headColor} 100%)`, 'important');
+        }
+        if (skinStyle.headColors) {
+          clubHead.style.setProperty('background', `linear-gradient(135deg, ${skinStyle.headColors.join(', ')})`, 'important');
+        }
+        if (skinStyle.shaftColor) {
+          clubShaft.style.setProperty('background', `linear-gradient(to right, ${skinStyle.shaftColor}, ${skinStyle.accent || skinStyle.shaftColor}, ${skinStyle.shaftColor})`, 'important');
+        }
+      },
+
       updateBalanceDisplay() {
         const balanceEl = document.getElementById('shop-balance');
         if (balanceEl) {
           balanceEl.textContent = this.golfBucks;
         }
-        const menuBalanceEl = document.getElementById('menu-balance');
-        if (menuBalanceEl) {
-          menuBalanceEl.textContent = this.golfBucks + ' GB';
+        const menuBalanceAmountEl = document.getElementById('menu-balance-amount');
+        if (menuBalanceAmountEl) {
+          menuBalanceAmountEl.textContent = this.golfBucks;
         }
       },
 
@@ -4497,7 +5880,7 @@
             <div class="shop-club-name">${this.clubNames[clubId]}</div>
             <div class="shop-club-tier">${stars}</div>
             <div class="shop-club-distance">${currentDist} yds</div>
-            <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' GB'}</div>
+            <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' Golf Bucks'}</div>
             ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.upgradeClub('${clubId}')">Upgrade</button>`}
           `;
 
@@ -4520,6 +5903,8 @@
 
         this.updateBalanceDisplay();
         this.renderBallSkins();
+        this.renderClubSkins();
+        this.renderThemes();
       },
 
       renderBallSkins() {
@@ -4558,7 +5943,7 @@
               ${isAnimated ? '<div class="animated-indicator">✨</div>' : ''}
             </div>
             <div class="shop-ball-name">${name}</div>
-            <div class="shop-ball-price">${isOwned ? '✓ OWNED' : (isFree ? 'FREE' : price + ' GB')}</div>
+            <div class="shop-ball-price">${isOwned ? '✓ OWNED' : (isFree ? 'FREE' : price + ' Golf Bucks')}</div>
             ${!isOwned && !isFree ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-skin="${skinId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyBallSkin('${skinId}')">Buy</button>` : ''}
           `;
 
@@ -4578,8 +5963,1289 @@
         }
       },
 
+      renderClubSkins() {
+        const container = document.getElementById('shop-club-skins-grid');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // All club skins
+        const allSkins = ['default', ...Object.keys(this.clubSkinPrices)];
+
+        for (const skinId of allSkins) {
+          const isDefault = skinId === 'default';
+          const isOwned = this.ownsClubSkin(skinId);
+          const isSelected = this.selectedClubSkin === skinId;
+          const price = isDefault ? 0 : this.getClubSkinPrice(skinId);
+          const canBuy = !isOwned && this.canAfford(price);
+          const skinStyle = this.clubSkinStyles[skinId];
+          const isAnimated = skinStyle?.type === 'animated';
+
+          const card = document.createElement('div');
+          let cardClass = 'shop-club-skin-card';
+          if (isOwned) cardClass += ' owned';
+          if (isSelected) cardClass += ' selected';
+          if (isAnimated) cardClass += ' animated';
+          card.className = cardClass;
+          card.dataset.skin = skinId;
+
+          // Generate preview colors
+          let previewColor = '#666';
+          if (skinStyle.headColor) {
+            previewColor = skinStyle.headColor;
+          } else if (skinStyle.headColors) {
+            previewColor = `linear-gradient(135deg, ${skinStyle.headColors.join(', ')})`;
+          }
+
+          const name = this.clubSkinNames[skinId] || skinId;
+          const animatedBadge = isAnimated ? '<span class="skin-animated-badge">✨ Animated</span>' : '';
+
+          card.innerHTML = `
+            <div class="shop-club-skin-preview ${isAnimated ? 'anim-' + skinId : ''}" style="background: ${previewColor}">
+              <div class="club-skin-shaft-preview" style="background: ${skinStyle.shaftColor || '#888'}"></div>
+            </div>
+            <div class="shop-club-skin-name">${name}</div>
+            ${animatedBadge}
+            <div class="shop-club-skin-price">${isSelected ? '✓ EQUIPPED' : (isOwned ? 'OWNED' : (isDefault ? 'FREE' : price + ' Golf Bucks'))}</div>
+            ${!isOwned && !isDefault ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyClubSkin('${skinId}')">Buy</button>` : ''}
+            ${isOwned && !isSelected ? `<button class="shop-equip-btn" onclick="ShopSystem.selectClubSkin('${skinId}')">Equip</button>` : ''}
+          `;
+
+          container.appendChild(card);
+        }
+
+        // Add animation to just-unlocked skin
+        if (this.lastUnlockedClubSkin) {
+          const unlockedCard = container.querySelector(`[data-skin="${this.lastUnlockedClubSkin}"]`);
+          if (unlockedCard) {
+            unlockedCard.classList.add('just-upgraded');
+            setTimeout(() => unlockedCard.classList.remove('just-upgraded'), 600);
+          }
+          this.lastUnlockedClubSkin = null;
+        }
+      },
+
+      renderThemes() {
+        const container = document.getElementById('shop-themes-grid');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // All themes
+        const allThemes = ['classic', 'desert', 'snow', 'tropical'];
+
+        for (const themeId of allThemes) {
+          const isClassic = themeId === 'classic';
+          const isOwned = this.ownsTheme(themeId);
+          const isSelected = this.selectedTheme === themeId;
+          const price = isClassic ? 0 : this.themePrices[themeId];
+          const canBuy = !isOwned && this.canAfford(price);
+          const themeData = CourseThemes.themes[themeId];
+
+          const card = document.createElement('div');
+          let cardClass = 'shop-theme-card';
+          if (isOwned) cardClass += ' owned';
+          if (isSelected) cardClass += ' selected';
+          card.className = cardClass;
+          card.dataset.theme = themeId;
+
+          const name = this.themeNames[themeId] || themeId;
+
+          // Physics info
+          const physics = themeData.physics;
+          let physicsDesc = '';
+          if (physics.frictionMod < 1.0) {
+            physicsDesc = 'Ball slides more';
+          } else if (physics.frictionMod > 1.0) {
+            physicsDesc = 'More grip';
+          }
+
+          card.innerHTML = `
+            <div class="shop-theme-preview">
+              <div class="theme-preview-rough" style="background: ${themeData.rough.gradient[0]}"></div>
+              <div class="theme-preview-fairway" style="background: ${themeData.fairway.main}"></div>
+              <div class="theme-preview-green" style="background: ${themeData.green.main}"></div>
+            </div>
+            <div class="shop-theme-name">${name}</div>
+            ${physicsDesc ? `<div class="shop-theme-physics">${physicsDesc}</div>` : ''}
+            <div class="shop-theme-price">${isSelected ? '✓ ACTIVE' : (isOwned ? 'OWNED' : (isClassic ? 'FREE' : price + ' Golf Bucks'))}</div>
+            ${!isOwned && !isClassic ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyTheme('${themeId}')">Buy</button>` : ''}
+            ${isOwned && !isSelected ? `<button class="shop-equip-btn" onclick="ShopSystem.selectTheme('${themeId}'); ShopSystem.renderThemes();">Select</button>` : ''}
+          `;
+
+          container.appendChild(card);
+        }
+
+        // Add animation to just-unlocked theme
+        if (this.lastUnlockedTheme) {
+          const unlockedCard = container.querySelector(`[data-theme="${this.lastUnlockedTheme}"]`);
+          if (unlockedCard) {
+            unlockedCard.classList.add('just-upgraded');
+            setTimeout(() => unlockedCard.classList.remove('just-upgraded'), 600);
+          }
+          this.lastUnlockedTheme = null;
+        }
+      },
+
+      buyTheme(themeId) {
+        if (this.purchaseTheme(themeId)) {
+          this.lastUnlockedTheme = themeId;
+          this.renderThemes();
+          this.updateBalanceDisplay();
+          this.showThemeUnlockPopup(this.themeNames[themeId]);
+        }
+      },
+
+      showThemeUnlockPopup(themeName) {
+        const popup = document.createElement('div');
+        popup.className = 'unlock-popup';
+        popup.innerHTML = `
+          <div class="unlock-popup-content">
+            <div class="unlock-icon">🌍</div>
+            <div class="unlock-text">Theme Unlocked!</div>
+            <div class="unlock-name">${themeName}</div>
+          </div>
+        `;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 300);
+        }, 2000);
+      },
+
       lastUpgradedClub: null,
-      lastUnlockedSkin: null
+      lastUnlockedSkin: null,
+      lastUnlockedClubSkin: null,
+      lastUnlockedTheme: null,
+
+      // Course theme methods
+      ownedThemes: ['classic'],
+      selectedTheme: 'classic',
+
+      themePrices: {
+        desert: 500,
+        snow: 500,
+        tropical: 600
+      },
+
+      themeNames: {
+        classic: 'Classic',
+        desert: 'Desert Dunes',
+        snow: 'Winter Frost',
+        tropical: 'Tropical Paradise'
+      },
+
+      ownsTheme(themeId) {
+        return this.ownedThemes.includes(themeId);
+      },
+
+      purchaseTheme(themeId) {
+        if (this.ownsTheme(themeId)) return false;
+        const price = this.themePrices[themeId];
+        if (!price) return false;
+
+        if (this.spendBucks(price)) {
+          this.ownedThemes.push(themeId);
+          this.selectedTheme = themeId;
+          this.save();
+          if (AudioManager.playAchievement) AudioManager.playAchievement();
+          return true;
+        }
+        return false;
+      },
+
+      selectTheme(themeId) {
+        if (this.ownsTheme(themeId)) {
+          this.selectedTheme = themeId;
+          this.save();
+        }
+      },
+
+      getSelectedTheme() {
+        // Tournament theme override takes priority
+        if (TournamentSystem.isInTournament()) {
+          const tournamentTheme = TournamentSystem.getCourseTheme();
+          return CourseThemes.themes[tournamentTheme] || CourseThemes.themes.classic;
+        }
+        return CourseThemes.themes[this.selectedTheme] || CourseThemes.themes.classic;
+      }
+    };
+
+    // === Course Themes System ===
+    const CourseThemes = {
+      themes: {
+        classic: {
+          name: 'Classic',
+          // Rough colors
+          rough: {
+            gradient: ['#5A7A42', '#6B8850', '#5A7540', '#4A6535'],
+            grassDark: 'rgba(50, 70, 30, 0.7)',
+            grassMed: 'rgba(70, 90, 40, 0.6)',
+            grassLight: 'rgba(85, 105, 50, 0.5)'
+          },
+          // Fairway colors
+          fairway: {
+            main: '#5DBF50',
+            fringe: '#4A9A40',
+            stripe: 'rgba(130, 220, 110, 0.4)'
+          },
+          // Tee box
+          tee: {
+            gradient: ['#3CB371', '#2E8B57'],
+            outline: '#228B22',
+            markers: '#FF6B6B',
+            markerOutline: '#CC5555'
+          },
+          // Green
+          green: {
+            main: '#3CB371',
+            light: '#4DD588',
+            contour: 'rgba(30, 100, 50, 0.15)'
+          },
+          // Hazards
+          water: {
+            main: '#4A90B8',
+            light: '#6BB8E0',
+            dark: '#2A5070',
+            highlight: 'rgba(255, 255, 255, 0.3)'
+          },
+          sand: {
+            main: '#E8D4A0',
+            light: '#F5E6C0',
+            dark: '#C4A060'
+          },
+          // Physics modifiers
+          physics: {
+            frictionMod: 1.0,
+            bounceMod: 1.0
+          },
+          // Special hazards for this theme
+          specialHazards: []
+        },
+
+        desert: {
+          name: 'Desert Dunes',
+          rough: {
+            gradient: ['#C4A35A', '#D4B36A', '#B89040', '#A07830'],
+            grassDark: 'rgba(160, 120, 48, 0.7)',
+            grassMed: 'rgba(180, 144, 64, 0.6)',
+            grassLight: 'rgba(200, 160, 80, 0.5)'
+          },
+          fairway: {
+            main: '#8DB860',
+            fringe: '#7AA050',
+            stripe: 'rgba(160, 200, 120, 0.3)'
+          },
+          tee: {
+            gradient: ['#7AA050', '#5A8030'],
+            outline: '#4A6A28',
+            markers: '#FF8C42',
+            markerOutline: '#CC6A30'
+          },
+          green: {
+            main: '#6AAA50',
+            light: '#7CC060',
+            contour: 'rgba(60, 100, 30, 0.15)'
+          },
+          water: {
+            main: '#5A9AB8',
+            light: '#7AC0E0',
+            dark: '#3A6A80',
+            highlight: 'rgba(255, 255, 255, 0.25)'
+          },
+          sand: {
+            main: '#F0D890',
+            light: '#FFF0B0',
+            dark: '#D0A850'
+          },
+          physics: {
+            frictionMod: 0.9, // Ball rolls further on hard ground
+            bounceMod: 1.1
+          },
+          specialHazards: ['quicksand', 'cactus']
+        },
+
+        snow: {
+          name: 'Winter Frost',
+          rough: {
+            gradient: ['#E8F0F8', '#D0E0F0', '#B8D0E8', '#A0C0E0'],
+            grassDark: 'rgba(160, 180, 200, 0.5)',
+            grassMed: 'rgba(180, 200, 220, 0.4)',
+            grassLight: 'rgba(200, 220, 240, 0.3)'
+          },
+          fairway: {
+            main: '#C8E0C0',
+            fringe: '#B0D0A8',
+            stripe: 'rgba(220, 240, 220, 0.4)'
+          },
+          tee: {
+            gradient: ['#A8D0A0', '#88B080'],
+            outline: '#689068',
+            markers: '#4A90D0',
+            markerOutline: '#3070A0'
+          },
+          green: {
+            main: '#90C888',
+            light: '#A8D8A0',
+            contour: 'rgba(100, 140, 100, 0.15)'
+          },
+          water: {
+            main: '#88C8E8',
+            light: '#B0E0F8',
+            dark: '#5090B0',
+            highlight: 'rgba(255, 255, 255, 0.5)'
+          },
+          sand: {
+            main: '#F8F8F8',
+            light: '#FFFFFF',
+            dark: '#D0D8E0'
+          },
+          physics: {
+            frictionMod: 0.7, // Icy = less friction, ball slides more
+            bounceMod: 0.8
+          },
+          specialHazards: ['ice', 'snowdrift']
+        },
+
+        tropical: {
+          name: 'Tropical Paradise',
+          rough: {
+            gradient: ['#2A8040', '#3A9050', '#2A7030', '#1A6020'],
+            grassDark: 'rgba(20, 80, 30, 0.7)',
+            grassMed: 'rgba(40, 100, 50, 0.6)',
+            grassLight: 'rgba(60, 120, 70, 0.5)'
+          },
+          fairway: {
+            main: '#40C050',
+            fringe: '#30A040',
+            stripe: 'rgba(100, 220, 120, 0.4)'
+          },
+          tee: {
+            gradient: ['#30B048', '#20A038'],
+            outline: '#108028',
+            markers: '#FF6090',
+            markerOutline: '#D04070'
+          },
+          green: {
+            main: '#28B840',
+            light: '#40D058',
+            contour: 'rgba(20, 100, 40, 0.15)'
+          },
+          water: {
+            main: '#20A0C0',
+            light: '#40C8E8',
+            dark: '#107090',
+            highlight: 'rgba(255, 255, 255, 0.35)'
+          },
+          sand: {
+            main: '#F8E8C0',
+            light: '#FFF8D8',
+            dark: '#E0C890'
+          },
+          physics: {
+            frictionMod: 1.1, // Lush grass = more friction
+            bounceMod: 0.9
+          },
+          specialHazards: ['palmTree', 'tidalPool']
+        }
+      },
+
+      getTheme(themeId) {
+        return this.themes[themeId] || this.themes.classic;
+      }
+    };
+
+    // === Daily Challenge System ===
+    const DailyChallengeSystem = {
+      // All possible challenge types
+      challengeTypes: {
+        birdie: { name: 'Birdie Hunter', desc: 'Score a birdie', icon: '🐦', reward: 50 },
+        eagle: { name: 'Eagle Eye', desc: 'Score an eagle or better', icon: '🦅', reward: 100 },
+        holeInOne: { name: 'Ace Master', desc: 'Get a hole in one', icon: '🎯', reward: 200 },
+        underPar: { name: 'Under Par Pro', desc: 'Finish a round under par', icon: '📊', reward: 75 },
+        parStreak: { name: 'Consistent', desc: 'Get par or better on 3 consecutive holes', icon: '⭐', reward: 60 },
+        longDrive: { name: 'Big Hitter', desc: 'Hit a drive over 260 yards', icon: '💪', reward: 40 },
+        noBunker: { name: 'Sand Dodger', desc: 'Complete a hole without hitting a bunker', icon: '🏖️', reward: 25 },
+        noWater: { name: 'Water Walker', desc: 'Complete 3 holes without hitting water', icon: '🌊', reward: 35 },
+        onePutt: { name: 'Putting Pro', desc: 'One-putt 2 greens in a round', icon: '🎱', reward: 45 },
+        complete5: { name: 'Grinder', desc: 'Complete 5 holes today', icon: '⛳', reward: 30 },
+        complete9: { name: 'Full Round', desc: 'Complete a full 9-hole round', icon: '🏆', reward: 80 }
+      },
+
+      // Current daily challenges (3 per day)
+      currentChallenges: [],
+      challengeProgress: {},
+      lastGeneratedDate: null,
+
+      init() {
+        this.load();
+        this.checkAndGenerateDaily();
+      },
+
+      load() {
+        const data = localStorage.getItem('golf-daily-challenges');
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.currentChallenges = parsed.challenges || [];
+            this.challengeProgress = parsed.progress || {};
+            this.lastGeneratedDate = parsed.date || null;
+          } catch (e) {
+            console.error('Failed to load daily challenges:', e);
+          }
+        }
+      },
+
+      save() {
+        localStorage.setItem('golf-daily-challenges', JSON.stringify({
+          challenges: this.currentChallenges,
+          progress: this.challengeProgress,
+          date: this.lastGeneratedDate
+        }));
+      },
+
+      getTodayString() {
+        const today = new Date();
+        return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+      },
+
+      checkAndGenerateDaily() {
+        const today = this.getTodayString();
+        if (this.lastGeneratedDate !== today) {
+          this.generateDailyChallenges();
+        }
+      },
+
+      generateDailyChallenges() {
+        // Use date as seed for consistent challenges per day
+        const today = this.getTodayString();
+        const seed = today.split('-').reduce((a, b) => a * 31 + parseInt(b), 0);
+
+        // Simple seeded random
+        let rng = seed;
+        const random = () => {
+          rng = (rng * 1103515245 + 12345) & 0x7fffffff;
+          return rng / 0x7fffffff;
+        };
+
+        // Pick 3 unique challenges
+        const types = Object.keys(this.challengeTypes);
+        const selected = [];
+        while (selected.length < 3) {
+          const idx = Math.floor(random() * types.length);
+          const type = types[idx];
+          if (!selected.includes(type)) {
+            selected.push(type);
+          }
+        }
+
+        this.currentChallenges = selected;
+        this.challengeProgress = {};
+        for (const type of selected) {
+          this.challengeProgress[type] = { completed: false, progress: 0 };
+        }
+        this.lastGeneratedDate = today;
+        this.save();
+      },
+
+      getChallenges() {
+        this.checkAndGenerateDaily();
+        return this.currentChallenges.map(type => ({
+          type,
+          ...this.challengeTypes[type],
+          progress: this.challengeProgress[type] || { completed: false, progress: 0 }
+        }));
+      },
+
+      // Called when various game events happen
+      onBirdie() {
+        this.trackProgress('birdie', 1, 1);
+      },
+
+      onEagle() {
+        this.trackProgress('eagle', 1, 1);
+        this.trackProgress('birdie', 1, 1); // Eagle counts as birdie too
+      },
+
+      onHoleInOne() {
+        this.trackProgress('holeInOne', 1, 1);
+        this.trackProgress('eagle', 1, 1);
+        this.trackProgress('birdie', 1, 1);
+      },
+
+      onRoundComplete(scoreRelativeToPar) {
+        if (scoreRelativeToPar < 0) {
+          this.trackProgress('underPar', 1, 1);
+        }
+        this.trackProgress('complete9', 1, 1);
+      },
+
+      onParStreak(count) {
+        if (count >= 3) {
+          this.trackProgress('parStreak', 1, 1);
+        }
+      },
+
+      onLongDrive(yards) {
+        if (yards >= 260) {
+          this.trackProgress('longDrive', 1, 1);
+        }
+      },
+
+      onHoleComplete(hitBunker, hitWater) {
+        this.trackProgress('complete5', 1, 5);
+        if (!hitBunker) {
+          this.trackProgress('noBunker', 1, 1);
+        }
+        if (!hitWater) {
+          this.challengeProgress.noWaterStreak = (this.challengeProgress.noWaterStreak || 0) + 1;
+          if (this.challengeProgress.noWaterStreak >= 3) {
+            this.trackProgress('noWater', 1, 1);
+          }
+        } else {
+          this.challengeProgress.noWaterStreak = 0;
+        }
+      },
+
+      onOnePutt() {
+        this.trackProgress('onePutt', 1, 2);
+      },
+
+      trackProgress(challengeType, amount, target) {
+        if (!this.currentChallenges.includes(challengeType)) return;
+
+        const progress = this.challengeProgress[challengeType];
+        if (!progress || progress.completed) return;
+
+        progress.progress += amount;
+        if (progress.progress >= target) {
+          progress.completed = true;
+          this.awardChallenge(challengeType);
+        }
+        this.save();
+        this.updateUI();
+      },
+
+      awardChallenge(challengeType) {
+        const challenge = this.challengeTypes[challengeType];
+        if (!challenge) return;
+
+        ShopSystem.addBucks(challenge.reward, `Daily: ${challenge.name}`);
+        this.showCompletionPopup(challenge);
+      },
+
+      showCompletionPopup(challenge) {
+        const popup = document.createElement('div');
+        popup.className = 'daily-challenge-popup';
+        popup.innerHTML = `
+          <div class="daily-challenge-popup-content">
+            <div class="daily-icon">${challenge.icon}</div>
+            <div class="daily-text">Daily Challenge Complete!</div>
+            <div class="daily-name">${challenge.name}</div>
+            <div class="daily-reward">+${challenge.reward} Golf Bucks</div>
+          </div>
+        `;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 300);
+        }, 2500);
+      },
+
+      updateUI() {
+        const container = document.getElementById('daily-challenges-list');
+        if (!container) return;
+
+        const challenges = this.getChallenges();
+        container.innerHTML = challenges.map(c => `
+          <div class="daily-challenge-item ${c.progress.completed ? 'completed' : ''}">
+            <span class="daily-challenge-icon">${c.icon}</span>
+            <div class="daily-challenge-info">
+              <div class="daily-challenge-name">${c.name}</div>
+              <div class="daily-challenge-desc">${c.desc}</div>
+            </div>
+            <div class="daily-challenge-reward">${c.progress.completed ? '✓' : `+${c.reward}`}</div>
+          </div>
+        `).join('');
+      },
+
+      getAllCompleted() {
+        return this.currentChallenges.every(type =>
+          this.challengeProgress[type]?.completed
+        );
+      }
+    };
+
+    // === Tournament System ===
+    const TournamentSystem = {
+      // Constants
+      TOTAL_PLAYERS: 25,
+      PRIZE_PLACES: 10,
+
+      // Tournament configurations with prize pools based on entry fees
+      // All tournaments are single round - 9 holes, then compare scores
+      tournaments: {
+        weekend: {
+          name: 'Weekend Classic',
+          entryFee: 0,
+          // Free tournament - smaller prizes funded by the club
+          prizePool: [300, 200, 150, 100, 75, 50, 40, 30, 20, 10]
+        },
+        pro: {
+          name: 'Pro Tournament',
+          entryFee: 100,
+          // 25 players × 100 = 2500 total pool, top 10 split it
+          prizePool: [750, 500, 350, 250, 200, 150, 125, 100, 50, 25]
+        },
+        championship: {
+          name: 'Championship',
+          entryFee: 500,
+          // 25 players × 500 = 12500 total pool, top 10 split it
+          prizePool: [4000, 2500, 1750, 1250, 1000, 750, 500, 400, 200, 150]
+        }
+      },
+
+      // Available course themes for random selection
+      courseThemes: ['classic', 'desert', 'winter', 'tropical'],
+
+      // Current tournament state
+      activeTournament: null,
+      queuedTournament: null,
+      queueTimer: null,
+
+      init() {
+        this.load();
+      },
+
+      load() {
+        const data = localStorage.getItem('golf-tournament-data');
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.activeTournament = parsed.activeTournament || null;
+            this.queuedTournament = parsed.queuedTournament || null;
+          } catch (e) {
+            console.error('Failed to load tournament data:', e);
+          }
+        }
+      },
+
+      save() {
+        localStorage.setItem('golf-tournament-data', JSON.stringify({
+          activeTournament: this.activeTournament,
+          queuedTournament: this.queuedTournament
+        }));
+      },
+
+      isInTournament() {
+        return this.activeTournament !== null && this.activeTournament.started;
+      },
+
+      isInQueue() {
+        return this.queuedTournament !== null || (this.activeTournament && !this.activeTournament.started);
+      },
+
+      // Join tournament queue
+      joinQueue(tournamentType) {
+        const config = this.tournaments[tournamentType];
+        if (!config) return false;
+
+        // Check entry fee
+        if (config.entryFee > 0 && !ShopSystem.canAfford(config.entryFee)) {
+          return false;
+        }
+
+        // Deduct entry fee immediately
+        if (config.entryFee > 0) {
+          ShopSystem.spendBucks(config.entryFee);
+        }
+
+        // Pick random course theme for the tournament
+        const randomTheme = this.courseThemes[Math.floor(Math.random() * this.courseThemes.length)];
+
+        this.activeTournament = {
+          type: tournamentType,
+          name: config.name,
+          entryFee: config.entryFee,
+          courseTheme: randomTheme,
+          seed: Date.now(),
+          started: false,
+          completed: false,
+          playersJoined: 1, // You're the first
+          queueStartTime: Date.now(),
+          finalScore: null,
+          totalStrokes: null
+        };
+        this.save();
+        return true;
+      },
+
+      // Simulate queue filling up (returns time until full in ms)
+      simulateQueueFill() {
+        if (!this.activeTournament || this.activeTournament.started) return 0;
+
+        // Simulate 3-8 seconds for queue to fill
+        const waitTime = 3000 + Math.random() * 5000;
+        return waitTime;
+      },
+
+      // Start the tournament after queue is full
+      startTournament() {
+        if (!this.activeTournament) return false;
+
+        this.activeTournament.started = true;
+        this.activeTournament.playersJoined = this.TOTAL_PLAYERS;
+        this.activeTournament.startTime = Date.now();
+        this.save();
+        return true;
+      },
+
+      // Record final score when round completes
+      recordScore(scoreRelativeToPar, totalStrokes) {
+        if (!this.activeTournament) return;
+
+        this.activeTournament.finalScore = scoreRelativeToPar;
+        this.activeTournament.totalStrokes = totalStrokes;
+        this.activeTournament.completed = true;
+        this.save();
+      },
+
+      getScore() {
+        if (!this.activeTournament) return 0;
+        return this.activeTournament.finalScore || 0;
+      },
+
+      getTotalStrokes() {
+        if (!this.activeTournament) return 0;
+        return this.activeTournament.totalStrokes || 0;
+      },
+
+      isTournamentComplete() {
+        if (!this.activeTournament) return false;
+        return this.activeTournament.completed === true;
+      },
+
+      getCourseTheme() {
+        if (!this.activeTournament) return 'classic';
+        return this.activeTournament.courseTheme || 'classic';
+      },
+
+      completeTournament() {
+        if (!this.activeTournament || !this.isTournamentComplete()) return null;
+
+        const config = this.tournaments[this.activeTournament.type];
+        const playerScore = this.getScore();
+
+        // Generate 24 AI competitors (you are the 25th)
+        const competitors = this.generateCompetitors(24);
+        competitors.push({ name: 'You', score: playerScore, isPlayer: true });
+        competitors.sort((a, b) => a.score - b.score);
+
+        const playerPosition = competitors.findIndex(c => c.isPlayer) + 1;
+        let prize = 0;
+        let lostEntry = false;
+
+        if (playerPosition <= this.PRIZE_PLACES) {
+          prize = config.prizePool[playerPosition - 1];
+          ShopSystem.addBucks(prize, `${config.name} - ${this.getPositionText(playerPosition)} Place!`);
+        } else {
+          // Lost entry fee (no prize)
+          lostEntry = true;
+        }
+
+        const result = {
+          tournament: this.activeTournament.name,
+          tournamentType: this.activeTournament.type,
+          position: playerPosition,
+          totalPlayers: this.TOTAL_PLAYERS,
+          playerScore: playerScore,
+          prize: prize,
+          entryFee: this.activeTournament.entryFee,
+          lostEntry: lostEntry,
+          leaderboard: competitors // Show all 25
+        };
+
+        // Clear active tournament
+        this.activeTournament = null;
+        this.save();
+
+        return result;
+      },
+
+      generateCompetitors(count) {
+        const firstNames = ['Tiger', 'Rory', 'Jordan', 'Dustin', 'Brooks', 'Justin', 'Jon', 'Xander', 'Patrick', 'Collin', 'Viktor', 'Scottie', 'Cameron', 'Tony', 'Max', 'Phil', 'Rickie', 'Bubba', 'Adam', 'Jason', 'Hideki', 'Tommy', 'Matt', 'Shane'];
+        const competitors = [];
+
+        // Shuffle names
+        const shuffled = [...firstNames].sort(() => Math.random() - 0.5);
+
+        for (let i = 0; i < count; i++) {
+          // Generate realistic scores for a single 9-hole round
+          // Scores typically range from -5 (great) to +10 (poor)
+          let score = 0;
+          const skillLevel = Math.random(); // 0 = best, 1 = worst
+
+          if (skillLevel < 0.2) {
+            // Top tier: -5 to -1
+            score = Math.floor(Math.random() * 5) - 5;
+          } else if (skillLevel < 0.5) {
+            // Good tier: -3 to +2
+            score = Math.floor(Math.random() * 6) - 3;
+          } else if (skillLevel < 0.8) {
+            // Mid tier: -1 to +5
+            score = Math.floor(Math.random() * 7) - 1;
+          } else {
+            // Lower tier: +2 to +10
+            score = Math.floor(Math.random() * 9) + 2;
+          }
+
+          competitors.push({
+            name: shuffled[i % shuffled.length],
+            score: score,
+            isPlayer: false
+          });
+        }
+
+        return competitors;
+      },
+
+      getPositionText(position) {
+        if (position === 1) return '1st';
+        if (position === 2) return '2nd';
+        if (position === 3) return '3rd';
+        return position + 'th';
+      },
+
+      abandonTournament() {
+        // Entry fee is already lost
+        this.activeTournament = null;
+        this.queuedTournament = null;
+        if (this.queueTimer) {
+          clearTimeout(this.queueTimer);
+          this.queueTimer = null;
+        }
+        this.save();
+      },
+
+      leaveQueue() {
+        // Refund entry fee if leaving queue before tournament starts
+        if (this.activeTournament && !this.activeTournament.started && this.activeTournament.entryFee > 0) {
+          ShopSystem.addBucks(this.activeTournament.entryFee, 'Tournament queue refund');
+        }
+        this.activeTournament = null;
+        if (this.queueTimer) {
+          clearTimeout(this.queueTimer);
+          this.queueTimer = null;
+        }
+        this.save();
+      },
+
+      renderUI() {
+        const container = document.getElementById('tournament-content');
+        if (!container) return;
+
+        // Check if in queue (waiting for players)
+        if (this.activeTournament && !this.activeTournament.started) {
+          this.renderQueueUI(container);
+          return;
+        }
+
+        // Check if there's an active tournament ready to play
+        if (this.activeTournament && this.activeTournament.started && !this.activeTournament.completed) {
+          const themeName = CourseThemes.getTheme(this.activeTournament.courseTheme).name;
+
+          container.innerHTML = `
+            <div class="tournament-progress">
+              <h3>${this.activeTournament.name}</h3>
+              <div class="tournament-course-theme">Course: ${themeName}</div>
+              <div class="tournament-players-info">${this.TOTAL_PLAYERS} Players Competing</div>
+              <div class="tournament-info-text">Play 9 holes - Best score wins!</div>
+            </div>
+            <button class="tournament-btn primary" id="continue-tournament-btn">Play Tournament</button>
+            <button class="tournament-btn danger" id="abandon-tournament-btn">Abandon (Forfeit Entry)</button>
+          `;
+        } else {
+          // Show tournament selection
+          let html = '<div class="tournament-info-banner">25 Players | 9 Holes | Top 10 Win Prizes</div>';
+          for (const [type, config] of Object.entries(this.tournaments)) {
+            const canAfford = config.entryFee === 0 || ShopSystem.canAfford(config.entryFee);
+            const lockedClass = canAfford ? '' : 'locked';
+            const totalPool = config.prizePool.reduce((a, b) => a + b, 0);
+            html += `
+              <div class="tournament-card ${lockedClass}" data-tournament="${type}">
+                <div class="tournament-name">${config.name}</div>
+                <div class="tournament-details">
+                  <span>9 Holes</span>
+                  <span class="tournament-entry">${config.entryFee === 0 ? 'FREE ENTRY' : config.entryFee + ' Golf Bucks Entry'}</span>
+                </div>
+                <div class="tournament-pool">Prize Pool: ${totalPool} Golf Bucks</div>
+                <div class="tournament-prizes-mini">
+                  1st: ${config.prizePool[0]} | 2nd: ${config.prizePool[1]} | 3rd: ${config.prizePool[2]} Golf Bucks
+                </div>
+                <div class="tournament-warning">${config.entryFee > 0 ? 'Finish outside top 10 = lose entry fee' : 'No risk - free to enter!'}</div>
+              </div>
+            `;
+          }
+          container.innerHTML = html;
+        }
+      },
+
+      renderQueueUI(container) {
+        const config = this.tournaments[this.activeTournament.type];
+        const themeName = CourseThemes.getTheme(this.activeTournament.courseTheme).name;
+
+        container.innerHTML = `
+          <div class="tournament-queue">
+            <h3>Joining ${this.activeTournament.name}</h3>
+            <div class="queue-course">Course: ${themeName}</div>
+            <div class="queue-animation">
+              <div class="queue-spinner"></div>
+            </div>
+            <div class="queue-status">
+              <span id="queue-player-count">${this.activeTournament.playersJoined}</span> / ${this.TOTAL_PLAYERS} Players
+            </div>
+            <div class="queue-message">Waiting for players to join...</div>
+            <div class="queue-entry-info">${config.entryFee > 0 ? `Entry Fee: ${config.entryFee} Golf Bucks (paid)` : 'Free Entry'}</div>
+          </div>
+          <button class="tournament-btn danger" id="leave-queue-btn">${config.entryFee > 0 ? 'Leave Queue (Refund)' : 'Leave Queue'}</button>
+        `;
+
+        // Start queue simulation
+        this.simulateQueueProgress(container);
+      },
+
+      simulateQueueProgress(container) {
+        if (this.queueTimer) clearTimeout(this.queueTimer);
+
+        const playerCountEl = document.getElementById('queue-player-count');
+        const queueMessageEl = container.querySelector('.queue-message');
+        let currentPlayers = this.activeTournament.playersJoined;
+
+        const addPlayers = () => {
+          if (!this.activeTournament || this.activeTournament.started) return;
+
+          // Add 1-4 players at a time
+          const toAdd = Math.min(Math.ceil(Math.random() * 4), this.TOTAL_PLAYERS - currentPlayers);
+          currentPlayers += toAdd;
+          this.activeTournament.playersJoined = currentPlayers;
+
+          if (playerCountEl) {
+            playerCountEl.textContent = currentPlayers;
+          }
+
+          if (currentPlayers >= this.TOTAL_PLAYERS) {
+            // Queue is full - tournament starting!
+            if (queueMessageEl) {
+              queueMessageEl.textContent = 'Tournament Starting!';
+              queueMessageEl.style.color = '#4CAF50';
+            }
+
+            // Start tournament after brief delay
+            this.queueTimer = setTimeout(() => {
+              this.startTournament();
+              this.showTournamentReady();
+            }, 1000);
+          } else {
+            // Continue adding players
+            const delay = 400 + Math.random() * 800;
+            this.queueTimer = setTimeout(addPlayers, delay);
+          }
+        };
+
+        // Start adding players after initial delay
+        this.queueTimer = setTimeout(addPlayers, 500);
+      },
+
+      showTournamentReady() {
+        const container = document.getElementById('tournament-content');
+        if (!container) return;
+
+        const themeName = CourseThemes.getTheme(this.activeTournament.courseTheme).name;
+        const config = this.tournaments[this.activeTournament.type];
+
+        container.innerHTML = `
+          <div class="tournament-ready">
+            <div class="ready-icon">🏆</div>
+            <h3>${this.activeTournament.name}</h3>
+            <div class="ready-message">Tournament is Ready!</div>
+            <div class="ready-details">
+              <div>${this.TOTAL_PLAYERS} Players Competing</div>
+              <div>Course: ${themeName}</div>
+              <div>9 Holes</div>
+            </div>
+            <div class="ready-prizes">
+              Top 10 Win Prizes | 1st Place: ${config.prizePool[0]} Golf Bucks
+            </div>
+          </div>
+          <button class="tournament-btn primary" id="start-tournament-btn">Start Tournament</button>
+        `;
+      },
+
+      showResults(result) {
+        const container = document.getElementById('tournament-content');
+        if (!container) return;
+
+        const positionClass = result.position === 1 ? 'gold' : (result.position === 2 ? 'silver' : (result.position === 3 ? 'bronze' : ''));
+        const scoreText = result.playerScore === 0 ? 'E' : (result.playerScore > 0 ? '+' + result.playerScore : result.playerScore);
+        const inMoney = result.position <= this.PRIZE_PLACES;
+        const config = this.tournaments[result.tournamentType];
+
+        container.innerHTML = `
+          <div class="tournament-results">
+            <h3>${result.tournament} Complete!</h3>
+            <div class="tournament-position ${positionClass}">${this.getPositionText(result.position)}</div>
+            <div style="color: rgba(255,255,255,0.7);">out of ${result.totalPlayers} players</div>
+            <div style="color: #fff; margin: 10px 0;">Your Score: ${scoreText}</div>
+            ${inMoney ?
+              `<div class="tournament-prize">+${result.prize} Golf Bucks!</div>` :
+              `<div class="tournament-lost">Finished outside top 10${result.entryFee > 0 ? ` - Lost ${result.entryFee} Golf Bucks entry` : ''}</div>`
+            }
+
+            <div class="tournament-leaderboard">
+              <h4>Final Standings (All 25 Players)</h4>
+              <div class="leaderboard-scroll">
+                ${result.leaderboard.map((entry, i) => `
+                  <div class="leaderboard-entry ${entry.isPlayer ? 'player' : ''} ${i < 10 ? 'in-money' : 'out-money'}">
+                    <span class="lb-rank">${i + 1}.</span>
+                    <span class="lb-name">${entry.name}</span>
+                    <span class="lb-score">${entry.score === 0 ? 'E' : (entry.score > 0 ? '+' + entry.score : entry.score)}</span>
+                    <span class="lb-prize">${i < 10 ? `+${config.prizePool[i]}` : '-'}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          <button class="tournament-btn primary" id="tournament-done-btn">Done</button>
+        `;
+      },
+
+      updateIndicator() {
+        const indicator = document.getElementById('tournament-indicator');
+        const text = document.getElementById('tournament-indicator-text');
+        if (!indicator || !text) return;
+
+        if (this.activeTournament && this.activeTournament.started && !this.activeTournament.completed) {
+          text.textContent = `${this.activeTournament.name} - In Progress`;
+          indicator.classList.remove('hidden');
+        } else if (this.activeTournament && !this.activeTournament.started) {
+          text.textContent = `Queuing: ${this.activeTournament.name}...`;
+          indicator.classList.remove('hidden');
+        } else {
+          indicator.classList.add('hidden');
+        }
+      }
+    };
+
+    // === Ghost Replay System ===
+    const GhostSystem = {
+      // Recording state
+      isRecording: false,
+      currentRecording: [],
+      recordingStartTime: 0,
+      sampleInterval: 50, // Sample position every 50ms
+
+      // Playback state
+      isEnabled: true,
+      ghostData: null, // Loaded ghost for current hole
+      playbackStartTime: 0,
+      currentGhostPosition: null,
+
+      // Storage
+      storageKey: 'golf-ghost-data',
+
+      init() {
+        this.load();
+        const settings = StorageManager.loadSettings();
+        this.isEnabled = settings.ghostEnabled !== false;
+      },
+
+      load() {
+        const data = localStorage.getItem(this.storageKey);
+        if (data) {
+          try {
+            this.allGhosts = JSON.parse(data);
+          } catch (e) {
+            console.error('Failed to load ghost data:', e);
+            this.allGhosts = {};
+          }
+        } else {
+          this.allGhosts = {};
+        }
+      },
+
+      save() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.allGhosts));
+      },
+
+      setEnabled(enabled) {
+        this.isEnabled = enabled;
+        const settings = StorageManager.loadSettings();
+        settings.ghostEnabled = enabled;
+        StorageManager.saveSettings(settings);
+      },
+
+      // Start recording for a hole
+      startRecording(holeNumber) {
+        this.isRecording = true;
+        this.currentRecording = [];
+        this.recordingStartTime = performance.now();
+        this.recordingHole = holeNumber;
+      },
+
+      // Sample current ball position
+      samplePosition(ball) {
+        if (!this.isRecording || !ball) return;
+
+        const elapsed = performance.now() - this.recordingStartTime;
+        this.currentRecording.push({
+          t: Math.round(elapsed),
+          x: Math.round(ball.x),
+          y: Math.round(ball.y),
+          moving: ball.isMoving || false
+        });
+      },
+
+      // Stop recording and save ghost
+      stopRecording(strokes) {
+        if (!this.isRecording) return;
+        this.isRecording = false;
+
+        // Only save if we have meaningful data
+        if (this.currentRecording.length < 5) return;
+
+        const ghostKey = `hole_${this.recordingHole}`;
+        const existingGhost = this.allGhosts[ghostKey];
+
+        // Only save if this is a better (fewer strokes) or first ghost
+        if (!existingGhost || strokes < existingGhost.strokes) {
+          this.allGhosts[ghostKey] = {
+            strokes: strokes,
+            positions: this.currentRecording,
+            recordedAt: Date.now()
+          };
+          this.save();
+          return true; // New best ghost saved
+        }
+        return false;
+      },
+
+      // Load ghost for a specific hole
+      loadGhostForHole(holeNumber) {
+        const ghostKey = `hole_${holeNumber}`;
+        this.ghostData = this.allGhosts[ghostKey] || null;
+        this.playbackStartTime = 0;
+        this.currentGhostPosition = null;
+      },
+
+      // Start playback when player takes first shot
+      startPlayback() {
+        if (!this.isEnabled || !this.ghostData) return;
+        this.playbackStartTime = performance.now();
+      },
+
+      // Get current ghost position for rendering
+      getGhostPosition(currentTime) {
+        if (!this.isEnabled || !this.ghostData || this.playbackStartTime === 0) {
+          return null;
+        }
+
+        const elapsed = currentTime - this.playbackStartTime;
+        const positions = this.ghostData.positions;
+
+        // Find the appropriate position based on elapsed time
+        let pos = null;
+        for (let i = 0; i < positions.length; i++) {
+          if (positions[i].t <= elapsed) {
+            pos = positions[i];
+          } else {
+            // Interpolate between positions for smooth movement
+            if (pos && positions[i]) {
+              const prev = pos;
+              const next = positions[i];
+              const t = (elapsed - prev.t) / (next.t - prev.t);
+              pos = {
+                x: prev.x + (next.x - prev.x) * t,
+                y: prev.y + (next.y - prev.y) * t
+              };
+            }
+            break;
+          }
+        }
+
+        // If we've passed all positions, use the last one
+        if (!pos && positions.length > 0) {
+          pos = positions[positions.length - 1];
+        }
+
+        this.currentGhostPosition = pos;
+        return pos;
+      },
+
+      // Check if ghost has finished (reached hole)
+      isGhostFinished(currentTime) {
+        if (!this.ghostData || this.playbackStartTime === 0) return true;
+        const elapsed = currentTime - this.playbackStartTime;
+        const lastPos = this.ghostData.positions[this.ghostData.positions.length - 1];
+        return lastPos && elapsed > lastPos.t;
+      },
+
+      // Get ghost strokes for comparison
+      getGhostStrokes() {
+        return this.ghostData ? this.ghostData.strokes : null;
+      },
+
+      // Clear ghost for a hole
+      clearGhostForHole(holeNumber) {
+        const ghostKey = `hole_${holeNumber}`;
+        delete this.allGhosts[ghostKey];
+        this.save();
+      },
+
+      // Clear all ghosts
+      clearAllGhosts() {
+        this.allGhosts = {};
+        this.save();
+      },
+
+      // Render the ghost ball
+      renderGhost(ctx, currentTime) {
+        const pos = this.getGhostPosition(currentTime);
+        if (!pos) return;
+
+        // Draw ghost ball (semi-transparent blue)
+        ctx.save();
+        ctx.globalAlpha = 0.4;
+
+        // Ghost ball gradient
+        const gradient = ctx.createRadialGradient(pos.x - 3, pos.y - 3, 0, pos.x, pos.y, 10);
+        gradient.addColorStop(0, '#87CEEB');
+        gradient.addColorStop(0.5, '#4169E1');
+        gradient.addColorStop(1, '#1E3A5F');
+
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Ghost outline
+        ctx.strokeStyle = 'rgba(65, 105, 225, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Ghost trail effect
+        ctx.globalAlpha = 0.2;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
+        ctx.strokeStyle = '#87CEEB';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.restore();
+      }
     };
 
     // === Achievement System ===
@@ -5221,9 +7887,132 @@
           tryPlaceObstacle('water', 0.35, 0.55, 60, 120);
         }
 
+        // === SPECIAL OBSTACLES (only on themed courses, not classic) ===
+        const currentTheme = ShopSystem.selectedTheme || 'classic';
+        const hasSpecialObstacles = currentTheme !== 'classic';
+
+        // Windmill - 30% chance on medium/long holes (themed courses only)
+        if (hasSpecialObstacles && template.length !== 'short' && this.rng.next() < 0.30) {
+          for (let attempt = 0; attempt < 10; attempt++) {
+            const t = 0.3 + this.rng.next() * 0.35; // Between 30-65% of fairway
+            const pt = getPointOnFairway(t);
+            const perp = getPerpAtT(t);
+            const perpOffset = 50 + this.rng.next() * 60; // Near fairway edge
+            const side = this.rng.next() < 0.5 ? 1 : -1;
+
+            const x = pt.x + perp.x * perpOffset * side;
+            const y = pt.y + perp.y * perpOffset * side;
+            const radius = 35;
+
+            if (isValidPosition(x, y, radius) && !overlapsExisting(x, y, radius)) {
+              obstacles.push({
+                type: 'windmill',
+                x, y, radius,
+                width: 0, height: 0,
+                shape: 'circle',
+                angle: this.rng.next() * Math.PI * 2,
+                rotationSpeed: 1.2 + this.rng.next() * 0.8
+              });
+              break;
+            }
+          }
+        }
+
+        // Moving rock - 25% chance on medium/long holes (themed courses only)
+        if (hasSpecialObstacles && template.length !== 'short' && this.rng.next() < 0.25) {
+          for (let attempt = 0; attempt < 10; attempt++) {
+            const t = 0.25 + this.rng.next() * 0.4; // Between 25-65% of fairway
+            const pt = getPointOnFairway(t);
+            const perp = getPerpAtT(t);
+            const perpOffset = 30 + this.rng.next() * 50; // Can be near fairway
+            const side = this.rng.next() < 0.5 ? 1 : -1;
+
+            const x = pt.x + perp.x * perpOffset * side;
+            const y = pt.y + perp.y * perpOffset * side;
+            const radius = 18;
+
+            if (isValidPosition(x, y, radius + 80) && !overlapsExisting(x, y, radius + 80)) {
+              obstacles.push({
+                type: 'movingRock',
+                x, y, radius,
+                width: 0, height: 0,
+                shape: 'circle',
+                moveSpeed: 40 + this.rng.next() * 40,
+                moveRange: 60 + this.rng.next() * 40,
+                moveDir: this.rng.next() < 0.5 ? 1 : -1
+              });
+              break;
+            }
+          }
+        }
+
+        // Teleporters - 20% chance, always come in pairs (themed courses only)
+        if (hasSpecialObstacles && this.rng.next() < 0.20) {
+          let teleporter1 = null;
+          let teleporter2 = null;
+
+          // First teleporter near tee area
+          for (let attempt = 0; attempt < 10; attempt++) {
+            const t = 0.15 + this.rng.next() * 0.2; // 15-35% of fairway
+            const pt = getPointOnFairway(t);
+            const perp = getPerpAtT(t);
+            const perpOffset = 60 + this.rng.next() * 50;
+            const side = this.rng.next() < 0.5 ? 1 : -1;
+
+            const x = pt.x + perp.x * perpOffset * side;
+            const y = pt.y + perp.y * perpOffset * side;
+            const radius = 20;
+
+            if (isValidPosition(x, y, radius) && !overlapsExisting(x, y, radius)) {
+              teleporter1 = {
+                type: 'teleporter',
+                x, y, radius,
+                width: 0, height: 0,
+                shape: 'circle',
+                portalColor: '#8B5CF6' // Purple
+              };
+              break;
+            }
+          }
+
+          // Second teleporter near green area
+          if (teleporter1) {
+            for (let attempt = 0; attempt < 10; attempt++) {
+              const t = 0.6 + this.rng.next() * 0.25; // 60-85% of fairway
+              const pt = getPointOnFairway(t);
+              const perp = getPerpAtT(t);
+              const perpOffset = 50 + this.rng.next() * 50;
+              const side = this.rng.next() < 0.5 ? 1 : -1;
+
+              const x = pt.x + perp.x * perpOffset * side;
+              const y = pt.y + perp.y * perpOffset * side;
+              const radius = 20;
+
+              if (isValidPosition(x, y, radius) && !overlapsExisting(x, y, radius)) {
+                teleporter2 = {
+                  type: 'teleporter',
+                  x, y, radius,
+                  width: 0, height: 0,
+                  shape: 'circle',
+                  portalColor: '#F59E0B' // Orange
+                };
+                break;
+              }
+            }
+          }
+
+          // Only add if both teleporters were placed successfully
+          if (teleporter1 && teleporter2) {
+            teleporter1.pairedWith = teleporter2;
+            teleporter2.pairedWith = teleporter1;
+            obstacles.push(teleporter1);
+            obstacles.push(teleporter2);
+          }
+        }
+
         // Sort for draw order
-        const typeOrder = { water: 0, sand: 1, rock: 2, tree: 3 };
-        obstacles.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
+        const typeOrder = { water: 0, sand: 1, teleporter: 2, rock: 3, movingRock: 3, tree: 4, windmill: 5 };
+        obstacles.sort((a, b) => (typeOrder[a.type] || 0) - (typeOrder[b.type] || 0));
 
         return obstacles;
       }
@@ -6992,6 +9781,15 @@
         if (this.debugMode) {
           document.getElementById('debug-info').classList.remove('hidden');
         }
+        // Debug: Add Golf Bucks via URL parameter (e.g., ?bucks=1000000)
+        const bucks = parseInt(params.get('bucks'));
+        if (bucks > 0 && !sessionStorage.getItem('bucks-added')) {
+          ShopSystem.golfBucks += bucks;
+          ShopSystem.save();
+          ShopSystem.updateBalanceDisplay();
+          sessionStorage.setItem('bucks-added', 'true');
+          console.log(`Added ${bucks} Golf Bucks!`);
+        }
       }
 
       start() {
@@ -7009,7 +9807,7 @@
         this.lastFrameTime = performance.now();
       }
 
-      async startNewRound(seed = null, playerName = 'Player', ballColor = 'white') {
+      async startNewRound(seed = null, playerName = 'Player', ballColor = 'white', themeOverride = null) {
         const usedSeed = seed || Date.now();
         CourseGenerator.init(usedSeed);
 
@@ -7039,7 +9837,8 @@
           selectedClub: recommendedClub,
           seed: usedSeed,
           playerName: playerName,
-          ballColor: ballColor
+          ballColor: ballColor,
+          themeOverride: themeOverride // For tournaments, override the shop theme
         };
 
         this.updateUI();
@@ -7234,6 +10033,9 @@
             <div class="club-distance">${maxDistance}yd</div>
           `;
 
+          // Apply club skin to this slot
+          ShopSystem.applyClubSkinToElement(slot);
+
           slot.addEventListener('click', () => this.selectClub(club.id));
           clubSelector.appendChild(slot);
         }
@@ -7262,6 +10064,11 @@
         if (this.gameState.ball.inSand) {
           modifiedSwing.power *= 0.5;
           this.gameState.ball.leavingSand = true;  // Flag to allow escape from sand
+        }
+
+        // Apply rough penalty - 20% power reduction when hitting from rough
+        if (this.gameState.ball.inRough) {
+          modifiedSwing.power *= PhysicsEngine.roughPowerMultiplier;
         }
 
         PhysicsEngine.applySwing(this.gameState.ball, modifiedSwing);
@@ -7316,7 +10123,9 @@
 
           if (this.gameState.ball) {
             const obstacles = this.gameState.currentHole.obstacles || [];
-            PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles);
+            // Update animated obstacles (windmills, moving rocks)
+            this.updateObstacles(obstacles, deltaTime);
+            PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles, this.gameState.currentHole);
 
             // Check if ball can enter hole (tutorial blocks until "Sink the Ball!" step)
             const canEnterHole = TutorialManager.canBallEnterHole();
@@ -7357,6 +10166,43 @@
         requestAnimationFrame((t) => this.update(t));
       }
 
+      updateObstacles(obstacles, deltaTime) {
+        for (const obstacle of obstacles) {
+          if (obstacle.type === 'windmill') {
+            // Rotate windmill blades
+            const rotationSpeed = obstacle.rotationSpeed || 1.5;
+            obstacle.angle = (obstacle.angle || 0) + rotationSpeed * deltaTime;
+            if (obstacle.angle > Math.PI * 2) {
+              obstacle.angle -= Math.PI * 2;
+            }
+          } else if (obstacle.type === 'movingRock') {
+            // Move rock back and forth
+            const speed = obstacle.moveSpeed || 60;
+            const range = obstacle.moveRange || 80;
+
+            // Initialize position tracking if not set
+            if (obstacle.startX === undefined) {
+              obstacle.startX = obstacle.x;
+              obstacle.moveOffset = 0;
+              obstacle.moveDir = 1;
+            }
+
+            obstacle.moveOffset += speed * deltaTime * obstacle.moveDir;
+
+            // Reverse direction at range limits
+            if (obstacle.moveOffset >= range) {
+              obstacle.moveDir = -1;
+              obstacle.moveOffset = range;
+            } else if (obstacle.moveOffset <= -range) {
+              obstacle.moveDir = 1;
+              obstacle.moveOffset = -range;
+            }
+
+            obstacle.x = obstacle.startX + obstacle.moveOffset;
+          }
+        }
+      }
+
       updateBallStateIndicator() {
         const ball = this.gameState.ball;
         const stateElement = document.getElementById('ball-state');
@@ -7382,8 +10228,11 @@
             stateElement.style.color = '#4ECDC4';
           }
         } else if (ball.inSand) {
-          stateElement.textContent = '🏖️ In Bunker (50% power)';
+          stateElement.textContent = '🏖️ In Bunker (-50% power)';
           stateElement.style.color = '#D4A574';
+        } else if (ball.inRough) {
+          stateElement.textContent = '🌿 In Rough (-20% power)';
+          stateElement.style.color = '#6B8E23';
         } else {
           stateElement.textContent = '🔴 Ready';
           stateElement.style.color = '#2E8B57';
@@ -7398,6 +10247,7 @@
               const distancePixels = Math.sqrt(dx * dx + dy * dy);
               const distanceYards = Math.round(distancePixels * PIXELS_TO_YARDS);
               AchievementManager.onDriveHit(distanceYards);
+              DailyChallengeSystem.onLongDrive(distanceYards);
               ball.teePosition = null; // Clear after checking
             }
           }
@@ -7443,6 +10293,20 @@
           AchievementManager.stats.hadSand,
           0 // putts not tracked
         );
+
+        // Track daily challenges - hole completion
+        DailyChallengeSystem.onHoleComplete(
+          AchievementManager.stats.hadSand,
+          AchievementManager.stats.hadWater
+        );
+
+        // Track par streak for daily challenges
+        if (holeScore.scoreRelativeToPar <= 0) {
+          this.parStreakCount = (this.parStreakCount || 0) + 1;
+          DailyChallengeSystem.onParStreak(this.parStreakCount);
+        } else {
+          this.parStreakCount = 0;
+        }
 
         // Reset hazard tracking for next hole
         AchievementManager.stats.hadWater = false;
@@ -7506,6 +10370,8 @@
             round.endTime = Date.now();
             // Notify achievement system of round completion
             AchievementManager.onRoundComplete(round.scoreRelativeToPar);
+            // Notify daily challenges of round completion
+            DailyChallengeSystem.onRoundComplete(round.scoreRelativeToPar);
 
             // Award Golf Bucks for completing round
             let roundReward = 100; // Base reward
@@ -7533,6 +10399,7 @@
           AudioManager.playCrowdCheer();  // Crowd goes wild!
           ConfettiSystem.spawn(holeX, holeY, 80, 'eagle');
           ShopSystem.addBucks(500, 'Hole in One!');
+          DailyChallengeSystem.onHoleInOne();
         } else if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
           AudioManager.playCheerSound();
@@ -7540,6 +10407,7 @@
           // Extra confetti burst for eagle or better
           ConfettiSystem.spawn(holeX, holeY, 60, 'eagle');
           ShopSystem.addBucks(150, 'Eagle!');
+          DailyChallengeSystem.onEagle();
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
           AudioManager.playCheerSound();
@@ -7547,6 +10415,7 @@
           // Extra confetti for birdie
           ConfettiSystem.spawn(holeX, holeY, 40, 'birdie');
           ShopSystem.addBucks(50, 'Birdie!');
+          DailyChallengeSystem.onBirdie();
         }
       }
 
@@ -7620,6 +10489,47 @@
 
         // === T078: Save to leaderboard ===
         await this.saveToLeaderboard(summary);
+
+        // === Tournament integration ===
+        if (TournamentSystem.isInTournament()) {
+          // Record final score for single-round tournament
+          TournamentSystem.recordScore(summary.scoreRelativeToPar, summary.totalStrokes);
+
+          // Tournament is complete - show results with all 25 players
+          const result = TournamentSystem.completeTournament();
+          if (result) {
+            const config = TournamentSystem.tournaments[result.tournamentType];
+            const inMoney = result.position <= 10;
+
+            // Add tournament results to scorecard
+            const scorecardContent = document.getElementById('scorecard-content');
+            scorecardContent.innerHTML += `
+              <div class="tournament-complete-banner">
+                <h3>🏆 ${result.tournament} Complete!</h3>
+                <div class="tournament-final-position ${result.position <= 3 ? (result.position === 1 ? 'gold' : (result.position === 2 ? 'silver' : 'bronze')) : ''}">${TournamentSystem.getPositionText(result.position)} Place</div>
+                <div class="tournament-final-details">out of ${result.totalPlayers} players</div>
+                ${inMoney ?
+                  `<div class="tournament-prize-won">+${result.prize} Golf Bucks!</div>` :
+                  `<div class="tournament-lost-entry">${result.entryFee > 0 ? `Lost ${result.entryFee} Golf Bucks entry fee` : 'No prize - try again!'}</div>`
+                }
+                <button class="button view-leaderboard-btn" id="view-tournament-leaderboard-btn">View All 25 Scores</button>
+              </div>
+            `;
+
+            // Add handler for leaderboard button
+            setTimeout(() => {
+              const lbBtn = document.getElementById('view-tournament-leaderboard-btn');
+              if (lbBtn) {
+                lbBtn.addEventListener('click', () => {
+                  TournamentSystem.showResults(result);
+                  document.getElementById('tournament-overlay').classList.remove('hidden');
+                });
+              }
+            }, 0);
+          }
+
+          TournamentSystem.updateIndicator();
+        }
 
         // Reset flag for next round
         this.holeCompleting = false;
@@ -7781,6 +10691,10 @@
       AudioManager.init();
       AchievementManager.init();
       ShopSystem.init();
+      DailyChallengeSystem.init();
+      DailyChallengeSystem.updateUI();
+      TournamentSystem.init();
+      TournamentSystem.updateIndicator();
       ShopSystem.updateBalanceDisplay();
 
       // Set up shop click handlers using event delegation (handles dynamically created buttons)
@@ -8211,6 +11125,124 @@
         shopCloseBtn.addEventListener('click', () => {
           shopOverlay.classList.add('hidden');
           AudioManager.playClickSound();
+        });
+      }
+
+      // === Shop Tab Switching ===
+      const shopTabs = document.querySelectorAll('.shop-tab');
+      shopTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active from all tabs and content
+          shopTabs.forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.shop-tab-content').forEach(c => c.classList.remove('active'));
+
+          // Activate clicked tab and its content
+          tab.classList.add('active');
+          const tabId = tab.dataset.tab;
+          const content = document.getElementById('shop-tab-' + tabId);
+          if (content) content.classList.add('active');
+
+          AudioManager.playClickSound();
+        });
+      });
+
+      // === Tournament button handlers ===
+      const tournamentBtn = document.getElementById('tournament-btn');
+      const tournamentOverlay = document.getElementById('tournament-overlay');
+      const tournamentCloseBtn = document.getElementById('tournament-close-btn');
+      const tournamentContent = document.getElementById('tournament-content');
+
+      function openTournaments() {
+        TournamentSystem.renderUI();
+        TournamentSystem.updateIndicator();
+        tournamentOverlay.classList.remove('hidden');
+        AudioManager.playClickSound();
+      }
+
+      if (tournamentBtn) {
+        tournamentBtn.addEventListener('click', openTournaments);
+      }
+
+      if (tournamentCloseBtn) {
+        tournamentCloseBtn.addEventListener('click', () => {
+          tournamentOverlay.classList.add('hidden');
+          AudioManager.playClickSound();
+        });
+      }
+
+      // Delegate click events for tournament content (cards and dynamic buttons)
+      if (tournamentContent) {
+        tournamentContent.addEventListener('click', async (e) => {
+          // Join tournament queue (click on tournament card)
+          const card = e.target.closest('.tournament-card:not(.locked)');
+          if (card) {
+            const tournamentType = card.dataset.tournament;
+            if (tournamentType && TournamentSystem.joinQueue(tournamentType)) {
+              AudioManager.playClickSound();
+              TournamentSystem.renderUI(); // Show queue UI
+              TournamentSystem.updateIndicator();
+            }
+            return;
+          }
+
+          // Start tournament button (after queue fills)
+          if (e.target.id === 'start-tournament-btn') {
+            AudioManager.playClickSound();
+            tournamentOverlay.classList.add('hidden');
+            document.getElementById('menu-overlay').classList.add('hidden');
+
+            // Start game with tournament course theme
+            const theme = TournamentSystem.getCourseTheme();
+            const playerName = localStorage.getItem('golf-player-name') || 'Player';
+            const ballColor = localStorage.getItem('golf-ball-color') || 'white';
+
+            await gameEngine.startNewRound(null, playerName, ballColor, theme);
+            gameEngine.start();
+            TournamentSystem.updateIndicator();
+            return;
+          }
+
+          // Continue/Play tournament button
+          if (e.target.id === 'continue-tournament-btn') {
+            AudioManager.playClickSound();
+            tournamentOverlay.classList.add('hidden');
+            document.getElementById('menu-overlay').classList.add('hidden');
+
+            // Start game with tournament course theme
+            const theme = TournamentSystem.getCourseTheme();
+            const playerName = localStorage.getItem('golf-player-name') || 'Player';
+            const ballColor = localStorage.getItem('golf-ball-color') || 'white';
+
+            await gameEngine.startNewRound(null, playerName, ballColor, theme);
+            gameEngine.start();
+            TournamentSystem.updateIndicator();
+            return;
+          }
+
+          // Leave queue button
+          if (e.target.id === 'leave-queue-btn') {
+            AudioManager.playClickSound();
+            TournamentSystem.leaveQueue();
+            TournamentSystem.renderUI();
+            TournamentSystem.updateIndicator();
+            return;
+          }
+
+          // Abandon tournament button
+          if (e.target.id === 'abandon-tournament-btn') {
+            AudioManager.playClickSound();
+            TournamentSystem.abandonTournament();
+            TournamentSystem.renderUI();
+            TournamentSystem.updateIndicator();
+            return;
+          }
+
+          // Done button after results
+          if (e.target.id === 'tournament-done-btn') {
+            AudioManager.playClickSound();
+            tournamentOverlay.classList.add('hidden');
+            return;
+          }
         });
       }
 
