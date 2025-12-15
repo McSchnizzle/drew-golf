@@ -1458,6 +1458,39 @@
       margin-top: 10px;
     }
 
+    /* Embedded leaderboard in scorecard */
+    .tournament-leaderboard-embed {
+      margin-top: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .tournament-leaderboard-embed h4 {
+      color: #FFD700;
+      margin: 0 0 10px 0;
+      font-size: 14px;
+    }
+    .tournament-leaderboard-embed .leaderboard-scroll {
+      max-height: 200px;
+    }
+
+    /* Tournament cooldown */
+    .tournament-cooldown {
+      text-align: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .cooldown-timer {
+      font-size: 48px;
+      font-weight: bold;
+      color: #FFD700;
+      margin: 20px 0;
+    }
+    .cooldown-message {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
     /* Menu balance display */
     #menu-balance {
       position: absolute;
@@ -5629,6 +5662,9 @@
           this.save();
           if (AudioManager.playAchievement) AudioManager.playAchievement();
 
+          // Track purchase achievement
+          AchievementManager.onPurchase(price);
+
           // Show upgrade notification
           const tierName = nextTier === 2 ? 'Standard' : 'Pro';
           this.showUpgradePopup(this.clubNames[clubId], tierName);
@@ -5700,6 +5736,9 @@
           this.save();
           if (AudioManager.playAchievement) AudioManager.playAchievement();
 
+          // Track purchase achievement
+          AchievementManager.onPurchase(price);
+
           // Show unlock notification
           const skinName = this.ballSkinNames[skinId] || skinId;
           this.showBallSkinUnlockPopup(skinName);
@@ -5742,6 +5781,9 @@
           this.lastUnlockedClubSkin = skinId; // For animation
           this.save();
           if (AudioManager.playAchievement) AudioManager.playAchievement();
+
+          // Track purchase achievement
+          AchievementManager.onPurchase(price);
 
           const skinName = this.clubSkinNames[skinId] || skinId;
           this.showClubSkinUnlockPopup(skinName);
@@ -6151,6 +6193,10 @@
           this.selectedTheme = themeId;
           this.save();
           if (AudioManager.playAchievement) AudioManager.playAchievement();
+
+          // Track purchase achievement
+          AchievementManager.onPurchase(price);
+
           return true;
         }
         return false;
@@ -6361,17 +6407,17 @@
     const DailyChallengeSystem = {
       // All possible challenge types
       challengeTypes: {
-        birdie: { name: 'Birdie Hunter', desc: 'Score a birdie', icon: '🐦', reward: 50 },
-        eagle: { name: 'Eagle Eye', desc: 'Score an eagle or better', icon: '🦅', reward: 100 },
-        holeInOne: { name: 'Ace Master', desc: 'Get a hole in one', icon: '🎯', reward: 200 },
-        underPar: { name: 'Under Par Pro', desc: 'Finish a round under par', icon: '📊', reward: 75 },
-        parStreak: { name: 'Consistent', desc: 'Get par or better on 3 consecutive holes', icon: '⭐', reward: 60 },
-        longDrive: { name: 'Big Hitter', desc: 'Hit a drive over 260 yards', icon: '💪', reward: 40 },
-        noBunker: { name: 'Sand Dodger', desc: 'Complete a hole without hitting a bunker', icon: '🏖️', reward: 25 },
-        noWater: { name: 'Water Walker', desc: 'Complete 3 holes without hitting water', icon: '🌊', reward: 35 },
-        onePutt: { name: 'Putting Pro', desc: 'One-putt 2 greens in a round', icon: '🎱', reward: 45 },
-        complete5: { name: 'Grinder', desc: 'Complete 5 holes today', icon: '⛳', reward: 30 },
-        complete9: { name: 'Full Round', desc: 'Complete a full 9-hole round', icon: '🏆', reward: 80 }
+        birdie: { name: 'Birdie Hunter', desc: 'Score a birdie', icon: '🐦', reward: 25 },
+        eagle: { name: 'Eagle Eye', desc: 'Score an eagle or better', icon: '🦅', reward: 50 },
+        holeInOne: { name: 'Ace Master', desc: 'Get a hole in one', icon: '🎯', reward: 100 },
+        underPar: { name: 'Under Par Pro', desc: 'Finish a round under par', icon: '📊', reward: 40 },
+        parStreak: { name: 'Consistent', desc: 'Get par or better on 3 consecutive holes', icon: '⭐', reward: 30 },
+        longDrive: { name: 'Big Hitter', desc: 'Hit a drive over 260 yards', icon: '💪', reward: 20 },
+        noBunker: { name: 'Sand Dodger', desc: 'Complete a hole without hitting a bunker', icon: '🏖️', reward: 15 },
+        noWater: { name: 'Water Walker', desc: 'Complete 3 holes without hitting water', icon: '🌊', reward: 20 },
+        onePutt: { name: 'Putting Pro', desc: 'One-putt 2 greens in a round', icon: '🎱', reward: 25 },
+        complete5: { name: 'Grinder', desc: 'Complete 5 holes today', icon: '⛳', reward: 15 },
+        complete9: { name: 'Full Round', desc: 'Complete a full 9-hole round', icon: '🏆', reward: 40 }
       },
 
       // Current daily challenges (3 per day)
@@ -6585,6 +6631,11 @@
       // Constants
       TOTAL_PLAYERS: 25,
       PRIZE_PLACES: 10,
+      COOLDOWN_MS: 30000, // 30 second cooldown between tournaments
+
+      // Cooldown tracking
+      lastTournamentEndTime: 0,
+      cooldownInterval: null,
 
       // Tournament configurations with prize pools based on entry fees
       // All tournaments are single round - 9 holes, then compare scores
@@ -6593,19 +6644,19 @@
           name: 'Weekend Classic',
           entryFee: 0,
           // Free tournament - smaller prizes funded by the club
-          prizePool: [300, 200, 150, 100, 75, 50, 40, 30, 20, 10]
+          prizePool: [150, 100, 75, 50, 40, 25, 20, 15, 10, 5]
         },
         pro: {
           name: 'Pro Tournament',
           entryFee: 100,
           // 25 players × 100 = 2500 total pool, top 10 split it
-          prizePool: [750, 500, 350, 250, 200, 150, 125, 100, 50, 25]
+          prizePool: [400, 250, 175, 125, 100, 75, 60, 50, 25, 15]
         },
         championship: {
           name: 'Championship',
           entryFee: 500,
           // 25 players × 500 = 12500 total pool, top 10 split it
-          prizePool: [4000, 2500, 1750, 1250, 1000, 750, 500, 400, 200, 150]
+          prizePool: [2000, 1250, 875, 625, 500, 375, 250, 200, 100, 75]
         }
       },
 
@@ -6628,6 +6679,7 @@
             const parsed = JSON.parse(data);
             this.activeTournament = parsed.activeTournament || null;
             this.queuedTournament = parsed.queuedTournament || null;
+            this.lastTournamentEndTime = parsed.lastTournamentEndTime || 0;
           } catch (e) {
             console.error('Failed to load tournament data:', e);
           }
@@ -6637,7 +6689,8 @@
       save() {
         localStorage.setItem('golf-tournament-data', JSON.stringify({
           activeTournament: this.activeTournament,
-          queuedTournament: this.queuedTournament
+          queuedTournament: this.queuedTournament,
+          lastTournamentEndTime: this.lastTournamentEndTime
         }));
       },
 
@@ -6649,8 +6702,23 @@
         return this.queuedTournament !== null || (this.activeTournament && !this.activeTournament.started);
       },
 
+      isOnCooldown() {
+        if (this.lastTournamentEndTime === 0) return false;
+        return Date.now() - this.lastTournamentEndTime < this.COOLDOWN_MS;
+      },
+
+      getCooldownRemaining() {
+        if (!this.isOnCooldown()) return 0;
+        return Math.ceil((this.COOLDOWN_MS - (Date.now() - this.lastTournamentEndTime)) / 1000);
+      },
+
       // Join tournament queue
       joinQueue(tournamentType) {
+        // Check cooldown first
+        if (this.isOnCooldown()) {
+          return false;
+        }
+
         const config = this.tournaments[tournamentType];
         if (!config) return false;
 
@@ -6769,8 +6837,9 @@
           leaderboard: competitors // Show all 25
         };
 
-        // Clear active tournament
+        // Clear active tournament and set cooldown
         this.activeTournament = null;
+        this.lastTournamentEndTime = Date.now();
         this.save();
 
         return result;
@@ -6784,23 +6853,23 @@
         const shuffled = [...firstNames].sort(() => Math.random() - 0.5);
 
         for (let i = 0; i < count; i++) {
-          // Generate realistic scores for a single 9-hole round
-          // Scores typically range from -5 (great) to +10 (poor)
+          // Generate competitive scores for a single 9-hole round
+          // These are skilled bots - hard to beat!
           let score = 0;
           const skillLevel = Math.random(); // 0 = best, 1 = worst
 
-          if (skillLevel < 0.2) {
-            // Top tier: -5 to -1
+          if (skillLevel < 0.25) {
+            // Elite tier (25%): -7 to -3 (very tough competitors)
+            score = Math.floor(Math.random() * 5) - 7;
+          } else if (skillLevel < 0.55) {
+            // Strong tier (30%): -5 to -1 (solid players)
             score = Math.floor(Math.random() * 5) - 5;
-          } else if (skillLevel < 0.5) {
-            // Good tier: -3 to +2
+          } else if (skillLevel < 0.85) {
+            // Mid tier (30%): -3 to +2 (decent players)
             score = Math.floor(Math.random() * 6) - 3;
-          } else if (skillLevel < 0.8) {
-            // Mid tier: -1 to +5
-            score = Math.floor(Math.random() * 7) - 1;
           } else {
-            // Lower tier: +2 to +10
-            score = Math.floor(Math.random() * 9) + 2;
+            // Lower tier (15%): 0 to +5 (weaker players)
+            score = Math.floor(Math.random() * 6);
           }
 
           competitors.push({
@@ -6848,6 +6917,12 @@
         const container = document.getElementById('tournament-content');
         if (!container) return;
 
+        // Check if on cooldown
+        if (this.isOnCooldown() && !this.activeTournament) {
+          this.renderCooldownUI(container);
+          return;
+        }
+
         // Check if in queue (waiting for players)
         if (this.activeTournament && !this.activeTournament.started) {
           this.renderQueueUI(container);
@@ -6892,6 +6967,32 @@
           }
           container.innerHTML = html;
         }
+      },
+
+      renderCooldownUI(container) {
+        const remaining = this.getCooldownRemaining();
+        container.innerHTML = `
+          <div class="tournament-cooldown">
+            <h3>Tournament Cooldown</h3>
+            <div class="cooldown-timer" id="cooldown-timer">${remaining}s</div>
+            <div class="cooldown-message">Please wait before joining another tournament</div>
+          </div>
+        `;
+
+        // Start countdown timer
+        if (this.cooldownInterval) clearInterval(this.cooldownInterval);
+        this.cooldownInterval = setInterval(() => {
+          const newRemaining = this.getCooldownRemaining();
+          const timerEl = document.getElementById('cooldown-timer');
+          if (timerEl) {
+            timerEl.textContent = newRemaining + 's';
+          }
+          if (newRemaining <= 0) {
+            clearInterval(this.cooldownInterval);
+            this.cooldownInterval = null;
+            this.renderUI(); // Re-render to show tournament selection
+          }
+        }, 1000);
       },
 
       renderQueueUI(container) {
@@ -7257,20 +7358,39 @@
         holeInOne: { name: 'ACE!', desc: 'Get a hole in one', icon: '🎯', unlocked: false },
         parStreak: { name: 'Par for the Course', desc: 'Get par or better on 3 holes in a row', icon: '⭐', unlocked: false },
         underPar: { name: 'Under Pressure', desc: 'Finish a round under par', icon: '🏆', unlocked: false },
+        albatross: { name: 'Albatross!', desc: 'Score 3 under par on a single hole', icon: '🦢', unlocked: false },
+        fiveBirdies: { name: 'Birdie Bonanza', desc: 'Get 5 birdies in a single round', icon: '🐦✨', unlocked: false },
+        bogeyFree: { name: 'Flawless', desc: 'Complete a round with no bogeys', icon: '💎', unlocked: false },
+        wayUnderPar: { name: 'On Fire!', desc: 'Finish a round 5 or more under par', icon: '🔥', unlocked: false },
 
         // Progress achievements
         firstHole: { name: 'Getting Started', desc: 'Complete your first hole', icon: '⛳', unlocked: false },
         halfway: { name: 'Halfway There', desc: 'Complete 5 holes', icon: '🌟', unlocked: false },
         fullRound: { name: 'Full Round', desc: 'Complete all 9 holes', icon: '🎉', unlocked: false },
+        tenRounds: { name: 'Regular', desc: 'Complete 10 rounds', icon: '📅', unlocked: false },
+        fiftyRounds: { name: 'Dedicated', desc: 'Complete 50 rounds', icon: '🎖️', unlocked: false },
+        hundredHoles: { name: 'Centurion', desc: 'Complete 100 holes total', icon: '💯', unlocked: false },
 
         // Special achievements
         longDrive: { name: 'Big Hitter', desc: 'Hit a drive over 280 yards', icon: '💪', unlocked: false },
         sandSave: { name: 'Sandy Save', desc: 'Get par after landing in a bunker', icon: '🏖️', unlocked: false },
         waterRecovery: { name: 'Water Walker', desc: 'Get par after a water hazard', icon: '🌊', unlocked: false },
+        monsterDrive: { name: 'Monster Drive', desc: 'Hit a drive over 320 yards', icon: '👹', unlocked: false },
 
         // Streak achievements
         threePutts: { name: 'Putting Pro', desc: 'One-putt 3 greens in a round', icon: '🎱', unlocked: false },
-        noDouble: { name: 'Steady Eddie', desc: 'Complete a round with no double bogeys', icon: '🛡️', unlocked: false }
+        noDouble: { name: 'Steady Eddie', desc: 'Complete a round with no double bogeys', icon: '🛡️', unlocked: false },
+        fiveParStreak: { name: 'Consistency King', desc: 'Get par or better on 5 holes in a row', icon: '👑', unlocked: false },
+
+        // Tournament achievements
+        tournamentFirst: { name: 'Champion!', desc: 'Win a tournament', icon: '🥇', unlocked: false },
+        tournamentTop3: { name: 'Podium Finish', desc: 'Finish top 3 in a tournament', icon: '🏅', unlocked: false },
+        tournamentMoney: { name: 'In the Money', desc: 'Finish in the prize spots', icon: '💰', unlocked: false },
+        tournamentTen: { name: 'Tournament Regular', desc: 'Complete 10 tournaments', icon: '🏟️', unlocked: false },
+
+        // Shopping achievements
+        firstPurchase: { name: 'Shopper', desc: 'Buy something from the shop', icon: '🛒', unlocked: false },
+        bigSpender: { name: 'Big Spender', desc: 'Spend 1000 Golf Bucks total', icon: '💸', unlocked: false }
       },
 
       // Track stats for achievements
@@ -7281,7 +7401,14 @@
         hadWater: false,
         hadSand: false,
         hasDoubleBogey: false,
-        longestDrive: 0
+        hasBogey: false,
+        longestDrive: 0,
+        birdiesThisRound: 0,
+        // Persistent stats (saved to localStorage)
+        totalHoles: 0,
+        totalRounds: 0,
+        tournamentsCompleted: 0,
+        totalSpent: 0
       },
 
       popupQueue: [],
@@ -7315,6 +7442,20 @@
             console.error('Failed to load achievements:', e);
           }
         }
+
+        // Load persistent stats from localStorage
+        const savedStats = localStorage.getItem('golf-achievement-stats');
+        if (savedStats) {
+          try {
+            const stats = JSON.parse(savedStats);
+            this.stats.totalHoles = stats.totalHoles || 0;
+            this.stats.totalRounds = stats.totalRounds || 0;
+            this.stats.tournamentsCompleted = stats.tournamentsCompleted || 0;
+            this.stats.totalSpent = stats.totalSpent || 0;
+          } catch (e) {
+            console.error('Failed to load achievement stats:', e);
+          }
+        }
       },
 
       resetRoundStats() {
@@ -7324,6 +7465,18 @@
         this.stats.hadWater = false;
         this.stats.hadSand = false;
         this.stats.hasDoubleBogey = false;
+        this.stats.hasBogey = false;
+        this.stats.birdiesThisRound = 0;
+      },
+
+      savePersistentStats() {
+        const statsToSave = {
+          totalHoles: this.stats.totalHoles,
+          totalRounds: this.stats.totalRounds,
+          tournamentsCompleted: this.stats.tournamentsCompleted,
+          totalSpent: this.stats.totalSpent
+        };
+        localStorage.setItem('golf-achievement-stats', JSON.stringify(statsToSave));
       },
 
       unlock(achievementId) {
@@ -7336,7 +7489,7 @@
         AudioManager.playAchievement();
 
         // Award Golf Bucks for achievement unlock
-        ShopSystem.addBucks(200, 'Achievement');
+        ShopSystem.addBucks(100, 'Achievement');
 
         return true;
       },
@@ -7396,6 +7549,12 @@
         }
 
         this.stats.holesCompleted++;
+        this.stats.totalHoles++;
+
+        // Check total holes achievement
+        if (this.stats.totalHoles >= 100) {
+          this.unlock('hundredHoles');
+        }
 
         // Halfway
         if (this.stats.holesCompleted >= 5) {
@@ -7412,6 +7571,11 @@
           this.unlock('holeInOne');
         }
 
+        // Albatross (-3 or better on a hole, not counting hole in one on par 3)
+        if (score <= -3) {
+          this.unlock('albatross');
+        }
+
         // Eagle or better
         if (score <= -2) {
           this.unlock('firstEagle');
@@ -7420,6 +7584,12 @@
         // Birdie
         if (score === -1) {
           this.unlock('firstBirdie');
+          this.stats.birdiesThisRound++;
+        }
+
+        // Also count eagles as birdies for the counter
+        if (score <= -2) {
+          this.stats.birdiesThisRound++;
         }
 
         // Par streak
@@ -7428,8 +7598,16 @@
           if (this.stats.parStreak >= 3) {
             this.unlock('parStreak');
           }
+          if (this.stats.parStreak >= 5) {
+            this.unlock('fiveParStreak');
+          }
         } else {
           this.stats.parStreak = 0;
+        }
+
+        // Bogey check (for bogey-free round)
+        if (score >= 1) {
+          this.stats.hasBogey = true;
         }
 
         // Double bogey check
@@ -7452,6 +7630,9 @@
         if (wasInSand && score <= 0) {
           this.unlock('sandSave');
         }
+
+        // Save persistent stats
+        this.savePersistentStats();
       },
 
       // Called when a drive is hit
@@ -7462,16 +7643,77 @@
         if (distanceYards >= 280) {
           this.unlock('longDrive');
         }
+        if (distanceYards >= 320) {
+          this.unlock('monsterDrive');
+        }
       },
 
       // Called when round is complete
       onRoundComplete(totalScore) {
+        this.stats.totalRounds++;
+
+        // Under par achievements
         if (totalScore < 0) {
           this.unlock('underPar');
         }
+        if (totalScore <= -5) {
+          this.unlock('wayUnderPar');
+        }
+
+        // Consistency achievements
         if (!this.stats.hasDoubleBogey) {
           this.unlock('noDouble');
         }
+        if (!this.stats.hasBogey) {
+          this.unlock('bogeyFree');
+        }
+
+        // Birdie count achievement
+        if (this.stats.birdiesThisRound >= 5) {
+          this.unlock('fiveBirdies');
+        }
+
+        // Rounds milestones
+        if (this.stats.totalRounds >= 10) {
+          this.unlock('tenRounds');
+        }
+        if (this.stats.totalRounds >= 50) {
+          this.unlock('fiftyRounds');
+        }
+
+        this.savePersistentStats();
+      },
+
+      // Called when a tournament is completed
+      onTournamentComplete(position) {
+        this.stats.tournamentsCompleted++;
+
+        if (position === 1) {
+          this.unlock('tournamentFirst');
+        }
+        if (position <= 3) {
+          this.unlock('tournamentTop3');
+        }
+        if (position <= 10) {
+          this.unlock('tournamentMoney');
+        }
+        if (this.stats.tournamentsCompleted >= 10) {
+          this.unlock('tournamentTen');
+        }
+
+        this.savePersistentStats();
+      },
+
+      // Called when a purchase is made
+      onPurchase(amount) {
+        this.stats.totalSpent += amount;
+        this.unlock('firstPurchase');
+
+        if (this.stats.totalSpent >= 1000) {
+          this.unlock('bigSpender');
+        }
+
+        this.savePersistentStats();
       }
     };
 
@@ -10374,10 +10616,10 @@
             DailyChallengeSystem.onRoundComplete(round.scoreRelativeToPar);
 
             // Award Golf Bucks for completing round
-            let roundReward = 100; // Base reward
+            let roundReward = 50; // Base reward
             if (round.scoreRelativeToPar < 0) {
-              // Bonus for under par: 50 GB per stroke under
-              roundReward += Math.abs(round.scoreRelativeToPar) * 50;
+              // Bonus for under par: 25 per stroke under
+              roundReward += Math.abs(round.scoreRelativeToPar) * 25;
               ShopSystem.addBucks(roundReward, 'Round Complete (Under Par!)');
             } else {
               ShopSystem.addBucks(roundReward, 'Round Complete');
@@ -10398,7 +10640,7 @@
           AudioManager.playCheerSound();
           AudioManager.playCrowdCheer();  // Crowd goes wild!
           ConfettiSystem.spawn(holeX, holeY, 80, 'eagle');
-          ShopSystem.addBucks(500, 'Hole in One!');
+          ShopSystem.addBucks(250, 'Hole in One!');
           DailyChallengeSystem.onHoleInOne();
         } else if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
@@ -10406,7 +10648,7 @@
           AudioManager.playCrowdCheer();  // Crowd cheers for eagle
           // Extra confetti burst for eagle or better
           ConfettiSystem.spawn(holeX, holeY, 60, 'eagle');
-          ShopSystem.addBucks(150, 'Eagle!');
+          ShopSystem.addBucks(75, 'Eagle!');
           DailyChallengeSystem.onEagle();
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
@@ -10414,7 +10656,7 @@
           AudioManager.playCrowdCheer();  // Crowd cheers for birdie
           // Extra confetti for birdie
           ConfettiSystem.spawn(holeX, holeY, 40, 'birdie');
-          ShopSystem.addBucks(50, 'Birdie!');
+          ShopSystem.addBucks(25, 'Birdie!');
           DailyChallengeSystem.onBirdie();
         }
       }
@@ -10498,10 +10740,13 @@
           // Tournament is complete - show results with all 25 players
           const result = TournamentSystem.completeTournament();
           if (result) {
+            // Track tournament achievement
+            AchievementManager.onTournamentComplete(result.position);
+
             const config = TournamentSystem.tournaments[result.tournamentType];
             const inMoney = result.position <= 10;
 
-            // Add tournament results to scorecard
+            // Add tournament results with full leaderboard to scorecard
             const scorecardContent = document.getElementById('scorecard-content');
             scorecardContent.innerHTML += `
               <div class="tournament-complete-banner">
@@ -10512,20 +10757,22 @@
                   `<div class="tournament-prize-won">+${result.prize} Golf Bucks!</div>` :
                   `<div class="tournament-lost-entry">${result.entryFee > 0 ? `Lost ${result.entryFee} Golf Bucks entry fee` : 'No prize - try again!'}</div>`
                 }
-                <button class="button view-leaderboard-btn" id="view-tournament-leaderboard-btn">View All 25 Scores</button>
+
+                <div class="tournament-leaderboard-embed">
+                  <h4>Final Standings</h4>
+                  <div class="leaderboard-scroll">
+                    ${result.leaderboard.map((entry, i) => `
+                      <div class="leaderboard-entry ${entry.isPlayer ? 'player' : ''} ${i < 10 ? 'in-money' : 'out-money'}">
+                        <span class="lb-rank">${i + 1}.</span>
+                        <span class="lb-name">${entry.name}</span>
+                        <span class="lb-score">${entry.score === 0 ? 'E' : (entry.score > 0 ? '+' + entry.score : entry.score)}</span>
+                        <span class="lb-prize">${i < 10 ? `+${config.prizePool[i]}` : '-'}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
               </div>
             `;
-
-            // Add handler for leaderboard button
-            setTimeout(() => {
-              const lbBtn = document.getElementById('view-tournament-leaderboard-btn');
-              if (lbBtn) {
-                lbBtn.addEventListener('click', () => {
-                  TournamentSystem.showResults(result);
-                  document.getElementById('tournament-overlay').classList.remove('hidden');
-                });
-              }
-            }, 0);
           }
 
           TournamentSystem.updateIndicator();
