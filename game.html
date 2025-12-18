@@ -155,6 +155,43 @@
       border: 2px solid rgba(255, 255, 255, 0.8);
     }
 
+    #powerups-display {
+      position: absolute;
+      bottom: 120px;
+      left: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 250, 230, 0.95));
+      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(255, 215, 0, 0.5);
+    }
+
+    #powerups-display .powerups-label {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    #powerups-display .powerups-list {
+      display: flex;
+      gap: 8px;
+    }
+
+    #powerups-display .powerup-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    #powerups-display .powerup-icon {
+      font-size: 16px;
+    }
+
     #wind-indicator {
       position: absolute;
       top: 65px;
@@ -588,6 +625,51 @@
       margin-bottom: 5px;
     }
 
+    /* Club stat bars */
+    .shop-club-stats {
+      width: 100%;
+      margin-bottom: 6px;
+    }
+    .stat-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3px;
+      height: 12px;
+    }
+    .stat-label {
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      width: 28px;
+      text-align: left;
+    }
+    .stat-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      margin-left: 4px;
+      overflow: hidden;
+    }
+    .stat-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .stat-fill.accuracy {
+      background: linear-gradient(90deg, #2196F3, #03A9F4);
+    }
+    .stat-fill.forgiveness {
+      background: linear-gradient(90deg, #FF9800, #FFC107);
+    }
+    .stat-value {
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.8);
+      width: 24px;
+      text-align: right;
+      margin-left: 4px;
+    }
+
     .shop-club-price {
       color: #81C784;
       font-size: 11px;
@@ -923,6 +1005,91 @@
     .shop-theme-card .shop-equip-btn {
       font-size: 10px;
       padding: 5px 10px;
+    }
+
+    /* Caddie Shop */
+    .caddie-shop {
+      padding: 10px 0;
+    }
+    .caddie-shop h3 {
+      color: #fff;
+      text-align: center;
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    .caddie-desc {
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      font-size: 12px;
+      margin: 0 0 20px 0;
+    }
+    .caddie-item {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .caddie-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .caddie-item.owned {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .caddie-item.locked {
+      opacity: 0.5;
+    }
+    .caddie-item.cant-afford {
+      opacity: 0.7;
+    }
+    .caddie-icon {
+      font-size: 36px;
+      margin-right: 15px;
+    }
+    .caddie-info {
+      flex: 1;
+    }
+    .caddie-name {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .caddie-tier-desc {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 12px;
+    }
+    .caddie-status {
+      color: #4CAF50;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .caddie-status.locked {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+    }
+    .caddie-buy-btn {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      border: none;
+      color: #1a1a1a;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .caddie-buy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+    .caddie-item.cant-afford .caddie-buy-btn {
+      background: #666;
+      cursor: not-allowed;
     }
 
     /* Daily Challenges */
@@ -1891,7 +2058,7 @@
     }
 
     #scorecard-overlay {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -1902,6 +2069,7 @@
       max-width: 500px;
       max-height: 80vh;
       overflow-y: auto;
+      z-index: 1100;
     }
 
     #scorecard-overlay h2 {
@@ -2145,6 +2313,7 @@
     }
 
     .menu-icon-btn {
+      position: relative;
       width: 50px;
       height: 50px;
       border-radius: 50%;
@@ -2961,6 +3130,340 @@
         font-size: 15px;
       }
     }
+
+    /* Mailbox System */
+    .mailbox-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #f44336;
+      color: white;
+      border-radius: 50%;
+      min-width: 16px;
+      height: 16px;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .mailbox-badge.hidden { display: none; }
+    .ingame-settings-btn { position: relative; }
+
+    #mailbox-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+      z-index: 1500;
+      overflow-y: auto;
+    }
+    #mailbox-overlay.hidden { display: none; }
+    #mailbox-overlay h2 { color: #fff; margin-bottom: 15px; }
+
+    .mailbox-actions {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    #mailbox-content {
+      width: 100%;
+      max-width: 500px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .notification-item:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .notification-item.unread {
+      border-left-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.15);
+    }
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .notification-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.5);
+    }
+    .notification-timestamp {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+    .notification-title {
+      font-weight: bold;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    .notification-message {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+    }
+    .notification-leaderboard {
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .notification-leaderboard .lb-entry {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+    }
+    .notification-leaderboard .lb-entry.player {
+      background: rgba(76, 175, 80, 0.3);
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .notification-empty {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      padding: 40px 20px;
+      font-size: 14px;
+    }
+
+    /* Game Mode Selection */
+    #game-mode-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+    #game-mode-overlay.hidden { display: none; }
+
+    .game-mode-modal {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .game-mode-modal h2 {
+      color: #fff;
+      margin-bottom: 25px;
+      font-size: 24px;
+    }
+    .game-mode-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .game-mode-btn {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      position: relative;
+    }
+    .game-mode-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: #4CAF50;
+      transform: translateY(-2px);
+    }
+    .game-mode-btn .mode-icon {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .game-mode-btn .mode-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      display: block;
+    }
+    .game-mode-btn .mode-subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      display: block;
+      margin-top: 5px;
+    }
+    .game-mode-btn.daily-highlight {
+      border-color: #FFD700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+    .game-mode-btn.daily-highlight::before {
+      content: "TODAY'S CHALLENGE";
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #FFD700;
+      color: #000;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+
+    /* Mini-Game Overlay */
+    #minigame-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+    #minigame-overlay.hidden { display: none; }
+    .minigame-title {
+      font-size: 32px;
+      color: #FFD700;
+      margin-bottom: 10px;
+    }
+    .minigame-desc {
+      font-size: 16px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+      text-align: center;
+      max-width: 400px;
+    }
+    .minigame-timer {
+      font-size: 48px;
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .minigame-score {
+      font-size: 24px;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+    .minigame-result {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 20px;
+      padding: 30px 50px;
+      text-align: center;
+      border: 2px solid #FFD700;
+    }
+    .minigame-result h3 {
+      font-size: 28px;
+      color: #FFD700;
+      margin-bottom: 15px;
+    }
+    .minigame-result .final-score {
+      font-size: 48px;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    .minigame-result .high-score {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+    }
+    .minigame-result .reward {
+      font-size: 20px;
+      color: #FFD700;
+      margin-bottom: 20px;
+    }
+    .minigame-hud {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      padding: 10px 30px;
+      border-radius: 20px;
+      display: flex;
+      gap: 30px;
+      z-index: 1601;
+    }
+    .minigame-hud.hidden { display: none; }
+    .minigame-hud-item {
+      text-align: center;
+    }
+    .minigame-hud-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+    }
+    .minigame-hud-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .minigame-hud-value.timer { color: #FFD700; }
+    .minigame-hud-value.score { color: #4CAF50; }
+
+    /* UFO abduction effect */
+    .ufo-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: linear-gradient(135deg, #4a0080, #000066);
+      color: #88FF88;
+      padding: 20px 35px;
+      border-radius: 15px;
+      font-size: 18px;
+      z-index: 2002;
+      opacity: 0;
+      transition: all 0.3s ease-out;
+      box-shadow: 0 10px 40px rgba(136, 255, 136, 0.3), 0 0 30px rgba(136, 255, 136, 0.2);
+      text-align: center;
+    }
+    .ufo-popup.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Out of bounds popup */
+    .oob-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: linear-gradient(135deg, #8B0000, #4a0000);
+      color: #fff;
+      padding: 20px 35px;
+      border-radius: 15px;
+      font-size: 18px;
+      z-index: 2002;
+      opacity: 0;
+      transition: all 0.3s ease-out;
+      box-shadow: 0 10px 40px rgba(139, 0, 0, 0.4);
+      text-align: center;
+    }
+    .oob-popup.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
   </style>
 </head>
 <body>
@@ -2988,6 +3491,11 @@
     </div>
 
     <div id="ball-state">🔴 Ready</div>
+
+    <div id="powerups-display" class="hidden">
+      <div class="powerups-label">Power-Ups:</div>
+      <div class="powerups-list" id="powerups-list"></div>
+    </div>
 
     <div id="wind-indicator" class="hidden wind-calm">
       <div class="wind-label">WIND</div>
@@ -3093,6 +3601,16 @@
       </div>
     </div>
 
+    <!-- Mailbox Overlay -->
+    <div id="mailbox-overlay" class="hidden">
+      <h2>📬 Mailbox</h2>
+      <div class="mailbox-actions">
+        <button class="button" id="mark-all-read-btn">Mark All Read</button>
+      </div>
+      <div id="mailbox-content"></div>
+      <button class="button" id="mailbox-close-btn">Close</button>
+    </div>
+
     <!-- Shop Overlay -->
     <div id="shop-overlay" class="hidden">
       <div id="shop-modal">
@@ -3106,6 +3624,7 @@
           <button class="shop-tab" data-tab="balls">Balls</button>
           <button class="shop-tab" data-tab="skins">Skins</button>
           <button class="shop-tab" data-tab="themes">Themes</button>
+          <button class="shop-tab" data-tab="caddie">Caddie</button>
           <button class="shop-tab" data-tab="info">Info</button>
         </div>
         <div id="shop-content">
@@ -3150,6 +3669,11 @@
             <div id="shop-themes-grid"></div>
           </div>
 
+          <!-- Caddie Tab -->
+          <div id="shop-tab-caddie" class="shop-tab-content">
+            <div id="caddie-shop-content"></div>
+          </div>
+
           <!-- Info Tab -->
           <div id="shop-tab-info" class="shop-tab-content">
             <div class="shop-tab-header">
@@ -3178,6 +3702,48 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Game Mode Selection -->
+    <div id="game-mode-overlay" class="hidden">
+      <div class="game-mode-modal">
+        <h2>Choose Game Mode</h2>
+        <div class="game-mode-options">
+          <button class="game-mode-btn" id="quick-play-btn">
+            <span class="mode-icon">⛳</span>
+            <span class="mode-title">Quick Play</span>
+            <span class="mode-subtitle">9 holes, casual round</span>
+          </button>
+          <button class="game-mode-btn" id="tournament-play-btn">
+            <span class="mode-icon">🏆</span>
+            <span class="mode-title">Tournament</span>
+            <span class="mode-subtitle">Compete for prizes</span>
+          </button>
+          <button class="game-mode-btn" id="minigame-play-btn">
+            <span class="mode-icon">🎯</span>
+            <span class="mode-title">Mini-Games</span>
+            <span class="mode-subtitle" id="minigame-today-label">Daily challenge</span>
+          </button>
+        </div>
+        <button class="button cancel-btn" id="cancel-mode-btn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Mini-Game Overlay -->
+    <div id="minigame-overlay" class="hidden">
+      <div id="minigame-content"></div>
+    </div>
+
+    <!-- Mini-Game HUD (shown during gameplay) -->
+    <div id="minigame-hud" class="minigame-hud hidden">
+      <div class="minigame-hud-item">
+        <div class="minigame-hud-label">Time</div>
+        <div class="minigame-hud-value timer" id="minigame-timer">60</div>
+      </div>
+      <div class="minigame-hud-item">
+        <div class="minigame-hud-label">Score</div>
+        <div class="minigame-hud-value score" id="minigame-score">0</div>
       </div>
     </div>
 
@@ -3283,7 +3849,7 @@
     <button id="music-prompt-btn">🎵 Tap for Music</button>
 
     <div class="menu-bottom-buttons">
-      <button class="menu-icon-btn" id="tournament-btn" title="Tournaments">🏅</button>
+      <button class="menu-icon-btn" id="mailbox-btn" title="Mailbox">📬<span class="mailbox-badge hidden" id="mailbox-badge">0</span></button>
       <button class="menu-icon-btn" id="shop-btn" title="Shop">🛒</button>
       <button class="menu-icon-btn" id="achievements-btn" title="Achievements">🏆</button>
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
@@ -3488,7 +4054,7 @@
 
         // Apply wind force only when ball is moving fast enough (not when nearly stopped)
         const currentSpeed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
-        if (currentSpeed > 20) {
+        if (currentSpeed > 20 && !ball.windImmune) {
           const wind = WindSystem.getWindForce();
           // Scale wind effect by speed - less effect when slowing down
           const windScale = Math.min(1, currentSpeed / 100);
@@ -3523,6 +4089,24 @@
           this.checkObstacleCollisions(ball, obstacles);
         }
 
+        // Apply magnet power-up effect - attract ball to hole when close and slow
+        if (ball.hasMagnet && hole && hole.holePosition) {
+          const toHoleX = hole.holePosition.x - ball.x;
+          const toHoleY = hole.holePosition.y - ball.y;
+          const distToHole = Math.sqrt(toHoleX * toHoleX + toHoleY * toHoleY);
+          const magnetRange = 80; // Pixels - range of magnet attraction
+          const currentSpd = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+
+          if (distToHole < magnetRange && currentSpd < 150) {
+            // Stronger attraction when closer to hole
+            const magnetStrength = 120 * (1 - distToHole / magnetRange);
+            const dirX = toHoleX / distToHole;
+            const dirY = toHoleY / distToHole;
+            ball.velocityX += dirX * magnetStrength * deltaTime;
+            ball.velocityY += dirY * magnetStrength * deltaTime;
+          }
+        }
+
         // Stop ball if moving too slowly
         const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
         if (speed < this.stopThreshold) {
@@ -3532,6 +4116,10 @@
           ball.isAirborne = false;
           ball.leavingSand = false;  // Clear escape flag when ball stops
           // Note: inSand will be set by collision detection if ball lands in sand
+
+          // Power-ups disabled
+          ball.windImmune = false;
+          ball.hasMagnet = false;
         }
 
         ball.rotation += speed * deltaTime * 0.1;
@@ -3764,11 +4352,19 @@
             BallTrail.draw(this.ctx);
           }
 
+          // Draw ghost ball (replay of best run) before player ball
+          if (GhostSystem.isEnabled && GhostSystem.ghostData) {
+            GhostSystem.renderGhost(this.ctx, performance.now());
+          }
+
           this.drawBall(gameState.ball);
 
           if (gameState.strikeFlash && gameState.strikeFlash.active) {
             this.drawStrikeFlash(gameState.ball, gameState.strikeFlash);
           }
+
+          // Power-ups disabled
+          // PowerUpManager.render(this.ctx);
 
           // Draw confetti particles
           ConfettiSystem.draw(this.ctx);
@@ -3799,6 +4395,40 @@
 
         // Get current theme colors
         const theme = ShopSystem.getSelectedTheme();
+
+        // Special rendering for putting mini-game - pure green surface
+        if (hole.isMinigamePuttingGreen) {
+          // Fill entire canvas with green
+          const greenGradient = ctx.createRadialGradient(
+            canvasW / 2, canvasH / 2, 0,
+            canvasW / 2, canvasH / 2, Math.max(canvasW, canvasH)
+          );
+          greenGradient.addColorStop(0, '#2E7D32');
+          greenGradient.addColorStop(0.5, '#388E3C');
+          greenGradient.addColorStop(1, '#1B5E20');
+          ctx.fillStyle = greenGradient;
+          ctx.fillRect(0, 0, canvasW, canvasH);
+
+          // Draw subtle putting green texture
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+          for (let i = 0; i < 200; i++) {
+            const x = (i * 137) % canvasW;
+            const y = (i * 173) % canvasH;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Draw the hole
+          this.drawHole(hole.holePosition, animationTime);
+
+          // Draw obstacles
+          if (hole.obstacles) {
+            this.drawObstacles(hole.obstacles);
+          }
+
+          return; // Skip normal course rendering
+        }
 
         // === ROUGH (themed background) ===
         const roughGradient = ctx.createLinearGradient(0, 0, canvasW, canvasH);
@@ -5445,6 +6075,13 @@
         3: 1.0    // Pro: 100% distance (current clubs)
       },
 
+      // Club tier stats (Power, Accuracy, Forgiveness)
+      tierStats: {
+        1: { power: 0.70, accuracy: 0.80, forgiveness: 0.70 },  // Basic: 70% power, 80% accuracy, 70% forgiveness
+        2: { power: 0.85, accuracy: 0.90, forgiveness: 0.85 },  // Standard: 85% all-around
+        3: { power: 1.00, accuracy: 1.00, forgiveness: 1.00 }   // Pro: Full stats
+      },
+
       // Prices for each club tier upgrade
       clubPrices: {
         driver: { 2: 400, 3: 800 },
@@ -5637,6 +6274,19 @@
         return this.tierMultipliers[tier];
       },
 
+      getTierStats(clubId) {
+        const tier = this.getOwnedTier(clubId);
+        return this.tierStats[tier] || this.tierStats[1];
+      },
+
+      getAccuracy(clubId) {
+        return this.getTierStats(clubId).accuracy;
+      },
+
+      getForgiveness(clubId) {
+        return this.getTierStats(clubId).forgiveness;
+      },
+
       getClubPrice(clubId, tier) {
         if (this.clubPrices[clubId] && this.clubPrices[clubId][tier]) {
           return this.clubPrices[clubId][tier];
@@ -5699,6 +6349,11 @@
           popup.classList.remove('show');
           setTimeout(() => popup.remove(), 500);
         }, 2500);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('unlock', 'Club Upgraded', `${clubName} upgraded to ${tierName}!`);
+        }
       },
 
       showEarningsPopup(amount, reason) {
@@ -5714,6 +6369,11 @@
           popup.classList.remove('show');
           setTimeout(() => popup.remove(), 500);
         }, 2000);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('earnings', `+${amount} Golf Bucks`, reason || 'Earned from playing');
+        }
       },
 
       // Ball skin methods
@@ -5758,6 +6418,11 @@
           popup.classList.remove('show');
           setTimeout(() => popup.remove(), 500);
         }, 2500);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('unlock', 'Ball Skin Unlocked', `Unlocked ${skinName} ball!`);
+        }
       },
 
       // Club skin methods
@@ -5819,6 +6484,11 @@
           popup.classList.remove('show');
           setTimeout(() => popup.remove(), 500);
         }, 2500);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('unlock', 'Club Skin Unlocked', `Unlocked ${skinName} club skin!`);
+        }
       },
 
       getSelectedClubSkinStyle() {
@@ -5908,6 +6578,9 @@
           // Calculate current max distance based on tier
           const currentDist = Math.round(baseDistances[clubId] * this.tierMultipliers[tier]);
 
+          // Get tier stats
+          const stats = this.tierStats[tier];
+
           // Get short label
           let label = clubId.charAt(0).toUpperCase();
           if (clubId === 'driver') label = 'D';
@@ -5922,6 +6595,11 @@
             <div class="shop-club-name">${this.clubNames[clubId]}</div>
             <div class="shop-club-tier">${stars}</div>
             <div class="shop-club-distance">${currentDist} yds</div>
+            <div class="shop-club-stats">
+              <div class="stat-bar"><span class="stat-label">PWR</span><div class="stat-bar-bg"><div class="stat-fill" style="width: ${stats.power * 100}%"></div></div><span class="stat-value">${Math.round(stats.power * 100)}</span></div>
+              <div class="stat-bar"><span class="stat-label">ACC</span><div class="stat-bar-bg"><div class="stat-fill accuracy" style="width: ${stats.accuracy * 100}%"></div></div><span class="stat-value">${Math.round(stats.accuracy * 100)}</span></div>
+              <div class="stat-bar"><span class="stat-label">FOR</span><div class="stat-bar-bg"><div class="stat-fill forgiveness" style="width: ${stats.forgiveness * 100}%"></div></div><span class="stat-value">${Math.round(stats.forgiveness * 100)}</span></div>
+            </div>
             <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' Golf Bucks'}</div>
             ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'}>Upgrade</button>`}
           `;
@@ -7124,6 +7802,15 @@
           </div>
           <button class="tournament-btn primary" id="tournament-done-btn">Done</button>
         `;
+
+        // Add tournament result to mailbox with leaderboard
+        if (typeof MailboxManager !== 'undefined') {
+          const prizeText = inMoney ? `Won ${result.prize} Golf Bucks!` : `Finished ${this.getPositionText(result.position)}`;
+          MailboxManager.addNotification('tournament', `${result.tournament} Complete`,
+            `${this.getPositionText(result.position)} place (${scoreText}). ${prizeText}`,
+            { leaderboard: result.leaderboard, position: result.position, prize: result.prize }
+          );
+        }
       },
 
       updateIndicator() {
@@ -7150,6 +7837,7 @@
       currentRecording: [],
       recordingStartTime: 0,
       sampleInterval: 50, // Sample position every 50ms
+      recordingHole: 1,
 
       // Playback state
       isEnabled: true,
@@ -7159,6 +7847,7 @@
 
       // Storage
       storageKey: 'golf-ghost-data',
+      allGhosts: {},
 
       init() {
         this.load();
@@ -7500,6 +8189,11 @@
         this.popupQueue.push(achievement);
         if (!this.isShowing) {
           this.showNextPopup();
+        }
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('achievement', achievement.name, achievement.desc);
         }
       },
 
@@ -8381,34 +9075,14 @@
         };
       },
 
-      getRecommendedClub(ball, holePosition) {
-        // Convert pixel distance to yards
-        const pixelDistance = PhysicsEngine.distance(ball, holePosition);
-        const distanceYards = pixelDistance * PIXELS_TO_YARDS;
-
-        // Get all clubs with their actual current max distances (including upgrades)
-        const allClubIds = ['putter', 'wedge', 'iron9', 'iron8', 'iron7', 'iron6', 'iron5', 'iron4', 'wood5', 'wood3', 'driver'];
-
-        // Build array of clubs with their actual distances
-        const clubsWithDistances = allClubIds.map(clubId => ({
-          id: clubId,
-          maxDistance: this.getMaxDistance(clubId)
-        }));
-
-        // Sort by actual max distance (shortest first)
-        clubsWithDistances.sort((a, b) => a.maxDistance - b.maxDistance);
-
-        // Find the club with the shortest max distance that can still reach the hole
-        let bestClub = clubsWithDistances[clubsWithDistances.length - 1].id; // Default to longest club
-
-        for (const club of clubsWithDistances) {
-          if (club.maxDistance >= distanceYards) {
-            bestClub = club.id;
-            break; // Found the shortest club that can reach
-          }
+      getRecommendedClub(ball, holePosition, wind = null, lie = null) {
+        // Use CaddieSystem if player has a caddie
+        if (CaddieSystem.getOwnedTier() > 0) {
+          return CaddieSystem.getRecommendation(ball, holePosition, wind, lie);
         }
 
-        return bestClub;
+        // No caddie - return null (no recommendation shown)
+        return null;
       },
 
       // Calculate max distance for a club at 100% power (in yards)
@@ -9355,12 +10029,1307 @@
       }
     };
 
+    // === MailboxManager Module ===
+    const MailboxManager = {
+      notifications: [],
+      maxNotifications: 50,
+      storageKey: 'golf-mailbox',
+
+      init() {
+        this.load();
+        this.updateBadge();
+      },
+
+      load() {
+        try {
+          const data = localStorage.getItem(this.storageKey);
+          if (data) {
+            this.notifications = JSON.parse(data);
+          }
+        } catch (e) {
+          console.error('Failed to load mailbox:', e);
+          this.notifications = [];
+        }
+      },
+
+      save() {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.notifications));
+        } catch (e) {
+          console.error('Failed to save mailbox:', e);
+        }
+      },
+
+      addNotification(type, title, message, data = null) {
+        const notification = {
+          id: Date.now().toString(),
+          type: type, // 'earnings', 'achievement', 'tournament', 'unlock', 'general'
+          title: title,
+          message: message,
+          timestamp: Date.now(),
+          read: false,
+          data: data
+        };
+
+        this.notifications.unshift(notification);
+
+        // Limit stored notifications
+        if (this.notifications.length > this.maxNotifications) {
+          this.notifications = this.notifications.slice(0, this.maxNotifications);
+        }
+
+        this.save();
+        this.updateBadge();
+      },
+
+      markAsRead(id) {
+        const notification = this.notifications.find(n => n.id === id);
+        if (notification && !notification.read) {
+          notification.read = true;
+          this.save();
+          this.updateBadge();
+        }
+      },
+
+      markAllAsRead() {
+        let changed = false;
+        for (const n of this.notifications) {
+          if (!n.read) {
+            n.read = true;
+            changed = true;
+          }
+        }
+        if (changed) {
+          this.save();
+          this.updateBadge();
+        }
+      },
+
+      getUnreadCount() {
+        return this.notifications.filter(n => !n.read).length;
+      },
+
+      updateBadge() {
+        const badge = document.getElementById('mailbox-badge');
+        if (!badge) return;
+
+        const count = this.getUnreadCount();
+        if (count > 0) {
+          badge.textContent = count > 99 ? '99+' : count;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      },
+
+      formatTimestamp(timestamp) {
+        const now = Date.now();
+        const diff = now - timestamp;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return 'Just now';
+        if (minutes < 60) return `${minutes}m ago`;
+        if (hours < 24) return `${hours}h ago`;
+        if (days < 7) return `${days}d ago`;
+        return new Date(timestamp).toLocaleDateString();
+      },
+
+      getTypeIcon(type) {
+        switch (type) {
+          case 'earnings': return '💰';
+          case 'achievement': return '🏆';
+          case 'tournament': return '🏅';
+          case 'unlock': return '🔓';
+          default: return '📬';
+        }
+      },
+
+      renderMailbox() {
+        const container = document.getElementById('mailbox-content');
+        if (!container) return;
+
+        if (this.notifications.length === 0) {
+          container.innerHTML = '<div class="notification-empty">No notifications yet.<br>Play to earn Golf Bucks and achievements!</div>';
+          return;
+        }
+
+        container.innerHTML = this.notifications.map(n => {
+          const icon = this.getTypeIcon(n.type);
+          const timeStr = this.formatTimestamp(n.timestamp);
+          let html = `
+            <div class="notification-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+              <div class="notification-header">
+                <span class="notification-type">${icon} ${n.type}</span>
+                <span class="notification-timestamp">${timeStr}</span>
+              </div>
+              <div class="notification-title">${n.title}</div>
+              <div class="notification-message">${n.message}</div>
+          `;
+
+          // If tournament result with leaderboard data
+          if (n.type === 'tournament' && n.data && n.data.leaderboard) {
+            html += '<div class="notification-leaderboard">';
+            n.data.leaderboard.forEach((entry, i) => {
+              const scoreText = entry.score === 0 ? 'E' : (entry.score > 0 ? '+' + entry.score : entry.score);
+              html += `<div class="lb-entry ${entry.isPlayer ? 'player' : ''}"">
+                <span>${i + 1}. ${entry.name}</span>
+                <span>${scoreText}</span>
+              </div>`;
+            });
+            html += '</div>';
+          }
+
+          html += '</div>';
+          return html;
+        }).join('');
+      }
+    };
+
+    // === Caddie AI System ===
+    const CaddieSystem = {
+      ownedTier: 0,  // 0=none, 1=rookie, 2=pro, 3=master
+      storageKey: 'golf-caddie',
+
+      tiers: [
+        { name: 'Rookie Caddie', cost: 2000, icon: '🧢', desc: 'Basic distance recommendations' },
+        { name: 'Pro Caddie', cost: 3000, icon: '🎩', desc: 'Accounts for lie penalties' },
+        { name: 'Master Caddie', cost: 5000, icon: '👑', desc: 'Full analysis with wind' }
+      ],
+
+      init() {
+        this.load();
+      },
+
+      load() {
+        const data = localStorage.getItem(this.storageKey);
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.ownedTier = parsed.ownedTier || 0;
+          } catch (e) {
+            console.error('Failed to load caddie data:', e);
+            this.ownedTier = 0;
+          }
+        }
+      },
+
+      save() {
+        localStorage.setItem(this.storageKey, JSON.stringify({
+          ownedTier: this.ownedTier
+        }));
+      },
+
+      getOwnedTier() {
+        return this.ownedTier;
+      },
+
+      canPurchase(tierIndex) {
+        // Must purchase in order (0 -> 1 -> 2 -> 3)
+        // tierIndex is 0-based (0=rookie, 1=pro, 2=master)
+        const requiredTier = tierIndex; // To buy tier 1, need tier 0; to buy tier 2, need tier 1
+        if (this.ownedTier !== requiredTier) return false;
+        return ShopSystem.canAfford(this.tiers[tierIndex].cost);
+      },
+
+      purchase(tierIndex) {
+        if (!this.canPurchase(tierIndex)) return false;
+        const tier = this.tiers[tierIndex];
+        if (ShopSystem.spendBucks(tier.cost)) {
+          this.ownedTier = tierIndex + 1;
+          this.save();
+          ShopSystem.showUpgradePopup(`${tier.icon} ${tier.name}`, `You hired a ${tier.name}!`);
+          AchievementManager.onShopPurchase(tier.cost);
+          return true;
+        }
+        return false;
+      },
+
+      // Get club recommendation based on owned caddie tier
+      getRecommendation(ball, holePosition, wind, lie) {
+        if (this.ownedTier === 0) return null;
+
+        // Calculate base distance
+        const pixelDistance = PhysicsEngine.distance(ball, holePosition);
+        let effectiveDistance = pixelDistance * PIXELS_TO_YARDS;
+
+        // Tier 2+: Account for lie penalties
+        if (this.ownedTier >= 2) {
+          if (lie === 'sand') {
+            effectiveDistance *= 2; // 50% power means need 2x distance club
+          } else if (lie === 'rough') {
+            effectiveDistance *= 1.25; // 80% power
+          }
+        }
+
+        // Tier 3: Account for wind
+        if (this.ownedTier >= 3 && wind) {
+          // Wind adjustment - headwind increases needed distance, tailwind decreases
+          const windAngle = Math.atan2(holePosition.y - ball.y, holePosition.x - ball.x);
+          const windDirection = Math.atan2(wind.dy || 0, wind.dx || 0);
+          const angleDiff = Math.cos(windAngle - windDirection);
+          // Strong headwind can add up to 20% distance, tailwind subtract 15%
+          const windStrength = wind.strength || 0;
+          effectiveDistance *= 1 + (angleDiff * windStrength * -0.02);
+        }
+
+        // Find appropriate club for effective distance
+        const allClubIds = ['putter', 'wedge', 'iron9', 'iron8', 'iron7', 'iron6', 'iron5', 'iron4', 'wood5', 'wood3', 'driver'];
+        const clubsWithDistances = allClubIds.map(clubId => ({
+          id: clubId,
+          maxDistance: ClubSystem.getMaxDistance(clubId)
+        }));
+        clubsWithDistances.sort((a, b) => a.maxDistance - b.maxDistance);
+
+        let bestClub = clubsWithDistances[clubsWithDistances.length - 1].id;
+        for (const club of clubsWithDistances) {
+          if (club.maxDistance >= effectiveDistance) {
+            bestClub = club.id;
+            break;
+          }
+        }
+
+        return bestClub;
+      },
+
+      getCaddieIcon() {
+        if (this.ownedTier === 0) return null;
+        return this.tiers[this.ownedTier - 1].icon;
+      },
+
+      getCaddieName() {
+        if (this.ownedTier === 0) return null;
+        return this.tiers[this.ownedTier - 1].name;
+      },
+
+      renderShopTab() {
+        let html = '<div class="caddie-shop">';
+        html += '<h3>Hire a Caddie</h3>';
+        html += '<p class="caddie-desc">Caddies help recommend the right club for each shot.</p>';
+
+        this.tiers.forEach((tier, index) => {
+          const tierNum = index + 1;
+          const isOwned = this.ownedTier >= tierNum;
+          const canBuy = this.canPurchase(index);
+          const isLocked = this.ownedTier < index; // Need previous tier first
+
+          let btnClass = 'caddie-item';
+          if (isOwned) btnClass += ' owned';
+          else if (isLocked) btnClass += ' locked';
+          else if (!canBuy) btnClass += ' cant-afford';
+
+          html += `<div class="${btnClass}" data-tier="${index}">`;
+          html += `<div class="caddie-icon">${tier.icon}</div>`;
+          html += `<div class="caddie-info">`;
+          html += `<div class="caddie-name">${tier.name}</div>`;
+          html += `<div class="caddie-tier-desc">${tier.desc}</div>`;
+          html += `</div>`;
+
+          if (isOwned) {
+            html += '<div class="caddie-status">HIRED</div>';
+          } else if (isLocked) {
+            html += `<div class="caddie-status locked">Need ${this.tiers[index - 1].name}</div>`;
+          } else {
+            html += `<button class="caddie-buy-btn" data-tier="${index}">${tier.cost} GB</button>`;
+          }
+          html += '</div>';
+        });
+
+        html += '</div>';
+        return html;
+      }
+    };
+
+    // === Power-up System ===
+    const PowerUpManager = {
+      activePowerUps: [], // Power-ups currently on the course
+      collectedPowerUps: [], // Power-ups player has collected this hole
+      activeEffects: {}, // Currently active effects
+      spawnChance: 0.4, // 40% chance to spawn power-ups per hole
+
+      types: {
+        superball: {
+          icon: '⚡',
+          name: 'Super Ball',
+          desc: '+25% power on next shot',
+          color: '#FFD700'
+        },
+        magnet: {
+          icon: '🧲',
+          name: 'Magnet',
+          desc: 'Ball attracted to hole',
+          color: '#E91E63'
+        },
+        mulligan: {
+          icon: '🔄',
+          name: 'Mulligan',
+          desc: 'Free stroke (doesn\'t count)',
+          color: '#4CAF50'
+        },
+        windshield: {
+          icon: '🛡️',
+          name: 'Wind Shield',
+          desc: 'Ignore wind on next shot',
+          color: '#2196F3'
+        },
+        golden: {
+          icon: '✨',
+          name: 'Golden Ball',
+          desc: '2x Golf Bucks this hole',
+          color: '#FFC107'
+        }
+      },
+
+      reset() {
+        this.activePowerUps = [];
+        this.collectedPowerUps = [];
+        this.activeEffects = {};
+        this.updateUI(); // Hide power-ups display
+      },
+
+      spawnPowerUps(hole, canvasWidth, canvasHeight) {
+        this.activePowerUps = [];
+
+        // Random chance to spawn
+        if (Math.random() > this.spawnChance) return;
+
+        // Spawn 1-2 power-ups
+        const count = Math.random() < 0.7 ? 1 : 2;
+        const typeKeys = Object.keys(this.types);
+
+        for (let i = 0; i < count; i++) {
+          const type = typeKeys[Math.floor(Math.random() * typeKeys.length)];
+
+          // Find a valid position on the fairway
+          const fairwayPath = hole.fairwayPath || [hole.teePosition, hole.greenPosition];
+          const t = 0.2 + Math.random() * 0.6; // Between 20-80% along fairway
+
+          let x, y;
+          if (fairwayPath.length === 2) {
+            x = fairwayPath[0].x + (fairwayPath[1].x - fairwayPath[0].x) * t;
+            y = fairwayPath[0].y + (fairwayPath[1].y - fairwayPath[0].y) * t;
+          } else {
+            // Dogleg - interpolate through path
+            const segment = t < 0.5 ? 0 : 1;
+            const localT = t < 0.5 ? t * 2 : (t - 0.5) * 2;
+            const p1 = fairwayPath[segment];
+            const p2 = fairwayPath[segment + 1];
+            x = p1.x + (p2.x - p1.x) * localT;
+            y = p1.y + (p2.y - p1.y) * localT;
+          }
+
+          // Add some random offset from center
+          x += (Math.random() - 0.5) * 80;
+          y += (Math.random() - 0.5) * 40;
+
+          this.activePowerUps.push({
+            type,
+            x,
+            y,
+            radius: 15,
+            collected: false,
+            pulsePhase: Math.random() * Math.PI * 2
+          });
+        }
+      },
+
+      checkCollection(ball) {
+        if (!ball || ball.isMoving === false) return;
+
+        for (const powerUp of this.activePowerUps) {
+          if (powerUp.collected) continue;
+
+          const dx = ball.x - powerUp.x;
+          const dy = ball.y - powerUp.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < powerUp.radius + 10) {
+            powerUp.collected = true;
+            this.collectPowerUp(powerUp.type);
+          }
+        }
+      },
+
+      collectPowerUp(type) {
+        const powerUp = this.types[type];
+        this.collectedPowerUps.push(type);
+
+        // Show notification
+        MailboxManager.addNotification(
+          'powerup',
+          `${powerUp.icon} ${powerUp.name}`,
+          powerUp.desc,
+          { type }
+        );
+
+        // Apply immediate effects
+        if (type === 'golden') {
+          this.activeEffects.goldenBall = true;
+        }
+
+        AudioManager.playClickSound(); // Collect sound
+        this.updateUI(); // Update power-ups display
+      },
+
+      // Called before a swing to get power modifier
+      getSwingModifiers() {
+        const modifiers = {
+          powerMultiplier: 1,
+          ignoreWind: false,
+          freeStroke: false,
+          hasMagnet: false
+        };
+
+        // Check for super ball
+        const superballIndex = this.collectedPowerUps.indexOf('superball');
+        if (superballIndex !== -1) {
+          modifiers.powerMultiplier = 1.25;
+          this.collectedPowerUps.splice(superballIndex, 1);
+        }
+
+        // Check for wind shield
+        const windshieldIndex = this.collectedPowerUps.indexOf('windshield');
+        if (windshieldIndex !== -1) {
+          modifiers.ignoreWind = true;
+          this.collectedPowerUps.splice(windshieldIndex, 1);
+        }
+
+        // Check for mulligan
+        const mulliganIndex = this.collectedPowerUps.indexOf('mulligan');
+        if (mulliganIndex !== -1) {
+          modifiers.freeStroke = true;
+          this.collectedPowerUps.splice(mulliganIndex, 1);
+        }
+
+        // Check for magnet
+        const magnetIndex = this.collectedPowerUps.indexOf('magnet');
+        if (magnetIndex !== -1) {
+          modifiers.hasMagnet = true;
+          // Magnet consumed after ball stops, tracked in updateBall
+        }
+
+        // Update UI after consuming power-ups
+        this.updateUI();
+
+        return modifiers;
+      },
+
+      // Check magnet effect during ball movement
+      applyMagnetEffect(ball, hole) {
+        const magnetIndex = this.collectedPowerUps.indexOf('magnet');
+        if (magnetIndex === -1) return;
+
+        const dx = hole.holePosition.x - ball.x;
+        const dy = hole.holePosition.y - ball.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Attract ball when within 50 pixels
+        if (distance < 50 && distance > 5) {
+          const attractStrength = 150 * (1 - distance / 50);
+          const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
+
+          if (speed > 10 && speed < 100) {
+            ball.velocityX += (dx / distance) * attractStrength * 0.016;
+            ball.velocityY += (dy / distance) * attractStrength * 0.016;
+          }
+        }
+
+        // Consume magnet when ball stops
+        if (!ball.isMoving) {
+          this.collectedPowerUps.splice(magnetIndex, 1);
+        }
+      },
+
+      // Get Golf Bucks multiplier for current hole
+      getBucksMultiplier() {
+        return this.activeEffects.goldenBall ? 2 : 1;
+      },
+
+      render(ctx, animationTime) {
+        for (const powerUp of this.activePowerUps) {
+          if (powerUp.collected) continue;
+
+          const type = this.types[powerUp.type];
+
+          // Pulsing glow effect
+          powerUp.pulsePhase += 0.05;
+          const pulse = Math.sin(powerUp.pulsePhase) * 0.3 + 0.7;
+          const glowRadius = powerUp.radius * (1.5 + pulse * 0.5);
+
+          // Draw glow
+          ctx.save();
+          const gradient = ctx.createRadialGradient(
+            powerUp.x, powerUp.y, 0,
+            powerUp.x, powerUp.y, glowRadius
+          );
+          gradient.addColorStop(0, type.color + '80');
+          gradient.addColorStop(0.5, type.color + '40');
+          gradient.addColorStop(1, type.color + '00');
+
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(powerUp.x, powerUp.y, glowRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Draw icon background
+          ctx.fillStyle = type.color;
+          ctx.beginPath();
+          ctx.arc(powerUp.x, powerUp.y, powerUp.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Draw icon
+          ctx.font = 'bold 16px Arial';
+          ctx.fillStyle = '#000';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(type.icon, powerUp.x, powerUp.y);
+
+          ctx.restore();
+        }
+      },
+
+      renderCollectedUI(ctx, canvasWidth) {
+        if (this.collectedPowerUps.length === 0) return;
+
+        const startX = canvasWidth - 40;
+        const startY = 100;
+
+        ctx.save();
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+
+        this.collectedPowerUps.forEach((type, i) => {
+          const powerUp = this.types[type];
+          const y = startY + i * 35;
+
+          // Background
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+          ctx.beginPath();
+          ctx.arc(startX, y, 15, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Icon
+          ctx.fillStyle = powerUp.color;
+          ctx.fillText(powerUp.icon, startX, y + 1);
+        });
+
+        ctx.restore();
+      },
+
+      // Update HTML UI display
+      updateUI() {
+        const container = document.getElementById('powerups-display');
+        const list = document.getElementById('powerups-list');
+
+        // Guard against early calls before DOM is ready
+        if (!container || !list) return;
+
+        if (this.collectedPowerUps.length === 0 && !this.activeEffects.goldenBall) {
+          container.classList.add('hidden');
+          return;
+        }
+
+        container.classList.remove('hidden');
+
+        // Build list of current power-ups
+        let html = '';
+
+        // Show golden ball if active
+        if (this.activeEffects.goldenBall) {
+          const type = this.types.golden;
+          html += `<div class="powerup-item" style="border: 1px solid ${type.color}">
+            <span class="powerup-icon">${type.icon}</span>
+            <span>2x</span>
+          </div>`;
+        }
+
+        // Show collected power-ups
+        this.collectedPowerUps.forEach(typeKey => {
+          const type = this.types[typeKey];
+          html += `<div class="powerup-item" style="border: 1px solid ${type.color}">
+            <span class="powerup-icon">${type.icon}</span>
+          </div>`;
+        });
+
+        list.innerHTML = html;
+      }
+    };
+
+    // === MiniGameManager Module ===
+    const MiniGameManager = {
+      currentGame: null,
+      isActive: false,
+      timer: 0,
+      score: 0,
+      highScores: {},
+      completedDates: {}, // Track which dates each challenge was completed
+      storageKey: 'golf-minigame-scores',
+      completedKey: 'golf-minigame-completed',
+      dailySeed: 0, // Seeded random for consistent daily layouts
+
+      games: {
+        closestToPin: {
+          name: 'Closest to Pin',
+          icon: '🎯',
+          desc: 'Get as close to the hole as possible from 150 yards!',
+          duration: 0, // Single shot, no timer
+          scoreUnit: 'ft',
+          lowerIsBetter: true
+        },
+        longestDrive: {
+          name: 'Longest Drive',
+          icon: '💪',
+          desc: 'Hit the ball as far as you can! 3 attempts.',
+          duration: 0,
+          scoreUnit: 'yds',
+          lowerIsBetter: false
+        },
+        puttingChallenge: {
+          name: 'Putting Challenge',
+          icon: '⛳',
+          desc: 'Sink as many putts as you can! 10 attempts.',
+          duration: 0, // No time limit
+          scoreUnit: ' sunk',
+          lowerIsBetter: false,
+          totalAttempts: 10
+        }
+      },
+
+      init() {
+        this.load();
+        this.loadCompleted();
+        this.updateTodayLabel();
+      },
+
+      load() {
+        try {
+          const data = localStorage.getItem(this.storageKey);
+          if (data) {
+            this.highScores = JSON.parse(data);
+          }
+        } catch (e) {
+          console.error('Failed to load mini-game scores:', e);
+        }
+      },
+
+      loadCompleted() {
+        try {
+          const data = localStorage.getItem(this.completedKey);
+          if (data) {
+            this.completedDates = JSON.parse(data);
+          }
+        } catch (e) {
+          console.error('Failed to load completion dates:', e);
+        }
+      },
+
+      save() {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.highScores));
+        } catch (e) {
+          console.error('Failed to save mini-game scores:', e);
+        }
+      },
+
+      saveCompleted() {
+        try {
+          localStorage.setItem(this.completedKey, JSON.stringify(this.completedDates));
+        } catch (e) {
+          console.error('Failed to save completion dates:', e);
+        }
+      },
+
+      // Get today's date string for tracking
+      getTodayDateString() {
+        const now = new Date();
+        return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+      },
+
+      // Check if today's challenge has been completed
+      // Currently disabled - allowing unlimited plays for testing
+      hasCompletedToday() {
+        return false; // Allow unlimited plays
+        // const todayGame = this.getTodayGame();
+        // const todayDate = this.getTodayDateString();
+        // return this.completedDates[todayGame] === todayDate;
+      },
+
+      // Mark today's challenge as completed
+      markCompleted() {
+        const todayGame = this.getTodayGame();
+        const todayDate = this.getTodayDateString();
+        this.completedDates[todayGame] = todayDate;
+        this.saveCompleted();
+      },
+
+      // Seeded random number generator for consistent daily layouts
+      seededRandom() {
+        this.dailySeed = (this.dailySeed * 9301 + 49297) % 233280;
+        return this.dailySeed / 233280;
+      },
+
+      // Initialize seed based on date
+      initDailySeed() {
+        const now = new Date();
+        // Create seed from date - same seed for same day
+        this.dailySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+      },
+
+      // Get today's mini-game based on 3-day rotation
+      getTodayGame() {
+        const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+        const gameKeys = Object.keys(this.games);
+        const index = dayOfYear % gameKeys.length;
+        return gameKeys[index];
+      },
+
+      updateTodayLabel() {
+        const todayGameKey = this.getTodayGame();
+        const todayGame = this.games[todayGameKey];
+        const label = document.getElementById('minigame-today-label');
+        if (label) {
+          label.textContent = `Today: ${todayGame.name}`;
+        }
+
+        // Highlight today's game button
+        const btn = document.getElementById('minigame-play-btn');
+        if (btn) {
+          btn.classList.add('daily-highlight');
+        }
+      },
+
+      showSelection() {
+        const overlay = document.getElementById('minigame-overlay');
+        const content = document.getElementById('minigame-content');
+        const todayGameKey = this.getTodayGame();
+        const todayGame = this.games[todayGameKey];
+        const highScore = this.highScores[todayGameKey];
+        const highScoreText = highScore !== undefined ?
+          `Best: ${highScore}${todayGame.scoreUnit}` : 'No record yet';
+        const alreadyCompleted = this.hasCompletedToday();
+
+        let html;
+        if (alreadyCompleted) {
+          // Already completed today - show completion message
+          html = `
+            <div class="minigame-result">
+              <h3>🎯 Today's Challenge</h3>
+              <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <div class="game-mode-btn" style="padding: 20px; opacity: 0.7; cursor: default;">
+                  <span class="mode-icon" style="font-size: 48px;">${todayGame.icon}</span>
+                  <span class="mode-title" style="font-size: 24px;">${todayGame.name}</span>
+                  <span class="mode-subtitle" style="color: #4CAF50;">✓ Completed Today!</span>
+                  <span style="font-size: 14px; color: #4CAF50; margin-top: 10px; display: block;">${highScoreText}</span>
+                </div>
+              </div>
+              <p style="color: #888; margin-top: 15px;">Come back tomorrow for a new challenge!</p>
+              <button class="button" id="minigame-close-btn" style="margin-top: 20px;">Back</button>
+            </div>
+          `;
+        } else {
+          // Not completed - show play button
+          html = `
+            <div class="minigame-result">
+              <h3>🎯 Today's Challenge</h3>
+              <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <button class="game-mode-btn daily-highlight" id="start-daily-challenge" style="padding: 20px;">
+                  <span class="mode-icon" style="font-size: 48px;">${todayGame.icon}</span>
+                  <span class="mode-title" style="font-size: 24px;">${todayGame.name}</span>
+                  <span class="mode-subtitle">${todayGame.desc}</span>
+                  <span style="font-size: 14px; color: #4CAF50; margin-top: 10px; display: block;">${highScoreText}</span>
+                </button>
+              </div>
+              <p style="color: #888; margin-top: 15px;">One attempt per day!</p>
+              <button class="button" id="minigame-close-btn" style="margin-top: 20px;">Back</button>
+            </div>
+          `;
+        }
+
+        content.innerHTML = html;
+        overlay.classList.remove('hidden');
+
+        // Add event listener for today's challenge (only if not completed)
+        const startBtn = document.getElementById('start-daily-challenge');
+        if (startBtn) {
+          startBtn.addEventListener('click', () => {
+            this.startGame(todayGameKey);
+          });
+        }
+
+        document.getElementById('minigame-close-btn').addEventListener('click', () => {
+          overlay.classList.add('hidden');
+        });
+      },
+
+      startGame(gameKey) {
+        const game = this.games[gameKey];
+        if (!game) return;
+
+        // Initialize daily seed for consistent layouts
+        this.initDailySeed();
+
+        this.currentGame = gameKey;
+        this.isActive = true;
+        this.score = 0;
+        this.timer = game.duration;
+        this.attempts = gameKey === 'longestDrive' ? 3 : 1;
+        this.bestAttempt = 0;
+
+        document.getElementById('minigame-overlay').classList.add('hidden');
+        document.getElementById('game-mode-overlay').classList.add('hidden');
+        document.getElementById('menu-overlay').classList.add('hidden');
+
+        // Initialize game engine state for mini-game
+        if (window.gameEngine) {
+          const canvas = document.getElementById('game-canvas');
+          const rect = canvas.getBoundingClientRect();
+
+          // Use CourseGenerator for proper hole with rendering support
+          const seed = Date.now();
+          CourseGenerator.init(seed);
+          const miniGameHole = CourseGenerator.generateHole(1, rect.width, rect.height);
+
+          // Initialize gameState if it doesn't exist
+          window.gameEngine.gameState = {
+            currentHole: miniGameHole,
+            round: {
+              roundId: 'minigame-' + Date.now(),
+              startTime: Date.now(),
+              endTime: null,
+              currentHoleNumber: 1,
+              isComplete: false,
+              holeScores: [],
+              totalStrokes: 0,
+              totalPar: 0,
+              scoreRelativeToPar: 0,
+              currentStrokeCount: 0
+            },
+            ball: window.gameEngine.createBall(miniGameHole, 'white'),
+            selectedClub: 'driver',
+            seed: seed,
+            playerName: localStorage.getItem('golf-player-name') || 'Player',
+            ballColor: 'white',
+            isMiniGame: true
+          };
+
+          window.gameEngine.currentHole = miniGameHole;
+
+          // Generate wind for the mini-game
+          WindSystem.generateWind(1);
+
+          // Start the game engine if not already running
+          window.gameEngine.start();
+        }
+
+        // Show HUD for timed games
+        const hud = document.getElementById('minigame-hud');
+        if (game.duration > 0) {
+          hud.classList.remove('hidden');
+          document.getElementById('minigame-timer').textContent = this.timer;
+          document.getElementById('minigame-score').textContent = '0';
+        } else {
+          hud.classList.add('hidden');
+        }
+
+        // Setup the game
+        if (gameKey === 'closestToPin') {
+          this.setupClosestToPin();
+        } else if (gameKey === 'longestDrive') {
+          this.setupLongestDrive();
+        } else if (gameKey === 'puttingChallenge') {
+          this.setupPuttingChallenge();
+        }
+      },
+
+      setupClosestToPin() {
+        // Position ball 150 yards from hole
+        if (window.gameEngine && window.gameEngine.gameState) {
+          const hole = window.gameEngine.gameState.currentHole;
+
+          // Position ball 150 yards from the generated hole
+          const holeX = hole.holePosition.x;
+          const holeY = hole.holePosition.y;
+          const ballX = Math.max(50, holeX - (150 * YARDS_TO_PIXELS));
+          const ballY = holeY + (Math.random() - 0.5) * 50;
+
+          window.gameEngine.gameState.ball.x = ballX;
+          window.gameEngine.gameState.ball.y = ballY;
+          window.gameEngine.gameState.ball.velocityX = 0;
+          window.gameEngine.gameState.ball.velocityY = 0;
+          window.gameEngine.gameState.ball.isMoving = false;
+          window.gameEngine.gameState.ball.lastSafePosition = { x: ballX, y: ballY };
+          window.gameEngine.gameState.ball.distanceFromHole = PhysicsEngine.distance(
+            { x: ballX, y: ballY }, hole.holePosition
+          );
+
+          // Update selected club for the distance
+          window.gameEngine.gameState.selectedClub = ClubSystem.getRecommendedClub(
+            window.gameEngine.gameState.ball, hole.holePosition
+          ) || 'iron7';
+
+          this.showMessage('🎯 Closest to Pin', 'Get as close to the hole as you can!', 2000);
+        }
+      },
+
+      setupLongestDrive() {
+        if (window.gameEngine && window.gameEngine.gameState) {
+          const hole = window.gameEngine.gameState.currentHole;
+
+          // Use tee position from generated hole
+          const ballX = hole.teePosition.x;
+          const ballY = hole.teePosition.y;
+
+          window.gameEngine.gameState.ball.x = ballX;
+          window.gameEngine.gameState.ball.y = ballY;
+          window.gameEngine.gameState.ball.velocityX = 0;
+          window.gameEngine.gameState.ball.velocityY = 0;
+          window.gameEngine.gameState.ball.isMoving = false;
+          window.gameEngine.gameState.ball.lastSafePosition = { x: ballX, y: ballY };
+          window.gameEngine.gameState.ball.distanceFromHole = PhysicsEngine.distance(
+            { x: ballX, y: ballY }, hole.holePosition
+          );
+
+          // Use driver for longest drive
+          window.gameEngine.gameState.selectedClub = 'driver';
+
+          this.showMessage('💪 Longest Drive', `Attempt ${4 - this.attempts} of 3 - Hit it far!`, 2000);
+        }
+      },
+
+      setupPuttingChallenge() {
+        if (window.gameEngine && window.gameEngine.gameState) {
+          // Initialize putting challenge state
+          this.puttingState = {
+            currentPutt: 0,
+            totalPutts: 10,
+            sunkCount: 0,
+            teePositions: [] // Pre-generated positions for the day
+          };
+
+          // Hide regular scoreboard for mini-game
+          document.getElementById('scoreboard').classList.add('hidden');
+
+          // Create the putting green and generate tee positions
+          this.createPuttingGreen();
+
+          // Start first putt
+          this.setupNextPutt();
+
+          this.showMessage('⛳ Putting Challenge', `Sink as many as you can! Putt 1 of ${this.puttingState.totalPutts}`, 2000);
+        }
+      },
+
+      createPuttingGreen() {
+        const canvas = document.getElementById('game-canvas');
+        const rect = canvas.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // Hole position (centered)
+        const holeX = centerX;
+        const holeY = centerY;
+
+        // Generate obstacles around the hole (but not blocking direct paths)
+        const obstacles = this.generatePuttingObstacles(holeX, holeY, rect);
+
+        // Generate 10 preset tee positions - SHORT distances for putter (15-50 feet = 45-150 pixels)
+        this.puttingState.teePositions = [];
+        for (let i = 0; i < 10; i++) {
+          // Putter-friendly distances: 15-50 feet (roughly 45-150 pixels)
+          const minDist = 45;
+          const maxDist = 130;
+
+          const angle = this.seededRandom() * Math.PI * 2;
+          const distance = minDist + this.seededRandom() * (maxDist - minDist);
+
+          let ballX = holeX + Math.cos(angle) * distance;
+          let ballY = holeY + Math.sin(angle) * distance;
+
+          // Keep within bounds
+          ballX = Math.max(60, Math.min(rect.width - 60, ballX));
+          ballY = Math.max(60, Math.min(rect.height - 60, ballY));
+
+          this.puttingState.teePositions.push({ x: ballX, y: ballY });
+        }
+
+        // Create a pure putting green - entire screen is green
+        const puttingHole = {
+          holePosition: { x: holeX, y: holeY },
+          teePosition: this.puttingState.teePositions[0],
+          par: 1,
+          greenPosition: { x: centerX, y: centerY },
+          greenRadius: Math.max(rect.width, rect.height) * 2, // Cover way beyond screen
+          // No fairway path - pure green
+          fairwayPath: null,
+          fairwayWidth: 0,
+          obstacles: obstacles,
+          bunkers: [],
+          water: [],
+          trees: [],
+          isPuttingGreen: true,
+          isMinigamePuttingGreen: true
+        };
+
+        window.gameEngine.gameState.currentHole = puttingHole;
+        window.gameEngine.currentHole = puttingHole;
+      },
+
+      generatePuttingObstacles(holeX, holeY, rect) {
+        const obstacles = [];
+        const numObstacles = 2 + Math.floor(this.seededRandom() * 2); // 2-3 obstacles
+
+        for (let i = 0; i < numObstacles; i++) {
+          const angle = this.seededRandom() * Math.PI * 2;
+          const distance = 60 + this.seededRandom() * 60; // 60-120px from hole
+
+          const obsX = holeX + Math.cos(angle) * distance;
+          const obsY = holeY + Math.sin(angle) * distance;
+
+          // Keep within bounds
+          if (obsX < 80 || obsX > rect.width - 80 || obsY < 80 || obsY > rect.height - 80) {
+            continue;
+          }
+
+          // Only use small rocks for putting green
+          obstacles.push({
+            type: 'rock',
+            x: obsX,
+            y: obsY,
+            radius: 15 + this.seededRandom() * 10,
+            width: 0,
+            height: 0,
+            shape: 'circle'
+          });
+        }
+
+        return obstacles;
+      },
+
+      setupNextPutt() {
+        if (!window.gameEngine || !window.gameEngine.gameState) return;
+
+        const state = this.puttingState;
+        const hole = window.gameEngine.gameState.currentHole;
+        const teePos = state.teePositions[state.currentPutt];
+
+        // Position ball at this putt's tee
+        const ball = window.gameEngine.gameState.ball;
+        ball.x = teePos.x;
+        ball.y = teePos.y;
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        ball.isMoving = false;
+        ball.inHole = false;
+        ball.holeProgress = 0;
+        ball.lastSafePosition = { x: teePos.x, y: teePos.y };
+        ball.distanceFromHole = PhysicsEngine.distance(teePos, hole.holePosition);
+        ball.holePosition = hole.holePosition;
+
+        // Force putter only - lock club selection
+        window.gameEngine.gameState.selectedClub = 'putter';
+        window.gameEngine.gameState.puttingMiniGame = true; // Flag to lock club
+
+        // Update HUD
+        this.updatePuttingHUD();
+      },
+
+      updatePuttingHUD() {
+        const state = this.puttingState;
+        const hud = document.getElementById('minigame-hud');
+        hud.classList.remove('hidden');
+
+        // Calculate distance to hole in feet
+        const ball = window.gameEngine.gameState.ball;
+        const hole = window.gameEngine.gameState.currentHole;
+        const distPixels = PhysicsEngine.distance(ball, hole.holePosition);
+        const distFeet = Math.round(distPixels / 3); // ~3 pixels per foot
+
+        // Repurpose the HUD for putting
+        document.getElementById('minigame-timer').textContent = `${state.currentPutt + 1}/${state.totalPutts}`;
+        document.getElementById('minigame-score').textContent = `${state.sunkCount} | ${distFeet}ft`;
+
+        // Update labels
+        const timerLabel = hud.querySelector('.minigame-hud-item:first-child .minigame-hud-label');
+        const scoreLabel = hud.querySelector('.minigame-hud-item:last-child .minigame-hud-label');
+        if (timerLabel) timerLabel.textContent = 'Putt';
+        if (scoreLabel) scoreLabel.textContent = 'Sunk | Dist';
+      },
+
+      showMessage(title, msg, duration) {
+        const popup = document.createElement('div');
+        popup.className = 'ufo-popup';
+        popup.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
+        popup.style.color = '#FFD700';
+        popup.innerHTML = `<span style="font-size: 32px;">${title.split(' ')[0]}</span><br><span style="color: #fff; font-size: 16px;">${msg}</span>`;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 500);
+        }, duration);
+      },
+
+      // Called when ball stops after a shot
+      onShotComplete(ball, hole) {
+        if (!this.isActive) return;
+
+        const game = this.games[this.currentGame];
+
+        if (this.currentGame === 'closestToPin') {
+          const dx = ball.x - hole.holePosition.x;
+          const dy = ball.y - hole.holePosition.y;
+          const distancePixels = Math.sqrt(dx * dx + dy * dy);
+          const distanceFeet = Math.round(distancePixels / 3); // ~3 pixels per foot
+
+          this.score = distanceFeet;
+          this.showMessage('🎯 Result', `${distanceFeet} feet from the hole!`, 2000);
+          setTimeout(() => this.endGame(), 2500);
+
+        } else if (this.currentGame === 'longestDrive') {
+          const dx = ball.x - hole.teePosition.x;
+          const distanceYards = Math.round(dx * PIXELS_TO_YARDS);
+
+          if (distanceYards > this.bestAttempt) {
+            this.bestAttempt = distanceYards;
+          }
+
+          this.attempts--;
+          if (this.attempts > 0) {
+            this.showMessage('💪 Drive', `${distanceYards} yards! ${this.attempts} attempts left.`, 1500);
+            setTimeout(() => this.setupLongestDrive(), 2000);
+          } else {
+            this.score = this.bestAttempt;
+            this.showMessage('💪 Final', `Best drive: ${this.bestAttempt} yards!`, 2000);
+            setTimeout(() => this.endGame(), 2500);
+          }
+
+        } else if (this.currentGame === 'puttingChallenge') {
+          const state = this.puttingState;
+
+          // Check if ball went in hole
+          if (ball.inHole) {
+            state.sunkCount++;
+            this.score = state.sunkCount;
+            AudioManager.playHoleSound();
+          }
+
+          // Move to next putt
+          state.currentPutt++;
+
+          if (state.currentPutt >= state.totalPutts) {
+            // All putts done - end game
+            const msg = state.sunkCount === state.totalPutts ? '🎉 Perfect!' :
+                       state.sunkCount >= 7 ? '👏 Great putting!' :
+                       state.sunkCount >= 5 ? '👍 Nice job!' : 'Keep practicing!';
+            this.showMessage('⛳ Complete', `${state.sunkCount}/${state.totalPutts} sunk! ${msg}`, 2000);
+            setTimeout(() => this.endGame(), 2500);
+          } else {
+            // Next putt
+            const result = ball.inHole ? '✓ Sunk!' : '✗ Miss';
+            this.showMessage(result, `Putt ${state.currentPutt + 1} of ${state.totalPutts}`, 1000);
+            setTimeout(() => this.setupNextPutt(), 1200);
+          }
+        }
+      },
+
+      endGame() {
+        this.isActive = false;
+        clearInterval(this.timerInterval);
+
+        document.getElementById('minigame-hud').classList.add('hidden');
+
+        const game = this.games[this.currentGame];
+        const oldHighScore = this.highScores[this.currentGame];
+        let isNewRecord = false;
+
+        if (oldHighScore === undefined) {
+          isNewRecord = true;
+        } else if (game.lowerIsBetter) {
+          isNewRecord = this.score < oldHighScore;
+        } else {
+          isNewRecord = this.score > oldHighScore;
+        }
+
+        if (isNewRecord) {
+          this.highScores[this.currentGame] = this.score;
+          this.save();
+        }
+
+        // Mark today's challenge as completed (one attempt per day)
+        this.markCompleted();
+
+        // Calculate reward (bonus for new records)
+        const baseReward = 50;
+        const reward = isNewRecord ? baseReward * 2 : baseReward;
+        ShopSystem.earnBucks(reward);
+
+        // Show results
+        const overlay = document.getElementById('minigame-overlay');
+        const content = document.getElementById('minigame-content');
+        const gameKey = this.currentGame;
+
+        content.innerHTML = `
+          <div class="minigame-result">
+            <h3>${game.icon} ${game.name}</h3>
+            <div class="final-score">${this.score}${game.scoreUnit}</div>
+            <div class="high-score">${isNewRecord ? '🎉 NEW RECORD!' : `Best: ${this.highScores[this.currentGame]}${game.scoreUnit}`}</div>
+            <div class="reward">+${reward} Golf Bucks</div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+              <button class="button" id="minigame-retry-btn">Play Again</button>
+              <button class="button" id="minigame-done-btn" style="background: #555;">Done</button>
+            </div>
+          </div>
+        `;
+
+        overlay.classList.remove('hidden');
+
+        // Show scoreboard again
+        document.getElementById('scoreboard').classList.remove('hidden');
+
+        document.getElementById('minigame-done-btn').addEventListener('click', () => {
+          overlay.classList.add('hidden');
+          this.currentGame = null;
+          // Return to main menu
+          document.getElementById('menu-overlay').classList.remove('hidden');
+          // Clear mini-game state
+          if (window.gameEngine && window.gameEngine.gameState) {
+            window.gameEngine.gameState.isMiniGame = false;
+            window.gameEngine.gameState.puttingMiniGame = false;
+            window.gameEngine.gameState = null;
+          }
+        });
+
+        document.getElementById('minigame-retry-btn').addEventListener('click', () => {
+          overlay.classList.add('hidden');
+          this.startGame(gameKey);
+        });
+
+        // Add to mailbox
+        MailboxManager.addNotification(
+          'achievement',
+          `${game.icon} ${game.name}`,
+          `Score: ${this.score}${game.scoreUnit}${isNewRecord ? ' (New Record!)' : ''} - Earned ${reward} GB`
+        );
+      }
+    };
+
     // === RandomEventManager Module (T108-T115: Random Events & Humor) ===
     const RandomEventManager = {
       activeEvent: null,
       cooldownTimer: 0,
       minCooldown: 8,
       triggerChance: 0.25,
+
+      // Ball interaction state for UFO pickup
+      ballInteraction: {
+        active: false,
+        targetBall: null,
+        originalPosition: { x: 0, y: 0 },
+        dropPosition: { x: 0, y: 0 },
+        phase: 'none', // 'lifting' | 'carrying' | 'dropping'
+        progress: 0
+      },
 
       // Event types with their configs
       eventTypes: ['streaker', 'golfCart', 'ufo', 'squirrel'],
@@ -9375,6 +11344,10 @@
       reset() {
         this.activeEvent = null;
         this.cooldownTimer = 0;
+        this.ballInteraction = {
+          active: false, targetBall: null, originalPosition: { x: 0, y: 0 },
+          dropPosition: { x: 0, y: 0 }, phase: 'none', progress: 0
+        };
       },
 
       checkTrigger() {
@@ -9426,6 +11399,9 @@
           this.cooldownTimer -= deltaTime;
         }
 
+        // Update ball interaction (UFO pickup)
+        this.updateBallInteraction(deltaTime);
+
         if (this.activeEvent) {
           const e = this.activeEvent;
 
@@ -9453,6 +11429,119 @@
               (e.direction < 0 && e.x < e.targetX)) {
             this.activeEvent = null;
           }
+        }
+      },
+
+      // Check if UFO should pick up the ball
+      checkBallCollision(ball, courseWidth, courseHeight) {
+        if (!this.activeEvent || !this.activeEvent.started) return false;
+        if (this.ballInteraction.active) return false;
+        if (ball.isMoving) return false; // Only interact with stationary ball
+        if (this.activeEvent.type !== 'ufo') return false;
+
+        const e = this.activeEvent;
+        const dist = Math.sqrt(Math.pow(e.x - ball.x, 2) + Math.pow(e.y - ball.y, 2));
+
+        // UFO picks up ball when it passes near it
+        if (dist < 80) {
+          return this.startUFOPickup(ball, courseWidth, courseHeight);
+        }
+        return false;
+      },
+
+      // Start UFO ball pickup sequence
+      startUFOPickup(ball, courseWidth, courseHeight) {
+        // Calculate random drop position on course
+        const margin = 100;
+        const dropX = margin + Math.random() * (courseWidth - margin * 2);
+        const dropY = courseHeight * 0.3 + Math.random() * (courseHeight * 0.4);
+
+        this.ballInteraction = {
+          active: true,
+          targetBall: ball,
+          originalPosition: { x: ball.x, y: ball.y },
+          dropPosition: { x: dropX, y: dropY },
+          phase: 'lifting',
+          progress: 0
+        };
+
+        // Play sound
+        if (AudioManager.playAchievement) AudioManager.playAchievement();
+        return true;
+      },
+
+      // Update ball during UFO interaction
+      updateBallInteraction(deltaTime) {
+        if (!this.ballInteraction.active) return;
+
+        const bi = this.ballInteraction;
+        bi.progress += deltaTime * 1.5; // Speed of animation
+
+        if (bi.phase === 'lifting') {
+          // Move ball up toward UFO
+          const t = Math.min(bi.progress, 1);
+          bi.targetBall.x = bi.originalPosition.x;
+          bi.targetBall.y = bi.originalPosition.y - t * 60;
+
+          if (bi.progress >= 1) {
+            bi.phase = 'carrying';
+            bi.progress = 0;
+          }
+        } else if (bi.phase === 'carrying') {
+          // Ball follows UFO
+          if (this.activeEvent) {
+            bi.targetBall.x = this.activeEvent.x;
+            bi.targetBall.y = this.activeEvent.y + 35;
+          }
+
+          // Drop at the random position when UFO passes over it
+          if (this.activeEvent && Math.abs(this.activeEvent.x - bi.dropPosition.x) < 40) {
+            bi.phase = 'dropping';
+            bi.progress = 0;
+          }
+
+          // Also drop if UFO is about to exit
+          if (!this.activeEvent) {
+            bi.phase = 'dropping';
+            bi.progress = 0;
+          }
+        } else if (bi.phase === 'dropping') {
+          // Drop ball at drop position
+          const t = Math.min(bi.progress, 1);
+          const startY = this.activeEvent ? this.activeEvent.y + 35 : bi.targetBall.y;
+          bi.targetBall.x = bi.dropPosition.x;
+          bi.targetBall.y = startY + (bi.dropPosition.y - startY) * t;
+
+          if (bi.progress >= 1) {
+            bi.targetBall.x = bi.dropPosition.x;
+            bi.targetBall.y = bi.dropPosition.y;
+            bi.targetBall.lastSafePosition = { x: bi.dropPosition.x, y: bi.dropPosition.y };
+            bi.targetBall.velocityX = 0;
+            bi.targetBall.velocityY = 0;
+
+            this.ballInteraction.active = false;
+            this.ballInteraction.phase = 'none';
+
+            // Show UFO popup
+            this.showUFODropPopup();
+          }
+        }
+      },
+
+      showUFODropPopup() {
+        const popup = document.createElement('div');
+        popup.className = 'ufo-popup';
+        popup.innerHTML = `<span style="font-size: 28px;">👽</span><br>UFO relocated your ball!`;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 500);
+        }, 2500);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('general', 'UFO Encounter!', 'A UFO picked up your ball and dropped it somewhere else!');
         }
       },
 
@@ -9855,6 +11944,8 @@
 
         // Get recommended club for the tutorial hole distance
         const recommendedClub = ClubSystem.getRecommendedClub(ball, practiceHole.holePosition);
+        // Default to driver if no caddie recommendation
+        const defaultClub = recommendedClub || 'driver';
 
         this.gameEngine.gameState = {
           currentHole: practiceHole,
@@ -9871,7 +11962,7 @@
             currentStrokeCount: 0
           },
           ball: ball,
-          selectedClub: recommendedClub,
+          selectedClub: defaultClub,
           seed: 12345,
           playerName: 'Student',
           isTutorial: true
@@ -10051,6 +12142,62 @@
         this.lastFrameTime = performance.now();
       }
 
+      // Check if ball is out of bounds
+      isBallOutOfBounds(ball) {
+        if (!ball) return false;
+        const canvas = this.canvas;
+        const rect = canvas.getBoundingClientRect();
+        const margin = 100; // Extra margin before out of bounds
+
+        return ball.x < -margin ||
+               ball.x > rect.width + margin ||
+               ball.y < -margin ||
+               ball.y > rect.height + margin;
+      }
+
+      // Handle ball going out of bounds
+      handleOutOfBounds() {
+        const ball = this.gameState.ball;
+
+        // Return to last safe position
+        if (ball.lastSafePosition) {
+          ball.x = ball.lastSafePosition.x;
+          ball.y = ball.lastSafePosition.y;
+        } else {
+          // Fallback to tee position
+          ball.x = this.gameState.currentHole.teePosition.x;
+          ball.y = this.gameState.currentHole.teePosition.y;
+        }
+
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        ball.isMoving = false;
+        ball.isAirborne = false;
+
+        // Add 1-stroke penalty
+        this.gameState.round.currentStrokeCount++;
+        this.gameState.round.totalStrokes++;
+
+        // Update score display
+        this.updateScoreDisplay();
+
+        // Show out-of-bounds popup
+        const popup = document.createElement('div');
+        popup.className = 'oob-popup';
+        popup.innerHTML = `<span style="font-size: 28px;">⚠️</span><br>Out of Bounds!<br><small>+1 Stroke Penalty</small>`;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+        setTimeout(() => {
+          popup.classList.remove('show');
+          setTimeout(() => popup.remove(), 500);
+        }, 2500);
+
+        // Add to mailbox
+        if (typeof MailboxManager !== 'undefined') {
+          MailboxManager.addNotification('general', 'Out of Bounds', 'Ball left the course - 1 stroke penalty applied');
+        }
+      }
+
       async startNewRound(seed = null, playerName = 'Player', ballColor = 'white', themeOverride = null) {
         const usedSeed = seed || Date.now();
         CourseGenerator.init(usedSeed);
@@ -10062,6 +12209,8 @@
 
         // Get recommended club for the tee shot based on hole distance
         const recommendedClub = ClubSystem.getRecommendedClub(ball, hole.holePosition);
+        // Default to driver if no caddie recommendation
+        const defaultClub = recommendedClub || 'driver';
 
         this.gameState = {
           currentHole: hole,
@@ -10078,7 +12227,7 @@
             currentStrokeCount: 0
           },
           ball: ball,
-          selectedClub: recommendedClub,
+          selectedClub: defaultClub,
           seed: usedSeed,
           playerName: playerName,
           ballColor: ballColor,
@@ -10091,6 +12240,10 @@
         // Reset random events for new round
         RandomEventManager.reset();
 
+        // Power-ups disabled for now
+        // PowerUpManager.reset();
+        // PowerUpManager.spawnPowerUps(hole, canvasRect.width, canvasRect.height);
+
         // Reset achievement stats for new round
         AchievementManager.resetRoundStats();
 
@@ -10100,6 +12253,10 @@
         // Start background music and crowd ambience
         AudioManager.startBackgroundMusic();
         AudioManager.startCrowdAmbience();
+
+        // Initialize ghost system for hole 1
+        GhostSystem.loadGhostForHole(1);
+        GhostSystem.startRecording(1);
 
         await StorageManager.clearGameState();
       }
@@ -10203,6 +12360,8 @@
       selectClub(clubId) {
         if (!this.gameState || !this.gameState.ball) return;
         if (this.gameState.ball.isMoving) return;
+        // Lock to putter during putting mini-game
+        if (this.gameState.puttingMiniGame) return;
 
         this.gameState.selectedClub = clubId;
 
@@ -10227,7 +12386,20 @@
         const clubSelector = document.getElementById('club-selector');
         clubSelector.innerHTML = '';
 
-        const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, this.gameState.currentHole.holePosition);
+        // Get ball lie for caddie recommendation
+        const ball = this.gameState.ball;
+        let lie = 'fairway';
+        if (ball.inSand) lie = 'sand';
+        else if (ball.inRough) lie = 'rough';
+
+        // Get wind for Master Caddie
+        const wind = {
+          dx: Math.cos(WindSystem.direction),
+          dy: Math.sin(WindSystem.direction),
+          strength: WindSystem.speed
+        };
+
+        const recommendedClub = ClubSystem.getRecommendedClub(ball, this.gameState.currentHole.holePosition, wind, lie);
 
         // Helper to get club type for styling
         const getClubType = (clubId) => {
@@ -10297,6 +12469,8 @@
         const isTeeShot = this.gameState.round.currentStrokeCount === 0;
         if (isTeeShot) {
           this.gameState.ball.teePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
+          // Start ghost playback on first shot of hole
+          GhostSystem.startPlayback();
         }
 
         this.gameState.ball.lastSafePosition = { x: this.gameState.ball.x, y: this.gameState.ball.y };
@@ -10304,19 +12478,51 @@
 
         const modifiedSwing = ClubSystem.applyClubToSwing(swingVector, this.gameState.selectedClub);
 
+        // Get club stats for accuracy and forgiveness
+        const clubStats = ShopSystem.getTierStats(this.gameState.selectedClub);
+        const accuracy = clubStats.accuracy;
+        const forgiveness = clubStats.forgiveness;
+
+        // Apply accuracy spread - lower accuracy = more random angle deviation
+        // Max deviation: +/- 5 degrees for lowest accuracy club
+        const maxDeviation = 0.087; // ~5 degrees in radians
+        const accuracySpread = (1 - accuracy) * maxDeviation;
+        const angleDeviation = (Math.random() - 0.5) * 2 * accuracySpread;
+        modifiedSwing.angle += angleDeviation;
+
         // Apply sand penalty - 50% power reduction when hitting from bunker
+        // Forgiveness reduces the penalty (at 100% forgiveness, still 50% penalty; at 70%, 65% penalty)
         if (this.gameState.ball.inSand) {
-          modifiedSwing.power *= 0.5;
+          const sandPenalty = 0.5 + (1 - forgiveness) * 0.3; // 50-80% penalty based on forgiveness
+          modifiedSwing.power *= (1 - sandPenalty);
           this.gameState.ball.leavingSand = true;  // Flag to allow escape from sand
         }
 
         // Apply rough penalty - 20% power reduction when hitting from rough
+        // Forgiveness reduces the penalty
         if (this.gameState.ball.inRough) {
-          modifiedSwing.power *= PhysicsEngine.roughPowerMultiplier;
+          const basePenalty = 1 - PhysicsEngine.roughPowerMultiplier; // ~0.2 (20% loss)
+          const reducedPenalty = basePenalty * (2 - forgiveness); // At 100% forgiveness: 20% loss; at 70%: 26% loss
+          modifiedSwing.power *= (1 - reducedPenalty);
         }
 
+        // Apply power-up modifiers
+        // Power-ups disabled
+        const powerUpMods = { powerMultiplier: 1, ignoreWind: false, freeStroke: false, hasMagnet: false };
+        if (powerUpMods.powerMultiplier !== 1) {
+          modifiedSwing.power *= powerUpMods.powerMultiplier;
+        }
+        // Store wind immunity on ball for physics to check
+        this.gameState.ball.windImmune = powerUpMods.ignoreWind;
+        // Store magnet effect for physics
+        this.gameState.ball.hasMagnet = powerUpMods.hasMagnet;
+
         PhysicsEngine.applySwing(this.gameState.ball, modifiedSwing);
-        ScoreKeeper.recordStroke(this.gameState.round);
+
+        // Check for mulligan - don't count stroke if mulligan active
+        if (!powerUpMods.freeStroke) {
+          ScoreKeeper.recordStroke(this.gameState.round);
+        }
 
         this.gameState.strikeFlash = { active: true, progress: 0, startTime: performance.now() };
 
@@ -10371,6 +12577,16 @@
             this.updateObstacles(obstacles, deltaTime);
             PhysicsEngine.updateBall(this.gameState.ball, deltaTime, obstacles, this.gameState.currentHole);
 
+            // Sample ball position for ghost recording
+            if (GhostSystem.isRecording && this.gameState.ball.isMoving) {
+              GhostSystem.samplePosition(this.gameState.ball);
+            }
+
+            // Check for out of bounds
+            if (this.isBallOutOfBounds(this.gameState.ball) && !this.gameState.ball.inHole) {
+              this.handleOutOfBounds();
+            }
+
             // Check if ball can enter hole (tutorial blocks until "Sink the Ball!" step)
             const canEnterHole = TutorialManager.canBallEnterHole();
             if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting && canEnterHole) {
@@ -10403,6 +12619,18 @@
 
           // Update random events (streaker)
           RandomEventManager.update(deltaTime);
+
+          // Power-ups disabled
+          // if (this.gameState.ball && this.gameState.ball.isMoving) {
+          //   PowerUpManager.checkCollection(this.gameState.ball);
+          // }
+
+          // Check for UFO ball pickup
+          if (this.gameState.ball && !this.gameState.ball.isMoving) {
+            const canvas = document.getElementById('game-canvas');
+            const rect = canvas.getBoundingClientRect();
+            RandomEventManager.checkBallCollision(this.gameState.ball, rect.width, rect.height);
+          }
 
           Renderer.renderFrame(this.gameState, this.animationTime);
         }
@@ -10494,11 +12722,21 @@
               DailyChallengeSystem.onLongDrive(distanceYards);
               ball.teePosition = null; // Clear after checking
             }
+
+            // Notify mini-game manager that shot completed
+            if (MiniGameManager.isActive && this.currentHole) {
+              MiniGameManager.onShotComplete(ball, this.currentHole);
+            }
           }
         }
       }
 
       completeHole() {
+        // Skip normal hole completion for mini-games
+        if (this.gameState && this.gameState.isMiniGame) {
+          return;
+        }
+
         const round = this.gameState.round;
         const hole = this.gameState.currentHole;
 
@@ -10523,6 +12761,9 @@
         }
 
         const holeScore = ScoreKeeper.completeHole(round, hole);
+
+        // Stop ghost recording and save if best run
+        GhostSystem.stopRecording(holeScore.strokes);
 
         this.updateRoundProgress();
 
@@ -10636,13 +12877,17 @@
 
       // === T098: Play cheer for exceptional shots ===
       celebrateGoodScore(scoreRelativeToPar, holeX, holeY, strokes) {
+        // Power-ups disabled
+        const goldenMultiplier = 1;
+        const goldenSuffix = '';
+
         if (strokes === 1) {
           // Hole in one!
           console.log('🎯 HOLE IN ONE! 🎯');
           AudioManager.playCheerSound();
           AudioManager.playCrowdCheer();  // Crowd goes wild!
           ConfettiSystem.spawn(holeX, holeY, 80, 'eagle');
-          ShopSystem.addBucks(250, 'Hole in One!');
+          ShopSystem.addBucks(250 * goldenMultiplier, 'Hole in One!' + goldenSuffix);
           DailyChallengeSystem.onHoleInOne();
         } else if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
@@ -10650,7 +12895,7 @@
           AudioManager.playCrowdCheer();  // Crowd cheers for eagle
           // Extra confetti burst for eagle or better
           ConfettiSystem.spawn(holeX, holeY, 60, 'eagle');
-          ShopSystem.addBucks(75, 'Eagle!');
+          ShopSystem.addBucks(75 * goldenMultiplier, 'Eagle!' + goldenSuffix);
           DailyChallengeSystem.onEagle();
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
@@ -10658,7 +12903,7 @@
           AudioManager.playCrowdCheer();  // Crowd cheers for birdie
           // Extra confetti for birdie
           ConfettiSystem.spawn(holeX, holeY, 40, 'birdie');
-          ShopSystem.addBucks(25, 'Birdie!');
+          ShopSystem.addBucks(25 * goldenMultiplier, 'Birdie!' + goldenSuffix);
           DailyChallengeSystem.onBirdie();
         }
       }
@@ -10687,16 +12932,25 @@
 
         // Auto-select recommended club for the new hole's tee shot based on distance
         const recommendedClub = ClubSystem.getRecommendedClub(this.gameState.ball, hole.holePosition);
-        this.gameState.selectedClub = recommendedClub;
+        // Default to driver if no caddie recommendation
+        this.gameState.selectedClub = recommendedClub || 'driver';
 
         // Generate new wind for this hole
         WindSystem.generateWind(round.currentHoleNumber);
+
+        // Power-ups disabled
+        // PowerUpManager.reset();
+        // PowerUpManager.spawnPowerUps(hole, canvasRect.width, canvasRect.height);
 
         this.updateUI();
         this.updateClubSelector();
 
         // Reset flag to allow next hole completion
         this.holeCompleting = false;
+
+        // Initialize ghost system for new hole
+        GhostSystem.loadGhostForHole(round.currentHoleNumber);
+        GhostSystem.startRecording(round.currentHoleNumber);
 
         StorageManager.saveGameState(this.gameState);
       }
@@ -10944,6 +13198,9 @@
       DailyChallengeSystem.updateUI();
       TournamentSystem.init();
       TournamentSystem.updateIndicator();
+      MailboxManager.init();
+      CaddieSystem.init();
+      MiniGameManager.init();
       ShopSystem.updateBalanceDisplay();
 
       // Set up shop click handlers using event delegation (handles dynamically created buttons)
@@ -11068,10 +13325,8 @@
         AudioManager.unlock();
         // Re-render ball picker to show any newly purchased skins
         renderBallColorPicker();
-        // Show name entry modal instead of starting immediately
-        nameEntryOverlay.classList.remove('hidden');
-        playerNameInput.focus();
-        playerNameInput.select();
+        // Show game mode selection
+        document.getElementById('game-mode-overlay').classList.remove('hidden');
       });
 
       // Handle starting game with name
@@ -11109,6 +13364,65 @@
       // Cancel button
       cancelNameEntryBtn.addEventListener('click', () => {
         nameEntryOverlay.classList.add('hidden');
+      });
+
+      // === Game Mode Selection handlers ===
+      const gameModeOverlay = document.getElementById('game-mode-overlay');
+      const quickPlayBtn = document.getElementById('quick-play-btn');
+      const tournamentPlayBtn = document.getElementById('tournament-play-btn');
+      const cancelModeBtn = document.getElementById('cancel-mode-btn');
+
+      quickPlayBtn.addEventListener('click', () => {
+        gameModeOverlay.classList.add('hidden');
+        nameEntryOverlay.classList.remove('hidden');
+        playerNameInput.focus();
+        playerNameInput.select();
+      });
+
+      tournamentPlayBtn.addEventListener('click', () => {
+        gameModeOverlay.classList.add('hidden');
+        document.getElementById('tournament-overlay').classList.remove('hidden');
+        TournamentSystem.renderUI();
+      });
+
+      const minigamePlayBtn = document.getElementById('minigame-play-btn');
+      minigamePlayBtn.addEventListener('click', () => {
+        gameModeOverlay.classList.add('hidden');
+        MiniGameManager.showSelection();
+      });
+
+      cancelModeBtn.addEventListener('click', () => {
+        gameModeOverlay.classList.add('hidden');
+      });
+
+      // === Mailbox handlers ===
+      const mailboxBtn = document.getElementById('mailbox-btn');
+      const mailboxOverlay = document.getElementById('mailbox-overlay');
+      const mailboxCloseBtn = document.getElementById('mailbox-close-btn');
+      const markAllReadBtn = document.getElementById('mark-all-read-btn');
+
+      mailboxBtn.addEventListener('click', () => {
+        MailboxManager.renderMailbox();
+        mailboxOverlay.classList.remove('hidden');
+      });
+
+      mailboxCloseBtn.addEventListener('click', () => {
+        mailboxOverlay.classList.add('hidden');
+      });
+
+      markAllReadBtn.addEventListener('click', () => {
+        MailboxManager.markAllAsRead();
+        MailboxManager.renderMailbox();
+      });
+
+      // Mark notifications as read when clicking on them
+      document.getElementById('mailbox-content').addEventListener('click', (e) => {
+        const notificationItem = e.target.closest('.notification-item');
+        if (notificationItem) {
+          const id = notificationItem.dataset.id;
+          MailboxManager.markAsRead(id);
+          notificationItem.classList.remove('unread');
+        }
       });
 
       resumeGameBtn.addEventListener('click', async () => {
@@ -11391,8 +13705,26 @@
           const content = document.getElementById('shop-tab-' + tabId);
           if (content) content.classList.add('active');
 
+          // Render caddie tab content when switching to it
+          if (tabId === 'caddie') {
+            document.getElementById('caddie-shop-content').innerHTML = CaddieSystem.renderShopTab();
+          }
+
           AudioManager.playClickSound();
         });
+      });
+
+      // Caddie shop buy button handler
+      document.getElementById('caddie-shop-content').addEventListener('click', (e) => {
+        const btn = e.target.closest('.caddie-buy-btn');
+        if (btn && !btn.disabled) {
+          const tierIndex = parseInt(btn.dataset.tier);
+          if (CaddieSystem.purchase(tierIndex)) {
+            // Re-render caddie tab
+            document.getElementById('caddie-shop-content').innerHTML = CaddieSystem.renderShopTab();
+            AudioManager.playClickSound();
+          }
+        }
       });
 
       // === Tournament button handlers ===

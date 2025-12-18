@@ -25,9 +25,20 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     await expect(page.locator('#new-game-btn')).toBeVisible();
   });
 
-  test('should show name entry modal when New Game is clicked', async ({ page }) => {
+  test('should show game mode selection when New Game is clicked', async ({ page }) => {
     // Click new game button
     await page.click('#new-game-btn');
+
+    // Game mode selection should be visible
+    await expect(page.locator('#game-mode-overlay')).toBeVisible();
+    await expect(page.locator('#quick-play-btn')).toBeVisible();
+    await expect(page.locator('#tournament-play-btn')).toBeVisible();
+  });
+
+  test('should show name entry modal when Quick Play is clicked', async ({ page }) => {
+    // Click new game button then quick play
+    await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
 
     // Name entry modal should be visible
     await expect(page.locator('#name-entry-overlay')).toBeVisible();
@@ -36,8 +47,9 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
   });
 
   test('should start game after entering name', async ({ page }) => {
-    // Click new game button
+    // Click new game button then quick play
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
 
     // Enter name
     await page.fill('#player-name-input', 'TestPlayer');
@@ -52,8 +64,9 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
   });
 
   test('should cancel name entry and return to menu', async ({ page }) => {
-    // Click new game button
+    // Click new game button then quick play
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
 
     // Name entry modal should be visible
     await expect(page.locator('#name-entry-overlay')).toBeVisible();
@@ -67,8 +80,9 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
   });
 
   test('should remember player name in localStorage', async ({ page }) => {
-    // Click new game, enter name
+    // Click new game, quick play, enter name
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'RememberMe');
     await page.click('#start-with-name-btn');
 
@@ -79,6 +93,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
 
     const inputValue = await page.locator('#player-name-input').inputValue();
     expect(inputValue).toBe('RememberMe');
@@ -86,6 +101,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
 
   test('should start game with Enter key in name input', async ({ page }) => {
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'EnterKeyTest');
     await page.press('#player-name-input', 'Enter');
 
@@ -96,6 +112,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
 
   test('should display game UI elements correctly', async ({ page }) => {
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'Test');
     await page.click('#start-with-name-btn');
 
@@ -113,6 +130,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
 
   test('should render canvas with game elements', async ({ page }) => {
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'Test');
     await page.click('#start-with-name-btn');
     await page.waitForTimeout(500);
@@ -132,6 +150,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     page.on('pageerror', error => errors.push(error.message));
 
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'Test');
     await page.click('#start-with-name-btn');
     await page.waitForTimeout(1500);
@@ -166,6 +185,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     page.on('pageerror', error => errors.push(error.message));
 
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'Test');
     await page.click('#start-with-name-btn');
     await page.waitForTimeout(1000);
@@ -212,6 +232,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     await page.waitForTimeout(500);
 
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     await page.fill('#player-name-input', 'Debug');
     await page.click('#start-with-name-btn');
 
@@ -234,6 +255,7 @@ test.describe('Howlett Golf Chaos - Game Tests', () => {
     await page.waitForLoadState('networkidle');
 
     await page.click('#new-game-btn');
+    await page.click('#quick-play-btn');
     // Clear the input and start with empty name
     await page.fill('#player-name-input', '');
     await page.click('#start-with-name-btn');
