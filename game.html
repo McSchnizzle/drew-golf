@@ -656,12 +656,6 @@
       border-radius: 4px;
       transition: width 0.3s ease;
     }
-    .stat-fill.accuracy {
-      background: linear-gradient(90deg, #2196F3, #03A9F4);
-    }
-    .stat-fill.forgiveness {
-      background: linear-gradient(90deg, #FF9800, #FFC107);
-    }
     .stat-value {
       font-size: 8px;
       color: rgba(255, 255, 255, 0.8);
@@ -1704,6 +1698,25 @@
       left: 50%;
       transform: translateX(-50%);
       display: none;
+    }
+
+    #caddie-tip {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(56, 142, 60, 0.95));
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    #caddie-tip.hidden { display: none; }
+    #caddie-tip .caddie-icon {
+      margin-right: 6px;
+    }
+    #caddie-tip strong {
+      color: #FFD700;
     }
 
     #club-selector {
@@ -3247,12 +3260,31 @@
       padding: 40px 20px;
       font-size: 14px;
     }
+    .mailbox-view-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .mailbox-view-btn:hover {
+      background: linear-gradient(135deg, #45a049, #3d8b40);
+      transform: scale(1.02);
+    }
+    .mailbox-view-btn:active {
+      transform: scale(0.98);
+    }
 
     /* Game Mode Selection */
     #game-mode-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.9);
+      background: linear-gradient(135deg, rgba(15, 32, 39, 0.97), rgba(32, 58, 67, 0.97), rgba(44, 83, 100, 0.97));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -3261,73 +3293,158 @@
     #game-mode-overlay.hidden { display: none; }
 
     .game-mode-modal {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 400px;
-      width: 90%;
+      background: linear-gradient(145deg, #1e3a4c, #0d1f2d);
+      border-radius: 24px;
+      padding: 35px 30px;
+      max-width: 420px;
+      width: 92%;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(76, 175, 80, 0.1);
+    }
+    .game-mode-header {
+      margin-bottom: 28px;
+    }
+    .game-mode-header .header-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
     .game-mode-modal h2 {
       color: #fff;
-      margin-bottom: 25px;
-      font-size: 24px;
+      margin: 0;
+      font-size: 26px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
     }
     .game-mode-options {
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      margin-bottom: 20px;
+      gap: 14px;
+      margin-bottom: 24px;
     }
     .game-mode-btn {
-      background: rgba(255,255,255,0.08);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 14px;
-      padding: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 18px 20px;
       cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
+      transition: all 0.25s ease;
+      text-align: left;
       position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow: hidden;
+    }
+    .game-mode-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .game-mode-btn:hover::before {
+      opacity: 1;
     }
     .game-mode-btn:hover {
-      background: rgba(255,255,255,0.12);
-      border-color: #4CAF50;
-      transform: translateY(-2px);
+      transform: translateX(6px);
+      border-color: rgba(76, 175, 80, 0.6);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 20px rgba(76, 175, 80, 0.15);
+    }
+    .game-mode-btn:active {
+      transform: translateX(3px) scale(0.98);
+    }
+    .game-mode-btn .mode-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #quick-play-btn .mode-icon-wrap {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    }
+    #tournament-play-btn .mode-icon-wrap {
+      background: linear-gradient(135deg, #FFD700, #FFA000);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+    #minigame-play-btn .mode-icon-wrap {
+      background: linear-gradient(135deg, #E91E63, #AD1457);
+      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
     }
     .game-mode-btn .mode-icon {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 10px;
+      font-size: 28px;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+    }
+    .game-mode-btn .mode-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
     .game-mode-btn .mode-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
       color: #fff;
-      display: block;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
     .game-mode-btn .mode-subtitle {
       font-size: 13px;
-      color: rgba(255,255,255,0.5);
-      display: block;
-      margin-top: 5px;
+      color: rgba(255,255,255,0.55);
+    }
+    .game-mode-btn .mode-arrow {
+      margin-left: auto;
+      color: rgba(255,255,255,0.3);
+      font-size: 20px;
+      transition: all 0.25s;
+    }
+    .game-mode-btn:hover .mode-arrow {
+      color: #4CAF50;
+      transform: translateX(4px);
     }
     .game-mode-btn.daily-highlight {
-      border-color: #FFD700;
-      background: rgba(255, 215, 0, 0.1);
+      border-color: rgba(255, 215, 0, 0.5);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
     }
-    .game-mode-btn.daily-highlight::before {
-      content: "TODAY'S CHALLENGE";
+    .game-mode-btn.daily-highlight .mode-icon-wrap {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4); }
+      50% { box-shadow: 0 4px 25px rgba(233, 30, 99, 0.7), 0 0 30px rgba(255, 215, 0, 0.3); }
+    }
+    .game-mode-btn.daily-highlight::after {
+      content: "NEW";
       position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #FFD700;
+      top: 8px;
+      right: 12px;
+      background: linear-gradient(135deg, #FFD700, #FFA000);
       color: #000;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: bold;
-      padding: 2px 8px;
-      border-radius: 8px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+    }
+    #cancel-mode-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6);
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #cancel-mode-btn:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
     }
 
     /* Mini-Game Overlay */
@@ -3520,6 +3637,7 @@
     </div>
 
     <div id="club-selector-container">
+      <div id="caddie-tip" class="hidden"></div>
       <div id="club-selector">
         <button class="button selected" data-club="driver">Driver</button>
       </div>
@@ -3708,25 +3826,43 @@
     <!-- Game Mode Selection -->
     <div id="game-mode-overlay" class="hidden">
       <div class="game-mode-modal">
-        <h2>Choose Game Mode</h2>
+        <div class="game-mode-header">
+          <span class="header-icon">🏌️</span>
+          <h2>Choose Game Mode</h2>
+        </div>
         <div class="game-mode-options">
           <button class="game-mode-btn" id="quick-play-btn">
-            <span class="mode-icon">⛳</span>
-            <span class="mode-title">Quick Play</span>
-            <span class="mode-subtitle">9 holes, casual round</span>
+            <div class="mode-icon-wrap">
+              <span class="mode-icon">⛳</span>
+            </div>
+            <div class="mode-text">
+              <span class="mode-title">Quick Play</span>
+              <span class="mode-subtitle">9 holes, casual round</span>
+            </div>
+            <span class="mode-arrow">›</span>
           </button>
           <button class="game-mode-btn" id="tournament-play-btn">
-            <span class="mode-icon">🏆</span>
-            <span class="mode-title">Tournament</span>
-            <span class="mode-subtitle">Compete for prizes</span>
+            <div class="mode-icon-wrap">
+              <span class="mode-icon">🏆</span>
+            </div>
+            <div class="mode-text">
+              <span class="mode-title">Tournament</span>
+              <span class="mode-subtitle">Compete for prizes</span>
+            </div>
+            <span class="mode-arrow">›</span>
           </button>
           <button class="game-mode-btn" id="minigame-play-btn">
-            <span class="mode-icon">🎯</span>
-            <span class="mode-title">Mini-Games</span>
-            <span class="mode-subtitle" id="minigame-today-label">Daily challenge</span>
+            <div class="mode-icon-wrap">
+              <span class="mode-icon">🎯</span>
+            </div>
+            <div class="mode-text">
+              <span class="mode-title">Mini-Games</span>
+              <span class="mode-subtitle" id="minigame-today-label">Daily challenge</span>
+            </div>
+            <span class="mode-arrow">›</span>
           </button>
         </div>
-        <button class="button cancel-btn" id="cancel-mode-btn">Cancel</button>
+        <button id="cancel-mode-btn">Cancel</button>
       </div>
     </div>
 
@@ -5016,213 +5152,369 @@
             ctx.restore();
 
           } else if (obstacle.type === 'tree') {
-            // Stylized cartoon tree with better grounding
+            // Themed tree rendering
             ctx.save();
             ctx.translate(obstacle.x, obstacle.y);
 
             const r = obstacle.radius;
+            const treeStyle = theme.tree || { type: 'oak', trunk: { main: '#8B5A2B', dark: '#5D4037', outline: '#3E2723' }, foliage: { light: '#81C784', mid: '#66BB6A', dark: '#2E7D32', outline: '#1B5E20' } };
 
-            // Large tree shadow on ground (more spread out)
+            // Shadow
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.beginPath();
             ctx.ellipse(10, 20, r * 1.2, r * 0.45, 0.1, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ground dirt patch around base
-            ctx.fillStyle = 'rgba(101, 67, 33, 0.4)';
-            ctx.beginPath();
-            ctx.ellipse(0, 28, 18, 8, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Grass tufts around base
-            ctx.strokeStyle = '#2E7D32';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 6; i++) {
-              const angle = (i / 6) * Math.PI * 2;
-              const gx = Math.cos(angle) * 14;
-              const gy = 26 + Math.sin(angle) * 5;
+            if (treeStyle.type === 'palm' || treeStyle.type === 'tropicalPalm') {
+              // PALM TREE
+              // Curved trunk
+              ctx.strokeStyle = treeStyle.trunk.outline;
+              ctx.lineWidth = 14;
               ctx.beginPath();
-              ctx.moveTo(gx, gy);
-              ctx.quadraticCurveTo(gx + (Math.random() - 0.5) * 4, gy - 8, gx + (Math.random() - 0.5) * 3, gy - 12);
+              ctx.moveTo(0, 30);
+              ctx.quadraticCurveTo(-8, 0, 5, -r * 0.5);
               ctx.stroke();
+
+              ctx.strokeStyle = treeStyle.trunk.main;
+              ctx.lineWidth = 10;
+              ctx.beginPath();
+              ctx.moveTo(0, 30);
+              ctx.quadraticCurveTo(-8, 0, 5, -r * 0.5);
+              ctx.stroke();
+
+              // Trunk rings
+              ctx.strokeStyle = treeStyle.trunk.dark;
+              ctx.lineWidth = 2;
+              for (let i = 0; i < 5; i++) {
+                const t = i / 5;
+                const tx = -8 * (1 - t) * (1 - t) + 5 * t;
+                const ty = 30 - 30 * t - r * 0.5 * t;
+                ctx.beginPath();
+                ctx.arc(tx, ty, 5, 0, Math.PI);
+                ctx.stroke();
+              }
+
+              // Palm fronds
+              const frondColors = [treeStyle.foliage.dark, treeStyle.foliage.mid, treeStyle.foliage.light];
+              for (let i = 0; i < 7; i++) {
+                const angle = (i / 7) * Math.PI * 2 - Math.PI / 2;
+                const frondLength = r * 1.2;
+                ctx.strokeStyle = frondColors[i % 3];
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(5, -r * 0.5);
+                const endX = 5 + Math.cos(angle) * frondLength;
+                const endY = -r * 0.5 + Math.sin(angle) * frondLength * 0.6;
+                const ctrlX = 5 + Math.cos(angle) * frondLength * 0.6;
+                const ctrlY = -r * 0.5 + Math.sin(angle) * frondLength * 0.3 - 10;
+                ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
+                ctx.stroke();
+
+                // Frond leaves
+                ctx.fillStyle = frondColors[i % 3];
+                for (let j = 0; j < 5; j++) {
+                  const lt = (j + 1) / 6;
+                  const lx = 5 + (ctrlX - 5) * lt + (endX - ctrlX) * lt * lt;
+                  const ly = -r * 0.5 + (ctrlY + r * 0.5) * lt + (endY - ctrlY) * lt * lt;
+                  ctx.beginPath();
+                  ctx.ellipse(lx, ly, 8, 3, angle, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+              }
+
+              // Coconuts for tropical
+              if (treeStyle.type === 'tropicalPalm') {
+                ctx.fillStyle = '#8B4513';
+                ctx.beginPath();
+                ctx.arc(2, -r * 0.45, 5, 0, Math.PI * 2);
+                ctx.arc(8, -r * 0.48, 5, 0, Math.PI * 2);
+                ctx.arc(5, -r * 0.4, 5, 0, Math.PI * 2);
+                ctx.fill();
+              }
+
+            } else if (treeStyle.type === 'pine') {
+              // PINE TREE
+              // Trunk
+              ctx.fillStyle = treeStyle.trunk.main;
+              ctx.beginPath();
+              ctx.moveTo(-5, 30);
+              ctx.lineTo(-4, -r * 0.3);
+              ctx.lineTo(4, -r * 0.3);
+              ctx.lineTo(5, 30);
+              ctx.closePath();
+              ctx.fill();
+              ctx.strokeStyle = treeStyle.trunk.outline;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              // Pine layers (triangular)
+              const layers = 4;
+              for (let i = layers - 1; i >= 0; i--) {
+                const layerY = -r * 0.2 - i * r * 0.35;
+                const layerWidth = r * (0.9 - i * 0.15);
+                const layerHeight = r * 0.5;
+
+                ctx.fillStyle = i % 2 === 0 ? treeStyle.foliage.mid : treeStyle.foliage.dark;
+                ctx.beginPath();
+                ctx.moveTo(0, layerY - layerHeight);
+                ctx.lineTo(-layerWidth, layerY);
+                ctx.lineTo(layerWidth, layerY);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = treeStyle.foliage.outline;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+              }
+
+              // Snow on pine if enabled
+              if (treeStyle.snow) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                for (let i = 0; i < layers; i++) {
+                  const layerY = -r * 0.2 - i * r * 0.35;
+                  const layerWidth = r * (0.9 - i * 0.15);
+                  ctx.beginPath();
+                  ctx.moveTo(-layerWidth * 0.7, layerY - r * 0.15);
+                  ctx.quadraticCurveTo(0, layerY - r * 0.35, layerWidth * 0.7, layerY - r * 0.15);
+                  ctx.quadraticCurveTo(layerWidth * 0.3, layerY - r * 0.2, 0, layerY - r * 0.25);
+                  ctx.quadraticCurveTo(-layerWidth * 0.3, layerY - r * 0.2, -layerWidth * 0.7, layerY - r * 0.15);
+                  ctx.fill();
+                }
+              }
+
+            } else {
+              // OAK/STANDARD TREE
+              // Ground dirt patch
+              ctx.fillStyle = 'rgba(101, 67, 33, 0.4)';
+              ctx.beginPath();
+              ctx.ellipse(0, 28, 18, 8, 0, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Trunk
+              const trunkGradient = ctx.createLinearGradient(-8, 0, 8, 0);
+              trunkGradient.addColorStop(0, treeStyle.trunk.main);
+              trunkGradient.addColorStop(0.5, treeStyle.trunk.main);
+              trunkGradient.addColorStop(1, treeStyle.trunk.dark);
+              ctx.fillStyle = trunkGradient;
+              ctx.beginPath();
+              ctx.moveTo(-6, 0);
+              ctx.lineTo(-10, 28);
+              ctx.lineTo(10, 28);
+              ctx.lineTo(6, 0);
+              ctx.closePath();
+              ctx.fill();
+              ctx.strokeStyle = treeStyle.trunk.outline;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              // Foliage layers
+              const foliageGradient1 = ctx.createRadialGradient(-5, -r - 5, 0, 0, -r / 2, r * 1.2);
+              foliageGradient1.addColorStop(0, treeStyle.foliage.mid);
+              foliageGradient1.addColorStop(1, treeStyle.foliage.dark);
+              ctx.fillStyle = foliageGradient1;
+              ctx.beginPath();
+              ctx.arc(-8, -r * 0.6, r * 0.7, 0, Math.PI * 2);
+              ctx.arc(10, -r * 0.5, r * 0.65, 0, Math.PI * 2);
+              ctx.fill();
+
+              const foliageGradient2 = ctx.createRadialGradient(-3, -r - 3, 0, 0, -r / 2, r);
+              foliageGradient2.addColorStop(0, treeStyle.foliage.light);
+              foliageGradient2.addColorStop(1, treeStyle.foliage.mid);
+              ctx.fillStyle = foliageGradient2;
+              ctx.beginPath();
+              ctx.arc(0, -r * 0.8, r * 0.85, 0, Math.PI * 2);
+              ctx.fill();
+
+              ctx.strokeStyle = treeStyle.foliage.outline;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              // Highlight
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+              ctx.beginPath();
+              ctx.arc(-r * 0.3, -r * 1.1, r * 0.2, 0, Math.PI * 2);
+              ctx.fill();
             }
-
-            // Trunk shadow
-            ctx.fillStyle = '#5D4037';
-            ctx.beginPath();
-            ctx.moveTo(8, 5);
-            ctx.lineTo(12, 30);
-            ctx.lineTo(4, 30);
-            ctx.closePath();
-            ctx.fill();
-
-            // Main trunk with gradient
-            const trunkGradient = ctx.createLinearGradient(-8, 0, 8, 0);
-            trunkGradient.addColorStop(0, '#8B5A2B');
-            trunkGradient.addColorStop(0.3, '#A0522D');
-            trunkGradient.addColorStop(0.7, '#8B4513');
-            trunkGradient.addColorStop(1, '#654321');
-            ctx.fillStyle = trunkGradient;
-            ctx.beginPath();
-            ctx.moveTo(-6, 0);
-            ctx.lineTo(-10, 28);
-            ctx.lineTo(10, 28);
-            ctx.lineTo(6, 0);
-            ctx.closePath();
-            ctx.fill();
-
-            // Trunk outline
-            ctx.strokeStyle = '#3E2723';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Trunk detail lines
-            ctx.strokeStyle = 'rgba(62, 39, 35, 0.5)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(-2, 5);
-            ctx.lineTo(-3, 25);
-            ctx.moveTo(3, 8);
-            ctx.lineTo(4, 22);
-            ctx.stroke();
-
-            // Foliage layers (back to front for depth)
-            // Back layer
-            const foliageGradient1 = ctx.createRadialGradient(-5, -r - 5, 0, 0, -r / 2, r * 1.2);
-            foliageGradient1.addColorStop(0, '#43A047');
-            foliageGradient1.addColorStop(1, '#1B5E20');
-            ctx.fillStyle = foliageGradient1;
-            ctx.beginPath();
-            ctx.arc(-8, -r * 0.6, r * 0.7, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(10, -r * 0.5, r * 0.65, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Middle layer
-            const foliageGradient2 = ctx.createRadialGradient(-3, -r - 3, 0, 0, -r / 2, r);
-            foliageGradient2.addColorStop(0, '#66BB6A');
-            foliageGradient2.addColorStop(1, '#2E7D32');
-            ctx.fillStyle = foliageGradient2;
-            ctx.beginPath();
-            ctx.arc(0, -r * 0.8, r * 0.85, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Front layer (brightest)
-            const foliageGradient3 = ctx.createRadialGradient(-5, -r - 8, 0, 0, -r * 0.7, r * 0.7);
-            foliageGradient3.addColorStop(0, '#81C784');
-            foliageGradient3.addColorStop(1, '#4CAF50');
-            ctx.fillStyle = foliageGradient3;
-            ctx.beginPath();
-            ctx.arc(-3, -r, r * 0.6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Foliage outline
-            ctx.strokeStyle = '#1B5E20';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, -r * 0.8, r * 0.85, 0, Math.PI * 2);
-            ctx.stroke();
-
-            // Highlight spots
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-            ctx.beginPath();
-            ctx.arc(-r * 0.3, -r * 1.1, r * 0.2, 0, Math.PI * 2);
-            ctx.fill();
 
             ctx.restore();
 
           } else if (obstacle.type === 'rock') {
-            // Stylized cartoon rock with better grounding
+            // Themed rock rendering
             ctx.save();
             ctx.translate(obstacle.x, obstacle.y);
 
             const r = obstacle.radius;
+            const rockStyle = theme.rock || { type: 'standard', colors: { light: '#A0A0A0', mid: '#787878', dark: '#4A4A4A', outline: '#2A2A2A' }, moss: 'rgba(85, 107, 47, 0.4)' };
 
-            // Larger ground shadow (more visible)
+            // Shadow
             ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
             ctx.beginPath();
             ctx.ellipse(6, r * 0.9, r * 1.1, r * 0.4, 0.1, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ground dirt/grass around base
-            ctx.fillStyle = 'rgba(101, 67, 33, 0.35)';
-            ctx.beginPath();
-            ctx.ellipse(0, r * 0.6, r * 0.8, r * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Small grass tufts around rock
-            ctx.strokeStyle = '#3D8B37';
-            ctx.lineWidth = 1.5;
-            for (let i = 0; i < 5; i++) {
-              const angle = (i / 5) * Math.PI + 0.3;
-              const gx = Math.cos(angle) * r * 0.7;
-              const gy = r * 0.5 + Math.sin(angle) * r * 0.2;
+            // Ground around base (skip for icy rocks)
+            if (rockStyle.type !== 'icy') {
+              ctx.fillStyle = 'rgba(101, 67, 33, 0.35)';
               ctx.beginPath();
-              ctx.moveTo(gx, gy);
-              ctx.lineTo(gx + (i % 2 ? 2 : -2), gy - 6);
-              ctx.stroke();
+              ctx.ellipse(0, r * 0.6, r * 0.8, r * 0.3, 0, 0, Math.PI * 2);
+              ctx.fill();
             }
 
-            // Main rock shape (irregular polygon for cartoon look)
+            // Main rock gradient
             const rockGradient = ctx.createRadialGradient(-r * 0.3, -r * 0.3, 0, 0, 0, r * 1.2);
-            rockGradient.addColorStop(0, '#A0A0A0');
-            rockGradient.addColorStop(0.5, '#787878');
-            rockGradient.addColorStop(1, '#4A4A4A');
+            rockGradient.addColorStop(0, rockStyle.colors.light);
+            rockGradient.addColorStop(0.5, rockStyle.colors.mid);
+            rockGradient.addColorStop(1, rockStyle.colors.dark);
             ctx.fillStyle = rockGradient;
 
-            ctx.beginPath();
-            ctx.moveTo(-r * 0.8, r * 0.4);
-            ctx.lineTo(-r * 0.95, -r * 0.1);
-            ctx.lineTo(-r * 0.6, -r * 0.65);
-            ctx.lineTo(-r * 0.1, -r * 0.8);
-            ctx.lineTo(r * 0.5, -r * 0.7);
-            ctx.lineTo(r * 0.85, -r * 0.3);
-            ctx.lineTo(r * 0.9, r * 0.2);
-            ctx.lineTo(r * 0.5, r * 0.55);
-            ctx.lineTo(-r * 0.3, r * 0.6);
-            ctx.closePath();
-            ctx.fill();
+            // Rock shape varies by type
+            if (rockStyle.type === 'sandstone') {
+              // Rounder, smoother sandstone shape
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.7, r * 0.3);
+              ctx.quadraticCurveTo(-r * 0.9, -r * 0.2, -r * 0.5, -r * 0.6);
+              ctx.quadraticCurveTo(0, -r * 0.8, r * 0.5, -r * 0.55);
+              ctx.quadraticCurveTo(r * 0.85, -r * 0.2, r * 0.7, r * 0.35);
+              ctx.quadraticCurveTo(r * 0.3, r * 0.55, 0, r * 0.5);
+              ctx.quadraticCurveTo(-r * 0.4, r * 0.5, -r * 0.7, r * 0.3);
+              ctx.closePath();
+              ctx.fill();
+
+              // Wind erosion lines
+              ctx.strokeStyle = rockStyle.colors.dark;
+              ctx.lineWidth = 1;
+              for (let i = 0; i < 4; i++) {
+                const y = -r * 0.4 + i * r * 0.2;
+                ctx.beginPath();
+                ctx.moveTo(-r * 0.5, y);
+                ctx.quadraticCurveTo(0, y - 5, r * 0.5, y);
+                ctx.stroke();
+              }
+
+            } else if (rockStyle.type === 'volcanic') {
+              // Jagged volcanic rock
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.8, r * 0.3);
+              ctx.lineTo(-r * 0.9, -r * 0.2);
+              ctx.lineTo(-r * 0.7, -r * 0.5);
+              ctx.lineTo(-r * 0.3, -r * 0.75);
+              ctx.lineTo(0, -r * 0.85);
+              ctx.lineTo(r * 0.4, -r * 0.7);
+              ctx.lineTo(r * 0.7, -r * 0.4);
+              ctx.lineTo(r * 0.85, 0);
+              ctx.lineTo(r * 0.75, r * 0.35);
+              ctx.lineTo(r * 0.3, r * 0.5);
+              ctx.lineTo(-r * 0.2, r * 0.45);
+              ctx.closePath();
+              ctx.fill();
+
+              // Lava cracks with glow effect
+              const lavaColor = rockStyle.lava || '#FF5722';
+              const glowColor = rockStyle.lavaGlow || 'rgba(255, 87, 34, 0.3)';
+
+              // Glow circles around crack intersections
+              ctx.fillStyle = glowColor;
+              ctx.beginPath();
+              ctx.arc(-r * 0.2, -r * 0.5, r * 0.18, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.arc(0, r * 0.1, r * 0.18, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.arc(r * 0.2, -r * 0.2, r * 0.18, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.arc(-r * 0.4, r * 0.2, r * 0.15, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Main lava cracks
+              ctx.strokeStyle = lavaColor;
+              ctx.lineWidth = 3;
+              ctx.lineCap = 'round';
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.2, -r * 0.5);
+              ctx.lineTo(0, r * 0.1);
+              ctx.lineTo(r * 0.2, -r * 0.2);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.4, r * 0.2);
+              ctx.lineTo(r * 0.3, -r * 0.1);
+              ctx.stroke();
+              ctx.lineCap = 'butt';
+
+            } else if (rockStyle.type === 'icy') {
+              // Crystalline ice rock
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.6, r * 0.4);
+              ctx.lineTo(-r * 0.8, 0);
+              ctx.lineTo(-r * 0.5, -r * 0.6);
+              ctx.lineTo(0, -r * 0.75);
+              ctx.lineTo(r * 0.5, -r * 0.5);
+              ctx.lineTo(r * 0.75, -r * 0.1);
+              ctx.lineTo(r * 0.6, r * 0.4);
+              ctx.lineTo(0, r * 0.5);
+              ctx.closePath();
+              ctx.fill();
+
+              // Ice shine
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.4, -r * 0.3);
+              ctx.lineTo(-r * 0.1, -r * 0.55);
+              ctx.lineTo(r * 0.2, -r * 0.4);
+              ctx.lineTo(r * 0.1, -r * 0.1);
+              ctx.closePath();
+              ctx.fill();
+
+              // Snow on top
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+              ctx.beginPath();
+              ctx.ellipse(0, -r * 0.5, r * 0.4, r * 0.15, 0, 0, Math.PI * 2);
+              ctx.fill();
+
+            } else {
+              // Standard irregular rock shape
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.8, r * 0.4);
+              ctx.lineTo(-r * 0.95, -r * 0.1);
+              ctx.lineTo(-r * 0.6, -r * 0.65);
+              ctx.lineTo(-r * 0.1, -r * 0.8);
+              ctx.lineTo(r * 0.5, -r * 0.7);
+              ctx.lineTo(r * 0.85, -r * 0.3);
+              ctx.lineTo(r * 0.9, r * 0.2);
+              ctx.lineTo(r * 0.5, r * 0.55);
+              ctx.lineTo(-r * 0.3, r * 0.6);
+              ctx.closePath();
+              ctx.fill();
+            }
 
             // Rock outline
-            ctx.strokeStyle = '#2A2A2A';
+            ctx.strokeStyle = rockStyle.colors.outline;
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Rock highlight (top-left)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.beginPath();
-            ctx.moveTo(-r * 0.5, -r * 0.35);
-            ctx.lineTo(-r * 0.25, -r * 0.6);
-            ctx.lineTo(r * 0.15, -r * 0.55);
-            ctx.lineTo(r * 0.05, -r * 0.2);
-            ctx.lineTo(-r * 0.35, -r * 0.1);
-            ctx.closePath();
-            ctx.fill();
+            // Highlight (skip for volcanic)
+            if (rockStyle.type !== 'volcanic') {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+              ctx.beginPath();
+              ctx.moveTo(-r * 0.5, -r * 0.35);
+              ctx.lineTo(-r * 0.25, -r * 0.6);
+              ctx.lineTo(r * 0.15, -r * 0.55);
+              ctx.lineTo(r * 0.05, -r * 0.2);
+              ctx.lineTo(-r * 0.35, -r * 0.1);
+              ctx.closePath();
+              ctx.fill();
+            }
 
-            // Moss/lichen patches (greenish spots)
-            ctx.fillStyle = 'rgba(85, 107, 47, 0.4)';
-            ctx.beginPath();
-            ctx.arc(-r * 0.4, r * 0.1, r * 0.15, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(r * 0.3, -r * 0.15, r * 0.12, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Crack details
-            ctx.strokeStyle = 'rgba(33, 33, 33, 0.6)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(-r * 0.15, -r * 0.35);
-            ctx.lineTo(r * 0.05, r * 0.15);
-            ctx.lineTo(r * 0.25, r * 0.05);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(r * 0.25, -r * 0.35);
-            ctx.lineTo(r * 0.35, r * 0.05);
-            ctx.stroke();
+            // Moss/lichen patches
+            if (rockStyle.moss) {
+              ctx.fillStyle = rockStyle.moss;
+              ctx.beginPath();
+              ctx.arc(-r * 0.4, r * 0.1, r * 0.15, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.arc(r * 0.3, -r * 0.15, r * 0.12, 0, Math.PI * 2);
+              ctx.fill();
+            }
 
             ctx.restore();
 
@@ -6350,10 +6642,6 @@
           setTimeout(() => popup.remove(), 500);
         }, 2500);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
-          MailboxManager.addNotification('unlock', 'Club Upgraded', `${clubName} upgraded to ${tierName}!`);
-        }
       },
 
       showEarningsPopup(amount, reason) {
@@ -6370,8 +6658,8 @@
           setTimeout(() => popup.remove(), 500);
         }, 2000);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
+        // Add to mailbox only for large amounts (500+)
+        if (typeof MailboxManager !== 'undefined' && amount >= 500) {
           MailboxManager.addNotification('earnings', `+${amount} Golf Bucks`, reason || 'Earned from playing');
         }
       },
@@ -6419,10 +6707,6 @@
           setTimeout(() => popup.remove(), 500);
         }, 2500);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
-          MailboxManager.addNotification('unlock', 'Ball Skin Unlocked', `Unlocked ${skinName} ball!`);
-        }
       },
 
       // Club skin methods
@@ -6485,10 +6769,6 @@
           setTimeout(() => popup.remove(), 500);
         }, 2500);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
-          MailboxManager.addNotification('unlock', 'Club Skin Unlocked', `Unlocked ${skinName} club skin!`);
-        }
       },
 
       getSelectedClubSkinStyle() {
@@ -6597,8 +6877,6 @@
             <div class="shop-club-distance">${currentDist} yds</div>
             <div class="shop-club-stats">
               <div class="stat-bar"><span class="stat-label">PWR</span><div class="stat-bar-bg"><div class="stat-fill" style="width: ${stats.power * 100}%"></div></div><span class="stat-value">${Math.round(stats.power * 100)}</span></div>
-              <div class="stat-bar"><span class="stat-label">ACC</span><div class="stat-bar-bg"><div class="stat-fill accuracy" style="width: ${stats.accuracy * 100}%"></div></div><span class="stat-value">${Math.round(stats.accuracy * 100)}</span></div>
-              <div class="stat-bar"><span class="stat-label">FOR</span><div class="stat-bar-bg"><div class="stat-fill forgiveness" style="width: ${stats.forgiveness * 100}%"></div></div><span class="stat-value">${Math.round(stats.forgiveness * 100)}</span></div>
             </div>
             <div class="shop-club-price">${isMaxed ? '✓ MAX' : nextPrice + ' Golf Bucks'}</div>
             ${isMaxed ? '' : `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-club="${clubId}" ${canBuy ? '' : 'disabled'}>Upgrade</button>`}
@@ -6945,6 +7223,18 @@
             frictionMod: 1.0,
             bounceMod: 1.0
           },
+          // Tree style - Lush oak with vibrant greens
+          tree: {
+            type: 'oak',
+            trunk: { main: '#8B4513', dark: '#5D4037', outline: '#3E2723' },
+            foliage: { light: '#7CB342', mid: '#689F38', dark: '#558B2F', outline: '#33691E' }
+          },
+          // Rock style - Classic boulder with moss
+          rock: {
+            type: 'standard',
+            colors: { light: '#9E9E9E', mid: '#757575', dark: '#424242', outline: '#212121' },
+            moss: 'rgba(56, 142, 60, 0.5)'
+          },
           // Special hazards for this theme
           specialHazards: []
         },
@@ -6988,6 +7278,18 @@
             frictionMod: 0.9, // Ball rolls further on hard ground
             bounceMod: 1.1
           },
+          // Tree style - Desert palm trees
+          tree: {
+            type: 'palm',
+            trunk: { main: '#C68E17', dark: '#875F00', outline: '#5D4037' },
+            foliage: { light: '#7CB342', mid: '#558B2F', dark: '#388E3C', outline: '#2E7D32' }
+          },
+          // Rock style - Weathered sandstone
+          rock: {
+            type: 'sandstone',
+            colors: { light: '#D2B48C', mid: '#C68E17', dark: '#8B4513', outline: '#5D4037' },
+            moss: 'rgba(160, 120, 80, 0.3)'
+          },
           specialHazards: ['quicksand', 'cactus']
         },
 
@@ -7030,6 +7332,19 @@
             frictionMod: 0.7, // Icy = less friction, ball slides more
             bounceMod: 0.8
           },
+          // Tree style - Snow-covered pine trees
+          tree: {
+            type: 'pine',
+            trunk: { main: '#8B4513', dark: '#5D4037', outline: '#3E2723' },
+            foliage: { light: '#4CAF50', mid: '#388E3C', dark: '#2E7D32', outline: '#1B5E20' },
+            snow: true
+          },
+          // Rock style - Icy crystalline rocks
+          rock: {
+            type: 'icy',
+            colors: { light: '#E0F7FA', mid: '#B0BEC5', dark: '#78909C', outline: '#546E7A' },
+            moss: 'rgba(224, 247, 250, 0.6)'
+          },
           specialHazards: ['ice', 'snowdrift']
         },
 
@@ -7071,6 +7386,20 @@
           physics: {
             frictionMod: 1.1, // Lush grass = more friction
             bounceMod: 0.9
+          },
+          // Tree style - Lush tropical palm trees with coconuts
+          tree: {
+            type: 'tropicalPalm',
+            trunk: { main: '#A0522D', dark: '#6B3218', outline: '#4E342E' },
+            foliage: { light: '#66BB6A', mid: '#4CAF50', dark: '#388E3C', outline: '#2E7D32' }
+          },
+          // Rock style - Dark volcanic rocks with lava glow
+          rock: {
+            type: 'volcanic',
+            colors: { light: '#424242', mid: '#303030', dark: '#212121', outline: '#000000' },
+            lava: '#FF5722',
+            lavaGlow: 'rgba(255, 87, 34, 0.3)',
+            moss: 'rgba(50, 150, 100, 0.3)'
           },
           specialHazards: ['palmTree', 'tidalPool']
         }
@@ -7808,7 +8137,7 @@
           const prizeText = inMoney ? `Won ${result.prize} Golf Bucks!` : `Finished ${this.getPositionText(result.position)}`;
           MailboxManager.addNotification('tournament', `${result.tournament} Complete`,
             `${this.getPositionText(result.position)} place (${scoreText}). ${prizeText}`,
-            { leaderboard: result.leaderboard, position: result.position, prize: result.prize }
+            { leaderboard: result.leaderboard, position: result.position, prize: result.prize, tournamentName: result.tournament }
           );
         }
       },
@@ -9078,7 +9407,12 @@
       getRecommendedClub(ball, holePosition, wind = null, lie = null) {
         // Use CaddieSystem if player has a caddie
         if (CaddieSystem.getOwnedTier() > 0) {
-          return CaddieSystem.getRecommendation(ball, holePosition, wind, lie);
+          const recommendation = CaddieSystem.getRecommendation(ball, holePosition, wind, lie);
+          // For master tier, recommendation is an object; otherwise it's just a club ID string
+          if (typeof recommendation === 'object' && recommendation !== null) {
+            return recommendation;
+          }
+          return recommendation;
         }
 
         // No caddie - return null (no recommendation shown)
@@ -10141,6 +10475,7 @@
           case 'earnings': return '💰';
           case 'achievement': return '🏆';
           case 'tournament': return '🏅';
+          case 'round': return '⛳';
           case 'unlock': return '🔓';
           default: return '📬';
         }
@@ -10168,22 +10503,92 @@
               <div class="notification-message">${n.message}</div>
           `;
 
-          // If tournament result with leaderboard data
+          // Add View Leaderboard button for tournament results
           if (n.type === 'tournament' && n.data && n.data.leaderboard) {
-            html += '<div class="notification-leaderboard">';
-            n.data.leaderboard.forEach((entry, i) => {
-              const scoreText = entry.score === 0 ? 'E' : (entry.score > 0 ? '+' + entry.score : entry.score);
-              html += `<div class="lb-entry ${entry.isPlayer ? 'player' : ''}"">
-                <span>${i + 1}. ${entry.name}</span>
-                <span>${scoreText}</span>
-              </div>`;
-            });
-            html += '</div>';
+            html += `<button class="mailbox-view-btn" data-action="leaderboard" data-id="${n.id}">📊 View Leaderboard</button>`;
+          }
+
+          // Add View Scorecard button for round completions
+          if (n.type === 'round' && n.data && n.data.holeScores) {
+            html += `<button class="mailbox-view-btn" data-action="scorecard" data-id="${n.id}">📋 View Scorecard</button>`;
           }
 
           html += '</div>';
           return html;
         }).join('');
+
+        // Add click handlers for view buttons
+        container.querySelectorAll('.mailbox-view-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            const notification = this.notifications.find(n => n.id === id);
+            if (!notification) return;
+
+            if (action === 'leaderboard') {
+              this.showLeaderboardOverlay(notification.data);
+            } else if (action === 'scorecard') {
+              this.showScorecardOverlay(notification.data);
+            }
+          });
+        });
+      },
+
+      showScorecardOverlay(data) {
+        let tableHTML = '<table class="scorecard-table">';
+        tableHTML += '<tr><th>Hole</th><th>Par</th><th>Strokes</th><th>Score</th></tr>';
+
+        for (const holeScore of data.holeScores) {
+          const scoreDisplay = ScoreKeeper.getScoreDisplay(holeScore.scoreRelativeToPar);
+          const scoreClass = holeScore.scoreRelativeToPar < 0 ? 'under-par' :
+                            holeScore.scoreRelativeToPar > 0 ? 'over-par' : 'par';
+
+          tableHTML += `<tr>`;
+          tableHTML += `<td>${holeScore.holeNumber}</td>`;
+          tableHTML += `<td>${holeScore.par}</td>`;
+          tableHTML += `<td>${holeScore.strokes}</td>`;
+          tableHTML += `<td class="${scoreClass}">${scoreDisplay}</td>`;
+          tableHTML += `</tr>`;
+        }
+
+        tableHTML += '</table>';
+        tableHTML += `<div style="margin-top: 20px; font-size: 18px;">`;
+        tableHTML += `<strong>Total Strokes:</strong> ${data.totalStrokes}<br>`;
+        tableHTML += `<strong>Total Par:</strong> ${data.totalPar}<br>`;
+        tableHTML += `<strong>Final Score:</strong> <span style="color: ${ScoreKeeper.getScoreColor(data.scoreRelativeToPar)}; font-weight: bold; font-size: 24px;">${ScoreKeeper.getScoreDisplay(data.scoreRelativeToPar)}</span>`;
+        tableHTML += `</div>`;
+
+        document.getElementById('scorecard-content').innerHTML = tableHTML;
+        document.getElementById('scorecard-overlay').classList.remove('hidden');
+      },
+
+      showLeaderboardOverlay(data) {
+        let html = `<h3 style="color: #FFD700; margin-bottom: 15px;">🏆 ${data.tournamentName || 'Tournament'} Leaderboard</h3>`;
+        html += '<div class="tournament-leaderboard-embed" style="max-height: 400px; overflow-y: auto;">';
+
+        data.leaderboard.forEach((entry, i) => {
+          const scoreText = entry.score === 0 ? 'E' : (entry.score > 0 ? '+' + entry.score : entry.score);
+          const positionClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+          html += `<div class="leaderboard-entry ${entry.isPlayer ? 'player' : ''} ${positionClass}" style="display: flex; justify-content: space-between; padding: 8px; margin: 4px 0; background: ${entry.isPlayer ? 'rgba(76, 175, 80, 0.3)' : 'rgba(255,255,255,0.1)'}; border-radius: 4px;">
+            <span>${i + 1}. ${entry.name}</span>
+            <span style="font-weight: bold;">${scoreText}</span>
+          </div>`;
+        });
+
+        html += '</div>';
+
+        if (data.position && data.prize !== undefined) {
+          html += `<div style="margin-top: 15px; text-align: center;">`;
+          html += `<div style="font-size: 18px;">Your Position: <strong>${data.position}${data.position === 1 ? 'st' : data.position === 2 ? 'nd' : data.position === 3 ? 'rd' : 'th'}</strong></div>`;
+          if (data.prize > 0) {
+            html += `<div style="color: #4CAF50; font-size: 16px;">Prize Won: +${data.prize} Golf Bucks</div>`;
+          }
+          html += `</div>`;
+        }
+
+        document.getElementById('scorecard-content').innerHTML = html;
+        document.getElementById('scorecard-overlay').classList.remove('hidden');
       }
     };
 
@@ -10252,7 +10657,8 @@
 
         // Calculate base distance
         const pixelDistance = PhysicsEngine.distance(ball, holePosition);
-        let effectiveDistance = pixelDistance * PIXELS_TO_YARDS;
+        const baseDistance = pixelDistance * PIXELS_TO_YARDS;
+        let effectiveDistance = baseDistance;
 
         // Tier 2+: Account for lie penalties
         if (this.ownedTier >= 2) {
@@ -10283,11 +10689,25 @@
         clubsWithDistances.sort((a, b) => a.maxDistance - b.maxDistance);
 
         let bestClub = clubsWithDistances[clubsWithDistances.length - 1].id;
+        let clubMaxDistance = 0;
         for (const club of clubsWithDistances) {
           if (club.maxDistance >= effectiveDistance) {
             bestClub = club.id;
+            clubMaxDistance = club.maxDistance;
             break;
           }
+        }
+
+        // For master tier, return additional yardage info
+        if (this.ownedTier >= 3) {
+          // Calculate power percentage needed to hit exact distance
+          const powerPercent = Math.min(100, Math.round((effectiveDistance / clubMaxDistance) * 100));
+          return {
+            clubId: bestClub,
+            targetYards: Math.round(effectiveDistance),
+            powerPercent: powerPercent,
+            distanceToHole: Math.round(baseDistance)
+          };
         }
 
         return bestClub;
@@ -10953,19 +11373,25 @@
           const ballX = Math.max(50, holeX - (150 * YARDS_TO_PIXELS));
           const ballY = holeY + (Math.random() - 0.5) * 50;
 
-          window.gameEngine.gameState.ball.x = ballX;
-          window.gameEngine.gameState.ball.y = ballY;
-          window.gameEngine.gameState.ball.velocityX = 0;
-          window.gameEngine.gameState.ball.velocityY = 0;
-          window.gameEngine.gameState.ball.isMoving = false;
-          window.gameEngine.gameState.ball.lastSafePosition = { x: ballX, y: ballY };
-          window.gameEngine.gameState.ball.distanceFromHole = PhysicsEngine.distance(
+          const ball = window.gameEngine.gameState.ball;
+          ball.x = ballX;
+          ball.y = ballY;
+          ball.velocityX = 0;
+          ball.velocityY = 0;
+          ball.isMoving = false;
+          ball.lastSafePosition = { x: ballX, y: ballY };
+          ball.distanceFromHole = PhysicsEngine.distance(
             { x: ballX, y: ballY }, hole.holePosition
           );
 
+          // Reset hole state so ball is visible
+          ball.inHole = false;
+          ball.holeProgress = undefined;
+          delete ball.holeStartTime;
+
           // Update selected club for the distance
           window.gameEngine.gameState.selectedClub = ClubSystem.getRecommendedClub(
-            window.gameEngine.gameState.ball, hole.holePosition
+            ball, hole.holePosition
           ) || 'iron7';
 
           this.showMessage('🎯 Closest to Pin', 'Get as close to the hole as you can!', 2000);
@@ -10980,15 +11406,21 @@
           const ballX = hole.teePosition.x;
           const ballY = hole.teePosition.y;
 
-          window.gameEngine.gameState.ball.x = ballX;
-          window.gameEngine.gameState.ball.y = ballY;
-          window.gameEngine.gameState.ball.velocityX = 0;
-          window.gameEngine.gameState.ball.velocityY = 0;
-          window.gameEngine.gameState.ball.isMoving = false;
-          window.gameEngine.gameState.ball.lastSafePosition = { x: ballX, y: ballY };
-          window.gameEngine.gameState.ball.distanceFromHole = PhysicsEngine.distance(
+          const ball = window.gameEngine.gameState.ball;
+          ball.x = ballX;
+          ball.y = ballY;
+          ball.velocityX = 0;
+          ball.velocityY = 0;
+          ball.isMoving = false;
+          ball.lastSafePosition = { x: ballX, y: ballY };
+          ball.distanceFromHole = PhysicsEngine.distance(
             { x: ballX, y: ballY }, hole.holePosition
           );
+
+          // Reset hole state so ball is visible
+          ball.inHole = false;
+          ball.holeProgress = undefined;
+          delete ball.holeStartTime;
 
           // Use driver for longest drive
           window.gameEngine.gameState.selectedClub = 'driver';
@@ -11110,21 +11542,40 @@
         if (!window.gameEngine || !window.gameEngine.gameState) return;
 
         const state = this.puttingState;
-        const hole = window.gameEngine.gameState.currentHole;
-        const teePos = state.teePositions[state.currentPutt];
+        if (!state || !state.teePositions || state.currentPutt >= state.teePositions.length) return;
 
-        // Position ball at this putt's tee
-        const ball = window.gameEngine.gameState.ball;
-        ball.x = teePos.x;
-        ball.y = teePos.y;
-        ball.velocityX = 0;
-        ball.velocityY = 0;
-        ball.isMoving = false;
-        ball.inHole = false;
-        ball.holeProgress = 0;
-        ball.lastSafePosition = { x: teePos.x, y: teePos.y };
-        ball.distanceFromHole = PhysicsEngine.distance(teePos, hole.holePosition);
-        ball.holePosition = hole.holePosition;
+        const hole = window.gameEngine.gameState.currentHole;
+        if (!hole) return;
+
+        const teePos = state.teePositions[state.currentPutt];
+        if (!teePos) return;
+
+        // Get current ball color
+        const ballColor = window.gameEngine.gameState.ball?.color || 'white';
+
+        // Create a completely fresh ball at the new tee position
+        const newBall = {
+          x: teePos.x,
+          y: teePos.y,
+          velocityX: 0,
+          velocityY: 0,
+          spin: 0,
+          isAirborne: false,
+          isMoving: false,
+          rotation: 0,
+          groundY: teePos.y,
+          holePosition: hole.holePosition,
+          distanceFromHole: PhysicsEngine.distance(teePos, hole.holePosition),
+          lastSafePosition: { x: teePos.x, y: teePos.y },
+          waterPenalty: false,
+          color: ballColor,
+          // Explicitly ensure hole state is clear - use undefined to skip fade check entirely
+          inHole: false,
+          holeProgress: undefined
+        };
+
+        // Replace the ball entirely
+        window.gameEngine.gameState.ball = newBall;
 
         // Force putter only - lock club selection
         window.gameEngine.gameState.selectedClub = 'putter';
@@ -11206,12 +11657,13 @@
 
         } else if (this.currentGame === 'puttingChallenge') {
           const state = this.puttingState;
+          if (!state) return;
 
-          // Check if ball went in hole
-          if (ball.inHole) {
+          // Check if ball went in hole (sound already played by update loop)
+          const madeIt = ball.inHole;
+          if (madeIt) {
             state.sunkCount++;
             this.score = state.sunkCount;
-            AudioManager.playHoleSound();
           }
 
           // Move to next putt
@@ -11224,13 +11676,40 @@
                        state.sunkCount >= 5 ? '👍 Nice job!' : 'Keep practicing!';
             this.showMessage('⛳ Complete', `${state.sunkCount}/${state.totalPutts} sunk! ${msg}`, 2000);
             setTimeout(() => this.endGame(), 2500);
-          } else {
-            // Next putt
-            const result = ball.inHole ? '✓ Sunk!' : '✗ Miss';
+          } else if (state.currentPutt < state.teePositions.length) {
+            // Next putt - verify tee position exists
+            const result = madeIt ? '✓ Sunk!' : '✗ Miss';
             this.showMessage(result, `Putt ${state.currentPutt + 1} of ${state.totalPutts}`, 1000);
             setTimeout(() => this.setupNextPutt(), 1200);
           }
         }
+      },
+
+      // Medal thresholds for each game
+      getMedal(gameKey, score) {
+        const thresholds = {
+          closestToPin: { gold: 5, silver: 15, bronze: Infinity }, // lower is better (feet)
+          longestDrive: { gold: 300, silver: 250, bronze: 0 }, // higher is better (yards)
+          puttingChallenge: { gold: 10, silver: 7, bronze: 0 } // higher is better (sunk)
+        };
+
+        const t = thresholds[gameKey];
+        const game = this.games[gameKey];
+
+        if (game.lowerIsBetter) {
+          if (score <= t.gold) return { type: 'gold', icon: '🥇', name: 'Gold' };
+          if (score <= t.silver) return { type: 'silver', icon: '🥈', name: 'Silver' };
+          return { type: 'bronze', icon: '🥉', name: 'Bronze' };
+        } else {
+          if (score >= t.gold) return { type: 'gold', icon: '🥇', name: 'Gold' };
+          if (score >= t.silver) return { type: 'silver', icon: '🥈', name: 'Silver' };
+          return { type: 'bronze', icon: '🥉', name: 'Bronze' };
+        }
+      },
+
+      getMedalReward(medalType) {
+        const rewards = { gold: 150, silver: 100, bronze: 50 };
+        return rewards[medalType] || 50;
       },
 
       endGame() {
@@ -11259,9 +11738,10 @@
         // Mark today's challenge as completed (one attempt per day)
         this.markCompleted();
 
-        // Calculate reward (bonus for new records)
-        const baseReward = 50;
-        const reward = isNewRecord ? baseReward * 2 : baseReward;
+        // Calculate medal and reward
+        const medal = this.getMedal(this.currentGame, this.score);
+        const baseReward = this.getMedalReward(medal.type);
+        const reward = isNewRecord ? baseReward + 50 : baseReward; // Bonus 50 for new record
         ShopSystem.earnBucks(reward);
 
         // Show results
@@ -11272,9 +11752,11 @@
         content.innerHTML = `
           <div class="minigame-result">
             <h3>${game.icon} ${game.name}</h3>
+            <div style="font-size: 64px; margin: 10px 0;">${medal.icon}</div>
+            <div style="font-size: 24px; color: ${medal.type === 'gold' ? '#FFD700' : medal.type === 'silver' ? '#C0C0C0' : '#CD7F32'}; font-weight: bold; margin-bottom: 10px;">${medal.name} Medal</div>
             <div class="final-score">${this.score}${game.scoreUnit}</div>
             <div class="high-score">${isNewRecord ? '🎉 NEW RECORD!' : `Best: ${this.highScores[this.currentGame]}${game.scoreUnit}`}</div>
-            <div class="reward">+${reward} Golf Bucks</div>
+            <div class="reward">+${reward} Golf Bucks${isNewRecord ? ' (includes record bonus!)' : ''}</div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
               <button class="button" id="minigame-retry-btn">Play Again</button>
               <button class="button" id="minigame-done-btn" style="background: #555;">Done</button>
@@ -11290,7 +11772,8 @@
         document.getElementById('minigame-done-btn').addEventListener('click', () => {
           overlay.classList.add('hidden');
           this.currentGame = null;
-          // Return to main menu
+          // Return to main menu - hide game-mode-overlay too
+          document.getElementById('game-mode-overlay').classList.add('hidden');
           document.getElementById('menu-overlay').classList.remove('hidden');
           // Clear mini-game state
           if (window.gameEngine && window.gameEngine.gameState) {
@@ -11308,7 +11791,7 @@
         // Add to mailbox
         MailboxManager.addNotification(
           'achievement',
-          `${game.icon} ${game.name}`,
+          `${medal.icon} ${game.name} - ${medal.name}`,
           `Score: ${this.score}${game.scoreUnit}${isNewRecord ? ' (New Record!)' : ''} - Earned ${reward} GB`
         );
       }
@@ -11539,10 +12022,6 @@
           setTimeout(() => popup.remove(), 500);
         }, 2500);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
-          MailboxManager.addNotification('general', 'UFO Encounter!', 'A UFO picked up your ball and dropped it somewhere else!');
-        }
       },
 
       draw(ctx) {
@@ -12192,10 +12671,6 @@
           setTimeout(() => popup.remove(), 500);
         }, 2500);
 
-        // Add to mailbox
-        if (typeof MailboxManager !== 'undefined') {
-          MailboxManager.addNotification('general', 'Out of Bounds', 'Ball left the course - 1 stroke penalty applied');
-        }
       }
 
       async startNewRound(seed = null, playerName = 'Player', ballColor = 'white', themeOverride = null) {
@@ -12399,7 +12874,36 @@
           strength: WindSystem.speed
         };
 
-        const recommendedClub = ClubSystem.getRecommendedClub(ball, this.gameState.currentHole.holePosition, wind, lie);
+        const recommendation = ClubSystem.getRecommendedClub(ball, this.gameState.currentHole.holePosition, wind, lie);
+
+        // Handle both string (lower tiers) and object (master tier) recommendation formats
+        let recommendedClubId = null;
+        let caddieTip = null;
+        if (recommendation) {
+          if (typeof recommendation === 'object') {
+            recommendedClubId = recommendation.clubId;
+            caddieTip = recommendation;
+          } else {
+            recommendedClubId = recommendation;
+          }
+        }
+
+        // Display caddie tip for master tier
+        const caddieTipEl = document.getElementById('caddie-tip');
+        if (caddieTipEl) {
+          if (caddieTip) {
+            const clubName = ClubSystem.getClub(caddieTip.clubId)?.name || caddieTip.clubId;
+            caddieTipEl.innerHTML = `<span class="caddie-icon">👑</span> Hit <strong>${clubName}</strong> at <strong>${caddieTip.powerPercent}%</strong> power (${caddieTip.targetYards}yd to hole)`;
+            caddieTipEl.classList.remove('hidden');
+          } else if (recommendedClubId && CaddieSystem.getOwnedTier() > 0) {
+            const clubName = ClubSystem.getClub(recommendedClubId)?.name || recommendedClubId;
+            const icon = CaddieSystem.getCaddieIcon();
+            caddieTipEl.innerHTML = `<span class="caddie-icon">${icon}</span> Recommended: <strong>${clubName}</strong>`;
+            caddieTipEl.classList.remove('hidden');
+          } else {
+            caddieTipEl.classList.add('hidden');
+          }
+        }
 
         // Helper to get club type for styling
         const getClubType = (clubId) => {
@@ -12439,7 +12943,7 @@
             slot.classList.add('selected');
           }
 
-          if (club.id === recommendedClub) {
+          if (club.id === recommendedClubId) {
             slot.classList.add('recommended');
           }
 
@@ -12985,6 +13489,20 @@
         document.getElementById('scorecard-overlay').classList.remove('hidden');
         document.getElementById('menu-overlay').classList.remove('hidden');
 
+        // Add round completion to mailbox with scorecard data
+        if (typeof MailboxManager !== 'undefined') {
+          const scoreDisplay = ScoreKeeper.getScoreDisplay(summary.scoreRelativeToPar);
+          MailboxManager.addNotification('round', `Round Complete: ${scoreDisplay}`,
+            `${summary.totalStrokes} strokes over ${summary.completedHoles} holes`, {
+              type: 'scorecard',
+              holeScores: round.holeScores,
+              totalStrokes: summary.totalStrokes,
+              totalPar: summary.totalPar,
+              scoreRelativeToPar: summary.scoreRelativeToPar,
+              timestamp: Date.now()
+            });
+        }
+
         // === T078: Save to leaderboard ===
         await this.saveToLeaderboard(summary);
 
@@ -13213,10 +13731,9 @@
           e.target.textContent = '...';
 
           if (ShopSystem.purchaseClub(clubId)) {
-            // Literally close and reopen shop to force refresh
-            shopOverlayEl.classList.add('hidden');
+            // Force full shop refresh
+            ShopSystem.updateBalanceDisplay();
             ShopSystem.renderShop();
-            shopOverlayEl.classList.remove('hidden');
           } else {
             e.target.disabled = false;
             e.target.textContent = 'Upgrade';
@@ -13231,10 +13748,9 @@
           e.target.textContent = '...';
 
           if (ShopSystem.purchaseBallSkin(skinId)) {
-            // Literally close and reopen shop to force refresh
-            shopOverlayEl.classList.add('hidden');
+            // Force full shop refresh
+            ShopSystem.updateBalanceDisplay();
             ShopSystem.renderShop();
-            shopOverlayEl.classList.remove('hidden');
           } else {
             e.target.disabled = false;
             e.target.textContent = 'Buy';
@@ -13720,7 +14236,8 @@
         if (btn && !btn.disabled) {
           const tierIndex = parseInt(btn.dataset.tier);
           if (CaddieSystem.purchase(tierIndex)) {
-            // Re-render caddie tab
+            // Force balance update and re-render caddie tab
+            ShopSystem.updateBalanceDisplay();
             document.getElementById('caddie-shop-content').innerHTML = CaddieSystem.renderShopTab();
             AudioManager.playClickSound();
           }

@@ -8,7 +8,28 @@
     "test:debug": "playwright test --debug"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "^1.57.0",
     "playwright": "^1.57.0"
-  }
+  },
+  "main": "generate-sprites.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "fsevents": "^2.3.2",
+    "playwright-core": "^1.57.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/McSchnizzle/drew-golf.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/McSchnizzle/drew-golf/issues"
+  },
+  "homepage": "https://github.com/McSchnizzle/drew-golf#readme"
 }
