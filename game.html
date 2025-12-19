@@ -192,6 +192,25 @@
       font-size: 16px;
     }
 
+    #career-player-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    #career-player-view.visible {
+      opacity: 1;
+    }
+    #career-player-view.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #wind-indicator {
       position: absolute;
       top: 65px;
@@ -3447,6 +3466,962 @@
       color: #fff;
     }
 
+    /* Career Mode Button Highlight - Purple Theme */
+    .career-mode-btn {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15)) !important;
+      border-color: rgba(139, 92, 246, 0.4) !important;
+    }
+    .career-mode-btn:hover {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2)) !important;
+      border-color: rgba(139, 92, 246, 0.6) !important;
+    }
+    .career-mode-btn .mode-icon-wrap {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED) !important;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5) !important;
+      position: relative;
+    }
+    .new-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: #fff;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 3px 6px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+    @keyframes badge-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Career Mode Entry Overlay */
+    #career-entry-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+    #career-entry-overlay.hidden { display: none; }
+
+    .career-entry-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 35px 30px;
+      max-width: 450px;
+      width: 92%;
+      text-align: center;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.15);
+    }
+    .career-entry-header {
+      margin-bottom: 20px;
+    }
+    .career-entry-header .header-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .career-entry-header h2 {
+      color: #A78BFA;
+      margin: 0;
+      font-size: 28px;
+      text-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+    }
+    .career-intro {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .career-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .career-slot {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .career-slot:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+    .career-slot.empty {
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+    }
+    .career-slot-avatar {
+      width: 50px;
+      height: 65px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    .career-slot-info {
+      flex: 1;
+    }
+    .career-slot-name {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .career-slot-details {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .career-entry-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .career-btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .career-btn.primary {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: #fff;
+    }
+    .career-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+    }
+    .career-btn.secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .career-btn.secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Character Creator */
+    #character-creator-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1650;
+      overflow-y: auto;
+    }
+    #character-creator-overlay.hidden { display: none; }
+
+    .character-creator-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 25px;
+      max-width: 500px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+    }
+    .creator-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .creator-header h2 {
+      color: #A78BFA;
+      margin: 0;
+      font-size: 24px;
+    }
+    .creator-content {
+      display: flex;
+      gap: 20px;
+    }
+    .creator-preview {
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
+      border-radius: 16px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #character-preview-canvas {
+      display: block;
+    }
+    .creator-options {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .creator-section {
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .creator-section label {
+      display: block;
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .creator-section input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 14px;
+    }
+    .option-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .option-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option-btn.selected {
+      border-color: #8B5CF6;
+      background: rgba(139, 92, 246, 0.2);
+    }
+    .color-options, .style-options {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .color-option {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .color-option.selected {
+      border-color: #8B5CF6;
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    }
+    .style-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .style-option.selected {
+      border-color: #8B5CF6;
+      background: rgba(139, 92, 246, 0.2);
+    }
+    .creator-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* Career Hub */
+    #career-hub-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(15, 32, 39, 0.98), rgba(32, 58, 67, 0.98));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1600;
+    }
+    #career-hub-overlay.hidden { display: none; }
+
+    .career-hub-modal {
+      background: transparent;
+      border-radius: 0;
+      padding: 20px 30px;
+      max-width: 100%;
+      width: 100%;
+      height: 100%;
+      border: none;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+    }
+    #career-hub-overlay {
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+    }
+    .hub-news-ticker {
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 15px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+    }
+    .news-ticker-content {
+      color: #E9D5FF;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      animation: scrollHeadline 25s linear infinite;
+      line-height: 1.4;
+    }
+    .hub-ranking-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      margin-top: 6px;
+    }
+    .hub-ranking-badge span {
+      color: #A78BFA;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .hub-next-tournament {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+    .next-tournament-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .next-label {
+      color: #A78BFA;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .season-week {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+    }
+    .next-tournament-info .tournament-name {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .tournament-details {
+      display: flex;
+      gap: 15px;
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+    }
+    .hub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+    .hub-player-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #hub-avatar-canvas {
+      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
+      border-radius: 10px;
+    }
+    .hub-player-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .hub-player-name {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .hub-tour-name {
+      color: #A78BFA;
+      font-size: 13px;
+    }
+    .hub-currencies {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .currency-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    .currency-display.premium {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+    .currency-display span {
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .hub-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      max-width: 500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hub-stats-panel {
+      background: rgba(0,0,0,0.2);
+      border-radius: 16px;
+      padding: 15px;
+    }
+    .hub-stats-panel h3 {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0 0 12px 0;
+    }
+    .hub-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .hub-stat span:first-child {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+    }
+    .hub-stat span:last-child {
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .hub-progress-bar {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      height: 24px;
+      position: relative;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .hub-progress-bar .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+    .hub-progress-bar .progress-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .hub-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hub-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px 12px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .hub-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.25);
+    }
+    .hub-btn.primary {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      padding: 20px 24px;
+    }
+    .hub-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    }
+    .primary-btn-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .primary-btn-content .btn-icon {
+      font-size: 32px;
+    }
+    .primary-btn-content .btn-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+    .primary-btn-content .btn-main {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .primary-btn-content .btn-sub {
+      font-size: 12px;
+      opacity: 0.8;
+      font-weight: normal;
+    }
+    /* Career Tournament Selection */
+    #career-tournament-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1650;
+    }
+    #career-tournament-overlay.hidden { display: none; }
+
+    .career-tournament-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 25px;
+      max-width: 450px;
+      width: 95%;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+    }
+    .tournament-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .tournament-header h2 {
+      color: #A78BFA;
+      margin: 0 0 5px 0;
+    }
+    .tournament-week {
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+    }
+    .tournament-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .tournament-option {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tournament-option:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+    .tournament-option-name {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .tournament-option-details {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      display: flex;
+      gap: 15px;
+    }
+    .tournament-confirm {
+      text-align: center;
+      padding: 20px;
+    }
+    .tournament-confirm-name {
+      color: #fff;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+    }
+    .tournament-confirm-details {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    .confirm-detail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.8);
+      font-size: 15px;
+    }
+    .confirm-detail span {
+      font-size: 18px;
+    }
+    .tournament-start-btn {
+      font-size: 18px !important;
+      padding: 16px 50px !important;
+    }
+
+    /* Debut Cutscene Overlay */
+    #debut-cutscene-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1750;
+    }
+    #debut-cutscene-overlay.hidden { display: none; }
+    .debut-cutscene {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .debut-scene {
+      width: 100%;
+      max-width: 600px;
+      padding: 40px;
+      animation: fadeIn 0.5s ease;
+    }
+    .debut-scene.hidden { display: none; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .debut-backdrop {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      z-index: -1;
+    }
+    .debut-content {
+      text-align: center;
+    }
+    .debut-announcer {
+      font-size: 60px;
+      margin-bottom: 30px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .debut-text {
+      color: #fff;
+      font-size: 24px;
+      line-height: 1.6;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .debut-interview {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 20px;
+      padding: 30px;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+    }
+    .interview-reporter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .reporter-icon {
+      font-size: 36px;
+    }
+    .reporter-name {
+      color: #A78BFA;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .interview-question {
+      color: #fff;
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 25px;
+      padding-left: 15px;
+      border-left: 3px solid #A78BFA;
+    }
+    .interview-player {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(139, 92, 246, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+    }
+    #debut-player-canvas {
+      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
+      border-radius: 10px;
+    }
+    .player-response {
+      color: #E9D5FF;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .debut-tee-intro {
+      text-align: center;
+    }
+    .tee-intro-text {
+      margin-bottom: 30px;
+    }
+    .intro-now {
+      color: #A78BFA;
+      font-size: 16px;
+      letter-spacing: 3px;
+      margin-bottom: 15px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .intro-name {
+      color: #fff;
+      font-size: 42px;
+      font-weight: bold;
+      text-shadow: 0 4px 20px rgba(139, 92, 246, 0.5);
+      margin-bottom: 10px;
+    }
+    .intro-hometown {
+      color: rgba(255,255,255,0.6);
+      font-size: 16px;
+    }
+    #debut-golfer-canvas {
+      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .debut-continue {
+      margin-top: 30px;
+    }
+
+    /* Sponsor Offer Overlay */
+    #sponsor-offer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+    }
+    #sponsor-offer-overlay.hidden { display: none; }
+
+    .sponsor-offer-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+    }
+    .sponsor-offer-modal h2 {
+      color: #A78BFA;
+      margin: 0 0 10px 0;
+    }
+    .sponsor-offer-intro {
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .sponsor-offer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .sponsor-card {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sponsor-card:hover {
+      border-color: #8B5CF6;
+      background: rgba(139, 92, 246, 0.15);
+    }
+    .sponsor-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .sponsor-icon {
+      font-size: 24px;
+    }
+    .sponsor-name {
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .sponsor-type {
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .sponsor-benefits {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      text-align: left;
+    }
+
+    /* Career Dialogue Overlay */
+    #career-dialogue-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1800;
+      padding-bottom: 50px;
+    }
+    #career-dialogue-overlay.hidden { display: none; }
+
+    .dialogue-box {
+      background: linear-gradient(145deg, #1e3a4c, #0d1f2d);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 600px;
+      width: 95%;
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .dialogue-portrait {
+      width: 80px;
+      height: 80px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    .dialogue-content {
+      flex: 1;
+    }
+    .dialogue-speaker {
+      color: #A78BFA;
+      font-weight: bold;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .dialogue-text {
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .dialogue-continue {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Career Headlines */
+    #career-headlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #1a1a2e, #2d2d44, #1a1a2e);
+      padding: 10px 20px;
+      z-index: 1100;
+      overflow: hidden;
+    }
+    #career-headlines.hidden { display: none; }
+
+    .headline-content {
+      color: #A78BFA;
+      font-size: 14px;
+      white-space: nowrap;
+      animation: scrollHeadline 15s linear infinite;
+    }
+    @keyframes scrollHeadline {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
     /* Mini-Game Overlay */
     #minigame-overlay {
       position: fixed;
@@ -3861,6 +4836,17 @@
             </div>
             <span class="mode-arrow">›</span>
           </button>
+          <button class="game-mode-btn career-mode-btn" id="career-play-btn">
+            <div class="mode-icon-wrap">
+              <span class="mode-icon">🏌️</span>
+              <span class="new-badge">NEW</span>
+            </div>
+            <div class="mode-text">
+              <span class="mode-title">Career Mode</span>
+              <span class="mode-subtitle">Build your legacy from rookie to legend!</span>
+            </div>
+            <span class="mode-arrow">›</span>
+          </button>
         </div>
         <button id="cancel-mode-btn">Cancel</button>
       </div>
@@ -4006,6 +4992,261 @@
   <div id="tournament-indicator" class="hidden">
     <span id="tournament-indicator-text"></span>
   </div>
+
+  <!-- Career Mode Entry -->
+  <div id="career-entry-overlay" class="hidden">
+    <div class="career-entry-modal">
+      <div class="career-entry-header">
+        <span class="header-icon">🏌️</span>
+        <h2>Career Mode</h2>
+      </div>
+      <div class="career-entry-content">
+        <p class="career-intro">Rise from local courses to legendary status. Create your golfer and compete across 4 tour tiers!</p>
+        <div class="career-slots" id="career-slots">
+          <!-- Career save slots will be populated here -->
+        </div>
+      </div>
+      <div class="career-entry-buttons">
+        <button class="career-btn primary" id="new-career-btn">New Career</button>
+        <button class="career-btn secondary" id="career-back-btn">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Creator -->
+  <div id="character-creator-overlay" class="hidden">
+    <div class="character-creator-modal">
+      <div class="creator-header">
+        <h2>Create Your Golfer</h2>
+      </div>
+      <div class="creator-content">
+        <div class="creator-preview">
+          <canvas id="character-preview-canvas" width="200" height="280"></canvas>
+        </div>
+        <div class="creator-options">
+          <div class="creator-section">
+            <label>Name</label>
+            <input type="text" id="career-name-input" placeholder="Enter name" maxlength="12">
+          </div>
+          <div class="creator-section">
+            <label>Gender</label>
+            <div class="option-buttons" id="gender-options">
+              <button class="option-btn selected" data-value="boy">Boy</button>
+              <button class="option-btn" data-value="girl">Girl</button>
+            </div>
+          </div>
+          <div class="creator-section">
+            <label>Skin Tone</label>
+            <div class="color-options" id="skin-options"></div>
+          </div>
+          <div class="creator-section">
+            <label>Hairstyle</label>
+            <div class="style-options" id="hair-style-options"></div>
+          </div>
+          <div class="creator-section">
+            <label>Hair Color</label>
+            <div class="color-options" id="hair-color-options"></div>
+          </div>
+          <div class="creator-section">
+            <label>Shirt Color</label>
+            <div class="color-options" id="shirt-options"></div>
+          </div>
+          <div class="creator-section">
+            <label>Pants Color</label>
+            <div class="color-options" id="pants-options"></div>
+          </div>
+        </div>
+      </div>
+      <div class="creator-buttons">
+        <button class="career-btn primary" id="create-career-btn">Start Career</button>
+        <button class="career-btn secondary" id="creator-back-btn">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Career Hub -->
+  <div id="career-hub-overlay" class="hidden">
+    <div class="career-hub-modal">
+      <div class="hub-header">
+        <div class="hub-player-info">
+          <canvas id="hub-avatar-canvas" width="70" height="90"></canvas>
+          <div class="hub-player-details">
+            <span class="hub-player-name" id="hub-player-name">Player</span>
+            <span class="hub-tour-name" id="hub-tour-name">Local Tour</span>
+            <div class="hub-ranking-badge">
+              <span class="ranking-icon">🏅</span>
+              <span id="hub-tour-ranking">#1</span>
+            </div>
+          </div>
+        </div>
+        <div class="hub-currencies">
+          <div class="currency-display">
+            <span class="currency-icon">💵</span>
+            <span id="hub-golf-bucks">$0</span>
+          </div>
+          <div class="currency-display premium">
+            <span class="currency-icon">🪙</span>
+            <span id="hub-tour-coins">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-news-ticker">
+        <div class="news-ticker-content" id="hub-headline-text">📰 Many new rookies ready to make their debut on the Local Tour this season...</div>
+      </div>
+
+      <div class="hub-next-tournament">
+        <div class="next-tournament-header">
+          <span class="next-label">NEXT EVENT</span>
+          <span class="season-week" id="hub-season-week">Season 1, Week 1</span>
+        </div>
+        <div class="next-tournament-info">
+          <span class="tournament-name" id="hub-next-tournament-name">Local Championship</span>
+          <div class="tournament-details">
+            <span>📍 9 Holes</span>
+            <span id="hub-next-entry">Entry: Free</span>
+            <span id="hub-next-prize">Prize: $25</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-content">
+        <div class="hub-stats-panel">
+          <h3>Season Progress</h3>
+          <div class="hub-stat">
+            <span>Ranking Points</span>
+            <span id="hub-ranking-points">0</span>
+          </div>
+          <div class="hub-stat">
+            <span>Tournaments Won</span>
+            <span id="hub-wins">0</span>
+          </div>
+          <div class="hub-stat">
+            <span>Total Earnings</span>
+            <span id="hub-total-earnings">$0</span>
+          </div>
+          <div class="hub-progress-bar">
+            <div class="progress-fill" id="hub-promotion-progress"></div>
+            <span class="progress-label" id="hub-promotion-label">0 / 500 pts to promote</span>
+          </div>
+        </div>
+        <div class="hub-actions">
+          <button class="hub-btn primary" id="hub-play-tournament-btn">
+            <div class="primary-btn-content">
+              <span class="btn-icon">⛳</span>
+              <div class="btn-text">
+                <span class="btn-main" id="hub-play-btn-text">Play Local Tournament</span>
+                <span class="btn-sub">9 holes • Earn ranking points</span>
+              </div>
+            </div>
+          </button>
+          <button class="hub-btn" id="hub-standings-btn">
+            <span class="btn-icon">📊</span>
+            Standings
+          </button>
+          <button class="hub-btn" id="hub-sponsors-btn">
+            <span class="btn-icon">🤝</span>
+            Sponsors
+          </button>
+          <button class="hub-btn" id="hub-customize-btn">
+            <span class="btn-icon">👕</span>
+            Customize
+          </button>
+          <button class="hub-btn" id="hub-back-btn">
+            <span class="btn-icon">🚪</span>
+            Exit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Career Tournament Selection -->
+  <div id="career-tournament-overlay" class="hidden">
+    <div class="career-tournament-modal">
+      <div class="tournament-header">
+        <h2 id="career-tour-title">Local Tour</h2>
+        <span class="tournament-week" id="career-week-label">Week 1</span>
+      </div>
+      <div class="tournament-list" id="career-tournament-list">
+        <!-- Tournament options populated here -->
+      </div>
+      <button class="career-btn secondary" id="career-tournament-back-btn">Back</button>
+    </div>
+  </div>
+
+  <!-- Debut Cutscene Overlay -->
+  <div id="debut-cutscene-overlay" class="hidden">
+    <div class="debut-cutscene">
+      <div class="debut-scene" id="debut-scene-1">
+        <div class="debut-backdrop"></div>
+        <div class="debut-content">
+          <div class="debut-announcer">🎙️</div>
+          <div class="debut-text" id="debut-text-1"></div>
+        </div>
+      </div>
+      <div class="debut-scene hidden" id="debut-scene-2">
+        <div class="debut-interview">
+          <div class="interview-reporter">
+            <div class="reporter-icon">📺</div>
+            <div class="reporter-name">Tour Reporter</div>
+          </div>
+          <div class="interview-question" id="interview-question"></div>
+          <div class="interview-player">
+            <canvas id="debut-player-canvas" width="80" height="100"></canvas>
+            <div class="player-response" id="player-response"></div>
+          </div>
+        </div>
+      </div>
+      <div class="debut-scene hidden" id="debut-scene-3">
+        <div class="debut-tee-intro">
+          <div class="tee-intro-text">
+            <div class="intro-now">NOW ON THE TEE...</div>
+            <div class="intro-name" id="debut-player-name"></div>
+            <div class="intro-hometown">Making their professional debut</div>
+          </div>
+          <canvas id="debut-golfer-canvas" width="150" height="200"></canvas>
+        </div>
+      </div>
+      <div class="debut-continue">
+        <button class="career-btn primary" id="debut-continue-btn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sponsor Offers Overlay -->
+  <div id="sponsor-offer-overlay" class="hidden">
+    <div class="sponsor-offer-modal">
+      <h2>Sponsor Offer!</h2>
+      <p class="sponsor-offer-intro">A sponsor wants to work with you!</p>
+      <div class="sponsor-offer-content" id="sponsor-offer-content">
+        <!-- Sponsor offers populated here -->
+      </div>
+      <div class="sponsor-offer-buttons">
+        <button class="career-btn secondary" id="sponsor-decline-btn">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Career Story/Dialogue Overlay -->
+  <div id="career-dialogue-overlay" class="hidden">
+    <div class="dialogue-box">
+      <div class="dialogue-portrait" id="dialogue-portrait"></div>
+      <div class="dialogue-content">
+        <span class="dialogue-speaker" id="dialogue-speaker">???</span>
+        <p class="dialogue-text" id="dialogue-text">...</p>
+      </div>
+      <button class="dialogue-continue" id="dialogue-continue-btn">Continue</button>
+    </div>
+  </div>
+
+  <!-- Career Headlines Ticker -->
+  <div id="career-headlines" class="hidden">
+    <div class="headline-content" id="headline-text"></div>
+  </div>
+
+  <!-- Career Player View Canvas (for cinematic cutaway) -->
+  <canvas id="career-player-view" class="hidden"></canvas>
 
   <script>
     'use strict';
@@ -11076,6 +12317,1413 @@
       }
     };
 
+    // === CareerSystem Module ===
+    // Complete career mode with 4-tier tour structure, character customization, rival system, and sponsorships
+    const CareerSystem = {
+      activeCareer: null,
+      isInCareerTournament: false,
+      activeTournament: null,
+      careerSlots: [],
+      maxSlots: 3,
+      storageKey: 'golf-career-saves',
+
+      // Skin tone options
+      skinTones: [
+        { id: 0, name: 'Light', hex: '#FFE0BD' },
+        { id: 1, name: 'Fair', hex: '#F5D0B0' },
+        { id: 2, name: 'Medium', hex: '#D4A574' },
+        { id: 3, name: 'Tan', hex: '#C68642' },
+        { id: 4, name: 'Brown', hex: '#8D5524' },
+        { id: 5, name: 'Dark', hex: '#5C3A21' }
+      ],
+
+      // Hair colors
+      hairColors: [
+        { id: 0, name: 'Black', hex: '#1a1a1a' },
+        { id: 1, name: 'Brown', hex: '#4A3728' },
+        { id: 2, name: 'Blonde', hex: '#D4A76A' },
+        { id: 3, name: 'Red', hex: '#8B3A3A' },
+        { id: 4, name: 'Gray', hex: '#808080' },
+        { id: 5, name: 'Blue', hex: '#4169E1' }
+      ],
+
+      // Hairstyles per gender
+      hairstyles: {
+        boy: [
+          { id: 0, name: 'Short', icon: '👦' },
+          { id: 1, name: 'Spiky', icon: '🧑' },
+          { id: 2, name: 'Buzz', icon: '👨' },
+          { id: 3, name: 'Wavy', icon: '🧔' },
+          { id: 4, name: 'Mohawk', icon: '🤘' },
+          { id: 5, name: 'Slick', icon: '💇' }
+        ],
+        girl: [
+          { id: 0, name: 'Ponytail', icon: '👧' },
+          { id: 1, name: 'Short', icon: '👩' },
+          { id: 2, name: 'Long', icon: '💁' },
+          { id: 3, name: 'Bun', icon: '👱' },
+          { id: 4, name: 'Curly', icon: '🙎' },
+          { id: 5, name: 'Braids', icon: '🧕' }
+        ]
+      },
+
+      // Outfit colors
+      shirtColors: [
+        '#E53935', '#1E88E5', '#43A047', '#FDD835', '#8E24AA', '#FF7043', '#00ACC1', '#FFFFFF'
+      ],
+      pantsColors: [
+        '#1565C0', '#37474F', '#5D4037', '#212121', '#F5F5F5', '#2E7D32'
+      ],
+
+      // Tour configurations
+      tours: {
+        local: {
+          id: 'local',
+          name: 'Local Tour',
+          icon: '🏠',
+          color: '#4CAF50',
+          entryFee: 0,
+          minRankingPoints: 0,
+          promotionPoints: 500,
+          basePrize: 25,
+          aiDifficulty: 'easy',
+          tournamentCount: 8
+        },
+        amateur: {
+          id: 'amateur',
+          name: 'Amateur Tour',
+          icon: '🎯',
+          color: '#2196F3',
+          entryFee: 5,
+          minRankingPoints: 500,
+          promotionPoints: 2000,
+          basePrize: 50,
+          aiDifficulty: 'medium',
+          tournamentCount: 10
+        },
+        pro: {
+          id: 'pro',
+          name: 'Pro Tour',
+          icon: '🏆',
+          color: '#9C27B0',
+          entryFee: 15,
+          minRankingPoints: 2000,
+          promotionPoints: 5000,
+          basePrize: 100,
+          aiDifficulty: 'hard',
+          tournamentCount: 10
+        },
+        legend: {
+          id: 'legend',
+          name: 'Legend Tour',
+          icon: '👑',
+          color: '#FF9800',
+          entryFee: 50,
+          minRankingPoints: 5000,
+          promotionPoints: null, // Final tier
+          basePrize: 250,
+          aiDifficulty: 'expert',
+          tournamentCount: 12
+        }
+      },
+
+      // Rival configuration
+      rival: {
+        name: 'Ace McStroke',
+        portrait: '😎',
+        phrases: {
+          intro: [
+            "Well, well... fresh meat on the tour.",
+            "Hope you brought your A-game, rookie.",
+            "Another one trying to take my crown? How cute."
+          ],
+          win: [
+            "Better luck next time, kid.",
+            "That's why they call me Ace!",
+            "Come back when you've practiced more."
+          ],
+          lose: [
+            "Lucky shot... it won't happen again.",
+            "Enjoy it while it lasts.",
+            "I was going easy on you."
+          ]
+        }
+      },
+
+      // Equipment sponsors
+      equipmentSponsors: {
+        swing_dynamics: {
+          id: 'swing_dynamics',
+          name: 'Swing Dynamics',
+          icon: '🏌️',
+          type: 'equipment',
+          minTour: 'local',
+          tiers: [
+            { level: 1, xpRequired: 0, powerBonus: 0.02, accuracyBonus: 0.02, reward: null },
+            { level: 2, xpRequired: 50, powerBonus: 0.04, accuracyBonus: 0.04, reward: 'Driver +5%' },
+            { level: 3, xpRequired: 150, powerBonus: 0.06, accuracyBonus: 0.06, reward: 'All Clubs +3%' },
+            { level: 4, xpRequired: 300, powerBonus: 0.08, accuracyBonus: 0.08, reward: 'Irons +8%' },
+            { level: 5, xpRequired: 500, powerBonus: 0.10, accuracyBonus: 0.10, reward: 'Full Set +10%' }
+          ]
+        },
+        fairway_forge: {
+          id: 'fairway_forge',
+          name: 'Fairway Forge',
+          icon: '🔧',
+          type: 'equipment',
+          minTour: 'amateur',
+          tiers: [
+            { level: 1, xpRequired: 0, powerBonus: 0.03, accuracyBonus: 0.02, reward: null },
+            { level: 2, xpRequired: 75, powerBonus: 0.05, accuracyBonus: 0.04, reward: 'Woods +6%' },
+            { level: 3, xpRequired: 200, powerBonus: 0.07, accuracyBonus: 0.06, reward: 'All Clubs +5%' },
+            { level: 4, xpRequired: 400, powerBonus: 0.09, accuracyBonus: 0.08, reward: 'Wedges +10%' },
+            { level: 5, xpRequired: 650, powerBonus: 0.12, accuracyBonus: 0.10, reward: 'Full Set +12%' }
+          ]
+        },
+        titan_golf: {
+          id: 'titan_golf',
+          name: 'Titan Golf',
+          icon: '⚡',
+          type: 'equipment',
+          minTour: 'pro',
+          tiers: [
+            { level: 1, xpRequired: 0, powerBonus: 0.04, accuracyBonus: 0.03, reward: null },
+            { level: 2, xpRequired: 100, powerBonus: 0.07, accuracyBonus: 0.05, reward: 'Driver +10%' },
+            { level: 3, xpRequired: 250, powerBonus: 0.10, accuracyBonus: 0.07, reward: 'All Clubs +7%' },
+            { level: 4, xpRequired: 500, powerBonus: 0.13, accuracyBonus: 0.09, reward: 'Power +15%' },
+            { level: 5, xpRequired: 800, powerBonus: 0.15, accuracyBonus: 0.12, reward: 'Full Set +15%' }
+          ]
+        },
+        precision_pro: {
+          id: 'precision_pro',
+          name: 'Precision Pro',
+          icon: '🎯',
+          type: 'equipment',
+          minTour: 'legend',
+          tiers: [
+            { level: 1, xpRequired: 0, powerBonus: 0.05, accuracyBonus: 0.05, reward: null },
+            { level: 2, xpRequired: 150, powerBonus: 0.08, accuracyBonus: 0.08, reward: 'All Clubs +10%' },
+            { level: 3, xpRequired: 350, powerBonus: 0.11, accuracyBonus: 0.11, reward: 'Accuracy +15%' },
+            { level: 4, xpRequired: 600, powerBonus: 0.14, accuracyBonus: 0.14, reward: 'All Stats +12%' },
+            { level: 5, xpRequired: 1000, powerBonus: 0.18, accuracyBonus: 0.18, reward: 'Elite Set +18%' }
+          ]
+        }
+      },
+
+      // Apparel sponsors
+      apparelSponsors: {
+        golf_basics: {
+          id: 'golf_basics',
+          name: 'Golf Basics',
+          icon: '👕',
+          type: 'apparel',
+          minTour: 'local',
+          tiers: [
+            { level: 1, xpRequired: 0, reward: null },
+            { level: 2, xpRequired: 50, reward: { type: 'shirt', color: '#4CAF50', name: 'Green Polo' } },
+            { level: 3, xpRequired: 150, reward: { type: 'pants', color: '#795548', name: 'Brown Khakis' } },
+            { level: 4, xpRequired: 300, reward: { type: 'accessory', id: 'visor', name: 'Classic Visor' } },
+            { level: 5, xpRequired: 500, reward: { type: 'shirt', color: '#FFD700', name: 'Gold Polo' } }
+          ]
+        },
+        ace_apparel: {
+          id: 'ace_apparel',
+          name: 'Ace Apparel',
+          icon: '🎽',
+          type: 'apparel',
+          minTour: 'amateur',
+          tiers: [
+            { level: 1, xpRequired: 0, reward: null },
+            { level: 2, xpRequired: 75, reward: { type: 'shirt', color: '#2196F3', name: 'Sky Blue Polo' } },
+            { level: 3, xpRequired: 200, reward: { type: 'accessory', id: 'sunglasses', name: 'Sport Shades' } },
+            { level: 4, xpRequired: 400, reward: { type: 'pants', color: '#263238', name: 'Charcoal Slacks' } },
+            { level: 5, xpRequired: 650, reward: { type: 'shirt', color: '#E91E63', name: 'Pro Pink Polo' } }
+          ]
+        },
+        champion_wear: {
+          id: 'champion_wear',
+          name: 'Champion Wear',
+          icon: '🏅',
+          type: 'apparel',
+          minTour: 'pro',
+          tiers: [
+            { level: 1, xpRequired: 0, reward: null },
+            { level: 2, xpRequired: 100, reward: { type: 'shirt', color: '#9C27B0', name: 'Purple Pro' } },
+            { level: 3, xpRequired: 250, reward: { type: 'accessory', id: 'cap', name: 'Champion Cap' } },
+            { level: 4, xpRequired: 500, reward: { type: 'pants', color: '#1A237E', name: 'Navy Elite' } },
+            { level: 5, xpRequired: 800, reward: { type: 'accessory', id: 'glove', name: 'Pro Glove' } }
+          ]
+        },
+        legend_style: {
+          id: 'legend_style',
+          name: 'Legend Style',
+          icon: '👑',
+          type: 'apparel',
+          minTour: 'legend',
+          tiers: [
+            { level: 1, xpRequired: 0, reward: null },
+            { level: 2, xpRequired: 150, reward: { type: 'shirt', color: '#FF9800', name: 'Legend Orange' } },
+            { level: 3, xpRequired: 350, reward: { type: 'accessory', id: 'goldvisor', name: 'Gold Visor' } },
+            { level: 4, xpRequired: 600, reward: { type: 'pants', color: '#212121', name: 'Black Elite' } },
+            { level: 5, xpRequired: 1000, reward: { type: 'accessory', id: 'crown', name: 'Legend Crown' } }
+          ]
+        }
+      },
+
+      init() {
+        this.loadCareerSlots();
+        this.setupEventListeners();
+      },
+
+      loadCareerSlots() {
+        try {
+          const saved = localStorage.getItem(this.storageKey);
+          this.careerSlots = saved ? JSON.parse(saved) : [];
+        } catch (e) {
+          console.error('Failed to load career slots:', e);
+          this.careerSlots = [];
+        }
+      },
+
+      saveCareerSlots() {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.careerSlots));
+        } catch (e) {
+          console.error('Failed to save career slots:', e);
+        }
+      },
+
+      saveActiveCareer() {
+        if (!this.activeCareer) return;
+        this.activeCareer.lastPlayedAt = Date.now();
+        const index = this.careerSlots.findIndex(s => s.careerSlotId === this.activeCareer.careerSlotId);
+        if (index >= 0) {
+          this.careerSlots[index] = this.activeCareer;
+        } else {
+          this.careerSlots.push(this.activeCareer);
+        }
+        this.saveCareerSlots();
+      },
+
+      createNewCareer(name, character) {
+        const career = {
+          careerSlotId: Date.now().toString(),
+          playerName: name || 'Golfer',
+          createdAt: Date.now(),
+          lastPlayedAt: Date.now(),
+          character: {
+            gender: character.gender || 'boy',
+            skinTone: character.skinTone || 2,
+            hairstyle: character.hairstyle || 0,
+            hairColor: character.hairColor || '#4A3728',
+            outfitShirt: character.outfitShirt || '#E53935',
+            outfitPants: character.outfitPants || '#1565C0',
+            accessories: []
+          },
+          currentTour: 'local',
+          currentSeason: 1,
+          seasonWeek: 1,
+          rankingPoints: 0,
+          tourRanking: 100,
+          careerGolfBucks: 15,
+          tourCoins: 0,
+          rival: {
+            name: 'Ace McStroke',
+            encounterCount: 0,
+            winsAgainst: 0,
+            lossesAgainst: 0,
+            storyPhase: 0
+          },
+          equipmentSponsor: null,
+          apparelSponsor: null,
+          unlockedShirtColors: [],
+          unlockedPantsColors: [],
+          unlockedAccessories: ['visor'],
+          equipmentBonuses: { power: 0, accuracy: 0 },
+          stats: {
+            roundsPlayed: 0,
+            tournamentsWon: 0,
+            totalEarnings: 0,
+            bestScore: null,
+            holesInOne: 0,
+            eagles: 0,
+            birdies: 0
+          },
+          tourHistory: [],
+          milestones: {},
+          storyFlags: {}
+        };
+
+        this.activeCareer = career;
+        this.careerSlots.push(career);
+        this.saveCareerSlots();
+        return career;
+      },
+
+      setupEventListeners() {
+        // Career Mode button
+        document.getElementById('career-play-btn')?.addEventListener('click', () => {
+          document.getElementById('game-mode-overlay').classList.add('hidden');
+          this.showCareerEntry();
+        });
+
+        // Career entry buttons
+        document.getElementById('new-career-btn')?.addEventListener('click', () => {
+          document.getElementById('career-entry-overlay').classList.add('hidden');
+          this.showCharacterCreator();
+        });
+
+        document.getElementById('career-back-btn')?.addEventListener('click', () => {
+          document.getElementById('career-entry-overlay').classList.add('hidden');
+          document.getElementById('game-mode-overlay').classList.remove('hidden');
+        });
+
+        // Character creator buttons
+        document.getElementById('create-career-btn')?.addEventListener('click', () => {
+          this.createCareerFromCreator();
+        });
+
+        document.getElementById('creator-back-btn')?.addEventListener('click', () => {
+          document.getElementById('character-creator-overlay').classList.add('hidden');
+          this.showCareerEntry();
+        });
+
+        // Hub buttons
+        document.getElementById('hub-play-tournament-btn')?.addEventListener('click', () => {
+          this.showTournamentSelection();
+        });
+
+        document.getElementById('hub-back-btn')?.addEventListener('click', () => {
+          this.saveActiveCareer();
+          document.getElementById('career-hub-overlay').classList.add('hidden');
+          document.getElementById('game-mode-overlay').classList.remove('hidden');
+        });
+
+        document.getElementById('career-tournament-back-btn')?.addEventListener('click', () => {
+          document.getElementById('career-tournament-overlay').classList.add('hidden');
+          this.showCareerHub();
+        });
+
+        // Dialogue continue
+        document.getElementById('dialogue-continue-btn')?.addEventListener('click', () => {
+          this.continueDialogue();
+        });
+
+        // Sponsor decline
+        document.getElementById('sponsor-decline-btn')?.addEventListener('click', () => {
+          document.getElementById('sponsor-offer-overlay').classList.add('hidden');
+        });
+
+        // Gender options
+        document.getElementById('gender-options')?.addEventListener('click', (e) => {
+          const btn = e.target.closest('.option-btn');
+          if (btn) {
+            document.querySelectorAll('#gender-options .option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            this.updateCharacterPreview();
+          }
+        });
+      },
+
+      showCareerEntry() {
+        document.getElementById('career-entry-overlay').classList.remove('hidden');
+        this.populateCareerSlots();
+      },
+
+      populateCareerSlots() {
+        const container = document.getElementById('career-slots');
+        container.innerHTML = '';
+
+        this.careerSlots.forEach(career => {
+          const slot = document.createElement('div');
+          slot.className = 'career-slot';
+          slot.innerHTML = `
+            <canvas class="career-slot-avatar" width="50" height="65"></canvas>
+            <div class="career-slot-info">
+              <div class="career-slot-name">${career.playerName}</div>
+              <div class="career-slot-details">${this.tours[career.currentTour].name} • $${career.careerGolfBucks}</div>
+            </div>
+          `;
+          slot.addEventListener('click', () => {
+            this.activeCareer = career;
+            document.getElementById('career-entry-overlay').classList.add('hidden');
+            this.showCareerHub();
+          });
+          container.appendChild(slot);
+
+          // Draw avatar on the slot canvas
+          const canvas = slot.querySelector('canvas');
+          this.drawCharacterAvatar(canvas, career.character);
+        });
+
+        if (this.careerSlots.length < this.maxSlots) {
+          const emptySlot = document.createElement('div');
+          emptySlot.className = 'career-slot empty';
+          emptySlot.textContent = '+ New Career';
+          emptySlot.addEventListener('click', () => {
+            document.getElementById('career-entry-overlay').classList.add('hidden');
+            this.showCharacterCreator();
+          });
+          container.appendChild(emptySlot);
+        }
+      },
+
+      showCharacterCreator() {
+        document.getElementById('character-creator-overlay').classList.remove('hidden');
+        this.populateCreatorOptions();
+        this.updateCharacterPreview();
+      },
+
+      populateCreatorOptions() {
+        // Skin tones
+        const skinContainer = document.getElementById('skin-options');
+        skinContainer.innerHTML = '';
+        this.skinTones.forEach((tone, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'color-option' + (i === 2 ? ' selected' : '');
+          opt.style.backgroundColor = tone.hex;
+          opt.dataset.value = i;
+          opt.addEventListener('click', () => {
+            skinContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          skinContainer.appendChild(opt);
+        });
+
+        // Hair colors
+        const hairColorContainer = document.getElementById('hair-color-options');
+        hairColorContainer.innerHTML = '';
+        this.hairColors.forEach((color, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'color-option' + (i === 1 ? ' selected' : '');
+          opt.style.backgroundColor = color.hex;
+          opt.dataset.value = color.hex;
+          opt.addEventListener('click', () => {
+            hairColorContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          hairColorContainer.appendChild(opt);
+        });
+
+        // Hairstyles
+        this.updateHairstyleOptions();
+
+        // Shirt colors
+        const shirtContainer = document.getElementById('shirt-options');
+        shirtContainer.innerHTML = '';
+        this.shirtColors.forEach((color, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'color-option' + (i === 0 ? ' selected' : '');
+          opt.style.backgroundColor = color;
+          opt.dataset.value = color;
+          opt.addEventListener('click', () => {
+            shirtContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          shirtContainer.appendChild(opt);
+        });
+
+        // Pants colors
+        const pantsContainer = document.getElementById('pants-options');
+        pantsContainer.innerHTML = '';
+        this.pantsColors.forEach((color, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'color-option' + (i === 0 ? ' selected' : '');
+          opt.style.backgroundColor = color;
+          opt.dataset.value = color;
+          opt.addEventListener('click', () => {
+            pantsContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          pantsContainer.appendChild(opt);
+        });
+      },
+
+      updateHairstyleOptions() {
+        const gender = document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy';
+        const container = document.getElementById('hair-style-options');
+        container.innerHTML = '';
+        this.hairstyles[gender].forEach((style, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'style-option' + (i === 0 ? ' selected' : '');
+          opt.textContent = style.icon;
+          opt.dataset.value = i;
+          opt.addEventListener('click', () => {
+            container.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          container.appendChild(opt);
+        });
+      },
+
+      getCreatorSelections() {
+        return {
+          gender: document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy',
+          skinTone: parseInt(document.querySelector('#skin-options .color-option.selected')?.dataset.value || '2'),
+          hairstyle: parseInt(document.querySelector('#hair-style-options .style-option.selected')?.dataset.value || '0'),
+          hairColor: document.querySelector('#hair-color-options .color-option.selected')?.dataset.value || '#4A3728',
+          outfitShirt: document.querySelector('#shirt-options .color-option.selected')?.dataset.value || '#E53935',
+          outfitPants: document.querySelector('#pants-options .color-option.selected')?.dataset.value || '#1565C0'
+        };
+      },
+
+      updateCharacterPreview() {
+        const canvas = document.getElementById('character-preview-canvas');
+        if (!canvas) return;
+        const character = this.getCreatorSelections();
+        this.drawCharacter(canvas, character, 'idle');
+      },
+
+      drawCharacterAvatar(canvas, character, scale = 0.6) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height * 0.7;
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.scale(scale, scale);
+
+        const skinTone = this.skinTones[character.skinTone]?.hex || '#D4A574';
+
+        // Body
+        ctx.fillStyle = character.outfitShirt || '#E53935';
+        ctx.beginPath();
+        ctx.ellipse(0, -20, 18, 25, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(0, -55, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = character.hairColor || '#4A3728';
+        ctx.beginPath();
+        ctx.arc(0, -58, 14, Math.PI + 0.3, -0.3);
+        ctx.fill();
+
+        // Eyes
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(-5, -55, 2, 0, Math.PI * 2);
+        ctx.arc(5, -55, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      },
+
+      drawCharacter(canvas, character, pose = 'idle') {
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const centerX = width / 2;
+        const centerY = height * 0.75;
+        const scale = 1.3;
+
+        const skinTone = this.skinTones[character.skinTone]?.hex || '#D4A574';
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY + 5, 25 * scale, 8 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+
+        // Legs
+        ctx.fillStyle = character.outfitPants || '#1565C0';
+        ctx.beginPath();
+        ctx.ellipse(-6 * scale, 0, 8 * scale, 22 * scale, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(9 * scale, 0, 8 * scale, 22 * scale, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Torso
+        ctx.fillStyle = character.outfitShirt || '#E53935';
+        ctx.beginPath();
+        ctx.ellipse(2 * scale, -35 * scale, 18 * scale, 24 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arms
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.ellipse(-15 * scale, -30 * scale, 6 * scale, 18 * scale, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(18 * scale, -30 * scale, 6 * scale, 18 * scale, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(0, -65 * scale, 14 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = character.hairColor || '#4A3728';
+        const hairstyle = character.hairstyle || 0;
+        const gender = character.gender || 'boy';
+
+        ctx.beginPath();
+        if (gender === 'boy') {
+          switch (hairstyle) {
+            case 1: // Spiky
+              ctx.moveTo(-12 * scale, -68 * scale);
+              ctx.lineTo(-8 * scale, -82 * scale);
+              ctx.lineTo(-2 * scale, -72 * scale);
+              ctx.lineTo(4 * scale, -84 * scale);
+              ctx.lineTo(10 * scale, -73 * scale);
+              ctx.lineTo(14 * scale, -80 * scale);
+              ctx.lineTo(15 * scale, -66 * scale);
+              ctx.arc(0, -65 * scale, 14 * scale, -0.2, Math.PI + 0.2, true);
+              break;
+            default:
+              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
+          }
+        } else {
+          switch (hairstyle) {
+            case 0: // Ponytail
+              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(0, -50 * scale, 4 * scale, 18 * scale, 0.1, 0, Math.PI * 2);
+              break;
+            case 2: // Long
+              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(-12 * scale, -50 * scale, 5 * scale, 20 * scale, 0.15, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(12 * scale, -50 * scale, 5 * scale, 20 * scale, -0.15, 0, Math.PI * 2);
+              break;
+            default:
+              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
+          }
+        }
+        ctx.fill();
+
+        // Eyes
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(-5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
+        ctx.arc(5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Smile
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(0, -62 * scale, 5 * scale, 0.2, Math.PI - 0.2);
+        ctx.stroke();
+
+        ctx.restore();
+      },
+
+      createCareerFromCreator() {
+        const name = document.getElementById('career-name-input').value.trim() || 'Golfer';
+        const character = this.getCreatorSelections();
+
+        this.createNewCareer(name, character);
+        document.getElementById('character-creator-overlay').classList.add('hidden');
+        this.showCareerHub();
+      },
+
+      showCareerHub() {
+        if (!this.activeCareer) return;
+        document.getElementById('career-hub-overlay').classList.remove('hidden');
+        this.updateHubDisplay();
+      },
+
+      updateHubDisplay() {
+        const career = this.activeCareer;
+        if (!career) return;
+
+        const tour = this.tours[career.currentTour];
+
+        document.getElementById('hub-player-name').textContent = career.playerName;
+        document.getElementById('hub-tour-name').textContent = tour.name;
+        document.getElementById('hub-golf-bucks').textContent = '$' + career.careerGolfBucks;
+        document.getElementById('hub-tour-coins').textContent = career.tourCoins;
+        document.getElementById('hub-ranking-points').textContent = career.rankingPoints;
+        document.getElementById('hub-tour-ranking').textContent = '#' + career.tourRanking;
+        document.getElementById('hub-wins').textContent = career.stats.tournamentsWon;
+        document.getElementById('hub-total-earnings').textContent = '$' + (career.stats.totalEarnings || 0);
+
+        // Update headline with career news
+        const headline = this.generateHeadline(career);
+        document.getElementById('hub-headline-text').textContent = headline;
+
+        // Update next tournament preview
+        const tournamentNum = ((career.seasonWeek - 1) % tour.tournamentCount) + 1;
+        document.getElementById('hub-season-week').textContent = `Tournament ${tournamentNum} of ${tour.tournamentCount} • Season ${career.currentSeason}`;
+        const tournamentNames = ['Local Open', 'Hometown Classic', 'City Championship', 'Regional Cup', 'County Invitational', 'State Qualifier', 'Amateur Challenge', 'Rising Stars Open'];
+        const nextTournament = tournamentNames[(career.seasonWeek - 1) % tournamentNames.length];
+        document.getElementById('hub-next-tournament-name').textContent = nextTournament;
+        document.getElementById('hub-next-entry').textContent = tour.entryFee > 0 ? `Entry: $${tour.entryFee}` : 'Free Entry';
+        document.getElementById('hub-next-prize').textContent = `Prize: $${tour.basePrize}`;
+
+        // Update play button text based on tour
+        document.getElementById('hub-play-btn-text').textContent = `Play ${tour.name} Tournament`;
+
+        // Update progress bar
+        const progressPercent = tour.promotionPoints ?
+          Math.min(100, (career.rankingPoints / tour.promotionPoints) * 100) : 100;
+        document.getElementById('hub-promotion-progress').style.width = progressPercent + '%';
+        document.getElementById('hub-promotion-label').textContent = tour.promotionPoints ?
+          `${career.rankingPoints} / ${tour.promotionPoints} pts to promote` : 'Legend Status Achieved!';
+
+        // Draw avatar
+        const avatarCanvas = document.getElementById('hub-avatar-canvas');
+        this.drawCharacterAvatar(avatarCanvas, career.character, 0.8);
+      },
+
+      generateHeadline(career) {
+        const tour = this.tours[career.currentTour];
+        const headlines = [];
+
+        // General tour news (always available)
+        headlines.push(
+          `📰 Many new rookies ready to make their debut on the ${tour.name} this season...`,
+          `📰 High-potential players flood ${tour.name} tryouts as season kicks off`,
+          `📰 Scouts predict exciting season ahead for ${tour.name} competitors`,
+          `📰 ${tour.name} officials report record number of entrants this year`,
+          `📰 "This is the most talented rookie class in years" - ${tour.name} commissioner`,
+          `📰 Former champions return to mentor young talent on the ${tour.name}`,
+          `📰 Weather forecast looks favorable for upcoming ${tour.name} events`
+        );
+
+        // Player-specific news occasionally
+        if (career.stats.tournamentsWon > 0) {
+          headlines.push(
+            `📰 ${career.playerName} among rising stars making waves on ${tour.name}`,
+            `📰 ${career.playerName}'s ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} catching attention of sponsors`
+          );
+        }
+
+        // Rival news
+        if (career.rival && career.rival.encounterCount > 0) {
+          headlines.push(
+            `📰 ${this.rival.name} looking strong heading into tournament play`,
+            `📰 "${tour.name} is mine" declares ${this.rival.name} at press conference`
+          );
+        }
+
+        return headlines[Math.floor(Math.random() * headlines.length)];
+      },
+
+      showTournamentSelection() {
+        // Auto-select tournament based on current week
+        const career = this.activeCareer;
+        const tour = this.tours[career.currentTour];
+
+        const tournamentNames = [
+          'Local Open', 'Hometown Classic', 'City Championship',
+          'Regional Cup', 'County Invitational', 'State Qualifier',
+          'Amateur Challenge', 'Rising Stars Open'
+        ];
+
+        const tournamentNum = ((career.seasonWeek - 1) % tour.tournamentCount) + 1;
+        const name = tournamentNames[(career.seasonWeek - 1) % tournamentNames.length];
+        const seed = career.currentSeason * 1000 + career.seasonWeek;
+        const prize = tour.basePrize;
+
+        // Show confirmation overlay
+        document.getElementById('career-hub-overlay').classList.add('hidden');
+        document.getElementById('career-tournament-overlay').classList.remove('hidden');
+
+        document.getElementById('career-tour-title').textContent = tour.name;
+        document.getElementById('career-week-label').textContent = `Tournament ${tournamentNum} of ${tour.tournamentCount}`;
+
+        const container = document.getElementById('career-tournament-list');
+        container.innerHTML = `
+          <div class="tournament-confirm">
+            <div class="tournament-confirm-name">${name}</div>
+            <div class="tournament-confirm-details">
+              <div class="confirm-detail"><span>📍</span> 9 Holes</div>
+              <div class="confirm-detail"><span>💵</span> ${tour.entryFee > 0 ? 'Entry: $' + tour.entryFee : 'Free Entry'}</div>
+              <div class="confirm-detail"><span>🏆</span> Prize: $${prize}</div>
+            </div>
+            <button class="career-btn primary tournament-start-btn" id="start-tournament-btn">
+              Tee Off!
+            </button>
+          </div>
+        `;
+
+        document.getElementById('start-tournament-btn').addEventListener('click', () => {
+          this.startTournament(name, seed, tour.entryFee, prize);
+        });
+      },
+
+      startTournament(name, seed, entryFee, prize) {
+        if (this.activeCareer.careerGolfBucks < entryFee) {
+          alert('Not enough Golf Bucks!');
+          return;
+        }
+
+        this.activeCareer.careerGolfBucks -= entryFee;
+        this.saveActiveCareer();
+
+        this.activeTournament = {
+          name,
+          seed,
+          entryFee,
+          prize,
+          tour: this.activeCareer.currentTour
+        };
+
+        document.getElementById('career-tournament-overlay').classList.add('hidden');
+
+        // Check for debut cutscene (first tournament ever)
+        if (this.activeCareer.stats.roundsPlayed === 0) {
+          this.showDebutCutscene();
+        }
+        // Check for rival encounter
+        else if (this.shouldShowRival()) {
+          this.showRivalEncounter();
+        } else {
+          this.actuallyStartTournament();
+        }
+      },
+
+      debutScene: 0,
+
+      showDebutCutscene() {
+        this.debutScene = 0;
+        document.getElementById('debut-cutscene-overlay').classList.remove('hidden');
+        this.showDebutScene(0);
+
+        // Draw player avatar
+        const smallCanvas = document.getElementById('debut-player-canvas');
+        const largeCanvas = document.getElementById('debut-golfer-canvas');
+        this.drawCharacterAvatar(smallCanvas, this.activeCareer.character, 0.9);
+        this.drawCharacter(largeCanvas, this.activeCareer.character, 'idle');
+
+        // Set player name
+        document.getElementById('debut-player-name').textContent = this.activeCareer.playerName;
+
+        // Setup continue button
+        const continueBtn = document.getElementById('debut-continue-btn');
+        continueBtn.onclick = () => this.advanceDebutScene();
+      },
+
+      showDebutScene(sceneNum) {
+        // Hide all scenes
+        document.getElementById('debut-scene-1').classList.add('hidden');
+        document.getElementById('debut-scene-2').classList.add('hidden');
+        document.getElementById('debut-scene-3').classList.add('hidden');
+
+        const career = this.activeCareer;
+
+        if (sceneNum === 0) {
+          // Announcer scene
+          document.getElementById('debut-scene-1').classList.remove('hidden');
+          document.getElementById('debut-text-1').innerHTML =
+            `<div style="margin-bottom: 20px;">Welcome to the <span style="color: #A78BFA; font-weight: bold;">Local Tour!</span></div>
+             <div>Today marks a special occasion as we welcome a promising new talent to the tour...</div>`;
+        } else if (sceneNum === 1) {
+          // Interview scene
+          document.getElementById('debut-scene-2').classList.remove('hidden');
+          document.getElementById('interview-question').textContent =
+            `"${career.playerName}, you're about to make your professional debut. How are you feeling heading into your first tournament?"`;
+          document.getElementById('player-response').textContent =
+            `"I've been working towards this moment my whole life. I'm ready to show everyone what I can do out there. Let's make some history!"`;
+        } else if (sceneNum === 2) {
+          // Tee intro scene
+          document.getElementById('debut-scene-3').classList.remove('hidden');
+          document.getElementById('debut-continue-btn').textContent = 'Start Tournament';
+        }
+      },
+
+      advanceDebutScene() {
+        this.debutScene++;
+        if (this.debutScene < 3) {
+          this.showDebutScene(this.debutScene);
+        } else {
+          // End cutscene, start tournament
+          document.getElementById('debut-cutscene-overlay').classList.add('hidden');
+          if (this.shouldShowRival()) {
+            this.showRivalEncounter();
+          } else {
+            this.actuallyStartTournament();
+          }
+        }
+      },
+
+      shouldShowRival() {
+        const career = this.activeCareer;
+        // Show rival every 3rd tournament or at key moments
+        return (career.stats.roundsPlayed + 1) % 3 === 0;
+      },
+
+      showRivalEncounter() {
+        const phrases = this.rival.phrases.intro;
+        const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+        document.getElementById('dialogue-portrait').textContent = this.rival.portrait;
+        document.getElementById('dialogue-speaker').textContent = this.rival.name;
+        document.getElementById('dialogue-text').textContent = phrase;
+        document.getElementById('career-dialogue-overlay').classList.remove('hidden');
+      },
+
+      continueDialogue() {
+        document.getElementById('career-dialogue-overlay').classList.add('hidden');
+        this.actuallyStartTournament();
+      },
+
+      async actuallyStartTournament() {
+        this.isInCareerTournament = true;
+        window.careerModeActive = true;
+
+        const themes = ['classic', 'desert', 'winter', 'tropical'];
+        const theme = themes[Math.floor(Math.random() * themes.length)];
+
+        if (typeof gameEngine !== 'undefined') {
+          await gameEngine.startNewRound(
+            this.activeTournament.seed,
+            this.activeCareer.playerName,
+            'white',
+            theme
+          );
+          gameEngine.start();
+
+          // Show the player cutaway renderer
+          if (typeof CareerPlayerRenderer !== 'undefined') {
+            CareerPlayerRenderer.init();
+          }
+        }
+      },
+
+      completeTournament(scoreRelativeToPar, totalStrokes) {
+        if (!this.activeTournament || !this.isInCareerTournament) return null;
+
+        const career = this.activeCareer;
+        const tour = this.tours[career.currentTour];
+
+        // Calculate position (simplified - based on score)
+        let position = 1;
+        if (scoreRelativeToPar > -5) position = Math.min(25, 1 + Math.floor((scoreRelativeToPar + 5) * 2));
+
+        // Calculate earnings
+        let earnings = 0;
+        const prizePool = this.activeTournament.prize;
+        if (position === 1) earnings = prizePool;
+        else if (position === 2) earnings = Math.floor(prizePool * 0.6);
+        else if (position === 3) earnings = Math.floor(prizePool * 0.4);
+        else if (position <= 5) earnings = Math.floor(prizePool * 0.2);
+        else if (position <= 10) earnings = Math.floor(prizePool * 0.1);
+
+        // Calculate ranking points
+        let points = 0;
+        if (position === 1) points = 100;
+        else if (position === 2) points = 70;
+        else if (position === 3) points = 50;
+        else if (position <= 5) points = 30;
+        else if (position <= 10) points = 15;
+        else if (position <= 15) points = 5;
+
+        // Update career
+        career.careerGolfBucks += earnings;
+        career.rankingPoints += points;
+        career.stats.roundsPlayed++;
+        career.stats.totalEarnings += earnings;
+        if (position === 1) {
+          career.stats.tournamentsWon++;
+          career.tourCoins += 10; // Bonus tour coins for winning
+        }
+
+        // Update best score
+        if (!career.stats.bestScore || scoreRelativeToPar < career.stats.bestScore) {
+          career.stats.bestScore = scoreRelativeToPar;
+        }
+
+        // Check for promotion
+        if (tour.promotionPoints && career.rankingPoints >= tour.promotionPoints) {
+          this.promoteTour();
+        }
+
+        // Advance week
+        career.seasonWeek++;
+        if (career.seasonWeek > tour.tournamentCount) {
+          career.seasonWeek = 1;
+          career.currentSeason++;
+        }
+
+        this.saveActiveCareer();
+        this.isInCareerTournament = false;
+        window.careerModeActive = false;
+        this.activeTournament = null;
+
+        // Check for sponsor offers
+        if (position <= 5) {
+          setTimeout(() => this.showSponsorOffers(position), 1000);
+        }
+
+        return { position, earnings, points };
+      },
+
+      promoteTour() {
+        const tourOrder = ['local', 'amateur', 'pro', 'legend'];
+        const currentIndex = tourOrder.indexOf(this.activeCareer.currentTour);
+        if (currentIndex < tourOrder.length - 1) {
+          this.activeCareer.currentTour = tourOrder[currentIndex + 1];
+          this.activeCareer.tourCoins += 50; // Bonus for promotion
+          this.activeCareer.tourHistory.push({
+            tour: tourOrder[currentIndex],
+            season: this.activeCareer.currentSeason,
+            finalRanking: this.activeCareer.tourRanking
+          });
+        }
+      },
+
+      getEquipmentPowerBonus() {
+        if (!this.activeCareer?.equipmentSponsor) return 0;
+        const sponsor = this.equipmentSponsors[this.activeCareer.equipmentSponsor.id];
+        if (!sponsor) return 0;
+        const tier = sponsor.tiers.find(t => t.level === this.activeCareer.equipmentSponsor.level);
+        return tier?.powerBonus || 0;
+      },
+
+      getEquipmentAccuracyBonus() {
+        if (!this.activeCareer?.equipmentSponsor) return 0;
+        const sponsor = this.equipmentSponsors[this.activeCareer.equipmentSponsor.id];
+        if (!sponsor) return 0;
+        const tier = sponsor.tiers.find(t => t.level === this.activeCareer.equipmentSponsor.level);
+        return tier?.accuracyBonus || 0;
+      },
+
+      showSponsorOffers(position) {
+        const career = this.activeCareer;
+        const container = document.getElementById('sponsor-offer-content');
+        container.innerHTML = '';
+
+        // Get available sponsors for current tour
+        const tourOrder = ['local', 'amateur', 'pro', 'legend'];
+        const tourIndex = tourOrder.indexOf(career.currentTour);
+
+        const availableEquip = Object.values(this.equipmentSponsors).filter(s => {
+          const minIndex = tourOrder.indexOf(s.minTour);
+          return minIndex <= tourIndex && (!career.equipmentSponsor || career.equipmentSponsor.id !== s.id);
+        });
+
+        const availableApparel = Object.values(this.apparelSponsors).filter(s => {
+          const minIndex = tourOrder.indexOf(s.minTour);
+          return minIndex <= tourIndex && (!career.apparelSponsor || career.apparelSponsor.id !== s.id);
+        });
+
+        if (availableEquip.length === 0 && availableApparel.length === 0) return;
+
+        // Pick one random sponsor to offer
+        const allAvailable = [...availableEquip, ...availableApparel];
+        const offer = allAvailable[Math.floor(Math.random() * allAvailable.length)];
+
+        const card = document.createElement('div');
+        card.className = 'sponsor-card';
+        card.innerHTML = `
+          <div class="sponsor-card-header">
+            <span class="sponsor-icon">${offer.icon}</span>
+            <div>
+              <div class="sponsor-name">${offer.name}</div>
+              <div class="sponsor-type">${offer.type}</div>
+            </div>
+          </div>
+          <div class="sponsor-benefits">
+            ${offer.type === 'equipment' ?
+              `+${Math.round(offer.tiers[0].powerBonus * 100)}% Power, +${Math.round(offer.tiers[0].accuracyBonus * 100)}% Accuracy` :
+              'Unlock exclusive apparel rewards'}
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          this.acceptSponsor(offer);
+          document.getElementById('sponsor-offer-overlay').classList.add('hidden');
+        });
+        container.appendChild(card);
+
+        document.getElementById('sponsor-offer-overlay').classList.remove('hidden');
+      },
+
+      acceptSponsor(sponsor) {
+        if (sponsor.type === 'equipment') {
+          this.activeCareer.equipmentSponsor = {
+            id: sponsor.id,
+            xp: 0,
+            level: 1,
+            tierClaimed: [1]
+          };
+        } else {
+          this.activeCareer.apparelSponsor = {
+            id: sponsor.id,
+            xp: 0,
+            level: 1,
+            tierClaimed: [1]
+          };
+        }
+        this.saveActiveCareer();
+      }
+    };
+
+    // === CareerPlayerRenderer Module ===
+    // Renders a cinematic cutaway showing the player hitting the ball
+    const CareerPlayerRenderer = {
+      canvas: null,
+      ctx: null,
+      isPlaying: false,
+      animationFrame: null,
+      startTime: 0,
+      duration: 600,
+
+      init() {
+        this.canvas = document.getElementById('career-player-view');
+        if (this.canvas) {
+          this.ctx = this.canvas.getContext('2d');
+          this.resizeCanvas();
+          window.addEventListener('resize', () => this.resizeCanvas());
+        }
+      },
+
+      resizeCanvas() {
+        if (!this.canvas) return;
+        const rect = this.canvas.parentElement?.getBoundingClientRect();
+        if (rect) {
+          this.canvas.width = rect.width;
+          this.canvas.height = rect.height;
+        }
+      },
+
+      triggerSwing() {
+        if (!CareerSystem.isInCareerTournament || !CareerSystem.activeCareer) return;
+        if (this.isPlaying) return;
+
+        this.isPlaying = true;
+        this.startTime = performance.now();
+        this.resizeCanvas();
+
+        this.canvas.classList.remove('hidden');
+        this.canvas.classList.add('visible');
+        this.animate();
+      },
+
+      animate() {
+        const elapsed = performance.now() - this.startTime;
+        const progress = Math.min(1, elapsed / this.duration);
+
+        this.render(progress);
+
+        if (progress < 1) {
+          this.animationFrame = requestAnimationFrame(() => this.animate());
+        } else {
+          this.canvas.classList.remove('visible');
+          this.canvas.classList.add('hidden');
+          this.isPlaying = false;
+        }
+      },
+
+      render(progress) {
+        if (!this.ctx || !CareerSystem.activeCareer) return;
+
+        const ctx = this.ctx;
+        const char = CareerSystem.activeCareer.character;
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const letterboxHeight = height * 0.12;
+
+        // Sky gradient
+        const skyGradient = ctx.createLinearGradient(0, letterboxHeight, 0, height - letterboxHeight);
+        skyGradient.addColorStop(0, '#87CEEB');
+        skyGradient.addColorStop(0.4, '#B0E0E6');
+        skyGradient.addColorStop(1, '#4CAF50');
+        ctx.fillStyle = skyGradient;
+        ctx.fillRect(0, letterboxHeight, width, height - letterboxHeight * 2);
+
+        // Ground
+        const groundY = height * 0.65;
+        const groundGradient = ctx.createLinearGradient(0, groundY, 0, height - letterboxHeight);
+        groundGradient.addColorStop(0, '#4CAF50');
+        groundGradient.addColorStop(0.5, '#388E3C');
+        groundGradient.addColorStop(1, '#2E7D32');
+        ctx.fillStyle = groundGradient;
+        ctx.fillRect(0, groundY, width, height - groundY - letterboxHeight);
+
+        const charX = width * 0.4;
+        const charY = height * 0.75;
+        const scale = Math.min(width, height) / 180;
+
+        // Swing animation
+        let swingAngle = 0, clubAngle = 0, bodyRotation = 0;
+
+        if (progress < 0.15) {
+          const p = progress / 0.15;
+          swingAngle = -Math.PI * 0.6 * p;
+          clubAngle = -Math.PI * 0.7 * p;
+          bodyRotation = -0.15 * p;
+        } else if (progress < 0.35) {
+          const p = (progress - 0.15) / 0.2;
+          swingAngle = -Math.PI * 0.6 + Math.PI * 0.9 * p;
+          clubAngle = -Math.PI * 0.7 + Math.PI * 1.1 * p;
+          bodyRotation = -0.15 + 0.25 * p;
+        } else if (progress < 0.5) {
+          const p = (progress - 0.35) / 0.15;
+          swingAngle = Math.PI * 0.3 + Math.PI * 0.2 * p;
+          clubAngle = Math.PI * 0.4 + Math.PI * 0.2 * p;
+          bodyRotation = 0.1 + 0.05 * p;
+        } else {
+          const p = (progress - 0.5) / 0.5;
+          swingAngle = Math.PI * 0.5 + Math.PI * 0.15 * p;
+          clubAngle = Math.PI * 0.6 + Math.PI * 0.2 * p;
+          bodyRotation = 0.15 + 0.05 * p;
+        }
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath();
+        ctx.ellipse(charX + 10, charY + 5, 40 * scale, 12 * scale, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(charX, charY);
+        ctx.rotate(bodyRotation);
+
+        const skinTone = CareerSystem.skinTones[char.skinTone]?.hex || '#D4A574';
+
+        // Legs
+        ctx.fillStyle = char.outfitPants || '#1565C0';
+        ctx.beginPath();
+        ctx.ellipse(-8 * scale, 0, 10 * scale, 30 * scale, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(12 * scale, 0, 10 * scale, 30 * scale, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Torso
+        ctx.fillStyle = char.outfitShirt || '#E53935';
+        ctx.beginPath();
+        ctx.ellipse(2 * scale, -45 * scale, 22 * scale, 30 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arms
+        ctx.save();
+        ctx.translate(5 * scale, -55 * scale);
+        ctx.rotate(swingAngle);
+
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.ellipse(0, 20 * scale, 8 * scale, 22 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(0, 38 * scale, 7 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Club
+        ctx.save();
+        ctx.translate(0, 38 * scale);
+        ctx.rotate(clubAngle - swingAngle);
+
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 4 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 55 * scale);
+        ctx.stroke();
+
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.ellipse(0, 60 * scale, 12 * scale, 5 * scale, 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+        ctx.restore();
+
+        // Head
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(0, -80 * scale, 18 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = char.hairColor || '#4A3728';
+        ctx.beginPath();
+        ctx.arc(0, -83 * scale, 17 * scale, Math.PI + 0.3, -0.3);
+        ctx.fill();
+
+        // Eye
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(10 * scale, -82 * scale, 3 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        // Impact flash
+        if (progress > 0.33 && progress < 0.45) {
+          const flashIntensity = 1 - Math.abs(progress - 0.39) / 0.06;
+          ctx.fillStyle = `rgba(255, 255, 255, ${flashIntensity * 0.4})`;
+          ctx.fillRect(0, letterboxHeight, width, height - letterboxHeight * 2);
+        }
+
+        // Ball flying
+        if (progress > 0.4) {
+          const ballProgress = (progress - 0.4) / 0.6;
+          const ballX = charX + 80 + ballProgress * width * 0.5;
+          const ballY = charY - 50 - Math.sin(ballProgress * Math.PI * 0.6) * 200;
+          const ballSize = Math.max(2, 6 - ballProgress * 4);
+
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Letterbox bars
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, letterboxHeight);
+        ctx.fillRect(0, height - letterboxHeight, width, letterboxHeight);
+
+        // Player name
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold ${14 * (scale / 5)}px -apple-system, sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText(CareerSystem.activeCareer.playerName, 20, letterboxHeight - 8);
+
+        ctx.textAlign = 'right';
+        ctx.font = `${12 * (scale / 5)}px -apple-system, sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillText('Career Mode', width - 20, letterboxHeight - 8);
+      },
+
+      update(gameState) {
+        // Cutaway handles its own visibility
+      },
+
+      hide() {
+        if (this.canvas) {
+          this.canvas.classList.remove('visible');
+          this.canvas.classList.add('hidden');
+        }
+        this.isPlaying = false;
+        if (this.animationFrame) {
+          cancelAnimationFrame(this.animationFrame);
+        }
+      }
+    };
+
     // === MiniGameManager Module ===
     const MiniGameManager = {
       currentGame: null,
@@ -13032,6 +15680,11 @@
 
         AudioManager.playHitSound(swingVector.power);
 
+        // Trigger career mode cinematic cutaway
+        if (CareerSystem.activeCareer && CareerSystem.isInCareerTournament) {
+          CareerPlayerRenderer.triggerSwing();
+        }
+
         if (this.gameState.ball.waterPenalty) {
           ScoreKeeper.recordStroke(this.gameState.round);
         }
@@ -13719,6 +16372,7 @@
       MailboxManager.init();
       CaddieSystem.init();
       MiniGameManager.init();
+      CareerSystem.init();
       ShopSystem.updateBalanceDisplay();
 
       // Set up shop click handlers using event delegation (handles dynamically created buttons)
