@@ -3586,6 +3586,25 @@
       font-size: 12px;
       margin-top: 4px;
     }
+    .career-slot-delete {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .career-slot-delete:hover {
+      background: rgba(239, 68, 68, 0.4);
+      border-color: #ef4444;
+    }
     .career-entry-buttons {
       display: flex;
       gap: 12px;
@@ -3731,9 +3750,9 @@
       box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
     }
     .style-option {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
       border: 2px solid rgba(255,255,255,0.2);
       background: rgba(255,255,255,0.1);
       cursor: pointer;
@@ -3741,6 +3760,11 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
+      overflow: hidden;
+      padding: 4px;
+    }
+    .style-option img {
+      border-radius: 6px;
     }
     .style-option.selected {
       border-color: #8B5CF6;
@@ -3768,120 +3792,35 @@
     .career-hub-modal {
       background: transparent;
       border-radius: 0;
-      padding: 20px 30px;
-      max-width: 100%;
+      padding: 20px;
       width: 100%;
       height: 100%;
       border: none;
       box-shadow: none;
       display: flex;
       flex-direction: column;
+      gap: 15px;
+      overflow-y: auto;
     }
     #career-hub-overlay {
       background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
-      flex-direction: column;
-      gap: 0;
-      padding: 0;
-    }
-    .hub-news-ticker {
-      background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.15));
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 15px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      min-height: 48px;
-    }
-    .news-ticker-content {
-      color: #E9D5FF;
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      animation: scrollHeadline 25s linear infinite;
-      line-height: 1.4;
-    }
-    .hub-ranking-badge {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
-      padding: 4px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(139, 92, 246, 0.4);
-      margin-top: 6px;
-    }
-    .hub-ranking-badge span {
-      color: #A78BFA;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .hub-next-tournament {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1));
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 20px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
-    }
-    .next-tournament-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .next-label {
-      color: #A78BFA;
-      font-size: 11px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .season-week {
-      color: rgba(255,255,255,0.6);
-      font-size: 12px;
-    }
-    .next-tournament-info .tournament-name {
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      display: block;
-      margin-bottom: 8px;
-    }
-    .tournament-details {
-      display: flex;
-      gap: 15px;
-      color: rgba(255,255,255,0.7);
-      font-size: 12px;
+      overflow-y: auto;
     }
     .hub-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
       padding-bottom: 15px;
       border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
     }
     .hub-player-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
     }
     #hub-avatar-canvas {
-      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
-      border-radius: 10px;
+      border-radius: 50%;
+      background: transparent;
     }
     .hub-player-details {
       display: flex;
@@ -3889,25 +3828,40 @@
     }
     .hub-player-name {
       color: #fff;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
     }
     .hub-tour-name {
       color: #A78BFA;
-      font-size: 13px;
+      font-size: 14px;
+    }
+    .hub-ranking-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      margin-top: 8px;
+    }
+    .hub-ranking-badge span {
+      color: #A78BFA;
+      font-weight: bold;
+      font-size: 14px;
     }
     .hub-currencies {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       align-items: flex-end;
     }
     .currency-display {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: rgba(0,0,0,0.3);
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 20px;
     }
     .currency-display.premium {
@@ -3916,44 +3870,96 @@
     }
     .currency-display span {
       color: #fff;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: bold;
     }
-    .hub-content {
+    .hub-news-ticker {
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      min-height: 48px;
+    }
+    .news-ticker-content {
+      color: #FFA500;
+      font-size: 14px;
+      font-weight: 400;
+      font-style: italic;
+      white-space: nowrap;
+      animation: scrollHeadlineHub 20s linear infinite;
+      line-height: 1.4;
+      display: inline-block;
+      padding-left: 100%;
+    }
+    @keyframes scrollHeadlineHub {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    .hub-next-tournament {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .next-tournament-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .next-label {
+      color: #A78BFA;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .season-week {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+    }
+    .next-tournament-info .tournament-name {
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .tournament-details {
+      display: flex;
       gap: 20px;
-      flex: 1;
-      max-width: 500px;
-      margin: 0 auto;
-      width: 100%;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
     }
     .hub-stats-panel {
       background: rgba(0,0,0,0.2);
       border-radius: 16px;
-      padding: 15px;
+      padding: 20px;
     }
     .hub-stats-panel h3 {
       color: rgba(255,255,255,0.7);
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin: 0 0 12px 0;
+      margin: 0 0 15px 0;
     }
     .hub-stat {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .hub-stat span:first-child {
       color: rgba(255,255,255,0.6);
-      font-size: 13px;
+      font-size: 14px;
     }
     .hub-stat span:last-child {
       color: #fff;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 16px;
     }
     .hub-progress-bar {
       background: rgba(0,0,0,0.3);
@@ -3982,21 +3988,22 @@
     .hub-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
+      margin-top: auto;
     }
     .hub-btn {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
-      padding: 14px 12px;
+      padding: 16px 14px;
       color: #fff;
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
     }
     .hub-btn:hover {
       background: rgba(255,255,255,0.12);
@@ -4418,8 +4425,8 @@
       animation: scrollHeadline 15s linear infinite;
     }
     @keyframes scrollHeadline {
-      from { transform: translateX(100%); }
-      to { transform: translateX(-100%); }
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-200%); }
     }
 
     /* Mini-Game Overlay */
@@ -5069,7 +5076,7 @@
     <div class="career-hub-modal">
       <div class="hub-header">
         <div class="hub-player-info">
-          <canvas id="hub-avatar-canvas" width="70" height="90"></canvas>
+          <canvas id="hub-avatar-canvas" width="70" height="70"></canvas>
           <div class="hub-player-details">
             <span class="hub-player-name" id="hub-player-name">Player</span>
             <span class="hub-tour-name" id="hub-tour-name">Local Tour</span>
@@ -5092,7 +5099,7 @@
       </div>
 
       <div class="hub-news-ticker">
-        <div class="news-ticker-content" id="hub-headline-text">📰 Many new rookies ready to make their debut on the Local Tour this season...</div>
+        <div class="news-ticker-content" id="hub-headline-text">📰 DAILY NEWS: Many new rookies ready to make their debut on the Local Tour this season...</div>
       </div>
 
       <div class="hub-next-tournament">
@@ -5110,53 +5117,52 @@
         </div>
       </div>
 
-      <div class="hub-content">
-        <div class="hub-stats-panel">
-          <h3>Season Progress</h3>
-          <div class="hub-stat">
-            <span>Ranking Points</span>
-            <span id="hub-ranking-points">0</span>
-          </div>
-          <div class="hub-stat">
-            <span>Tournaments Won</span>
-            <span id="hub-wins">0</span>
-          </div>
-          <div class="hub-stat">
-            <span>Total Earnings</span>
-            <span id="hub-total-earnings">$0</span>
-          </div>
-          <div class="hub-progress-bar">
-            <div class="progress-fill" id="hub-promotion-progress"></div>
-            <span class="progress-label" id="hub-promotion-label">0 / 500 pts to promote</span>
-          </div>
+      <div class="hub-stats-panel">
+        <h3>Season Progress</h3>
+        <div class="hub-stat">
+          <span>Ranking Points</span>
+          <span id="hub-ranking-points">0</span>
         </div>
-        <div class="hub-actions">
-          <button class="hub-btn primary" id="hub-play-tournament-btn">
-            <div class="primary-btn-content">
-              <span class="btn-icon">⛳</span>
-              <div class="btn-text">
-                <span class="btn-main" id="hub-play-btn-text">Play Local Tournament</span>
-                <span class="btn-sub">9 holes • Earn ranking points</span>
-              </div>
+        <div class="hub-stat">
+          <span>Tournaments Won</span>
+          <span id="hub-wins">0</span>
+        </div>
+        <div class="hub-stat">
+          <span>Total Earnings</span>
+          <span id="hub-total-earnings">$0</span>
+        </div>
+        <div class="hub-progress-bar">
+          <div class="progress-fill" id="hub-promotion-progress"></div>
+          <span class="progress-label" id="hub-promotion-label">0 / 500 pts to promote</span>
+        </div>
+      </div>
+
+      <div class="hub-actions">
+        <button class="hub-btn primary" id="hub-play-tournament-btn">
+          <div class="primary-btn-content">
+            <span class="btn-icon">⛳</span>
+            <div class="btn-text">
+              <span class="btn-main" id="hub-play-btn-text">Play Local Tournament</span>
+              <span class="btn-sub">9 holes • Earn ranking points</span>
             </div>
-          </button>
-          <button class="hub-btn" id="hub-standings-btn">
-            <span class="btn-icon">📊</span>
-            Standings
-          </button>
-          <button class="hub-btn" id="hub-sponsors-btn">
-            <span class="btn-icon">🤝</span>
-            Sponsors
-          </button>
-          <button class="hub-btn" id="hub-customize-btn">
-            <span class="btn-icon">👕</span>
-            Customize
-          </button>
-          <button class="hub-btn" id="hub-back-btn">
-            <span class="btn-icon">🚪</span>
-            Exit
-          </button>
-        </div>
+          </div>
+        </button>
+        <button class="hub-btn" id="hub-standings-btn">
+          <span class="btn-icon">📊</span>
+          Standings
+        </button>
+        <button class="hub-btn" id="hub-sponsors-btn">
+          <span class="btn-icon">🤝</span>
+          Sponsors
+        </button>
+        <button class="hub-btn" id="hub-customize-btn">
+          <span class="btn-icon">👕</span>
+          Customize
+        </button>
+        <button class="hub-btn" id="hub-back-btn">
+          <span class="btn-icon">🚪</span>
+          Exit
+        </button>
       </div>
     </div>
   </div>
@@ -12327,6 +12333,38 @@
       maxSlots: 3,
       storageKey: 'golf-career-saves',
 
+      // Avatar sprites - loaded SVG images
+      avatarSprites: {},       // Cache for Image objects keyed by "file" or "file:hairHex"
+      avatarSvgText: {},       // Raw SVG text for each sprite file
+      spritesLoaded: false,
+
+      // Sprite definitions mapping to SVG files with skin tones and original hair colors
+      spriteMap: {
+        boy: [
+          { id: 0, file: '01-boy-light-brown.svg', name: 'Short Brown', skinHex: '#FFDAB9', hairHex: ['#8B4513', '#A0522D'] },
+          { id: 1, file: '02-boy-light-blonde.svg', name: 'Spiky Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] },
+          { id: 2, file: '03-boy-medium-curly.svg', name: 'Curly Afro', skinHex: '#DEB887', hairHex: ['#2C1810', '#3D2314'] },
+          { id: 3, file: '04-boy-tan-wavy.svg', name: 'Wavy Brown', skinHex: '#D2A679', hairHex: ['#4A3728', '#5D4632'] },
+          { id: 4, file: '05-boy-dark-short.svg', name: 'Short Black', skinHex: '#8B5A2B', hairHex: ['#1a1a1a', '#333'] },
+          { id: 5, file: '06-boy-dark-fade.svg', name: 'Fade Cut', skinHex: '#6B4423', hairHex: ['#1a1a1a', '#333', '#2a2a2a'] },
+          { id: 6, file: '13-boy-light-red.svg', name: 'Messy Red', skinHex: '#FFE4C4', hairHex: ['#C0392B', '#E74C3C', '#A93226'] },
+          { id: 7, file: '14-boy-medium-mohawk.svg', name: 'Mohawk', skinHex: '#DEB887', hairHex: ['#9B59B6', '#8E44AD', '#7D3C98'] },
+          { id: 8, file: '17-boy-tan-longhair.svg', name: 'Long Hair', skinHex: '#D2A679', hairHex: ['#1a1a1a', '#333'] },
+          { id: 9, file: '19-boy-light-shortblonde.svg', name: 'Short Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] }
+        ],
+        girl: [
+          { id: 0, file: '07-girl-light-blonde.svg', name: 'Long Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] },
+          { id: 1, file: '08-girl-light-ponytail.svg', name: 'Ponytail', skinHex: '#FFDAB9', hairHex: ['#8B4513', '#A0522D'] },
+          { id: 2, file: '09-girl-medium-straight.svg', name: 'Straight Black', skinHex: '#DEB887', hairHex: ['#1a1a1a', '#333'] },
+          { id: 3, file: '10-girl-tan-curly.svg', name: 'Big Curls', skinHex: '#D2A679', hairHex: ['#4A3728', '#5D4A35'] },
+          { id: 4, file: '11-girl-dark-braids.svg', name: 'Braids', skinHex: '#8B5A2B', hairHex: ['#1a1a1a', '#333'] },
+          { id: 5, file: '12-girl-dark-puffs.svg', name: 'Afro Puffs', skinHex: '#6B4423', hairHex: ['#1a1a1a', '#333'] },
+          { id: 6, file: '15-girl-light-pigtails.svg', name: 'Pigtails', skinHex: '#FFDAB9', hairHex: ['#FF69B4', '#FF8DC7'] },
+          { id: 7, file: '16-girl-medium-bob.svg', name: 'Bob Cut', skinHex: '#DEB887', hairHex: ['#4A3728', '#5D4A35'] },
+          { id: 8, file: '18-girl-tan-bangs.svg', name: 'Bangs', skinHex: '#D2A679', hairHex: ['#8B4513', '#A0522D'] }
+        ]
+      },
+
       // Skin tone options
       skinTones: [
         { id: 0, name: 'Light', hex: '#FFE0BD' },
@@ -12337,34 +12375,131 @@
         { id: 5, name: 'Dark', hex: '#5C3A21' }
       ],
 
-      // Hair colors
+      // Hair colors - expanded palette
       hairColors: [
         { id: 0, name: 'Black', hex: '#1a1a1a' },
         { id: 1, name: 'Brown', hex: '#4A3728' },
-        { id: 2, name: 'Blonde', hex: '#D4A76A' },
-        { id: 3, name: 'Red', hex: '#8B3A3A' },
-        { id: 4, name: 'Gray', hex: '#808080' },
-        { id: 5, name: 'Blue', hex: '#4169E1' }
+        { id: 2, name: 'Light Brown', hex: '#8B4513' },
+        { id: 3, name: 'Blonde', hex: '#F4D03F' },
+        { id: 4, name: 'Platinum', hex: '#E8E4C9' },
+        { id: 5, name: 'Ginger', hex: '#D2691E' },
+        { id: 6, name: 'Red', hex: '#C0392B' },
+        { id: 7, name: 'Pink', hex: '#FF69B4' },
+        { id: 8, name: 'Purple', hex: '#9B59B6' },
+        { id: 9, name: 'Blue', hex: '#3498DB' },
+        { id: 10, name: 'Teal', hex: '#1ABC9C' },
+        { id: 11, name: 'Gray', hex: '#7F8C8D' },
+        { id: 12, name: 'White', hex: '#ECF0F1' }
       ],
 
-      // Hairstyles per gender
-      hairstyles: {
-        boy: [
-          { id: 0, name: 'Short', icon: '👦' },
-          { id: 1, name: 'Spiky', icon: '🧑' },
-          { id: 2, name: 'Buzz', icon: '👨' },
-          { id: 3, name: 'Wavy', icon: '🧔' },
-          { id: 4, name: 'Mohawk', icon: '🤘' },
-          { id: 5, name: 'Slick', icon: '💇' }
-        ],
-        girl: [
-          { id: 0, name: 'Ponytail', icon: '👧' },
-          { id: 1, name: 'Short', icon: '👩' },
-          { id: 2, name: 'Long', icon: '💁' },
-          { id: 3, name: 'Bun', icon: '👱' },
-          { id: 4, name: 'Curly', icon: '🙎' },
-          { id: 5, name: 'Braids', icon: '🧕' }
-        ]
+      // Hairstyles per gender - now using sprite map
+      get hairstyles() {
+        return {
+          boy: this.spriteMap.boy.map(s => ({ id: s.id, name: s.name, file: s.file })),
+          girl: this.spriteMap.girl.map(s => ({ id: s.id, name: s.name, file: s.file }))
+        };
+      },
+
+      // Load all avatar sprites as SVG text for recoloring
+      async loadSprites() {
+        if (this.spritesLoaded) return;
+
+        const allSprites = [...this.spriteMap.boy, ...this.spriteMap.girl];
+
+        for (const sprite of allSprites) {
+          try {
+            const response = await fetch(`sprites/${sprite.file}`);
+            const svgText = await response.text();
+            this.avatarSvgText[sprite.file] = svgText;
+            // Create default image from original SVG
+            this.avatarSprites[sprite.file] = await this.svgTextToImage(svgText);
+          } catch (e) {
+            console.warn(`Could not load sprite: ${sprite.file}`, e);
+          }
+        }
+
+        this.spritesLoaded = true;
+        console.log('Avatar sprites loaded:', Object.keys(this.avatarSprites).length);
+      },
+
+      // Convert SVG text to Image object
+      svgTextToImage(svgText) {
+        return new Promise((resolve, reject) => {
+          const blob = new Blob([svgText], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(blob);
+          const img = new Image();
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('Failed to convert SVG to image'));
+          };
+          img.src = url;
+        });
+      },
+
+      // Get a lighter version of a hex color for highlights
+      lightenColor(hex, percent = 20) {
+        const num = parseInt(hex.replace('#', ''), 16);
+        const r = Math.min(255, (num >> 16) + Math.floor(255 * percent / 100));
+        const g = Math.min(255, ((num >> 8) & 0x00FF) + Math.floor(255 * percent / 100));
+        const b = Math.min(255, (num & 0x0000FF) + Math.floor(255 * percent / 100));
+        return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+      },
+
+      // Get a darker version of a hex color for eyebrows
+      darkenColor(hex, percent = 15) {
+        const num = parseInt(hex.replace('#', ''), 16);
+        const r = Math.max(0, (num >> 16) - Math.floor(255 * percent / 100));
+        const g = Math.max(0, ((num >> 8) & 0x00FF) - Math.floor(255 * percent / 100));
+        const b = Math.max(0, (num & 0x0000FF) - Math.floor(255 * percent / 100));
+        return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+      },
+
+      // Get sprite with custom hair color (cached)
+      async getRecoloredSprite(spriteInfo, newHairHex) {
+        if (!spriteInfo || !newHairHex) return this.avatarSprites[spriteInfo?.file];
+
+        const cacheKey = `${spriteInfo.file}:${newHairHex}`;
+
+        // Return cached version if exists
+        if (this.avatarSprites[cacheKey]) {
+          return this.avatarSprites[cacheKey];
+        }
+
+        // Get original SVG text
+        const svgText = this.avatarSvgText[spriteInfo.file];
+        if (!svgText) return this.avatarSprites[spriteInfo.file];
+
+        // Replace hair colors
+        let recoloredSvg = svgText;
+        const originalHairColors = spriteInfo.hairHex || [];
+        const newHighlight = this.lightenColor(newHairHex, 20);
+        const newDark = this.darkenColor(newHairHex, 10);
+
+        // Replace each original hair color with the new color variants
+        originalHairColors.forEach((origColor, i) => {
+          const replacement = i === 0 ? newHairHex : (i === 1 ? newHighlight : newDark);
+          // Escape the color for regex and match with or without #
+          const escaped = origColor.replace('#', '').toUpperCase();
+          // Match fill="#COLOR" or stroke="#COLOR" patterns (case insensitive)
+          const fillRegex = new RegExp(`(fill=["']#?)${escaped}(["'])`, 'gi');
+          const strokeRegex = new RegExp(`(stroke=["']#?)${escaped}(["'])`, 'gi');
+          recoloredSvg = recoloredSvg.replace(fillRegex, `$1${replacement.replace('#', '')}$2`);
+          recoloredSvg = recoloredSvg.replace(strokeRegex, `$1${replacement.replace('#', '')}$2`);
+        });
+
+        // Create and cache the new image
+        try {
+          const img = await this.svgTextToImage(recoloredSvg);
+          this.avatarSprites[cacheKey] = img;
+          return img;
+        } catch (e) {
+          console.warn('Failed to recolor sprite:', e);
+          return this.avatarSprites[spriteInfo.file];
+        }
       },
 
       // Outfit colors
@@ -12605,6 +12740,12 @@
         this.saveCareerSlots();
       },
 
+      deleteCareer(careerSlotId) {
+        this.careerSlots = this.careerSlots.filter(s => s.careerSlotId !== careerSlotId);
+        this.saveCareerSlots();
+        this.populateCareerSlots();
+      },
+
       createNewCareer(name, character) {
         const career = {
           careerSlotId: Date.now().toString(),
@@ -12714,18 +12855,21 @@
           document.getElementById('sponsor-offer-overlay').classList.add('hidden');
         });
 
-        // Gender options
+        // Gender options - update hairstyles when gender changes
         document.getElementById('gender-options')?.addEventListener('click', (e) => {
           const btn = e.target.closest('.option-btn');
           if (btn) {
             document.querySelectorAll('#gender-options .option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
+            this.updateHairstyleOptions(); // Show correct sprites for selected gender
             this.updateCharacterPreview();
           }
         });
       },
 
-      showCareerEntry() {
+      async showCareerEntry() {
+        // Load sprites first
+        await this.loadSprites();
         document.getElementById('career-entry-overlay').classList.remove('hidden');
         this.populateCareerSlots();
       },
@@ -12743,12 +12887,25 @@
               <div class="career-slot-name">${career.playerName}</div>
               <div class="career-slot-details">${this.tours[career.currentTour].name} • $${career.careerGolfBucks}</div>
             </div>
+            <button class="career-slot-delete" title="Delete Career">✕</button>
           `;
-          slot.addEventListener('click', () => {
+
+          // Click slot to load career
+          slot.addEventListener('click', (e) => {
+            if (e.target.classList.contains('career-slot-delete')) return;
             this.activeCareer = career;
             document.getElementById('career-entry-overlay').classList.add('hidden');
             this.showCareerHub();
           });
+
+          // Delete button
+          slot.querySelector('.career-slot-delete').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm(`Delete ${career.playerName}'s career? This cannot be undone.`)) {
+              this.deleteCareer(career.careerSlotId);
+            }
+          });
+
           container.appendChild(slot);
 
           // Draw avatar on the slot canvas
@@ -12768,7 +12925,9 @@
         }
       },
 
-      showCharacterCreator() {
+      async showCharacterCreator() {
+        // Load sprites first
+        await this.loadSprites();
         document.getElementById('character-creator-overlay').classList.remove('hidden');
         this.populateCreatorOptions();
         this.updateCharacterPreview();
@@ -12850,8 +13009,29 @@
         this.hairstyles[gender].forEach((style, i) => {
           const opt = document.createElement('div');
           opt.className = 'style-option' + (i === 0 ? ' selected' : '');
-          opt.textContent = style.icon;
           opt.dataset.value = i;
+          opt.title = style.name;
+
+          // Use sprite image if available
+          if (style.file && this.avatarSprites[style.file]) {
+            const img = document.createElement('img');
+            img.src = `sprites/${style.file}`;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            opt.appendChild(img);
+          } else if (style.file) {
+            // Fallback to direct image load
+            const img = document.createElement('img');
+            img.src = `sprites/${style.file}`;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            opt.appendChild(img);
+          } else {
+            opt.textContent = '👤';
+          }
+
           opt.addEventListener('click', () => {
             container.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
             opt.classList.add('selected');
@@ -12862,76 +13042,142 @@
       },
 
       getCreatorSelections() {
+        const gender = document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy';
+        const hairstyle = parseInt(document.querySelector('#hair-style-options .style-option.selected')?.dataset.value || '0');
+
+        // Get skin tone from the selected sprite
+        const spriteInfo = this.spriteMap[gender]?.[hairstyle];
+        const spriteSkinHex = spriteInfo?.skinHex || '#D4A574';
+
         return {
-          gender: document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy',
+          gender,
           skinTone: parseInt(document.querySelector('#skin-options .color-option.selected')?.dataset.value || '2'),
-          hairstyle: parseInt(document.querySelector('#hair-style-options .style-option.selected')?.dataset.value || '0'),
+          skinHex: spriteSkinHex, // Use the sprite's skin tone
+          hairstyle,
           hairColor: document.querySelector('#hair-color-options .color-option.selected')?.dataset.value || '#4A3728',
           outfitShirt: document.querySelector('#shirt-options .color-option.selected')?.dataset.value || '#E53935',
           outfitPants: document.querySelector('#pants-options .color-option.selected')?.dataset.value || '#1565C0'
         };
       },
 
-      updateCharacterPreview() {
+      async updateCharacterPreview() {
         const canvas = document.getElementById('character-preview-canvas');
         if (!canvas) return;
         const character = this.getCreatorSelections();
-        this.drawCharacter(canvas, character, 'idle');
+        await this.drawCharacter(canvas, character, 'idle');
       },
 
-      drawCharacterAvatar(canvas, character, scale = 0.6) {
+      async drawCharacterAvatar(canvas, character, scale = 0.6) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const centerX = canvas.width / 2;
-        const centerY = canvas.height * 0.7;
+        const centerY = canvas.height / 2;
+        const size = Math.min(canvas.width, canvas.height);
 
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.scale(scale, scale);
+        // Get sprite file for this character (with custom hair color if set)
+        const gender = character.gender || 'boy';
+        const hairstyle = character.hairstyle || 0;
+        const spriteInfo = this.spriteMap[gender]?.[hairstyle];
+        const hairColor = character.hairColor;
+        const sprite = hairColor && spriteInfo
+          ? await this.getRecoloredSprite(spriteInfo, hairColor)
+          : this.avatarSprites[spriteInfo?.file];
 
-        const skinTone = this.skinTones[character.skinTone]?.hex || '#D4A574';
-
-        // Body
-        ctx.fillStyle = character.outfitShirt || '#E53935';
+        // Background circle
+        ctx.fillStyle = '#2a3a4a';
         ctx.beginPath();
-        ctx.ellipse(0, -20, 18, 25, 0, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, size / 2 - 2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Head
-        ctx.fillStyle = skinTone;
-        ctx.beginPath();
-        ctx.arc(0, -55, 16, 0, Math.PI * 2);
-        ctx.fill();
+        const spriteSize = size * 0.85;
+        const spriteX = centerX - spriteSize / 2;
+        const spriteY = centerY - spriteSize / 2 - size * 0.08;
+        const clipCutoff = 0.82; // Show top 82% of sprite (matches full body preview)
 
-        // Hair
-        ctx.fillStyle = character.hairColor || '#4A3728';
-        ctx.beginPath();
-        ctx.arc(0, -58, 14, Math.PI + 0.3, -0.3);
-        ctx.fill();
+        // Draw sprite with 3-layer approach for long hair
+        if (sprite) {
+          // LAYER 1: Draw full sprite first (long hair goes BEHIND)
+          ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);
 
-        // Eyes
-        ctx.fillStyle = '#333';
-        ctx.beginPath();
-        ctx.arc(-5, -55, 2, 0, Math.PI * 2);
-        ctx.arc(5, -55, 2, 0, Math.PI * 2);
-        ctx.fill();
+          // LAYER 2: Shirt/shoulders (covers bottom of sprite)
+          ctx.fillStyle = character.outfitShirt || '#E53935';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY + size * 0.42, size * 0.35, 0, Math.PI, true);
+          ctx.fill();
 
-        ctx.restore();
+          // LAYER 3: Draw upper portion of sprite (head + top hair)
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(spriteX, spriteY, spriteSize, spriteSize * clipCutoff);
+          ctx.clip();
+          ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);
+          ctx.restore();
+        } else {
+          // Fallback: Shirt/shoulders at bottom
+          ctx.fillStyle = character.outfitShirt || '#E53935';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY + size * 0.42, size * 0.35, 0, Math.PI, true);
+          ctx.fill();
+          // Fallback: simple head drawing - use sprite skin tone if available
+          const skinTone = spriteInfo?.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
+
+          // Head
+          ctx.fillStyle = skinTone;
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY - size * 0.02, size * 0.28, size * 0.32, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Hair
+          ctx.fillStyle = character.hairColor || '#4A3728';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY - size * 0.2, size * 0.22, Math.PI + 0.3, -0.3);
+          ctx.fill();
+
+          // Eyes
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(centerX - size * 0.1, centerY - size * 0.05, size * 0.04, 0, Math.PI * 2);
+          ctx.arc(centerX + size * 0.1, centerY - size * 0.05, size * 0.04, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Smile
+          ctx.strokeStyle = '#333';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY + size * 0.08, size * 0.1, 0.3, Math.PI - 0.3);
+          ctx.stroke();
+        }
+
+        // Purple border
+        ctx.strokeStyle = '#8B5CF6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, size / 2 - 2, 0, Math.PI * 2);
+        ctx.stroke();
       },
 
-      drawCharacter(canvas, character, pose = 'idle') {
+      async drawCharacter(canvas, character, pose = 'idle') {
         const ctx = canvas.getContext('2d');
         const width = canvas.width;
         const height = canvas.height;
 
         ctx.clearRect(0, 0, width, height);
 
+        // Dark blue-gray background (works with all hair colors including black)
+        ctx.fillStyle = '#2a3a4a';
+        ctx.fillRect(0, 0, width, height);
+
         const centerX = width / 2;
         const centerY = height * 0.75;
         const scale = 1.3;
 
-        const skinTone = this.skinTones[character.skinTone]?.hex || '#D4A574';
+        // Use sprite's skin tone if available, otherwise fall back to selection
+        const gender = character.gender || 'boy';
+        const hairstyle = character.hairstyle || 0;
+        const spriteInfo = this.spriteMap[gender]?.[hairstyle];
+        const skinTone = spriteInfo?.skinHex || character.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
 
         // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -12942,6 +13188,26 @@
         ctx.save();
         ctx.translate(centerX, centerY);
 
+        // Get sprite (with custom hair color if set)
+        const hairColor = character.hairColor;
+        const sprite = hairColor && spriteInfo
+          ? await this.getRecoloredSprite(spriteInfo, hairColor)
+          : this.avatarSprites[spriteInfo?.file];
+        const headSize = 38 * scale;
+        const headX = 2 * scale; // Offset to match torso center
+        const headY = -65 * scale;
+        // Sprite positioning
+        const spriteX = headX - headSize / 2;
+        const spriteY = headY - headSize / 2;
+        // Cut off point: where the body/shoulders start (percentage from top of sprite)
+        const clipCutoff = 0.82; // Show top 82% of sprite, hide bottom 18% (the long hair area)
+
+        // LAYER 1: Draw full sprite first (long hair goes BEHIND body)
+        if (sprite) {
+          ctx.drawImage(sprite, spriteX, spriteY, headSize, headSize);
+        }
+
+        // LAYER 2: Draw body (covers the long hair that extends below)
         // Legs
         ctx.fillStyle = character.outfitPants || '#1565C0';
         ctx.beginPath();
@@ -12951,11 +13217,23 @@
         ctx.ellipse(9 * scale, 0, 8 * scale, 22 * scale, -0.1, 0, Math.PI * 2);
         ctx.fill();
 
-        // Torso
+        // Torso - different shape for boy vs girl
         ctx.fillStyle = character.outfitShirt || '#E53935';
-        ctx.beginPath();
-        ctx.ellipse(2 * scale, -35 * scale, 18 * scale, 24 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
+        if (gender === 'girl') {
+          // Girl torso: slightly narrower, more tapered
+          ctx.beginPath();
+          ctx.ellipse(2 * scale, -38 * scale, 15 * scale, 22 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // Add slight waist curve
+          ctx.beginPath();
+          ctx.ellipse(2 * scale, -28 * scale, 13 * scale, 10 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Boy torso: broader shoulders
+          ctx.beginPath();
+          ctx.ellipse(2 * scale, -35 * scale, 18 * scale, 24 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         // Arms
         ctx.fillStyle = skinTone;
@@ -12966,69 +13244,42 @@
         ctx.ellipse(18 * scale, -30 * scale, 6 * scale, 18 * scale, -0.3, 0, Math.PI * 2);
         ctx.fill();
 
-        // Head
-        ctx.fillStyle = skinTone;
-        ctx.beginPath();
-        ctx.arc(0, -65 * scale, 14 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Hair
-        ctx.fillStyle = character.hairColor || '#4A3728';
-        const hairstyle = character.hairstyle || 0;
-        const gender = character.gender || 'boy';
-
-        ctx.beginPath();
-        if (gender === 'boy') {
-          switch (hairstyle) {
-            case 1: // Spiky
-              ctx.moveTo(-12 * scale, -68 * scale);
-              ctx.lineTo(-8 * scale, -82 * scale);
-              ctx.lineTo(-2 * scale, -72 * scale);
-              ctx.lineTo(4 * scale, -84 * scale);
-              ctx.lineTo(10 * scale, -73 * scale);
-              ctx.lineTo(14 * scale, -80 * scale);
-              ctx.lineTo(15 * scale, -66 * scale);
-              ctx.arc(0, -65 * scale, 14 * scale, -0.2, Math.PI + 0.2, true);
-              break;
-            default:
-              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
-          }
+        // LAYER 3: Draw upper portion of sprite (head + top hair, but NOT long hair hanging down)
+        if (sprite) {
+          ctx.save();
+          ctx.beginPath();
+          // Clip to rectangle covering upper portion of sprite
+          ctx.rect(spriteX, spriteY, headSize, headSize * clipCutoff);
+          ctx.clip();
+          ctx.drawImage(sprite, spriteX, spriteY, headSize, headSize);
+          ctx.restore();
         } else {
-          switch (hairstyle) {
-            case 0: // Ponytail
-              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
-              ctx.fill();
-              ctx.beginPath();
-              ctx.ellipse(0, -50 * scale, 4 * scale, 18 * scale, 0.1, 0, Math.PI * 2);
-              break;
-            case 2: // Long
-              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
-              ctx.fill();
-              ctx.beginPath();
-              ctx.ellipse(-12 * scale, -50 * scale, 5 * scale, 20 * scale, 0.15, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.beginPath();
-              ctx.ellipse(12 * scale, -50 * scale, 5 * scale, 20 * scale, -0.15, 0, Math.PI * 2);
-              break;
-            default:
-              ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
-          }
+          // Fallback: programmatic head
+          ctx.fillStyle = skinTone;
+          ctx.beginPath();
+          ctx.arc(0, -65 * scale, 14 * scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Hair
+          ctx.fillStyle = character.hairColor || '#4A3728';
+          ctx.beginPath();
+          ctx.arc(0, -68 * scale, 13 * scale, Math.PI + 0.3, -0.3);
+          ctx.fill();
+
+          // Eyes
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(-5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
+          ctx.arc(5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Smile
+          ctx.strokeStyle = '#333';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(0, -62 * scale, 5 * scale, 0.2, Math.PI - 0.2);
+          ctx.stroke();
         }
-        ctx.fill();
-
-        // Eyes
-        ctx.fillStyle = '#333';
-        ctx.beginPath();
-        ctx.arc(-5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
-        ctx.arc(5 * scale, -66 * scale, 2.5 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Smile
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(0, -62 * scale, 5 * scale, 0.2, Math.PI - 0.2);
-        ctx.stroke();
 
         ctx.restore();
       },
@@ -13048,7 +13299,7 @@
         this.updateHubDisplay();
       },
 
-      updateHubDisplay() {
+      async updateHubDisplay() {
         const career = this.activeCareer;
         if (!career) return;
 
@@ -13088,7 +13339,7 @@
 
         // Draw avatar
         const avatarCanvas = document.getElementById('hub-avatar-canvas');
-        this.drawCharacterAvatar(avatarCanvas, career.character, 0.8);
+        await this.drawCharacterAvatar(avatarCanvas, career.character, 0.9);
       },
 
       generateHeadline(career) {
@@ -13097,32 +13348,32 @@
 
         // General tour news (always available)
         headlines.push(
-          `📰 Many new rookies ready to make their debut on the ${tour.name} this season...`,
-          `📰 High-potential players flood ${tour.name} tryouts as season kicks off`,
-          `📰 Scouts predict exciting season ahead for ${tour.name} competitors`,
-          `📰 ${tour.name} officials report record number of entrants this year`,
-          `📰 "This is the most talented rookie class in years" - ${tour.name} commissioner`,
-          `📰 Former champions return to mentor young talent on the ${tour.name}`,
-          `📰 Weather forecast looks favorable for upcoming ${tour.name} events`
+          `Many new rookies ready to make their debut on the ${tour.name} this season...`,
+          `High-potential players flood ${tour.name} tryouts as season kicks off`,
+          `Scouts predict exciting season ahead for ${tour.name} competitors`,
+          `${tour.name} officials report record number of entrants this year`,
+          `"This is the most talented rookie class in years" - ${tour.name} commissioner`,
+          `Former champions return to mentor young talent on the ${tour.name}`,
+          `Weather forecast looks favorable for upcoming ${tour.name} events`
         );
 
         // Player-specific news occasionally
         if (career.stats.tournamentsWon > 0) {
           headlines.push(
-            `📰 ${career.playerName} among rising stars making waves on ${tour.name}`,
-            `📰 ${career.playerName}'s ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} catching attention of sponsors`
+            `${career.playerName} among rising stars making waves on ${tour.name}`,
+            `${career.playerName}'s ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} catching attention of sponsors`
           );
         }
 
         // Rival news
         if (career.rival && career.rival.encounterCount > 0) {
           headlines.push(
-            `📰 ${this.rival.name} looking strong heading into tournament play`,
-            `📰 "${tour.name} is mine" declares ${this.rival.name} at press conference`
+            `${this.rival.name} looking strong heading into tournament play`,
+            `"${tour.name} is mine" declares ${this.rival.name} at press conference`
           );
         }
 
-        return headlines[Math.floor(Math.random() * headlines.length)];
+        return '📰 DAILY NEWS: ' + headlines[Math.floor(Math.random() * headlines.length)];
       },
 
       showTournamentSelection() {
@@ -13201,7 +13452,7 @@
 
       debutScene: 0,
 
-      showDebutCutscene() {
+      async showDebutCutscene() {
         this.debutScene = 0;
         document.getElementById('debut-cutscene-overlay').classList.remove('hidden');
         this.showDebutScene(0);
@@ -13209,8 +13460,8 @@
         // Draw player avatar
         const smallCanvas = document.getElementById('debut-player-canvas');
         const largeCanvas = document.getElementById('debut-golfer-canvas');
-        this.drawCharacterAvatar(smallCanvas, this.activeCareer.character, 0.9);
-        this.drawCharacter(largeCanvas, this.activeCareer.character, 'idle');
+        await this.drawCharacterAvatar(smallCanvas, this.activeCareer.character, 0.9);
+        await this.drawCharacter(largeCanvas, this.activeCareer.character, 'idle');
 
         // Set player name
         document.getElementById('debut-player-name').textContent = this.activeCareer.playerName;

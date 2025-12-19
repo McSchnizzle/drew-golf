@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Head -->
+  <circle cx="50" cy="50" r="32" fill="#DEB887"/>
+  <!-- Mohawk - tall and impressive -->
+  <ellipse cx="50" cy="10" rx="10" ry="22" fill="#1a1a1a"/>
+  <ellipse cx="50" cy="24" rx="12" ry="14" fill="#1a1a1a"/>
+  <!-- Mohawk texture -->
+  <ellipse cx="50" cy="4" rx="6" ry="10" fill="#1a1a1a"/>
+  <!-- Hair shine -->
+  <ellipse cx="48" cy="14" rx="4" ry="6" fill="#333" opacity="0.4"/>
+  <!-- Shaved sides -->
+  <ellipse cx="24" cy="36" rx="6" ry="10" fill="#444" opacity="0.2"/>
+  <ellipse cx="76" cy="36" rx="6" ry="10" fill="#444" opacity="0.2"/>
+  <!-- Eyes - intense -->
+  <circle cx="40" cy="48" r="5" fill="#333"/>
+  <circle cx="60" cy="48" r="5" fill="#333"/>
+  <!-- Eye highlights - determined look -->
+  <circle cx="42" cy="46" r="2" fill="#fff"/>
+  <circle cx="62" cy="46" r="2" fill="#fff"/>
+  <!-- Eyebrows - fierce angle -->
+  <path d="M 32 42 Q 40 38 47 44" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 53 44 Q 60 38 68 42" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="54" rx="2" ry="1.5" fill="#C9A87C" opacity="0.6"/>
+  <!-- Confident smirk -->
+  <path d="M 44 60 Q 52 68 60 62" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="56" r="6" fill="#FFB6C1" opacity="0.35"/>
+  <circle cx="68" cy="56" r="6" fill="#FFB6C1" opacity="0.35"/>
+</svg>

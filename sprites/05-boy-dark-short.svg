@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Head -->
+  <circle cx="50" cy="50" r="32" fill="#8B5A2B"/>
+  <!-- Short black hair - clean cut -->
+  <ellipse cx="50" cy="24" rx="26" ry="14" fill="#1a1a1a"/>
+  <!-- Hair texture/shine -->
+  <ellipse cx="44" cy="22" rx="6" ry="3" fill="#333" opacity="0.4"/>
+  <ellipse cx="56" cy="20" rx="4" ry="2" fill="#333" opacity="0.3"/>
+  <!-- Eyes - confident -->
+  <circle cx="40" cy="48" r="5" fill="#111"/>
+  <circle cx="60" cy="48" r="5" fill="#111"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="46" r="2" fill="#fff"/>
+  <circle cx="62" cy="46" r="2" fill="#fff"/>
+  <!-- Eyebrows - strong -->
+  <path d="M 33 40 Q 40 38 46 41" stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 54 41 Q 60 38 67 40" stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="54" rx="2" ry="1.5" fill="#724A1E" opacity="0.5"/>
+  <!-- Confident smile -->
+  <path d="M 42 62 Q 50 70 58 62" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="56" r="6" fill="#FFB6C1" opacity="0.25"/>
+  <circle cx="68" cy="56" r="6" fill="#FFB6C1" opacity="0.25"/>
+</svg>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avatar Sprites Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+    h2 {
+      text-align: center;
+      color: #888;
+      margin-bottom: 40px;
+      font-weight: normal;
+    }
+    .section {
+      margin-bottom: 50px;
+    }
+    .section h3 {
+      color: #4ecdc4;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      padding-left: 20px;
+      border-left: 4px solid #4ecdc4;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .avatar-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .avatar-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .avatar-card img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 12px;
+    }
+    .avatar-card .name {
+      color: #fff;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+    .avatar-card .desc {
+      color: #888;
+      font-size: 0.75em;
+      margin-top: 4px;
+    }
+    .boys .avatar-card { border: 2px solid rgba(100, 149, 237, 0.4); }
+    .girls .avatar-card { border: 2px solid rgba(255, 105, 180, 0.4); }
+    .boys .avatar-card:hover { border-color: rgba(100, 149, 237, 0.8); }
+    .girls .avatar-card:hover { border-color: rgba(255, 105, 180, 0.8); }
+  </style>
+</head>
+<body>
+  <h1>Career Mode Avatars</h1>
+  <h2>19 Character Sprites for Howlett Golf Chaos</h2>
+
+  <div class="section boys">
+    <h3>Boys (10 styles)</h3>
+    <div class="grid">
+      <div class="avatar-card">
+        <img src="01-boy-light-brown.svg" alt="Boy 1">
+        <div class="name">Brown Hair</div>
+        <div class="desc">Light skin, neat cut</div>
+      </div>
+      <div class="avatar-card">
+        <img src="02-boy-light-blonde.svg" alt="Boy 2">
+        <div class="name">Spiky Blonde</div>
+        <div class="desc">Light skin, excited</div>
+      </div>
+      <div class="avatar-card">
+        <img src="03-boy-medium-curly.svg" alt="Boy 3">
+        <div class="name">Curly Afro</div>
+        <div class="desc">Medium skin, fluffy</div>
+      </div>
+      <div class="avatar-card">
+        <img src="04-boy-tan-wavy.svg" alt="Boy 4">
+        <div class="name">Wavy Brown</div>
+        <div class="desc">Tan skin, swoopy</div>
+      </div>
+      <div class="avatar-card">
+        <img src="05-boy-dark-short.svg" alt="Boy 5">
+        <div class="name">Short Black</div>
+        <div class="desc">Dark skin, confident</div>
+      </div>
+      <div class="avatar-card">
+        <img src="06-boy-dark-fade.svg" alt="Boy 6">
+        <div class="name">Fade Cut</div>
+        <div class="desc">Dark skin, cool</div>
+      </div>
+      <div class="avatar-card">
+        <img src="13-boy-light-red.svg" alt="Boy 13">
+        <div class="name">Red Messy</div>
+        <div class="desc">Light skin, freckles</div>
+      </div>
+      <div class="avatar-card">
+        <img src="14-boy-medium-mohawk.svg" alt="Boy 14">
+        <div class="name">Mohawk</div>
+        <div class="desc">Medium skin, fierce</div>
+      </div>
+      <div class="avatar-card">
+        <img src="17-boy-tan-longhair.svg" alt="Boy 17">
+        <div class="name">Long Hair</div>
+        <div class="desc">Tan skin, chill</div>
+      </div>
+      <div class="avatar-card">
+        <img src="19-boy-light-shortblonde.svg" alt="Boy 19">
+        <div class="name">Short Blonde</div>
+        <div class="desc">Light skin, friendly</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section girls">
+    <h3>Girls (9 styles)</h3>
+    <div class="grid">
+      <div class="avatar-card">
+        <img src="07-girl-light-blonde.svg" alt="Girl 7">
+        <div class="name">Long Blonde</div>
+        <div class="desc">Light skin, flowing</div>
+      </div>
+      <div class="avatar-card">
+        <img src="08-girl-light-ponytail.svg" alt="Girl 8">
+        <div class="name">Ponytail</div>
+        <div class="desc">Light skin, bouncy</div>
+      </div>
+      <div class="avatar-card">
+        <img src="09-girl-medium-straight.svg" alt="Girl 9">
+        <div class="name">Straight Black</div>
+        <div class="desc">Medium skin, sleek</div>
+      </div>
+      <div class="avatar-card">
+        <img src="10-girl-tan-curly.svg" alt="Girl 10">
+        <div class="name">Big Curls</div>
+        <div class="desc">Tan skin, voluminous</div>
+      </div>
+      <div class="avatar-card">
+        <img src="11-girl-dark-braids.svg" alt="Girl 11">
+        <div class="name">Braids</div>
+        <div class="desc">Dark skin, gold beads</div>
+      </div>
+      <div class="avatar-card">
+        <img src="12-girl-dark-puffs.svg" alt="Girl 12">
+        <div class="name">Afro Puffs</div>
+        <div class="desc">Dark skin, cute ties</div>
+      </div>
+      <div class="avatar-card">
+        <img src="15-girl-light-pigtails.svg" alt="Girl 15">
+        <div class="name">Pink Pigtails</div>
+        <div class="desc">Light skin, super cute</div>
+      </div>
+      <div class="avatar-card">
+        <img src="16-girl-medium-bob.svg" alt="Girl 16">
+        <div class="name">Stylish Bob</div>
+        <div class="desc">Medium skin, confident</div>
+      </div>
+      <div class="avatar-card">
+        <img src="18-girl-tan-bangs.svg" alt="Girl 18">
+        <div class="name">Bangs</div>
+        <div class="desc">Tan skin, sweet</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

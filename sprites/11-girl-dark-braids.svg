@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Braids - elegant with texture -->
+  <ellipse cx="22" cy="60" rx="10" ry="26" fill="#1a1a1a"/>
+  <ellipse cx="78" cy="60" rx="10" ry="26" fill="#1a1a1a"/>
+  <!-- Braid texture lines -->
+  <path d="M 22 44 Q 18 50 22 56 Q 26 62 22 68 Q 18 74 22 80" stroke="#333" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M 78 44 Q 82 50 78 56 Q 74 62 78 68 Q 82 74 78 80" stroke="#333" stroke-width="2" fill="none" opacity="0.4"/>
+  <!-- Braid beads - golden with shine -->
+  <circle cx="22" cy="82" r="5" fill="#FFD700"/>
+  <circle cx="78" cy="82" r="5" fill="#FFD700"/>
+  <!-- Bead shine -->
+  <circle cx="20" cy="80" r="1.5" fill="#FFF8DC" opacity="0.6"/>
+  <circle cx="76" cy="80" r="1.5" fill="#FFF8DC" opacity="0.6"/>
+  <!-- Extra beads up the braid -->
+  <circle cx="22" cy="70" r="3" fill="#FFD700"/>
+  <circle cx="78" cy="70" r="3" fill="#FFD700"/>
+  <!-- Head -->
+  <circle cx="50" cy="50" r="32" fill="#8B5A2B"/>
+  <!-- Hair top - neat -->
+  <ellipse cx="50" cy="24" rx="30" ry="16" fill="#1a1a1a"/>
+  <!-- Hair shine -->
+  <ellipse cx="45" cy="22" rx="10" ry="4" fill="#333" opacity="0.35"/>
+  <!-- Eyes -->
+  <circle cx="40" cy="48" r="5" fill="#111"/>
+  <circle cx="60" cy="48" r="5" fill="#111"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="46" r="2.5" fill="#fff"/>
+  <circle cx="62" cy="46" r="2.5" fill="#fff"/>
+  <circle cx="38" cy="49" r="1" fill="#fff" opacity="0.5"/>
+  <!-- Eyebrows -->
+  <path d="M 34 40 Q 40 37 46 40" stroke="#111" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 54 40 Q 60 37 66 40" stroke="#111" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="54" rx="2" ry="1.5" fill="#724A1E" opacity="0.5"/>
+  <!-- Warm smile -->
+  <path d="M 42 62 Q 50 70 58 62" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="56" r="6" fill="#FFB6C1" opacity="0.3"/>
+  <circle cx="68" cy="56" r="6" fill="#FFB6C1" opacity="0.3"/>
+</svg>

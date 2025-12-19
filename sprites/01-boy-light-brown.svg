@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Head -->
+  <circle cx="50" cy="50" r="32" fill="#FFDAB9"/>
+  <!-- Hair - neat short brown with cowlick -->
+  <ellipse cx="50" cy="24" rx="28" ry="14" fill="#8B4513"/>
+  <ellipse cx="50" cy="18" rx="22" ry="10" fill="#8B4513"/>
+  <!-- Cute cowlick tuft -->
+  <ellipse cx="62" cy="14" rx="6" ry="8" fill="#8B4513"/>
+  <!-- Hair shine -->
+  <ellipse cx="40" cy="20" rx="8" ry="4" fill="#A0522D" opacity="0.4"/>
+  <!-- Eyes -->
+  <circle cx="40" cy="48" r="5" fill="#333"/>
+  <circle cx="60" cy="48" r="5" fill="#333"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="46" r="2" fill="#fff"/>
+  <circle cx="62" cy="46" r="2" fill="#fff"/>
+  <circle cx="38" cy="49" r="0.8" fill="#fff" opacity="0.6"/>
+  <!-- Eyebrows -->
+  <path d="M 34 41 Q 40 39 46 41" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M 54 41 Q 60 39 66 41" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="54" rx="2" ry="1.5" fill="#E8C4A0" opacity="0.6"/>
+  <!-- Smile -->
+  <path d="M 42 62 Q 50 70 58 62" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="56" r="6" fill="#FFB6C1" opacity="0.4"/>
+  <circle cx="68" cy="56" r="6" fill="#FFB6C1" opacity="0.4"/>
+</svg>

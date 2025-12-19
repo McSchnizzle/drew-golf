@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Afro puffs - big and cute, extra fluffy -->
+  <circle cx="24" cy="24" r="24" fill="#1a1a1a"/>
+  <circle cx="76" cy="24" r="24" fill="#1a1a1a"/>
+  <!-- Puff texture/volume -->
+  <circle cx="18" cy="18" r="10" fill="#1a1a1a"/>
+  <circle cx="30" cy="16" r="10" fill="#1a1a1a"/>
+  <circle cx="70" cy="16" r="10" fill="#1a1a1a"/>
+  <circle cx="82" cy="18" r="10" fill="#1a1a1a"/>
+  <!-- Puff shine -->
+  <circle cx="22" cy="20" r="5" fill="#333" opacity="0.35"/>
+  <circle cx="74" cy="20" r="5" fill="#333" opacity="0.35"/>
+  <!-- Puff ties - colorful with shine -->
+  <circle cx="34" cy="40" r="6" fill="#E91E63"/>
+  <circle cx="66" cy="40" r="6" fill="#E91E63"/>
+  <!-- Tie shine -->
+  <circle cx="32" cy="38" r="1.5" fill="#F48FB1" opacity="0.6"/>
+  <circle cx="64" cy="38" r="1.5" fill="#F48FB1" opacity="0.6"/>
+  <!-- Head -->
+  <circle cx="50" cy="52" r="32" fill="#6B4423"/>
+  <!-- Hair front -->
+  <ellipse cx="50" cy="28" rx="26" ry="12" fill="#1a1a1a"/>
+  <!-- Hair shine -->
+  <ellipse cx="46" cy="26" rx="8" ry="4" fill="#333" opacity="0.35"/>
+  <!-- Eyes - bright -->
+  <circle cx="40" cy="50" r="5" fill="#111"/>
+  <circle cx="60" cy="50" r="5" fill="#111"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="48" r="2.5" fill="#fff"/>
+  <circle cx="62" cy="48" r="2.5" fill="#fff"/>
+  <circle cx="38" cy="51" r="1" fill="#fff" opacity="0.5"/>
+  <!-- Eyebrows -->
+  <path d="M 34 43 Q 40 40 46 43" stroke="#111" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 54 43 Q 60 40 66 43" stroke="#111" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="56" rx="2" ry="1.5" fill="#5A3518" opacity="0.5"/>
+  <!-- Big happy smile -->
+  <path d="M 40 64 Q 50 76 60 64" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="58" r="6" fill="#FFB6C1" opacity="0.3"/>
+  <circle cx="68" cy="58" r="6" fill="#FFB6C1" opacity="0.3"/>
+</svg>

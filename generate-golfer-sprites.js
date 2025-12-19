@@ -4,93 +4,95 @@ require('dotenv').config();
 
 const API_KEY = process.env.GOOGLE_AI_API_KEY;
 
-async function generateGolferSprite(description, filename) {
-  const prompt = `Create a cartoon golfer character sprite for a mobile golf game. ${description}.
-  Style: Cute, colorful, 2D cartoon style similar to Clash Royale or Golf Clash characters.
-  Requirements:
-  - Transparent background (PNG)
-  - Full body visible
-  - Clean cartoon style with bold outlines
-  - Friendly, appealing design
-  - No text or watermarks
-  - Simple enough for a game sprite`;
+const avatars = [
+  { id: '01', desc: 'boy, light skin, short brown hair' },
+  { id: '02', desc: 'boy, light skin, blonde spiky hair' },
+  { id: '03', desc: 'boy, medium skin, black curly hair' },
+  { id: '04', desc: 'boy, tan skin, dark brown wavy hair' },
+  { id: '05', desc: 'boy, dark skin, short black hair' },
+  { id: '06', desc: 'boy, dark skin, fade haircut' },
+  { id: '07', desc: 'girl, light skin, long blonde hair' },
+  { id: '08', desc: 'girl, light skin, brown ponytail' },
+  { id: '09', desc: 'girl, medium skin, black straight hair' },
+  { id: '10', desc: 'girl, tan skin, dark curly hair' },
+  { id: '11', desc: 'girl, dark skin, black braids' },
+  { id: '12', desc: 'girl, dark skin, afro puffs' },
+  { id: '13', desc: 'boy, light skin, red hair' },
+  { id: '14', desc: 'boy, medium skin, mohawk' },
+  { id: '15', desc: 'girl, light skin, pink pigtails' },
+  { id: '16', desc: 'girl, medium skin, short bob haircut' },
+  { id: '17', desc: 'boy, tan skin, long hair in ponytail' },
+  { id: '18', desc: 'girl, tan skin, wavy brown hair with bangs' }
+];
+
+async function generateAvatar(avatar) {
+  const prompt = `Create a simple flat cartoon avatar icon of a ${avatar.desc}.
+Style: Simple like an emoji or Nintendo Mii - round head, dot eyes, curved smile, minimal details.
+Must be: Flat colors only, no shading, no gradients, transparent background.
+Face must have: two dot eyes and a happy curved smile/mouth.
+Image size: exactly 128x128 pixels square.
+Head should fill most of the frame.`;
+
+  console.log(`  Generating...`);
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `Generate an image: ${prompt}`
-          }]
-        }],
-        generationConfig: {
-          responseModalities: ["image", "text"],
-          responseMimeType: "image/png"
-        }
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+        })
+      }
+    );
 
     const data = await response.json();
+    if (data.error) {
+      console.error(`  ✗ ${data.error.message}`);
+      return false;
+    }
 
-    if (data.candidates && data.candidates[0]?.content?.parts) {
+    if (data.candidates?.[0]?.content?.parts) {
       for (const part of data.candidates[0].content.parts) {
         if (part.inlineData) {
-          const imageData = part.inlineData.data;
-          const buffer = Buffer.from(imageData, 'base64');
+          const buffer = Buffer.from(part.inlineData.data, 'base64');
+          const filename = `${avatar.id}-avatar.png`;
           fs.writeFileSync(path.join(__dirname, 'sprites', filename), buffer);
-          console.log(`Generated: ${filename}`);
+          console.log(`  ✓ Saved ${filename}`);
           return true;
         }
       }
     }
-
-    console.log('Response:', JSON.stringify(data, null, 2));
+    console.log('  ✗ No image returned');
     return false;
   } catch (error) {
-    console.error(`Error generating ${filename}:`, error.message);
+    console.error(`  ✗ ${error.message}`);
     return false;
   }
 }
 
 async function main() {
-  // Create sprites directory
   const spritesDir = path.join(__dirname, 'sprites');
-  if (!fs.existsSync(spritesDir)) {
-    fs.mkdirSync(spritesDir);
+
+  // Clear old files
+  const oldFiles = fs.readdirSync(spritesDir).filter(f => f.endsWith('.png'));
+  for (const f of oldFiles) {
+    fs.unlinkSync(path.join(spritesDir, f));
+  }
+  console.log(`Cleared ${oldFiles.length} old files\n`);
+
+  console.log(`Generating ${avatars.length} fresh avatars...\n`);
+
+  let success = 0;
+  for (let i = 0; i < avatars.length; i++) {
+    console.log(`[${i + 1}/${avatars.length}] ${avatars[i].desc}`);
+    if (await generateAvatar(avatars[i])) success++;
+    await new Promise(r => setTimeout(r, 2500));
   }
 
-  const sprites = [
-    {
-      desc: "Male golfer standing in idle pose, wearing red polo shirt and khaki pants, holding golf club, light skin tone",
-      file: "golfer-male-idle.png"
-    },
-    {
-      desc: "Male golfer in backswing pose with golf club raised, wearing red polo shirt and khaki pants, light skin tone",
-      file: "golfer-male-swing.png"
-    },
-    {
-      desc: "Female golfer standing in idle pose, wearing pink polo shirt and navy skirt, holding golf club, light skin tone, ponytail hairstyle",
-      file: "golfer-female-idle.png"
-    },
-    {
-      desc: "Female golfer in backswing pose with golf club raised, wearing pink polo shirt and navy skirt, light skin tone, ponytail hairstyle",
-      file: "golfer-female-swing.png"
-    }
-  ];
-
-  console.log('Generating golfer sprites with Gemini...\n');
-
-  for (const sprite of sprites) {
-    await generateGolferSprite(sprite.desc, sprite.file);
-    // Small delay between requests
-    await new Promise(r => setTimeout(r, 1000));
-  }
-
-  console.log('\nDone!');
+  console.log(`\n✓ Done! Generated ${success}/${avatars.length} avatars.`);
 }
 
 main();

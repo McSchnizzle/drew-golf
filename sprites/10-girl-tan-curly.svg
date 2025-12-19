@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Big beautiful curly hair -->
+  <circle cx="50" cy="16" r="24" fill="#4A3728"/>
+  <circle cx="24" cy="26" r="20" fill="#4A3728"/>
+  <circle cx="76" cy="26" r="20" fill="#4A3728"/>
+  <circle cx="16" cy="48" r="16" fill="#4A3728"/>
+  <circle cx="84" cy="48" r="16" fill="#4A3728"/>
+  <!-- Extra curl volume -->
+  <circle cx="38" cy="10" r="12" fill="#4A3728"/>
+  <circle cx="62" cy="10" r="12" fill="#4A3728"/>
+  <!-- Hair shine highlights -->
+  <circle cx="44" cy="14" r="5" fill="#5D4A35" opacity="0.4"/>
+  <circle cx="60" cy="12" r="4" fill="#5D4A35" opacity="0.35"/>
+  <!-- Head -->
+  <circle cx="50" cy="50" r="30" fill="#D2A679"/>
+  <!-- Eyes - warm -->
+  <circle cx="40" cy="48" r="5" fill="#333"/>
+  <circle cx="60" cy="48" r="5" fill="#333"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="46" r="2.5" fill="#fff"/>
+  <circle cx="62" cy="46" r="2.5" fill="#fff"/>
+  <circle cx="38" cy="49" r="1" fill="#fff" opacity="0.5"/>
+  <!-- Eyebrows -->
+  <path d="M 34 40 Q 40 37 46 40" stroke="#4A3728" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 54 40 Q 60 37 66 40" stroke="#4A3728" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="53" rx="2" ry="1.5" fill="#B8956A" opacity="0.6"/>
+  <!-- Big joyful smile -->
+  <path d="M 38 58 Q 50 72 62 58" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="30" cy="54" r="6" fill="#FFB6C1" opacity="0.4"/>
+  <circle cx="70" cy="54" r="6" fill="#FFB6C1" opacity="0.4"/>
+</svg>

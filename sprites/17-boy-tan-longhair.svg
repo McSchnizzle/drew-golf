@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Long flowing hair -->
+  <path d="M 20 32 Q 16 56 20 86 L 80 86 Q 84 56 80 32 Q 68 14 50 12 Q 32 14 20 32" fill="#1a1a1a"/>
+  <!-- Head -->
+  <circle cx="50" cy="50" r="32" fill="#D2A679"/>
+  <!-- Hair top -->
+  <ellipse cx="50" cy="24" rx="30" ry="16" fill="#1a1a1a"/>
+  <!-- Hair shine - sleek look -->
+  <ellipse cx="42" cy="22" rx="12" ry="5" fill="#333" opacity="0.4"/>
+  <ellipse cx="62" cy="20" rx="6" ry="3" fill="#333" opacity="0.3"/>
+  <!-- Eyes - chill vibe -->
+  <circle cx="40" cy="48" r="5" fill="#333"/>
+  <circle cx="60" cy="48" r="5" fill="#333"/>
+  <!-- Eye highlights - sparkly -->
+  <circle cx="42" cy="46" r="2" fill="#fff"/>
+  <circle cx="62" cy="46" r="2" fill="#fff"/>
+  <!-- Eyebrows - relaxed -->
+  <path d="M 34 40 Q 40 38 46 41" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 54 41 Q 60 38 66 40" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose hint -->
+  <ellipse cx="50" cy="54" rx="2" ry="1.5" fill="#B8956A" opacity="0.6"/>
+  <!-- Mellow smile -->
+  <path d="M 43 62 Q 50 68 57 62" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="32" cy="56" r="6" fill="#FFB6C1" opacity="0.35"/>
+  <circle cx="68" cy="56" r="6" fill="#FFB6C1" opacity="0.35"/>
+</svg>
