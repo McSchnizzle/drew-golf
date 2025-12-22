@@ -3637,144 +3637,360 @@
     }
 
     /* Character Creator */
+    /* ===== CHARACTER CREATOR - Premium Redesign ===== */
     #character-creator-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      background: radial-gradient(ellipse at 50% 30%, #1a2a4a 0%, #0a1628 50%, #050d18 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1650;
-      overflow-y: auto;
+      overflow: hidden;
+    }
+    #character-creator-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(120, 200, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(200, 120, 255, 0.03) 0%, transparent 50%);
+      pointer-events: none;
     }
     #character-creator-overlay.hidden { display: none; }
 
     .character-creator-modal {
-      background: linear-gradient(145deg, #1e2a4c, #0d1525);
-      border-radius: 24px;
-      padding: 25px;
-      max-width: 500px;
+      display: flex;
+      flex-direction: column;
       width: 95%;
-      max-height: 90vh;
-      overflow-y: auto;
-      border: 2px solid rgba(139, 92, 246, 0.4);
+      max-width: 950px;
+      height: 92vh;
+      max-height: 750px;
+      animation: creatorSlideIn 0.4s ease-out;
     }
+    @keyframes creatorSlideIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     .creator-header {
       text-align: center;
-      margin-bottom: 20px;
+      padding: 8px 0 12px;
+      position: relative;
     }
     .creator-header h2 {
-      color: #A78BFA;
+      color: #fff;
       margin: 0;
-      font-size: 24px;
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(100, 180, 255, 0.4);
     }
-    .creator-content {
-      display: flex;
-      gap: 20px;
+    .creator-header h2 span {
+      color: #64B5F6;
+      font-weight: 600;
     }
-    .creator-preview {
-      flex-shrink: 0;
-      background: linear-gradient(180deg, #87CEEB 0%, #4CAF50 100%);
-      border-radius: 16px;
-      padding: 10px;
+    .creator-subtitle {
+      display: none;
+    }
+
+    .creator-main {
       display: flex;
+      gap: 30px;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Left side - Character Stage */
+    .creator-stage {
+      flex: 0 0 260px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
+    .creator-preview {
+      position: relative;
+      width: 220px;
+      height: 300px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 15px;
+    }
+    .creator-preview::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 100px;
+      background: radial-gradient(ellipse at center, rgba(100, 180, 255, 0.15) 0%, transparent 70%);
+      filter: blur(10px);
+    }
+    .creator-preview::after {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 30px;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%);
+      border-radius: 50%;
+    }
     #character-preview-canvas {
       display: block;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
     }
+    .stage-platform {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 20px;
+      background: linear-gradient(180deg, #2a3a5a 0%, #1a2a4a 100%);
+      border-radius: 50%;
+      border: 1px solid rgba(100, 180, 255, 0.2);
+    }
+    .creator-name-display {
+      margin-top: 15px;
+      padding: 8px 24px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      border: 1px solid rgba(100, 180, 255, 0.2);
+    }
+    .creator-name-display input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      text-align: center;
+      width: 150px;
+      outline: none;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    .creator-name-display input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Right side - Options Panel */
     .creator-options {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      overflow-y: auto;
+      padding-right: 10px;
     }
+    .creator-options::-webkit-scrollbar {
+      width: 6px;
+    }
+    .creator-options::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 3px;
+    }
+    .creator-options::-webkit-scrollbar-thumb {
+      background: rgba(100, 180, 255, 0.3);
+      border-radius: 3px;
+    }
+
     .creator-section {
-      background: rgba(0,0,0,0.2);
-      border-radius: 10px;
-      padding: 10px 12px;
+      background: linear-gradient(135deg, rgba(30, 50, 80, 0.6) 0%, rgba(20, 35, 60, 0.6) 100%);
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid rgba(100, 180, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .creator-section:hover {
+      border-color: rgba(100, 180, 255, 0.25);
+      background: linear-gradient(135deg, rgba(35, 55, 90, 0.7) 0%, rgba(25, 40, 70, 0.7) 100%);
     }
     .creator-section label {
       display: block;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.6);
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      font-weight: 500;
     }
-    .creator-section input {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      font-size: 14px;
-    }
-    .option-buttons {
+
+    /* Gender Toggle */
+    .gender-toggle {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
-    .option-btn {
+    .gender-btn {
       flex: 1;
-      padding: 8px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.6);
       font-size: 13px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    .option-btn.selected {
-      border-color: #8B5CF6;
-      background: rgba(139, 92, 246, 0.2);
+    .gender-btn .gender-icon {
+      font-size: 18px;
+      font-weight: bold;
+      opacity: 0.7;
     }
-    .color-options, .style-options {
+    .gender-btn:hover {
+      border-color: rgba(100, 180, 255, 0.3);
+      background: rgba(100, 180, 255, 0.05);
+    }
+    .gender-btn.selected {
+      border-color: #64B5F6;
+      background: linear-gradient(135deg, rgba(100, 180, 255, 0.15) 0%, rgba(100, 150, 255, 0.1) 100%);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(100, 180, 255, 0.2);
+    }
+    .gender-btn.selected .gender-icon {
+      opacity: 1;
+    }
+
+    /* Color Swatches */
+    .color-options {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
     }
     .color-option {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.3);
+      border: 2px solid transparent;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1);
+    }
+    .color-option:hover {
+      transform: scale(1.15);
+      z-index: 1;
     }
     .color-option.selected {
-      border-color: #8B5CF6;
+      border-color: #64B5F6;
       transform: scale(1.1);
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 0 2px rgba(100, 180, 255, 0.3), 0 3px 12px rgba(100, 180, 255, 0.4);
+    }
+    .color-option.selected::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #fff;
+    }
+
+    /* Style Options (Hairstyles) */
+    .style-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .style-option {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      border: 2px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.1);
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: linear-gradient(135deg, rgba(40, 60, 100, 0.5) 0%, rgba(30, 45, 80, 0.5) 100%);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
       overflow: hidden;
       padding: 4px;
+      transition: all 0.2s ease;
+    }
+    .style-option:hover {
+      border-color: rgba(100, 180, 255, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     }
     .style-option img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       border-radius: 6px;
     }
     .style-option.selected {
-      border-color: #8B5CF6;
-      background: rgba(139, 92, 246, 0.2);
+      border-color: #64B5F6;
+      background: linear-gradient(135deg, rgba(100, 180, 255, 0.2) 0%, rgba(80, 140, 220, 0.15) 100%);
+      box-shadow: 0 0 15px rgba(100, 180, 255, 0.3);
+      transform: translateY(-2px);
     }
+
+    /* Bottom Buttons */
     .creator-buttons {
       display: flex;
       gap: 12px;
       justify-content: center;
-      margin-top: 20px;
+      padding: 12px 0 8px;
+      flex-shrink: 0;
+    }
+    .creator-btn {
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .creator-btn.primary {
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+    }
+    .creator-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(76, 175, 80, 0.6);
+    }
+    .creator-btn.secondary {
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .creator-btn.secondary:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 800px) {
+      .creator-main {
+        flex-direction: column;
+        gap: 20px;
+      }
+      .creator-stage {
+        flex: none;
+      }
+      .creator-preview {
+        width: 200px;
+        height: 280px;
+      }
+      .creator-options {
+        max-height: none;
+      }
     }
 
     /* Career Hub */
@@ -5024,27 +5240,32 @@
   <div id="character-creator-overlay" class="hidden">
     <div class="character-creator-modal">
       <div class="creator-header">
-        <h2>Create Your Golfer</h2>
+        <h2>Create Your <span>Golfer</span></h2>
+        <div class="creator-subtitle">Customize your champion</div>
       </div>
-      <div class="creator-content">
-        <div class="creator-preview">
-          <canvas id="character-preview-canvas" width="200" height="280"></canvas>
+      <div class="creator-main">
+        <div class="creator-stage">
+          <div class="creator-preview">
+            <canvas id="character-preview-canvas" width="200" height="280"></canvas>
+            <div class="stage-platform"></div>
+          </div>
+          <div class="creator-name-display">
+            <input type="text" id="career-name-input" placeholder="Your Name" maxlength="12">
+          </div>
         </div>
         <div class="creator-options">
           <div class="creator-section">
-            <label>Name</label>
-            <input type="text" id="career-name-input" placeholder="Enter name" maxlength="12">
-          </div>
-          <div class="creator-section">
             <label>Gender</label>
-            <div class="option-buttons" id="gender-options">
-              <button class="option-btn selected" data-value="boy">Boy</button>
-              <button class="option-btn" data-value="girl">Girl</button>
+            <div class="gender-toggle" id="gender-options">
+              <button class="gender-btn selected" data-value="boy">
+                <span class="gender-icon">M</span>
+                <span>Boy</span>
+              </button>
+              <button class="gender-btn" data-value="girl">
+                <span class="gender-icon">F</span>
+                <span>Girl</span>
+              </button>
             </div>
-          </div>
-          <div class="creator-section">
-            <label>Skin Tone</label>
-            <div class="color-options" id="skin-options"></div>
           </div>
           <div class="creator-section">
             <label>Hairstyle</label>
@@ -5055,18 +5276,22 @@
             <div class="color-options" id="hair-color-options"></div>
           </div>
           <div class="creator-section">
-            <label>Shirt Color</label>
+            <label>Skin Tone</label>
+            <div class="color-options" id="skin-options"></div>
+          </div>
+          <div class="creator-section">
+            <label>Shirt</label>
             <div class="color-options" id="shirt-options"></div>
           </div>
           <div class="creator-section">
-            <label>Pants Color</label>
+            <label>Pants</label>
             <div class="color-options" id="pants-options"></div>
           </div>
         </div>
       </div>
       <div class="creator-buttons">
-        <button class="career-btn primary" id="create-career-btn">Start Career</button>
-        <button class="career-btn secondary" id="creator-back-btn">Back</button>
+        <button class="creator-btn secondary" id="creator-back-btn">Back</button>
+        <button class="creator-btn primary" id="create-career-btn">Start Career</button>
       </div>
     </div>
   </div>
@@ -7327,6 +7552,10 @@
         if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.ball && this.gameEngine.gameState.ball.isMoving) {
           return;
         }
+        // Prevent swinging if minigame round is over (waiting for endGame timeout)
+        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.isMiniGame && !MiniGameManager.isActive) {
+          return;
+        }
         const touch = e.touches[0];
         const rect = this.canvas.getBoundingClientRect();
         this.touchStartPos = {
@@ -7377,6 +7606,10 @@
 
       onMouseDown(e) {
         if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.ball && this.gameEngine.gameState.ball.isMoving) {
+          return;
+        }
+        // Prevent swinging if minigame round is over (waiting for endGame timeout)
+        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.isMiniGame && !MiniGameManager.isActive) {
           return;
         }
         const rect = this.canvas.getBoundingClientRect();
@@ -12365,31 +12598,33 @@
         ]
       },
 
-      // Skin tone options
+      // Skin tone options (null hex = use sprite's original)
       skinTones: [
-        { id: 0, name: 'Light', hex: '#FFE0BD' },
-        { id: 1, name: 'Fair', hex: '#F5D0B0' },
-        { id: 2, name: 'Medium', hex: '#D4A574' },
-        { id: 3, name: 'Tan', hex: '#C68642' },
-        { id: 4, name: 'Brown', hex: '#8D5524' },
-        { id: 5, name: 'Dark', hex: '#5C3A21' }
+        { id: 0, name: 'Original', hex: null },
+        { id: 1, name: 'Light', hex: '#FFE0BD' },
+        { id: 2, name: 'Fair', hex: '#F5D0B0' },
+        { id: 3, name: 'Medium', hex: '#D4A574' },
+        { id: 4, name: 'Tan', hex: '#C68642' },
+        { id: 5, name: 'Brown', hex: '#8D5524' },
+        { id: 6, name: 'Dark', hex: '#5C3A21' }
       ],
 
-      // Hair colors - expanded palette
+      // Hair colors - expanded palette (null hex = use sprite's original)
       hairColors: [
-        { id: 0, name: 'Black', hex: '#1a1a1a' },
-        { id: 1, name: 'Brown', hex: '#4A3728' },
-        { id: 2, name: 'Light Brown', hex: '#8B4513' },
-        { id: 3, name: 'Blonde', hex: '#F4D03F' },
-        { id: 4, name: 'Platinum', hex: '#E8E4C9' },
-        { id: 5, name: 'Ginger', hex: '#D2691E' },
-        { id: 6, name: 'Red', hex: '#C0392B' },
-        { id: 7, name: 'Pink', hex: '#FF69B4' },
-        { id: 8, name: 'Purple', hex: '#9B59B6' },
-        { id: 9, name: 'Blue', hex: '#3498DB' },
-        { id: 10, name: 'Teal', hex: '#1ABC9C' },
-        { id: 11, name: 'Gray', hex: '#7F8C8D' },
-        { id: 12, name: 'White', hex: '#ECF0F1' }
+        { id: 0, name: 'Original', hex: null },
+        { id: 1, name: 'Black', hex: '#1a1a1a' },
+        { id: 2, name: 'Brown', hex: '#4A3728' },
+        { id: 3, name: 'Light Brown', hex: '#8B4513' },
+        { id: 4, name: 'Blonde', hex: '#F4D03F' },
+        { id: 5, name: 'Platinum', hex: '#E8E4C9' },
+        { id: 6, name: 'Ginger', hex: '#D2691E' },
+        { id: 7, name: 'Red', hex: '#C0392B' },
+        { id: 8, name: 'Pink', hex: '#FF69B4' },
+        { id: 9, name: 'Purple', hex: '#9B59B6' },
+        { id: 10, name: 'Blue', hex: '#3498DB' },
+        { id: 11, name: 'Teal', hex: '#1ABC9C' },
+        { id: 12, name: 'Gray', hex: '#7F8C8D' },
+        { id: 13, name: 'White', hex: '#ECF0F1' }
       ],
 
       // Hairstyles per gender - now using sprite map
@@ -12459,10 +12694,11 @@
       },
 
       // Get sprite with custom hair color (cached)
-      async getRecoloredSprite(spriteInfo, newHairHex) {
-        if (!spriteInfo || !newHairHex) return this.avatarSprites[spriteInfo?.file];
+      async getRecoloredSprite(spriteInfo, newHairHex, newSkinHex = null) {
+        if (!spriteInfo) return null;
+        if (!newHairHex && !newSkinHex) return this.avatarSprites[spriteInfo?.file];
 
-        const cacheKey = `${spriteInfo.file}:${newHairHex}`;
+        const cacheKey = `${spriteInfo.file}:${newHairHex || 'default'}:${newSkinHex || 'default'}`;
 
         // Return cached version if exists
         if (this.avatarSprites[cacheKey]) {
@@ -12473,23 +12709,47 @@
         const svgText = this.avatarSvgText[spriteInfo.file];
         if (!svgText) return this.avatarSprites[spriteInfo.file];
 
-        // Replace hair colors
         let recoloredSvg = svgText;
-        const originalHairColors = spriteInfo.hairHex || [];
-        const newHighlight = this.lightenColor(newHairHex, 20);
-        const newDark = this.darkenColor(newHairHex, 10);
 
-        // Replace each original hair color with the new color variants
-        originalHairColors.forEach((origColor, i) => {
-          const replacement = i === 0 ? newHairHex : (i === 1 ? newHighlight : newDark);
-          // Escape the color for regex and match with or without #
-          const escaped = origColor.replace('#', '').toUpperCase();
-          // Match fill="#COLOR" or stroke="#COLOR" patterns (case insensitive)
-          const fillRegex = new RegExp(`(fill=["']#?)${escaped}(["'])`, 'gi');
-          const strokeRegex = new RegExp(`(stroke=["']#?)${escaped}(["'])`, 'gi');
-          recoloredSvg = recoloredSvg.replace(fillRegex, `$1${replacement.replace('#', '')}$2`);
-          recoloredSvg = recoloredSvg.replace(strokeRegex, `$1${replacement.replace('#', '')}$2`);
-        });
+        // Replace hair colors
+        if (newHairHex) {
+          const originalHairColors = spriteInfo.hairHex || [];
+          const newHighlight = this.lightenColor(newHairHex, 20);
+          const newDark = this.darkenColor(newHairHex, 10);
+
+          // Replace each original hair color with the new color variants
+          originalHairColors.forEach((origColor, i) => {
+            const replacement = i === 0 ? newHairHex : (i === 1 ? newHighlight : newDark);
+            // Escape the color for regex and match with or without #
+            const escaped = origColor.replace('#', '').toUpperCase();
+            // Match fill="#COLOR" or stroke="#COLOR" patterns (case insensitive)
+            const fillRegex = new RegExp(`(fill=["']#?)${escaped}(["'])`, 'gi');
+            const strokeRegex = new RegExp(`(stroke=["']#?)${escaped}(["'])`, 'gi');
+            recoloredSvg = recoloredSvg.replace(fillRegex, `$1${replacement.replace('#', '')}$2`);
+            recoloredSvg = recoloredSvg.replace(strokeRegex, `$1${replacement.replace('#', '')}$2`);
+          });
+        }
+
+        // Replace skin color
+        if (newSkinHex && spriteInfo.skinHex) {
+          const origSkin = spriteInfo.skinHex.toUpperCase();
+          const newSkinUpper = newSkinHex.toUpperCase();
+
+          // Simple direct replacement of the main skin color
+          // Replace the entire fill="#XXXXXX" pattern to avoid regex issues
+          const origSkinNoHash = origSkin.replace('#', '');
+          const newSkinNoHash = newSkinUpper.replace('#', '');
+
+          // Replace fill colors (both with and without # prefix, case insensitive)
+          recoloredSvg = recoloredSvg.split(`fill="#${origSkinNoHash}"`).join(`fill="#${newSkinNoHash}"`);
+          recoloredSvg = recoloredSvg.split(`fill="#${origSkinNoHash.toLowerCase()}"`).join(`fill="#${newSkinNoHash}"`);
+          recoloredSvg = recoloredSvg.split(`fill='#${origSkinNoHash}'`).join(`fill='#${newSkinNoHash}'`);
+          recoloredSvg = recoloredSvg.split(`fill='#${origSkinNoHash.toLowerCase()}'`).join(`fill='#${newSkinNoHash}'`);
+
+          // Also try without the # in case SVG uses different format
+          recoloredSvg = recoloredSvg.split(`fill="${origSkinNoHash}"`).join(`fill="${newSkinNoHash}"`);
+          recoloredSvg = recoloredSvg.split(`fill='${origSkinNoHash}'`).join(`fill='${newSkinNoHash}'`);
+        }
 
         // Create and cache the new image
         try {
@@ -12857,9 +13117,9 @@
 
         // Gender options - update hairstyles when gender changes
         document.getElementById('gender-options')?.addEventListener('click', (e) => {
-          const btn = e.target.closest('.option-btn');
+          const btn = e.target.closest('.gender-btn');
           if (btn) {
-            document.querySelectorAll('#gender-options .option-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('#gender-options .gender-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             this.updateHairstyleOptions(); // Show correct sprites for selected gender
             this.updateCharacterPreview();
@@ -12934,13 +13194,22 @@
       },
 
       populateCreatorOptions() {
-        // Skin tones
+        // Skin tones (index 0 = "Original" is default)
         const skinContainer = document.getElementById('skin-options');
         skinContainer.innerHTML = '';
         this.skinTones.forEach((tone, i) => {
           const opt = document.createElement('div');
-          opt.className = 'color-option' + (i === 2 ? ' selected' : '');
-          opt.style.backgroundColor = tone.hex;
+          opt.className = 'color-option' + (i === 0 ? ' selected' : '');
+          if (tone.hex === null) {
+            // "Original" option - show slash through circle
+            opt.style.background = 'transparent';
+            opt.style.border = '2px solid rgba(255,255,255,0.5)';
+            opt.style.position = 'relative';
+            opt.innerHTML = '<div style="position:absolute;top:50%;left:50%;width:120%;height:2px;background:rgba(255,255,255,0.7);transform:translate(-50%,-50%) rotate(-45deg);"></div>';
+            opt.title = 'Original (sprite default)';
+          } else {
+            opt.style.backgroundColor = tone.hex;
+          }
           opt.dataset.value = i;
           opt.addEventListener('click', () => {
             skinContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
@@ -12950,14 +13219,23 @@
           skinContainer.appendChild(opt);
         });
 
-        // Hair colors
+        // Hair colors (index 0 = "Original" is default)
         const hairColorContainer = document.getElementById('hair-color-options');
         hairColorContainer.innerHTML = '';
         this.hairColors.forEach((color, i) => {
           const opt = document.createElement('div');
-          opt.className = 'color-option' + (i === 1 ? ' selected' : '');
-          opt.style.backgroundColor = color.hex;
-          opt.dataset.value = color.hex;
+          opt.className = 'color-option' + (i === 0 ? ' selected' : '');
+          if (color.hex === null) {
+            // "Original" option - show slash through circle
+            opt.style.background = 'transparent';
+            opt.style.border = '2px solid rgba(255,255,255,0.5)';
+            opt.style.position = 'relative';
+            opt.innerHTML = '<div style="position:absolute;top:50%;left:50%;width:120%;height:2px;background:rgba(255,255,255,0.7);transform:translate(-50%,-50%) rotate(-45deg);"></div>';
+            opt.title = 'Original (sprite default)';
+          } else {
+            opt.style.backgroundColor = color.hex;
+          }
+          opt.dataset.value = color.hex || 'original';
           opt.addEventListener('click', () => {
             hairColorContainer.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
             opt.classList.add('selected');
@@ -13003,7 +13281,7 @@
       },
 
       updateHairstyleOptions() {
-        const gender = document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy';
+        const gender = document.querySelector('#gender-options .gender-btn.selected')?.dataset.value || 'boy';
         const container = document.getElementById('hair-style-options');
         container.innerHTML = '';
         this.hairstyles[gender].forEach((style, i) => {
@@ -13042,19 +13320,23 @@
       },
 
       getCreatorSelections() {
-        const gender = document.querySelector('#gender-options .option-btn.selected')?.dataset.value || 'boy';
+        const gender = document.querySelector('#gender-options .gender-btn.selected')?.dataset.value || 'boy';
         const hairstyle = parseInt(document.querySelector('#hair-style-options .style-option.selected')?.dataset.value || '0');
 
-        // Get skin tone from the selected sprite
-        const spriteInfo = this.spriteMap[gender]?.[hairstyle];
-        const spriteSkinHex = spriteInfo?.skinHex || '#D4A574';
+        // Get user's selected skin tone (null = use sprite's original)
+        const skinToneIndex = parseInt(document.querySelector('#skin-options .color-option.selected')?.dataset.value || '0');
+        const selectedSkinHex = this.skinTones[skinToneIndex]?.hex; // Can be null for "Original"
+
+        // Get user's selected hair color (null/"original" = use sprite's original)
+        const hairColorValue = document.querySelector('#hair-color-options .color-option.selected')?.dataset.value;
+        const selectedHairHex = (hairColorValue === 'original' || !hairColorValue) ? null : hairColorValue;
 
         return {
           gender,
-          skinTone: parseInt(document.querySelector('#skin-options .color-option.selected')?.dataset.value || '2'),
-          skinHex: spriteSkinHex, // Use the sprite's skin tone
+          skinTone: skinToneIndex,
+          skinHex: selectedSkinHex, // null means keep sprite's original
           hairstyle,
-          hairColor: document.querySelector('#hair-color-options .color-option.selected')?.dataset.value || '#4A3728',
+          hairColor: selectedHairHex, // null means keep sprite's original
           outfitShirt: document.querySelector('#shirt-options .color-option.selected')?.dataset.value || '#E53935',
           outfitPants: document.querySelector('#pants-options .color-option.selected')?.dataset.value || '#1565C0'
         };
@@ -13075,13 +13357,15 @@
         const centerY = canvas.height / 2;
         const size = Math.min(canvas.width, canvas.height);
 
-        // Get sprite file for this character (with custom hair color if set)
+        // Get sprite file for this character (with custom hair and skin colors)
         const gender = character.gender || 'boy';
         const hairstyle = character.hairstyle || 0;
         const spriteInfo = this.spriteMap[gender]?.[hairstyle];
         const hairColor = character.hairColor;
-        const sprite = hairColor && spriteInfo
-          ? await this.getRecoloredSprite(spriteInfo, hairColor)
+        const skinColor = character.skinHex;
+        // Always use recolored sprite if we have hair or skin customization
+        const sprite = spriteInfo
+          ? await this.getRecoloredSprite(spriteInfo, hairColor, skinColor)
           : this.avatarSprites[spriteInfo?.file];
 
         // Background circle
@@ -13119,8 +13403,8 @@
           ctx.beginPath();
           ctx.arc(centerX, centerY + size * 0.42, size * 0.35, 0, Math.PI, true);
           ctx.fill();
-          // Fallback: simple head drawing - use sprite skin tone if available
-          const skinTone = spriteInfo?.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
+          // Fallback: simple head drawing - use character's skinHex, or sprite's original if "Original" selected
+          const skinTone = character.skinHex || spriteInfo?.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
 
           // Head
           ctx.fillStyle = skinTone;
@@ -13173,11 +13457,12 @@
         const centerY = height * 0.75;
         const scale = 1.3;
 
-        // Use sprite's skin tone if available, otherwise fall back to selection
+        // Get character customization options
         const gender = character.gender || 'boy';
         const hairstyle = character.hairstyle || 0;
         const spriteInfo = this.spriteMap[gender]?.[hairstyle];
-        const skinTone = spriteInfo?.skinHex || character.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
+        // When "Original" is selected (skinHex is null), use the sprite's original skin color for arms
+        const skinTone = character.skinHex || spriteInfo?.skinHex || this.skinTones[character.skinTone]?.hex || '#D4A574';
 
         // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -13188,10 +13473,11 @@
         ctx.save();
         ctx.translate(centerX, centerY);
 
-        // Get sprite (with custom hair color if set)
+        // Get sprite (with custom hair and skin colors)
         const hairColor = character.hairColor;
-        const sprite = hairColor && spriteInfo
-          ? await this.getRecoloredSprite(spriteInfo, hairColor)
+        const skinColor = character.skinHex;
+        const sprite = spriteInfo
+          ? await this.getRecoloredSprite(spriteInfo, hairColor, skinColor)
           : this.avatarSprites[spriteInfo?.file];
         const headSize = 38 * scale;
         const headX = 2 * scale; // Offset to match torso center
@@ -13208,40 +13494,142 @@
         }
 
         // LAYER 2: Draw body (covers the long hair that extends below)
-        // Legs
-        ctx.fillStyle = character.outfitPants || '#1565C0';
+        const shirtColor = character.outfitShirt || '#E53935';
+        const pantsColor = character.outfitPants || '#1565C0';
+
+        // Helper to darken color for shading
+        const darken = (hex, amt) => {
+          let c = hex.replace('#', '');
+          let num = parseInt(c, 16);
+          let r = Math.max(0, (num >> 16) - amt);
+          let g = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+          let b = Math.max(0, (num & 0x0000FF) - amt);
+          return '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+        };
+        const lighten = (hex, amt) => {
+          let c = hex.replace('#', '');
+          let num = parseInt(c, 16);
+          let r = Math.min(255, (num >> 16) + amt);
+          let g = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+          let b = Math.min(255, (num & 0x0000FF) + amt);
+          return '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+        };
+
+        // Shoes
+        ctx.fillStyle = '#2D2D2D';
         ctx.beginPath();
-        ctx.ellipse(-6 * scale, 0, 8 * scale, 22 * scale, 0.1, 0, Math.PI * 2);
+        ctx.ellipse(-6 * scale, 22 * scale, 9 * scale, 5 * scale, 0.1, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(9 * scale, 0, 8 * scale, 22 * scale, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(9 * scale, 22 * scale, 9 * scale, 5 * scale, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+        // Shoe highlights
+        ctx.fillStyle = '#4A4A4A';
+        ctx.beginPath();
+        ctx.ellipse(-7 * scale, 20 * scale, 5 * scale, 2 * scale, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(8 * scale, 20 * scale, 5 * scale, 2 * scale, -0.1, 0, Math.PI * 2);
         ctx.fill();
 
-        // Torso - different shape for boy vs girl
-        ctx.fillStyle = character.outfitShirt || '#E53935';
+        // Legs with gradient effect
+        const legGrad = ctx.createLinearGradient(-15 * scale, 0, 15 * scale, 0);
+        legGrad.addColorStop(0, darken(pantsColor, 30));
+        legGrad.addColorStop(0.3, pantsColor);
+        legGrad.addColorStop(0.7, pantsColor);
+        legGrad.addColorStop(1, darken(pantsColor, 30));
+        ctx.fillStyle = legGrad;
+        ctx.beginPath();
+        ctx.ellipse(-6 * scale, 2 * scale, 9 * scale, 20 * scale, 0.08, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(9 * scale, 2 * scale, 9 * scale, 20 * scale, -0.08, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Belt
+        ctx.fillStyle = '#5D4037';
+        ctx.fillRect(-14 * scale, -18 * scale, 30 * scale, 4 * scale);
+        // Belt buckle
+        ctx.fillStyle = '#FFD700';
+        ctx.fillRect(-2 * scale, -18 * scale, 6 * scale, 4 * scale);
+
+        // Torso with shading
+        const torsoGrad = ctx.createLinearGradient(-20 * scale, -50 * scale, 20 * scale, -20 * scale);
+        torsoGrad.addColorStop(0, darken(shirtColor, 40));
+        torsoGrad.addColorStop(0.3, shirtColor);
+        torsoGrad.addColorStop(0.6, lighten(shirtColor, 20));
+        torsoGrad.addColorStop(1, darken(shirtColor, 30));
+        ctx.fillStyle = torsoGrad;
+
         if (gender === 'girl') {
           // Girl torso: slightly narrower, more tapered
           ctx.beginPath();
-          ctx.ellipse(2 * scale, -38 * scale, 15 * scale, 22 * scale, 0, 0, Math.PI * 2);
-          ctx.fill();
-          // Add slight waist curve
-          ctx.beginPath();
-          ctx.ellipse(2 * scale, -28 * scale, 13 * scale, 10 * scale, 0, 0, Math.PI * 2);
+          ctx.moveTo(-13 * scale, -18 * scale);
+          ctx.quadraticCurveTo(-16 * scale, -35 * scale, -14 * scale, -52 * scale);
+          ctx.quadraticCurveTo(-8 * scale, -58 * scale, 2 * scale, -58 * scale);
+          ctx.quadraticCurveTo(12 * scale, -58 * scale, 17 * scale, -52 * scale);
+          ctx.quadraticCurveTo(19 * scale, -35 * scale, 16 * scale, -18 * scale);
+          ctx.closePath();
           ctx.fill();
         } else {
           // Boy torso: broader shoulders
           ctx.beginPath();
-          ctx.ellipse(2 * scale, -35 * scale, 18 * scale, 24 * scale, 0, 0, Math.PI * 2);
+          ctx.moveTo(-14 * scale, -18 * scale);
+          ctx.quadraticCurveTo(-20 * scale, -35 * scale, -18 * scale, -50 * scale);
+          ctx.quadraticCurveTo(-10 * scale, -58 * scale, 2 * scale, -58 * scale);
+          ctx.quadraticCurveTo(14 * scale, -58 * scale, 20 * scale, -50 * scale);
+          ctx.quadraticCurveTo(22 * scale, -35 * scale, 17 * scale, -18 * scale);
+          ctx.closePath();
           ctx.fill();
         }
 
-        // Arms
-        ctx.fillStyle = skinTone;
+        // Polo collar
+        ctx.fillStyle = lighten(shirtColor, 40);
         ctx.beginPath();
-        ctx.ellipse(-15 * scale, -30 * scale, 6 * scale, 18 * scale, 0.3, 0, Math.PI * 2);
+        ctx.moveTo(-8 * scale, -54 * scale);
+        ctx.lineTo(-4 * scale, -48 * scale);
+        ctx.lineTo(2 * scale, -52 * scale);
+        ctx.lineTo(8 * scale, -48 * scale);
+        ctx.lineTo(12 * scale, -54 * scale);
+        ctx.quadraticCurveTo(2 * scale, -58 * scale, -8 * scale, -54 * scale);
+        ctx.fill();
+        // Collar outline
+        ctx.strokeStyle = darken(shirtColor, 50);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Shirt buttons (subtle)
+        ctx.fillStyle = lighten(shirtColor, 60);
+        ctx.beginPath();
+        ctx.arc(2 * scale, -44 * scale, 1.5 * scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(18 * scale, -30 * scale, 6 * scale, 18 * scale, -0.3, 0, Math.PI * 2);
+        ctx.arc(2 * scale, -38 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arms with shading
+        const armGrad = ctx.createRadialGradient(0, -30 * scale, 0, 0, -30 * scale, 20 * scale);
+        armGrad.addColorStop(0, lighten(skinTone, 20));
+        armGrad.addColorStop(0.5, skinTone);
+        armGrad.addColorStop(1, darken(skinTone, 30));
+        ctx.fillStyle = armGrad;
+
+        // Left arm
+        ctx.beginPath();
+        ctx.ellipse(-17 * scale, -32 * scale, 7 * scale, 16 * scale, 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        // Right arm
+        ctx.beginPath();
+        ctx.ellipse(20 * scale, -32 * scale, 7 * scale, 16 * scale, -0.25, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hands
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(-19 * scale, -18 * scale, 5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(22 * scale, -18 * scale, 5 * scale, 0, Math.PI * 2);
         ctx.fill();
 
         // LAYER 3: Draw upper portion of sprite (head + top hair, but NOT long hair hanging down)
@@ -13850,7 +14238,9 @@
         ctx.translate(charX, charY);
         ctx.rotate(bodyRotation);
 
-        const skinTone = CareerSystem.skinTones[char.skinTone]?.hex || '#D4A574';
+        // Get sprite info for "Original" skin tone fallback
+        const spriteInfo = CareerSystem.spriteMap[char.gender]?.[char.hairstyle];
+        const skinTone = char.skinHex || spriteInfo?.skinHex || CareerSystem.skinTones[char.skinTone]?.hex || '#D4A574';
 
         // Legs
         ctx.fillStyle = char.outfitPants || '#1565C0';
@@ -14066,12 +14456,10 @@
       },
 
       // Check if today's challenge has been completed
-      // Currently disabled - allowing unlimited plays for testing
       hasCompletedToday() {
-        return false; // Allow unlimited plays
-        // const todayGame = this.getTodayGame();
-        // const todayDate = this.getTodayDateString();
-        // return this.completedDates[todayGame] === todayDate;
+        const todayGame = this.getTodayGame();
+        const todayDate = this.getTodayDateString();
+        return this.completedDates[todayGame] === todayDate;
       },
 
       // Mark today's challenge as completed
@@ -14182,14 +14570,16 @@
       },
 
       startGame(gameKey) {
+        console.log('=== MINIGAME START ===', gameKey);
         const game = this.games[gameKey];
-        if (!game) return;
+        if (!game) { console.error('Game not found:', gameKey); return; }
 
         // Initialize daily seed for consistent layouts
         this.initDailySeed();
 
         this.currentGame = gameKey;
         this.isActive = true;
+        console.log('Game active:', { currentGame: this.currentGame, isActive: this.isActive });
         this.score = 0;
         this.timer = game.duration;
         this.attempts = gameKey === 'longestDrive' ? 3 : 1;
@@ -14233,6 +14623,10 @@
           };
 
           window.gameEngine.currentHole = miniGameHole;
+          console.log('MiniGame setup complete:', { currentHole: !!window.gameEngine.currentHole, isActive: this.isActive, gameKey: gameKey });
+
+          // Reset hole completion flag for fresh game
+          window.gameEngine.holeCompleting = false;
 
           // Generate wind for the mini-game
           WindSystem.generateWind(1);
@@ -14241,13 +14635,16 @@
           window.gameEngine.start();
         }
 
-        // Show HUD for timed games
+        // Show HUD only for timed games
         const hud = document.getElementById('minigame-hud');
         if (game.duration > 0) {
           hud.classList.remove('hidden');
+          hud.style.padding = '10px 30px';
+          hud.style.background = 'rgba(0,0,0,0.8)';
           document.getElementById('minigame-timer').textContent = this.timer;
           document.getElementById('minigame-score').textContent = '0';
         } else {
+          // Hide HUD for single-shot games
           hud.classList.add('hidden');
         }
 
@@ -14353,16 +14750,18 @@
 
       createPuttingGreen() {
         const canvas = document.getElementById('game-canvas');
-        const rect = canvas.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+        // Use the actual canvas dimensions (not getBoundingClientRect which can be different)
+        const canvasW = canvas.width || canvas.getBoundingClientRect().width || 800;
+        const canvasH = canvas.height || canvas.getBoundingClientRect().height || 600;
+        const centerX = canvasW / 2;
+        const centerY = canvasH / 2;
 
         // Hole position (centered)
         const holeX = centerX;
         const holeY = centerY;
 
         // Generate obstacles around the hole (but not blocking direct paths)
-        const obstacles = this.generatePuttingObstacles(holeX, holeY, rect);
+        const obstacles = this.generatePuttingObstacles(holeX, holeY, { width: canvasW, height: canvasH });
 
         // Generate 10 preset tee positions - SHORT distances for putter (15-50 feet = 45-150 pixels)
         this.puttingState.teePositions = [];
@@ -14378,8 +14777,8 @@
           let ballY = holeY + Math.sin(angle) * distance;
 
           // Keep within bounds
-          ballX = Math.max(60, Math.min(rect.width - 60, ballX));
-          ballY = Math.max(60, Math.min(rect.height - 60, ballY));
+          ballX = Math.max(60, Math.min(canvasW - 60, ballX));
+          ballY = Math.max(60, Math.min(canvasH - 60, ballY));
 
           this.puttingState.teePositions.push({ x: ballX, y: ballY });
         }
@@ -14390,7 +14789,7 @@
           teePosition: this.puttingState.teePositions[0],
           par: 1,
           greenPosition: { x: centerX, y: centerY },
-          greenRadius: Math.max(rect.width, rect.height) * 2, // Cover way beyond screen
+          greenRadius: Math.max(canvasW, canvasH) * 2, // Cover way beyond screen
           // No fairway path - pure green
           fairwayPath: null,
           fairwayWidth: 0,
@@ -14524,17 +14923,30 @@
       onShotComplete(ball, hole) {
         if (!this.isActive) return;
 
-        const game = this.games[this.currentGame];
-
         if (this.currentGame === 'closestToPin') {
-          const dx = ball.x - hole.holePosition.x;
-          const dy = ball.y - hole.holePosition.y;
-          const distancePixels = Math.sqrt(dx * dx + dy * dy);
-          const distanceFeet = Math.round(distancePixels / 3); // ~3 pixels per foot
+          // Prevent further shots immediately - this is a single-shot game
+          this.isActive = false;
 
-          this.score = distanceFeet;
-          this.showMessage('🎯 Result', `${distanceFeet} feet from the hole!`, 2000);
-          setTimeout(() => this.endGame(), 2500);
+          // Check if ball went in the hole (hole-in-one!)
+          if (ball.inHole) {
+            this.score = 0;
+            this.showMessage('🎉 HOLE IN ONE!', 'You sunk it! 0 feet from the hole!', 2500);
+            AudioManager.playCrowdClap && AudioManager.playCrowdClap();
+            // Reset ball state for clean game end
+            ball.inHole = false;
+            ball.holeProgress = undefined;
+            delete ball.holeStartTime;
+            setTimeout(() => this.endGame(), 3000);
+          } else {
+            const dx = ball.x - hole.holePosition.x;
+            const dy = ball.y - hole.holePosition.y;
+            const distancePixels = Math.sqrt(dx * dx + dy * dy);
+            const distanceFeet = Math.round(distancePixels / 3); // ~3 pixels per foot
+
+            this.score = distanceFeet;
+            this.showMessage('🎯 Result', `${distanceFeet} feet from the hole!`, 2000);
+            setTimeout(() => this.endGame(), 2500);
+          }
 
         } else if (this.currentGame === 'longestDrive') {
           const dx = ball.x - hole.teePosition.x;
@@ -14641,7 +15053,7 @@
         const medal = this.getMedal(this.currentGame, this.score);
         const baseReward = this.getMedalReward(medal.type);
         const reward = isNewRecord ? baseReward + 50 : baseReward; // Bonus 50 for new record
-        ShopSystem.earnBucks(reward);
+        ShopSystem.addBucks(reward, 'Mini-Game Reward');
 
         // Show results
         const overlay = document.getElementById('minigame-overlay');
@@ -14655,11 +15067,8 @@
             <div style="font-size: 24px; color: ${medal.type === 'gold' ? '#FFD700' : medal.type === 'silver' ? '#C0C0C0' : '#CD7F32'}; font-weight: bold; margin-bottom: 10px;">${medal.name} Medal</div>
             <div class="final-score">${this.score}${game.scoreUnit}</div>
             <div class="high-score">${isNewRecord ? '🎉 NEW RECORD!' : `Best: ${this.highScores[this.currentGame]}${game.scoreUnit}`}</div>
-            <div class="reward">+${reward} Golf Bucks${isNewRecord ? ' (includes record bonus!)' : ''}</div>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-              <button class="button" id="minigame-retry-btn">Play Again</button>
-              <button class="button" id="minigame-done-btn" style="background: #555;">Done</button>
-            </div>
+            <div class="reward" style="font-size: 20px; color: #4CAF50; margin: 15px 0;">+${reward} Golf Bucks${isNewRecord ? ' (includes record bonus!)' : ''}</div>
+            <div style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 10px;">Returning to lobby in <span id="minigame-countdown">4</span>s...</div>
           </div>
         `;
 
@@ -14668,24 +15077,25 @@
         // Show scoreboard again
         document.getElementById('scoreboard').classList.remove('hidden');
 
-        document.getElementById('minigame-done-btn').addEventListener('click', () => {
-          overlay.classList.add('hidden');
-          this.currentGame = null;
-          // Return to main menu - hide game-mode-overlay too
-          document.getElementById('game-mode-overlay').classList.add('hidden');
-          document.getElementById('menu-overlay').classList.remove('hidden');
-          // Clear mini-game state
-          if (window.gameEngine && window.gameEngine.gameState) {
-            window.gameEngine.gameState.isMiniGame = false;
-            window.gameEngine.gameState.puttingMiniGame = false;
-            window.gameEngine.gameState = null;
+        // Auto-return to lobby after countdown
+        let countdown = 4;
+        const countdownEl = document.getElementById('minigame-countdown');
+        const countdownInterval = setInterval(() => {
+          countdown--;
+          if (countdownEl) countdownEl.textContent = countdown;
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            this.returnToLobby();
           }
-        });
+        }, 1000);
 
-        document.getElementById('minigame-retry-btn').addEventListener('click', () => {
-          overlay.classList.add('hidden');
-          this.startGame(gameKey);
-        });
+        // Allow clicking anywhere on the overlay to return immediately
+        const clickHandler = () => {
+          clearInterval(countdownInterval);
+          overlay.removeEventListener('click', clickHandler);
+          this.returnToLobby();
+        };
+        overlay.addEventListener('click', clickHandler);
 
         // Add to mailbox
         MailboxManager.addNotification(
@@ -14693,6 +15103,25 @@
           `${medal.icon} ${game.name} - ${medal.name}`,
           `Score: ${this.score}${game.scoreUnit}${isNewRecord ? ' (New Record!)' : ''} - Earned ${reward} GB`
         );
+      },
+
+      returnToLobby() {
+        const overlay = document.getElementById('minigame-overlay');
+        overlay.classList.add('hidden');
+        this.currentGame = null;
+        this.puttingState = null;
+
+        // Return to main menu
+        document.getElementById('game-mode-overlay').classList.add('hidden');
+        document.getElementById('menu-overlay').classList.remove('hidden');
+
+        // Clear mini-game state
+        if (window.gameEngine && window.gameEngine.gameState) {
+          window.gameEngine.gameState.isMiniGame = false;
+          window.gameEngine.gameState.puttingMiniGame = false;
+          window.gameEngine.gameState = null;
+        }
+        window.gameEngine.holeCompleting = false;
       }
     };
 
@@ -15506,6 +15935,11 @@
       }
 
       start() {
+        if (this.isRunning) {
+          console.log('Game engine already running, skipping start');
+          return;
+        }
+        console.log('Starting game engine');
         this.isRunning = true;
         this.lastFrameTime = performance.now();
         requestAnimationFrame((t) => this.update(t));
@@ -16086,7 +16520,10 @@
       updateBallStateIndicator() {
         const ball = this.gameState.ball;
         const stateElement = document.getElementById('ball-state');
-        if (!stateElement) return;
+        if (!stateElement) {
+          console.log('No ball-state element found!');
+          return;
+        }
 
         const wasMoving = this.ballWasMoving || false;
         this.ballWasMoving = ball.isMoving;
@@ -16116,32 +16553,36 @@
         } else {
           stateElement.textContent = '🔴 Ready';
           stateElement.style.color = '#2E8B57';
+        }
 
-          if (wasMoving && !ball.isMoving) {
-            this.updateClubSelector();
+        // Shot completion check - must happen regardless of terrain
+        if (wasMoving && !ball.isMoving) {
+          this.updateClubSelector();
 
-            // Check for long drive achievement (after tee shot)
-            if (ball.teePosition && this.gameState.round.currentStrokeCount === 1) {
-              const dx = ball.x - ball.teePosition.x;
-              const dy = ball.y - ball.teePosition.y;
-              const distancePixels = Math.sqrt(dx * dx + dy * dy);
-              const distanceYards = Math.round(distancePixels * PIXELS_TO_YARDS);
-              AchievementManager.onDriveHit(distanceYards);
-              DailyChallengeSystem.onLongDrive(distanceYards);
-              ball.teePosition = null; // Clear after checking
-            }
+          // Check for long drive achievement (after tee shot)
+          if (ball.teePosition && this.gameState.round.currentStrokeCount === 1) {
+            const dx = ball.x - ball.teePosition.x;
+            const dy = ball.y - ball.teePosition.y;
+            const distancePixels = Math.sqrt(dx * dx + dy * dy);
+            const distanceYards = Math.round(distancePixels * PIXELS_TO_YARDS);
+            AchievementManager.onDriveHit(distanceYards);
+            DailyChallengeSystem.onLongDrive(distanceYards);
+            ball.teePosition = null; // Clear after checking
+          }
 
-            // Notify mini-game manager that shot completed
-            if (MiniGameManager.isActive && this.currentHole) {
-              MiniGameManager.onShotComplete(ball, this.currentHole);
-            }
+          // Notify mini-game manager that shot completed
+          // Use either this.currentHole or gameState.currentHole (both should work)
+          const hole = this.currentHole || this.gameState.currentHole;
+          if (MiniGameManager.isActive && hole) {
+            MiniGameManager.onShotComplete(ball, hole);
           }
         }
       }
 
       completeHole() {
-        // Skip normal hole completion for mini-games
+        // Skip normal hole completion for mini-games (but set flag to prevent repeated calls)
         if (this.gameState && this.gameState.isMiniGame) {
+          this.holeCompleting = true;
           return;
         }
 
