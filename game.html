@@ -6431,6 +6431,11 @@
             GhostSystem.renderGhost(this.ctx, performance.now());
           }
 
+          // Draw golfer next to ball (only when ball is not moving)
+          if (!gameState.ball.isMoving) {
+            this.drawGolfer(gameState.ball);
+          }
+
           this.drawBall(gameState.ball);
 
           if (gameState.strikeFlash && gameState.strikeFlash.active) {
@@ -7865,6 +7870,142 @@
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, radius, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.restore();
+      },
+
+      drawGolfer(ball, swingPreview) {
+        const ctx = this.ctx;
+
+        // Get character from career mode if available, otherwise use defaults
+        const career = typeof CareerSystem !== 'undefined' && CareerSystem.activeCareer;
+        const character = career?.character || {
+          gender: 'boy',
+          skinTone: '#DEB887',
+          hairColor: '#4A3728',
+          shirtColor: '#E53935',
+          pantsColor: '#1565C0'
+        };
+
+        // Position golfer to the left of the ball
+        const golferX = ball.x - 25;
+        const golferY = ball.y + 5;
+        const scale = 0.35; // Small scale for course view
+
+        ctx.save();
+        ctx.translate(golferX, golferY);
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.beginPath();
+        ctx.ellipse(0, 18 * scale, 12 * scale, 4 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Legs
+        ctx.fillStyle = character.pantsColor || character.outfitPants || '#1565C0';
+        ctx.beginPath();
+        ctx.ellipse(-4 * scale, 12 * scale, 3 * scale, 8 * scale, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(4 * scale, 12 * scale, 3 * scale, 8 * scale, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shoes
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.ellipse(-4 * scale, 20 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(4 * scale, 20 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Body/Shirt
+        ctx.fillStyle = character.shirtColor || character.outfitShirt || '#E53935';
+        ctx.beginPath();
+        ctx.ellipse(0, -2 * scale, 8 * scale, 12 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arms
+        ctx.fillStyle = character.skinTone || '#DEB887';
+        // Left arm (holding club)
+        ctx.beginPath();
+        ctx.ellipse(-10 * scale, 2 * scale, 3 * scale, 6 * scale, 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Right arm
+        ctx.beginPath();
+        ctx.ellipse(10 * scale, 0 * scale, 3 * scale, 6 * scale, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hands
+        ctx.beginPath();
+        ctx.arc(-12 * scale, 6 * scale, 2.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(11 * scale, 5 * scale, 2.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(0, -18 * scale, 8 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = character.hairColor || '#4A3728';
+        ctx.beginPath();
+        ctx.arc(0, -20 * scale, 7 * scale, Math.PI, 0);
+        ctx.fill();
+
+        // Eyes
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(-3 * scale, -18 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(3 * scale, -18 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Golf club
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-12 * scale, 6 * scale);
+        ctx.lineTo(15 * scale, 18 * scale);
+        ctx.stroke();
+        // Club head
+        ctx.fillStyle = '#666';
+        ctx.beginPath();
+        ctx.ellipse(17 * scale, 19 * scale, 4 * scale, 2 * scale, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hat if equipped
+        const equippedHat = character.equippedHat;
+        if (equippedHat) {
+          ctx.fillStyle = equippedHat.includes('blue') ? '#1976D2' :
+                          equippedHat.includes('red') ? '#D32F2F' :
+                          equippedHat === 'crown' ? '#FFD700' :
+                          equippedHat === 'cowboy' ? '#8B4513' : '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(0, -26 * scale, 6 * scale, Math.PI, 0);
+          ctx.fill();
+          // Brim for caps
+          if (equippedHat.includes('cap') || equippedHat === 'visor') {
+            ctx.beginPath();
+            ctx.ellipse(5 * scale, -20 * scale, 8 * scale, 3 * scale, 0.2, Math.PI, 0);
+            ctx.fill();
+          }
+        }
+
+        // Glasses if equipped
+        const equippedGlasses = character.equippedGlasses;
+        if (equippedGlasses) {
+          ctx.fillStyle = equippedGlasses === 'star_glasses' ? '#FFD700' : '#1a1a1a';
+          ctx.beginPath();
+          ctx.ellipse(-3 * scale, -18 * scale, 2.5 * scale, 1.5 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(3 * scale, -18 * scale, 2.5 * scale, 1.5 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         ctx.restore();
       }
