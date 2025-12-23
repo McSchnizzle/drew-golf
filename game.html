@@ -4546,19 +4546,27 @@
     }
     .shop-set-contents {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-size: 9px;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 6px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3px;
+      font-size: 8px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 8px;
     }
     .shop-set-contents span {
-      background: rgba(255,255,255,0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
+      background: rgba(139, 92, 246, 0.3);
+      padding: 3px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
     }
     .set-item {
-      min-height: 140px;
+      min-height: 150px;
+      min-width: 130px;
+    }
+    .shop-items-grid.sets-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
     .shop-item-price {
       display: flex;
@@ -15027,7 +15035,7 @@
         if (equippedGlasses) {
           ctx.save();
           ctx.translate(2 * scale, -66 * scale); // Center on eyes
-          const gs = scale * 0.55; // Smaller glass scale
+          const gs = scale * 0.85; // Glass scale
 
           if (equippedGlasses === 'sunglasses' || equippedGlasses === 'sport_shades') {
             // Dark sunglasses - sleek and small
@@ -15805,6 +15813,9 @@
         const items = this.shopItems[this.currentShopTab];
         const grid = document.getElementById('shop-items-grid');
         const career = this.activeCareer;
+
+        // Toggle grid layout for sets
+        grid.classList.toggle('sets-grid', this.currentShopTab === 'sets');
 
         if (this.currentShopTab === 'sets') {
           // Special rendering for sets
