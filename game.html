@@ -4356,6 +4356,398 @@
       padding: 16px 50px !important;
     }
 
+    /* Tour Coins Shop Overlay */
+    #tour-coins-shop-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1660;
+    }
+    #tour-coins-shop-overlay.hidden { display: none; }
+    .shop-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 25px;
+      max-width: 700px;
+      width: 95%;
+      max-height: 90vh;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+    .shop-body {
+      display: flex;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+    .shop-character-panel {
+      flex: 0 0 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, rgba(30, 42, 76, 0.5) 100%);
+      border-radius: 16px;
+      padding: 15px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .shop-character-canvas {
+      width: 160px;
+      height: 280px;
+      border-radius: 12px;
+      background: radial-gradient(ellipse at center bottom, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+    }
+    .shop-character-label {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .shop-trying-on {
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: 8px;
+      text-align: center;
+      min-height: 20px;
+    }
+    .shop-equipped-list {
+      margin-top: 12px;
+      width: 100%;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .shop-equipped-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+    .shop-equipped-item span:first-child {
+      color: #FFD700;
+    }
+    .shop-items-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .shop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .shop-header h2 {
+      color: #A78BFA;
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .shop-balance {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
+      padding: 10px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(139, 92, 246, 0.5);
+    }
+    .shop-balance span {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .shop-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .shop-tab {
+      flex: 1;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .shop-tab:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .shop-tab.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
+      border-color: rgba(139, 92, 246, 0.5);
+      color: #fff;
+    }
+    .shop-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      overflow-y: auto;
+      max-height: 380px;
+      padding-right: 5px;
+    }
+    .shop-item {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .shop-item:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-2px);
+    }
+    .shop-item.selected {
+      border-color: #A78BFA;
+      background: rgba(139, 92, 246, 0.2);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    }
+    .shop-item.owned {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .shop-item.owned.selected {
+      border-color: #4CAF50;
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+    }
+    .shop-item.equipped {
+      border-color: #FFD700;
+      background: rgba(255, 215, 0, 0.15);
+    }
+    .shop-item.equipped.selected {
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .shop-item-preview {
+      font-size: 32px;
+      margin-bottom: 6px;
+    }
+    .shop-item-name {
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .shop-item-price {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .shop-item-price.owned {
+      color: #4CAF50;
+    }
+    .shop-item-btn {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .shop-item-btn.buy-btn {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: #fff;
+    }
+    .shop-item-btn.buy-btn:hover {
+      transform: scale(1.02);
+    }
+    .shop-item-btn.buy-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .shop-item-btn.equip-btn {
+      background: linear-gradient(135deg, #4CAF50, #388E3C);
+      color: #fff;
+    }
+    .shop-item-btn.unequip-btn {
+      background: linear-gradient(135deg, #FF9800, #F57C00);
+      color: #fff;
+    }
+    .shop-item-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .shop-item-badge.owned-badge {
+      background: #4CAF50;
+      color: #fff;
+    }
+    .shop-item-badge.equipped-badge {
+      background: #FFD700;
+      color: #000;
+    }
+    .shop-back-btn {
+      margin-top: 15px;
+      width: 100%;
+      padding: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .shop-back-btn:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* Sponsors Management Overlay */
+    #sponsors-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1660;
+    }
+    #sponsors-overlay.hidden { display: none; }
+    .sponsors-modal {
+      background: linear-gradient(145deg, #1e2a4c, #0d1525);
+      border-radius: 24px;
+      padding: 25px;
+      max-width: 500px;
+      width: 95%;
+      max-height: 85vh;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+    .sponsors-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .sponsors-header h2 {
+      color: #A78BFA;
+      margin: 0 0 5px 0;
+      font-size: 24px;
+    }
+    .sponsors-header p {
+      color: rgba(255,255,255,0.6);
+      margin: 0;
+      font-size: 13px;
+    }
+    .sponsor-section {
+      margin-bottom: 20px;
+    }
+    .sponsor-section h3 {
+      color: #fff;
+      font-size: 14px;
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sponsor-card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 15px;
+    }
+    .sponsor-card.active {
+      border-color: rgba(139, 92, 246, 0.5);
+      background: rgba(139, 92, 246, 0.1);
+    }
+    .sponsor-card.empty {
+      border-style: dashed;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      padding: 25px 15px;
+    }
+    .sponsor-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .sponsor-icon-large {
+      font-size: 32px;
+    }
+    .sponsor-details {
+      flex: 1;
+    }
+    .sponsor-name {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .sponsor-level {
+      color: #A78BFA;
+      font-size: 12px;
+    }
+    .sponsor-progress {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .sponsor-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+      border-radius: 8px;
+      transition: width 0.3s;
+    }
+    .sponsor-bonuses {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .sponsor-bonus {
+      background: rgba(76, 175, 80, 0.2);
+      color: #81C784;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .sponsors-back-btn {
+      margin-top: 15px;
+      width: 100%;
+      padding: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sponsors-back-btn:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
     /* Debut Cutscene Overlay */
     #debut-cutscene-overlay {
       position: fixed;
@@ -5389,6 +5781,55 @@
           Exit
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Tour Coins Shop -->
+  <div id="tour-coins-shop-overlay" class="hidden">
+    <div class="shop-modal">
+      <div class="shop-header">
+        <h2>🛍️ Pro Shop</h2>
+        <div class="shop-balance">
+          <span>🪙</span>
+          <span id="shop-coin-balance">0</span>
+        </div>
+      </div>
+      <div class="shop-body">
+        <!-- Character Preview Panel -->
+        <div class="shop-character-panel">
+          <canvas class="shop-character-canvas" id="shop-character-canvas" width="160" height="280"></canvas>
+          <div class="shop-trying-on" id="shop-trying-on"></div>
+          <div class="shop-equipped-list" id="shop-equipped-list">
+            <!-- Shows currently equipped items -->
+          </div>
+        </div>
+        <!-- Items Panel -->
+        <div class="shop-items-panel">
+          <div class="shop-tabs">
+            <button class="shop-tab active" data-tab="hats">🧢 Hats</button>
+            <button class="shop-tab" data-tab="glasses">🕶️ Glasses</button>
+            <button class="shop-tab" data-tab="outfits">👔 Outfits</button>
+          </div>
+          <div class="shop-items" id="shop-items-grid">
+            <!-- Items populated by JS -->
+          </div>
+        </div>
+      </div>
+      <button class="shop-back-btn" id="shop-back-btn">← Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- Sponsors Management -->
+  <div id="sponsors-overlay" class="hidden">
+    <div class="sponsors-modal">
+      <div class="sponsors-header">
+        <h2>🤝 My Sponsors</h2>
+        <p>Earn XP by playing tournaments to level up your sponsors</p>
+      </div>
+      <div id="sponsors-content">
+        <!-- Populated by JS -->
+      </div>
+      <button class="sponsors-back-btn" id="sponsors-back-btn">← Back to Hub</button>
     </div>
   </div>
 
@@ -12782,7 +13223,8 @@
           promotionPoints: 500,
           basePrize: 25,
           aiDifficulty: 'easy',
-          tournamentCount: 8
+          tournamentCount: 8,
+          themes: ['classic', 'desert'] // Beginner-friendly courses
         },
         amateur: {
           id: 'amateur',
@@ -12794,7 +13236,8 @@
           promotionPoints: 2000,
           basePrize: 50,
           aiDifficulty: 'medium',
-          tournamentCount: 10
+          tournamentCount: 10,
+          themes: ['classic', 'desert', 'winter', 'tropical'] // All standard courses
         },
         pro: {
           id: 'pro',
@@ -12806,7 +13249,8 @@
           promotionPoints: 5000,
           basePrize: 100,
           aiDifficulty: 'hard',
-          tournamentCount: 10
+          tournamentCount: 10,
+          themes: ['classic', 'desert', 'winter', 'tropical', 'links', 'night'] // Includes exclusive courses
         },
         legend: {
           id: 'legend',
@@ -12818,32 +13262,128 @@
           promotionPoints: null, // Final tier
           basePrize: 250,
           aiDifficulty: 'expert',
-          tournamentCount: 12
+          tournamentCount: 12,
+          themes: ['links', 'night', 'volcanic', 'aurora'] // Exclusive legendary courses only
         }
       },
 
-      // Rival configuration
+      // Career-exclusive course themes (not in Quick Play)
+      careerExclusiveThemes: {
+        links: {
+          name: 'Scottish Links',
+          icon: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+          description: 'Windswept coastal courses',
+          colors: { fairway: '#7CB342', rough: '#5D8A3E', sand: '#D4C4A8', water: '#3A7CA5' }
+        },
+        night: {
+          name: 'Night Golf',
+          icon: '🌙',
+          description: 'Under the stars',
+          colors: { fairway: '#2E4A3E', rough: '#1E3A2E', sand: '#4A4A3A', water: '#1A3A5A' }
+        },
+        volcanic: {
+          name: 'Volcanic',
+          icon: '🌋',
+          description: 'Dramatic lava landscapes',
+          colors: { fairway: '#4A5A4A', rough: '#3A4A3A', sand: '#2A2A2A', water: '#FF6B35' }
+        },
+        aurora: {
+          name: 'Aurora Borealis',
+          icon: '✨',
+          description: 'Northern lights paradise',
+          colors: { fairway: '#3A5A5A', rough: '#2A4A4A', sand: '#6A7A7A', water: '#4A8A9A' }
+        }
+      },
+
+      // Rival configuration - Ace McStroke, your nemesis throughout career mode
       rival: {
         name: 'Ace McStroke',
         portrait: '😎',
         phrases: {
-          intro: [
-            "Well, well... fresh meat on the tour.",
-            "Hope you brought your A-game, rookie.",
-            "Another one trying to take my crown? How cute."
+          // First encounter
+          firstMeet: [
+            "Well, well... fresh meat on the tour. I'm Ace McStroke. Remember that name - you'll be seeing it at the top of every leaderboard.",
+            "A new face? How adorable. I'm Ace, the one you'll never beat. Enjoy your brief time in the spotlight.",
+            "So YOU'RE the rookie everyone's talking about? I've seen dozens like you come and go. I'm Ace McStroke - the king of this tour."
           ],
+          // Regular encounters
+          intro: [
+            "Back for more? I admire your persistence.",
+            "Oh look, my favorite punching bag returns!",
+            "Ready to watch me lift another trophy?",
+            "You again? Don't you ever learn?",
+            "The rookie's back! How's second place treating you?",
+            "Hope you stretched - you'll be chasing me all day."
+          ],
+          // When rival wins
           win: [
             "Better luck next time, kid.",
             "That's why they call me Ace!",
-            "Come back when you've practiced more."
+            "Come back when you've practiced more.",
+            "And THAT'S how a pro does it!",
+            "Maybe stick to mini-golf?",
+            "Don't feel bad - losing to me is inevitable."
           ],
+          // When player wins
           lose: [
             "Lucky shot... it won't happen again.",
             "Enjoy it while it lasts.",
-            "I was going easy on you."
+            "I was going easy on you.",
+            "Must've been the wind...",
+            "Fine, you got ONE win. Savor it.",
+            "I wasn't feeling well today. Next time you're done."
+          ],
+          // When player is promoted to next tier
+          promotion: [
+            "Oh, moving up? Don't get comfortable - I'll be there too.",
+            "Congrats on the promotion. Now the REAL competition begins.",
+            "You made it to the next level? Good. I was getting bored beating you down there."
+          ],
+          // Legend tier encounters
+          legend: [
+            "So you've made it to the Legend Tour. Impressive. But THIS is MY domain.",
+            "Welcome to the big leagues, rookie. Here's where legends are made... or broken.",
+            "You've come far. But no one's ever beaten me on the Legend Tour. NO ONE."
           ]
         }
       },
+
+      // Shop items - purchasable with Tour Coins
+      shopItems: {
+        hats: [
+          { id: 'visor_white', name: 'White Visor', icon: '🧢', price: 25, desc: 'Classic golf visor' },
+          { id: 'cap_blue', name: 'Blue Cap', icon: '🧢', price: 30, desc: 'Sporty baseball cap' },
+          { id: 'cap_red', name: 'Red Cap', icon: '🧢', price: 30, desc: 'Bold red cap' },
+          { id: 'bucket_hat', name: 'Bucket Hat', icon: '🎩', price: 50, desc: 'Trendy bucket style' },
+          { id: 'cowboy', name: 'Cowboy Hat', icon: '🤠', price: 75, desc: 'Yeehaw!' },
+          { id: 'top_hat', name: 'Top Hat', icon: '🎩', price: 100, desc: 'Fancy and formal' },
+          { id: 'crown', name: 'Champion Crown', icon: '👑', price: 200, desc: 'For true legends only' }
+        ],
+        glasses: [
+          { id: 'sunglasses', name: 'Sunglasses', icon: '🕶️', price: 20, desc: 'Cool shades' },
+          { id: 'sport_shades', name: 'Sport Shades', icon: '🕶️', price: 35, desc: 'Wraparound style' },
+          { id: 'aviators', name: 'Aviators', icon: '🕶️', price: 50, desc: 'Top Gun vibes' },
+          { id: 'nerd_glasses', name: 'Nerd Glasses', icon: '🤓', price: 40, desc: 'Smart look' },
+          { id: 'star_glasses', name: 'Star Glasses', icon: '⭐', price: 80, desc: 'Be a star!' },
+          { id: 'vr_headset', name: 'VR Headset', icon: '🥽', price: 150, desc: 'Future golfer' }
+        ],
+        outfits: [
+          { id: 'outfit_stripes', name: 'Racing Stripes', icon: '🏁', price: 50, desc: 'Speed demon look', shirtColor: '#1565C0', design: 'stripes', stripeColor: '#FFFFFF' },
+          { id: 'outfit_gradient', name: 'Sunset Fade', icon: '🌅', price: 65, desc: 'Beautiful gradient', shirtColor: '#FF6B6B', design: 'gradient', gradientTo: '#9C27B0' },
+          { id: 'outfit_camo', name: 'Golf Camo', icon: '🌲', price: 70, desc: 'Hidden in the rough', shirtColor: '#4CAF50', design: 'camo' },
+          { id: 'outfit_argyle', name: 'Classic Argyle', icon: '🔷', price: 80, desc: 'Old school cool', shirtColor: '#2E7D32', design: 'argyle', patternColor: '#FFC107' },
+          { id: 'outfit_flames', name: 'Hot Shot', icon: '🔥', price: 100, desc: 'Straight fire', shirtColor: '#F44336', design: 'flames' },
+          { id: 'outfit_stars', name: 'All-Star', icon: '⭐', price: 90, desc: 'Star player', shirtColor: '#1A237E', design: 'stars', patternColor: '#FFD700' },
+          { id: 'outfit_tiger', name: 'Tiger Stripes', icon: '🐅', price: 110, desc: 'Fierce competitor', shirtColor: '#FF9800', design: 'tiger', pantsColor: '#1a1a1a' },
+          { id: 'outfit_lightning', name: 'Lightning Strike', icon: '⚡', price: 120, desc: 'Electric energy', shirtColor: '#311B92', design: 'lightning', patternColor: '#FFEB3B' },
+          { id: 'outfit_champion', name: 'Champion Gold', icon: '🏆', price: 150, desc: 'For true winners', shirtColor: '#FFD700', design: 'champion', pantsColor: '#1a1a1a' },
+          { id: 'outfit_neon', name: 'Neon Nights', icon: '💜', price: 130, desc: 'Glow in style', shirtColor: '#E91E63', design: 'neon', patternColor: '#00FFFF' }
+        ]
+      },
+
+      // Shop state
+      currentShopTab: 'hats',
+      selectedShopItem: null,
 
       // Equipment sponsors
       equipmentSponsors: {
@@ -13098,6 +13638,36 @@
           this.saveActiveCareer();
           document.getElementById('career-hub-overlay').classList.add('hidden');
           document.getElementById('game-mode-overlay').classList.remove('hidden');
+        });
+
+        // Shop button (Customize)
+        document.getElementById('hub-customize-btn')?.addEventListener('click', () => {
+          this.openShop();
+        });
+
+        // Shop event handlers
+        document.getElementById('shop-back-btn')?.addEventListener('click', () => {
+          this.closeShop();
+        });
+
+        document.querySelectorAll('.shop-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            this.switchShopTab(tab.dataset.tab);
+          });
+        });
+
+        document.getElementById('shop-action-btn')?.addEventListener('click', () => {
+          this.shopAction();
+        });
+
+        // Sponsors button
+        document.getElementById('hub-sponsors-btn')?.addEventListener('click', () => {
+          this.showSponsors();
+        });
+
+        document.getElementById('sponsors-back-btn')?.addEventListener('click', () => {
+          document.getElementById('sponsors-overlay').classList.add('hidden');
+          this.showCareerHub();
         });
 
         document.getElementById('career-tournament-back-btn')?.addEventListener('click', () => {
@@ -13390,6 +13960,82 @@
           ctx.arc(centerX, centerY + size * 0.42, size * 0.35, 0, Math.PI, true);
           ctx.fill();
 
+          // LAYER 2.5: Outfit design overlay on shirt
+          if (character.outfitDesign) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY + size * 0.42, size * 0.34, 0, Math.PI, true);
+            ctx.clip();
+            const ds = size / 80; // design scale
+            if (character.outfitDesign === 'stripes') {
+              ctx.strokeStyle = character.outfitStripeColor || '#FFFFFF';
+              ctx.lineWidth = 2 * ds;
+              ctx.beginPath();
+              ctx.moveTo(centerX - 3 * ds, centerY + size * 0.15);
+              ctx.lineTo(centerX - 3 * ds, centerY + size * 0.5);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(centerX + 3 * ds, centerY + size * 0.15);
+              ctx.lineTo(centerX + 3 * ds, centerY + size * 0.5);
+              ctx.stroke();
+            } else if (character.outfitDesign === 'stars') {
+              ctx.fillStyle = character.outfitPatternColor || '#FFD700';
+              const drawStar = (cx, cy, r) => {
+                ctx.beginPath();
+                for (let i = 0; i < 10; i++) {
+                  const rad = i % 2 === 0 ? r : r * 0.4;
+                  const angle = (i * Math.PI) / 5 - Math.PI / 2;
+                  if (i === 0) ctx.moveTo(cx + rad * Math.cos(angle), cy + rad * Math.sin(angle));
+                  else ctx.lineTo(cx + rad * Math.cos(angle), cy + rad * Math.sin(angle));
+                }
+                ctx.closePath();
+                ctx.fill();
+              };
+              drawStar(centerX, centerY + size * 0.32, 4 * ds);
+            } else if (character.outfitDesign === 'lightning') {
+              ctx.fillStyle = character.outfitPatternColor || '#FFEB3B';
+              ctx.beginPath();
+              ctx.moveTo(centerX + 2 * ds, centerY + size * 0.2);
+              ctx.lineTo(centerX - 3 * ds, centerY + size * 0.32);
+              ctx.lineTo(centerX, centerY + size * 0.32);
+              ctx.lineTo(centerX - 4 * ds, centerY + size * 0.45);
+              ctx.lineTo(centerX + 1 * ds, centerY + size * 0.35);
+              ctx.lineTo(centerX - 1 * ds, centerY + size * 0.35);
+              ctx.lineTo(centerX + 4 * ds, centerY + size * 0.2);
+              ctx.closePath();
+              ctx.fill();
+            } else if (character.outfitDesign === 'flames') {
+              ctx.fillStyle = '#FF9800';
+              for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX + i * 8 * ds - 3 * ds, centerY + size * 0.5);
+                ctx.quadraticCurveTo(centerX + i * 8 * ds, centerY + size * 0.28, centerX + i * 8 * ds + 3 * ds, centerY + size * 0.5);
+                ctx.fill();
+              }
+            } else if (character.outfitDesign === 'champion') {
+              ctx.fillStyle = '#FFFFFF';
+              ctx.beginPath();
+              ctx.arc(centerX, centerY + size * 0.32, 6 * ds, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = '#FFD700';
+              ctx.font = `bold ${8 * ds}px Arial`;
+              ctx.textAlign = 'center';
+              ctx.fillText('★', centerX, centerY + size * 0.35);
+            } else if (character.outfitDesign === 'tiger') {
+              ctx.strokeStyle = '#000000';
+              ctx.lineWidth = 1.5 * ds;
+              ctx.lineCap = 'round';
+              for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX + i * 10 * ds - 4 * ds, centerY + size * 0.25);
+                ctx.lineTo(centerX + i * 10 * ds, centerY + size * 0.3);
+                ctx.lineTo(centerX + i * 10 * ds - 3 * ds, centerY + size * 0.38);
+                ctx.stroke();
+              }
+            }
+            ctx.restore();
+          }
+
           // LAYER 3: Draw upper portion of sprite (head + top hair)
           ctx.save();
           ctx.beginPath();
@@ -13432,6 +14078,295 @@
           ctx.beginPath();
           ctx.arc(centerX, centerY + size * 0.08, size * 0.1, 0.3, Math.PI - 0.3);
           ctx.stroke();
+        }
+
+        // LAYER 4: Draw accessories (hats and glasses) on avatar
+        const equippedHat = character.equippedHat;
+        const equippedGlasses = character.equippedGlasses;
+        const accScale = size / 70; // Larger scale for avatar accessories
+
+        // Draw glasses on face - positioned over the eyes
+        if (equippedGlasses) {
+          ctx.save();
+          const eyeY = centerY - size * 0.05; // Eye level in avatar
+          const eyeSpacing = size * 0.10; // Distance between eyes
+          const gs = size / 60; // Glass scale factor
+
+          ctx.translate(centerX, eyeY);
+
+          if (equippedGlasses === 'sunglasses' || equippedGlasses === 'sport_shades') {
+            // Sleek wraparound sunglasses
+            ctx.fillStyle = '#1a1a1a';
+            // Left lens
+            ctx.beginPath();
+            ctx.ellipse(-eyeSpacing, 0, 9 * gs, 5 * gs, -0.1, 0, Math.PI * 2);
+            ctx.fill();
+            // Right lens
+            ctx.beginPath();
+            ctx.ellipse(eyeSpacing, 0, 9 * gs, 5 * gs, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+            // Bridge
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2 * gs;
+            ctx.beginPath();
+            ctx.moveTo(-eyeSpacing + 7 * gs, -1 * gs);
+            ctx.quadraticCurveTo(0, -3 * gs, eyeSpacing - 7 * gs, -1 * gs);
+            ctx.stroke();
+            // Lens shine
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1.5 * gs;
+            ctx.beginPath();
+            ctx.arc(-eyeSpacing - 2 * gs, -1 * gs, 3 * gs, Math.PI * 0.8, Math.PI * 1.4);
+            ctx.stroke();
+          } else if (equippedGlasses === 'aviators') {
+            // Classic aviator shape with gold frame
+            ctx.strokeStyle = '#C0A060';
+            ctx.lineWidth = 2 * gs;
+            // Left lens
+            ctx.fillStyle = 'rgba(80, 60, 40, 0.7)';
+            ctx.beginPath();
+            ctx.moveTo(-eyeSpacing - 8 * gs, -4 * gs);
+            ctx.quadraticCurveTo(-eyeSpacing - 10 * gs, 3 * gs, -eyeSpacing, 6 * gs);
+            ctx.quadraticCurveTo(-eyeSpacing + 10 * gs, 3 * gs, -eyeSpacing + 8 * gs, -4 * gs);
+            ctx.quadraticCurveTo(-eyeSpacing, -6 * gs, -eyeSpacing - 8 * gs, -4 * gs);
+            ctx.fill();
+            ctx.stroke();
+            // Right lens
+            ctx.beginPath();
+            ctx.moveTo(eyeSpacing - 8 * gs, -4 * gs);
+            ctx.quadraticCurveTo(eyeSpacing - 10 * gs, 3 * gs, eyeSpacing, 6 * gs);
+            ctx.quadraticCurveTo(eyeSpacing + 10 * gs, 3 * gs, eyeSpacing + 8 * gs, -4 * gs);
+            ctx.quadraticCurveTo(eyeSpacing, -6 * gs, eyeSpacing - 8 * gs, -4 * gs);
+            ctx.fill();
+            ctx.stroke();
+            // Bridge
+            ctx.beginPath();
+            ctx.moveTo(-eyeSpacing + 6 * gs, -3 * gs);
+            ctx.lineTo(eyeSpacing - 6 * gs, -3 * gs);
+            ctx.stroke();
+          } else if (equippedGlasses === 'nerd_glasses') {
+            // Thick round frames
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 3 * gs;
+            // Left lens
+            ctx.beginPath();
+            ctx.arc(-eyeSpacing, 0, 7 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            // Right lens
+            ctx.beginPath();
+            ctx.arc(eyeSpacing, 0, 7 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            // Bridge
+            ctx.lineWidth = 2.5 * gs;
+            ctx.beginPath();
+            ctx.moveTo(-eyeSpacing + 7 * gs, 0);
+            ctx.lineTo(eyeSpacing - 7 * gs, 0);
+            ctx.stroke();
+            // Lens glare
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath();
+            ctx.arc(-eyeSpacing, 0, 6 * gs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(eyeSpacing, 0, 6 * gs, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (equippedGlasses === 'star_glasses') {
+            // Fun star-shaped glasses
+            ctx.fillStyle = '#FFD700';
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 1 * gs;
+            const drawStar = (cx, cy, outerR, innerR) => {
+              ctx.beginPath();
+              for (let i = 0; i < 10; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const angle = (i * Math.PI) / 5 - Math.PI / 2;
+                const x = cx + r * Math.cos(angle);
+                const y = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+              }
+              ctx.closePath();
+              ctx.fill();
+              ctx.stroke();
+            };
+            drawStar(-eyeSpacing, 0, 9 * gs, 4 * gs);
+            drawStar(eyeSpacing, 0, 9 * gs, 4 * gs);
+            // Bridge
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 2 * gs;
+            ctx.beginPath();
+            ctx.moveTo(-eyeSpacing + 6 * gs, 0);
+            ctx.lineTo(eyeSpacing - 6 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'vr_headset') {
+            // Futuristic VR headset
+            ctx.fillStyle = '#2a2a2a';
+            // Main visor
+            ctx.beginPath();
+            ctx.roundRect(-size * 0.22, -6 * gs, size * 0.44, 14 * gs, 4 * gs);
+            ctx.fill();
+            // Glowing screens
+            ctx.fillStyle = '#4FC3F7';
+            ctx.beginPath();
+            ctx.roundRect(-eyeSpacing - 6 * gs, -3 * gs, 12 * gs, 8 * gs, 2 * gs);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.roundRect(eyeSpacing - 6 * gs, -3 * gs, 12 * gs, 8 * gs, 2 * gs);
+            ctx.fill();
+            // Glow effect
+            ctx.shadowColor = '#4FC3F7';
+            ctx.shadowBlur = 5;
+            ctx.fillStyle = 'rgba(79, 195, 247, 0.3)';
+            ctx.fillRect(-eyeSpacing - 5 * gs, -2 * gs, 10 * gs, 6 * gs);
+            ctx.fillRect(eyeSpacing - 5 * gs, -2 * gs, 10 * gs, 6 * gs);
+            ctx.shadowBlur = 0;
+          }
+          ctx.restore();
+        }
+
+        // Draw hat on top - make them look like they're actually ON the head
+        if (equippedHat) {
+          ctx.save();
+          // Position hat to wrap around the top of the head
+          const headTop = centerY - size * 0.28; // Top of head in avatar
+          const headRadius = size * 0.28; // Head radius
+          const hs = size / 55; // Hat scale factor
+
+          if (equippedHat === 'visor_white') {
+            // Visor - sits on forehead with brim
+            ctx.translate(centerX, headTop + size * 0.12);
+            ctx.fillStyle = '#FFFFFF';
+            // Headband part
+            ctx.beginPath();
+            ctx.arc(0, 0, headRadius * 0.95, Math.PI + 0.3, -0.3);
+            ctx.lineWidth = 4 * hs;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.stroke();
+            // Brim
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.ellipse(0, 3 * hs, 22 * hs, 6 * hs, 0, Math.PI, 0);
+            ctx.fill();
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          } else if (equippedHat === 'cap_blue' || equippedHat === 'cap_red') {
+            // Baseball cap - wraps around head
+            ctx.translate(centerX, headTop + size * 0.08);
+            const capColor = equippedHat === 'cap_blue' ? '#1565C0' : '#C62828';
+            // Cap dome
+            ctx.fillStyle = capColor;
+            ctx.beginPath();
+            ctx.arc(0, 2 * hs, headRadius * 1.05, Math.PI, 0);
+            ctx.fill();
+            // Cap button on top
+            ctx.fillStyle = capColor;
+            ctx.beginPath();
+            ctx.arc(0, -headRadius * 0.95, 3 * hs, 0, Math.PI * 2);
+            ctx.fill();
+            // Brim
+            ctx.beginPath();
+            ctx.ellipse(8 * hs, 5 * hs, 18 * hs, 5 * hs, 0.25, Math.PI, 0);
+            ctx.fill();
+          } else if (equippedHat === 'bucket_hat') {
+            // Bucket hat - floppy brim all around
+            ctx.translate(centerX, headTop + size * 0.06);
+            ctx.fillStyle = '#8D6E63';
+            // Crown
+            ctx.beginPath();
+            ctx.arc(0, 0, headRadius * 0.98, Math.PI, 0);
+            ctx.fill();
+            // Top flat
+            ctx.beginPath();
+            ctx.ellipse(0, -headRadius * 0.85, headRadius * 0.7, 4 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Wide floppy brim
+            ctx.fillStyle = '#7D5E53';
+            ctx.beginPath();
+            ctx.ellipse(0, 5 * hs, headRadius * 1.4, 7 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#8D6E63';
+            ctx.beginPath();
+            ctx.ellipse(0, 4 * hs, headRadius * 1.35, 5 * hs, 0, 0, Math.PI);
+            ctx.fill();
+          } else if (equippedHat === 'cowboy') {
+            // Cowboy hat - tall crown, wide curved brim
+            ctx.translate(centerX, headTop + size * 0.04);
+            ctx.fillStyle = '#8B4513';
+            // Wide brim (under)
+            ctx.fillStyle = '#6D4C41';
+            ctx.beginPath();
+            ctx.ellipse(0, 8 * hs, headRadius * 1.6, 8 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Crown
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.moveTo(-headRadius * 0.7, 5 * hs);
+            ctx.quadraticCurveTo(-headRadius * 0.65, -12 * hs, 0, -15 * hs);
+            ctx.quadraticCurveTo(headRadius * 0.65, -12 * hs, headRadius * 0.7, 5 * hs);
+            ctx.fill();
+            // Front brim curve
+            ctx.beginPath();
+            ctx.ellipse(0, 6 * hs, headRadius * 1.5, 6 * hs, 0, Math.PI * 0.85, Math.PI * 0.15, true);
+            ctx.fill();
+            // Band
+            ctx.fillStyle = '#5D4037';
+            ctx.fillRect(-headRadius * 0.65, -2 * hs, headRadius * 1.3, 4 * hs);
+          } else if (equippedHat === 'top_hat') {
+            // Top hat - tall cylinder with brim
+            ctx.translate(centerX, headTop + size * 0.02);
+            ctx.fillStyle = '#1a1a1a';
+            // Brim
+            ctx.beginPath();
+            ctx.ellipse(0, 5 * hs, headRadius * 1.2, 5 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Tall cylinder
+            ctx.fillRect(-headRadius * 0.65, -25 * hs, headRadius * 1.3, 28 * hs);
+            // Top of hat
+            ctx.beginPath();
+            ctx.ellipse(0, -25 * hs, headRadius * 0.65, 4 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Purple band
+            ctx.fillStyle = '#9C27B0';
+            ctx.fillRect(-headRadius * 0.66, -4 * hs, headRadius * 1.32, 6 * hs);
+          } else if (equippedHat === 'crown') {
+            // Crown - royal with points and jewels
+            ctx.translate(centerX, headTop + size * 0.08);
+            // Gold crown base wrapping head
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(0, 2 * hs, headRadius * 0.95, Math.PI + 0.2, -0.2);
+            ctx.lineTo(headRadius * 0.9, -3 * hs);
+            // Crown points
+            ctx.lineTo(headRadius * 0.7, -15 * hs);
+            ctx.lineTo(headRadius * 0.45, -5 * hs);
+            ctx.lineTo(headRadius * 0.2, -18 * hs);
+            ctx.lineTo(0, -8 * hs);
+            ctx.lineTo(-headRadius * 0.2, -18 * hs);
+            ctx.lineTo(-headRadius * 0.45, -5 * hs);
+            ctx.lineTo(-headRadius * 0.7, -15 * hs);
+            ctx.lineTo(-headRadius * 0.9, -3 * hs);
+            ctx.closePath();
+            ctx.fill();
+            // Crown outline
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            // Center jewel (red)
+            ctx.fillStyle = '#E91E63';
+            ctx.beginPath();
+            ctx.arc(0, -4 * hs, 4 * hs, 0, Math.PI * 2);
+            ctx.fill();
+            // Side jewels (blue)
+            ctx.fillStyle = '#4FC3F7';
+            ctx.beginPath();
+            ctx.arc(-headRadius * 0.5, -1 * hs, 3 * hs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(headRadius * 0.5, -1 * hs, 3 * hs, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
         }
 
         // Purple border
@@ -13617,6 +14552,183 @@
           ctx.fill();
         }
 
+        // OUTFIT DESIGN OVERLAY
+        const outfitDesign = character.outfitDesign;
+        if (outfitDesign) {
+          ctx.save();
+          // Clip to torso shape
+          ctx.beginPath();
+          if (gender === 'girl') {
+            ctx.moveTo(-4 * scale, -12 * scale);
+            ctx.quadraticCurveTo(-6 * scale, -18 * scale, -5 * scale, -28 * scale);
+            ctx.quadraticCurveTo(-8 * scale, -40 * scale, -9 * scale, -50 * scale);
+            ctx.quadraticCurveTo(-4 * scale, -58 * scale, 1 * scale, -58 * scale);
+            ctx.quadraticCurveTo(6 * scale, -58 * scale, 11 * scale, -50 * scale);
+            ctx.quadraticCurveTo(10 * scale, -40 * scale, 7 * scale, -28 * scale);
+            ctx.quadraticCurveTo(8 * scale, -18 * scale, 6 * scale, -12 * scale);
+          } else {
+            ctx.moveTo(-6 * scale, -12 * scale);
+            ctx.quadraticCurveTo(-8 * scale, -25 * scale, -12 * scale, -45 * scale);
+            ctx.quadraticCurveTo(-8 * scale, -58 * scale, 1 * scale, -58 * scale);
+            ctx.quadraticCurveTo(10 * scale, -58 * scale, 14 * scale, -45 * scale);
+            ctx.quadraticCurveTo(10 * scale, -25 * scale, 8 * scale, -12 * scale);
+          }
+          ctx.closePath();
+          ctx.clip();
+
+          if (outfitDesign === 'stripes') {
+            // Racing stripes down the middle
+            const stripeColor = character.outfitStripeColor || '#FFFFFF';
+            ctx.strokeStyle = stripeColor;
+            ctx.lineWidth = 2.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(-2 * scale, -55 * scale);
+            ctx.lineTo(-2 * scale, -12 * scale);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(4 * scale, -55 * scale);
+            ctx.lineTo(4 * scale, -12 * scale);
+            ctx.stroke();
+          } else if (outfitDesign === 'gradient') {
+            // Gradient overlay
+            const gradTo = character.outfitGradientTo || '#9C27B0';
+            const gradOverlay = ctx.createLinearGradient(0, -55 * scale, 0, -12 * scale);
+            gradOverlay.addColorStop(0, 'transparent');
+            gradOverlay.addColorStop(0.5, gradTo + '80');
+            gradOverlay.addColorStop(1, gradTo);
+            ctx.fillStyle = gradOverlay;
+            ctx.fillRect(-15 * scale, -60 * scale, 30 * scale, 50 * scale);
+          } else if (outfitDesign === 'camo') {
+            // Camo pattern
+            ctx.globalAlpha = 0.6;
+            const camoColors = ['#2E7D32', '#1B5E20', '#33691E', '#4E342E'];
+            for (let i = 0; i < 12; i++) {
+              ctx.fillStyle = camoColors[i % camoColors.length];
+              const x = (Math.random() - 0.5) * 20 * scale;
+              const y = -20 * scale - Math.random() * 35 * scale;
+              ctx.beginPath();
+              ctx.ellipse(x, y, 4 * scale + Math.random() * 3 * scale, 3 * scale + Math.random() * 2 * scale, Math.random() * Math.PI, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+          } else if (outfitDesign === 'argyle') {
+            // Argyle diamonds
+            const patternColor = character.outfitPatternColor || '#FFC107';
+            ctx.fillStyle = patternColor + '90';
+            for (let row = 0; row < 3; row++) {
+              for (let col = -1; col <= 1; col++) {
+                ctx.save();
+                ctx.translate(col * 8 * scale, -48 * scale + row * 14 * scale);
+                ctx.rotate(Math.PI / 4);
+                ctx.fillRect(-3 * scale, -3 * scale, 6 * scale, 6 * scale);
+                ctx.restore();
+              }
+            }
+          } else if (outfitDesign === 'flames') {
+            // Flames from bottom
+            ctx.fillStyle = '#FF9800';
+            for (let i = -2; i <= 2; i++) {
+              ctx.beginPath();
+              ctx.moveTo(i * 4 * scale - 2 * scale, -12 * scale);
+              ctx.quadraticCurveTo(i * 4 * scale, -28 * scale - Math.random() * 8 * scale, i * 4 * scale + 2 * scale, -12 * scale);
+              ctx.fill();
+            }
+            ctx.fillStyle = '#FFEB3B';
+            for (let i = -1; i <= 1; i++) {
+              ctx.beginPath();
+              ctx.moveTo(i * 5 * scale - 1 * scale, -12 * scale);
+              ctx.quadraticCurveTo(i * 5 * scale, -22 * scale, i * 5 * scale + 1 * scale, -12 * scale);
+              ctx.fill();
+            }
+          } else if (outfitDesign === 'stars') {
+            // Star pattern
+            const patternColor = character.outfitPatternColor || '#FFD700';
+            ctx.fillStyle = patternColor;
+            const drawSmallStar = (cx, cy, size) => {
+              ctx.beginPath();
+              for (let i = 0; i < 10; i++) {
+                const r = i % 2 === 0 ? size : size * 0.4;
+                const angle = (i * Math.PI) / 5 - Math.PI / 2;
+                const x = cx + r * Math.cos(angle);
+                const y = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+              }
+              ctx.closePath();
+              ctx.fill();
+            };
+            drawSmallStar(0, -45 * scale, 4 * scale);
+            drawSmallStar(-6 * scale, -32 * scale, 3 * scale);
+            drawSmallStar(6 * scale, -35 * scale, 3 * scale);
+            drawSmallStar(-3 * scale, -22 * scale, 2.5 * scale);
+            drawSmallStar(4 * scale, -25 * scale, 2.5 * scale);
+          } else if (outfitDesign === 'tiger') {
+            // Tiger stripes
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2 * scale;
+            ctx.lineCap = 'round';
+            const stripes = [
+              [[-8, -50], [-4, -48], [-6, -45]],
+              [[8, -50], [4, -48], [6, -45]],
+              [[-6, -40], [-2, -38], [-5, -35]],
+              [[6, -40], [2, -38], [5, -35]],
+              [[-4, -30], [0, -28], [-3, -25]],
+              [[4, -30], [0, -28], [3, -25]]
+            ];
+            stripes.forEach(stripe => {
+              ctx.beginPath();
+              ctx.moveTo(stripe[0][0] * scale, stripe[0][1] * scale);
+              stripe.slice(1).forEach(pt => ctx.lineTo(pt[0] * scale, pt[1] * scale));
+              ctx.stroke();
+            });
+          } else if (outfitDesign === 'lightning') {
+            // Lightning bolt
+            const patternColor = character.outfitPatternColor || '#FFEB3B';
+            ctx.fillStyle = patternColor;
+            ctx.beginPath();
+            ctx.moveTo(2 * scale, -52 * scale);
+            ctx.lineTo(-4 * scale, -38 * scale);
+            ctx.lineTo(-1 * scale, -38 * scale);
+            ctx.lineTo(-6 * scale, -20 * scale);
+            ctx.lineTo(0, -30 * scale);
+            ctx.lineTo(-2 * scale, -30 * scale);
+            ctx.lineTo(5 * scale, -52 * scale);
+            ctx.closePath();
+            ctx.fill();
+          } else if (outfitDesign === 'champion') {
+            // Champion emblem
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(1 * scale, -40 * scale, 8 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#FFD700';
+            ctx.font = `bold ${10 * scale}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('★', 1 * scale, -36 * scale);
+          } else if (outfitDesign === 'neon') {
+            // Neon glow lines
+            const patternColor = character.outfitPatternColor || '#00FFFF';
+            ctx.shadowColor = patternColor;
+            ctx.shadowBlur = 8 * scale;
+            ctx.strokeStyle = patternColor;
+            ctx.lineWidth = 1.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(-8 * scale, -48 * scale);
+            ctx.lineTo(-4 * scale, -38 * scale);
+            ctx.lineTo(-8 * scale, -28 * scale);
+            ctx.lineTo(-4 * scale, -18 * scale);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(10 * scale, -48 * scale);
+            ctx.lineTo(6 * scale, -38 * scale);
+            ctx.lineTo(10 * scale, -28 * scale);
+            ctx.lineTo(6 * scale, -18 * scale);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+          }
+          ctx.restore();
+        }
+
         // Collar - V-neck style, positioned to connect with head
         ctx.fillStyle = lighten(shirtColor, 50);
         ctx.beginPath();
@@ -13764,6 +14876,252 @@
           ctx.stroke();
         }
 
+        // LAYER 4: Draw accessories (hats and glasses) on top of head
+        const equippedHat = character.equippedHat;
+        const equippedGlasses = character.equippedGlasses;
+
+        // Draw glasses first (under hats)
+        if (equippedGlasses) {
+          ctx.save();
+          ctx.translate(2 * scale, -66 * scale); // Center on eyes
+          const gs = scale * 0.55; // Smaller glass scale
+
+          if (equippedGlasses === 'sunglasses' || equippedGlasses === 'sport_shades') {
+            // Dark sunglasses - sleek and small
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.ellipse(-5 * gs, 0, 4 * gs, 2.5 * gs, -0.1, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(5 * gs, 0, 4 * gs, 2.5 * gs, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+            // Bridge
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-1 * gs, 0);
+            ctx.lineTo(1 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'aviators') {
+            // Aviator style - teardrop shape
+            ctx.fillStyle = 'rgba(80, 60, 40, 0.85)';
+            ctx.beginPath();
+            ctx.ellipse(-5 * gs, 0.5 * gs, 4.5 * gs, 3 * gs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(5 * gs, 0.5 * gs, 4.5 * gs, 3 * gs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Gold frame
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.ellipse(-5 * gs, 0.5 * gs, 4.5 * gs, 3 * gs, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(5 * gs, 0.5 * gs, 4.5 * gs, 3 * gs, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-0.5 * gs, 0);
+            ctx.lineTo(0.5 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'nerd_glasses') {
+            // Round nerd glasses - small circles
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(-5 * gs, 0, 3.5 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(5 * gs, 0, 3.5 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            // Bridge
+            ctx.beginPath();
+            ctx.moveTo(-1.5 * gs, 0);
+            ctx.lineTo(1.5 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'star_glasses') {
+            // Star shaped - smaller, positioned on eyes
+            ctx.fillStyle = '#FFD700';
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 0.5;
+            const drawStar = (cx, cy, spikes, outerR, innerR) => {
+              ctx.beginPath();
+              for (let i = 0; i < spikes * 2; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const angle = (i * Math.PI) / spikes - Math.PI / 2;
+                const x = cx + r * Math.cos(angle);
+                const y = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+              }
+              ctx.closePath();
+              ctx.fill();
+              ctx.stroke();
+            };
+            drawStar(-5 * gs, 0, 5, 4 * gs, 2 * gs);
+            drawStar(5 * gs, 0, 5, 4 * gs, 2 * gs);
+            // Bridge
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-1 * gs, 0);
+            ctx.lineTo(1 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'vr_headset') {
+            // VR headset - compact
+            ctx.fillStyle = '#222';
+            ctx.beginPath();
+            ctx.roundRect(-9 * gs, -2.5 * gs, 18 * gs, 6 * gs, 2);
+            ctx.fill();
+            ctx.fillStyle = '#4FC3F7';
+            ctx.beginPath();
+            ctx.roundRect(-7.5 * gs, -1.5 * gs, 6 * gs, 4 * gs, 1);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.roundRect(1.5 * gs, -1.5 * gs, 6 * gs, 4 * gs, 1);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Draw hat on top
+        if (equippedHat) {
+          ctx.save();
+          ctx.translate(2 * scale, -78 * scale); // Position above head
+          const hs = scale * 0.85; // Hat scale
+
+          if (equippedHat === 'visor_white') {
+            // Golf visor - curved headband + brim
+            ctx.fillStyle = '#FFFFFF';
+            // Curved headband
+            ctx.beginPath();
+            ctx.arc(0, 4 * hs, 14 * hs, Math.PI + 0.2, -0.2);
+            ctx.arc(0, 4 * hs, 10 * hs, -0.2, Math.PI + 0.2, true);
+            ctx.closePath();
+            ctx.fill();
+            // Curved brim
+            ctx.beginPath();
+            ctx.ellipse(5 * hs, 6 * hs, 13 * hs, 5 * hs, 0.1, Math.PI, 0);
+            ctx.fill();
+          } else if (equippedHat === 'cap_blue' || equippedHat === 'cap_red') {
+            // Baseball cap - covers more head
+            const capColor = equippedHat === 'cap_blue' ? '#1976D2' : '#D32F2F';
+            const darkColor = equippedHat === 'cap_blue' ? '#0D47A1' : '#B71C1C';
+
+            // Cap dome - larger, covers hair
+            ctx.fillStyle = capColor;
+            ctx.beginPath();
+            ctx.arc(0, 6 * hs, 15 * hs, Math.PI, 0);
+            ctx.fill();
+
+            // Button on top
+            ctx.fillStyle = darkColor;
+            ctx.beginPath();
+            ctx.arc(0, -8 * hs, 2 * hs, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Curved brim
+            ctx.fillStyle = capColor;
+            ctx.beginPath();
+            ctx.ellipse(6 * hs, 8 * hs, 14 * hs, 5 * hs, 0.15, Math.PI, 0);
+            ctx.fill();
+
+            // Brim underside
+            ctx.fillStyle = darkColor;
+            ctx.beginPath();
+            ctx.ellipse(6 * hs, 9 * hs, 12 * hs, 3 * hs, 0.15, Math.PI, 0);
+            ctx.fill();
+          } else if (equippedHat === 'bucket_hat') {
+            // Bucket hat - soft crown + floppy brim
+            // Crown
+            ctx.fillStyle = '#A1887F';
+            ctx.beginPath();
+            ctx.moveTo(-11 * hs, 3 * hs);
+            ctx.quadraticCurveTo(-10 * hs, -10 * hs, 0, -12 * hs);
+            ctx.quadraticCurveTo(10 * hs, -10 * hs, 11 * hs, 3 * hs);
+            ctx.closePath();
+            ctx.fill();
+            // Crown seams
+            ctx.strokeStyle = '#8D6E63';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -12 * hs);
+            ctx.lineTo(0, 2 * hs);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-6 * hs, -10 * hs);
+            ctx.quadraticCurveTo(-5 * hs, -4 * hs, -5 * hs, 2 * hs);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(6 * hs, -10 * hs);
+            ctx.quadraticCurveTo(5 * hs, -4 * hs, 5 * hs, 2 * hs);
+            ctx.stroke();
+            // Floppy brim
+            ctx.fillStyle = '#8D6E63';
+            ctx.beginPath();
+            ctx.ellipse(0, 4 * hs, 16 * hs, 6 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Brim top (lighter)
+            ctx.fillStyle = '#A1887F';
+            ctx.beginPath();
+            ctx.ellipse(0, 3 * hs, 15 * hs, 4 * hs, 0, 0, Math.PI);
+            ctx.fill();
+          } else if (equippedHat === 'cowboy') {
+            // Cowboy hat
+            ctx.fillStyle = '#8B4513';
+            // Crown
+            ctx.beginPath();
+            ctx.moveTo(-10 * hs, 4 * hs);
+            ctx.quadraticCurveTo(-8 * hs, -12 * hs, 0, -14 * hs);
+            ctx.quadraticCurveTo(8 * hs, -12 * hs, 10 * hs, 4 * hs);
+            ctx.fill();
+            // Wide brim
+            ctx.beginPath();
+            ctx.ellipse(0, 5 * hs, 22 * hs, 6 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (equippedHat === 'top_hat') {
+            // Top hat
+            ctx.fillStyle = '#1a1a1a';
+            // Crown
+            ctx.fillRect(-10 * hs, -20 * hs, 20 * hs, 24 * hs);
+            // Brim
+            ctx.beginPath();
+            ctx.ellipse(0, 4 * hs, 14 * hs, 4 * hs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Band
+            ctx.fillStyle = '#9C27B0';
+            ctx.fillRect(-10 * hs, -2 * hs, 20 * hs, 4 * hs);
+          } else if (equippedHat === 'crown') {
+            // Crown
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.moveTo(-12 * hs, 4 * hs);
+            ctx.lineTo(-12 * hs, -6 * hs);
+            ctx.lineTo(-8 * hs, -12 * hs);
+            ctx.lineTo(-4 * hs, -4 * hs);
+            ctx.lineTo(0, -14 * hs);
+            ctx.lineTo(4 * hs, -4 * hs);
+            ctx.lineTo(8 * hs, -12 * hs);
+            ctx.lineTo(12 * hs, -6 * hs);
+            ctx.lineTo(12 * hs, 4 * hs);
+            ctx.closePath();
+            ctx.fill();
+            // Jewels
+            ctx.fillStyle = '#E91E63';
+            ctx.beginPath();
+            ctx.arc(0, -2 * hs, 3 * hs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#4FC3F7';
+            ctx.beginPath();
+            ctx.arc(-6 * hs, 0, 2 * hs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(6 * hs, 0, 2 * hs, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
         ctx.restore();
       },
 
@@ -13828,32 +15186,183 @@
       generateHeadline(career) {
         const tour = this.tours[career.currentTour];
         const headlines = [];
+        const playerName = career.playerName;
+        const rivalName = this.rival.name;
 
         // General tour news (always available)
-        headlines.push(
+        const generalNews = [
           `Many new rookies ready to make their debut on the ${tour.name} this season...`,
           `High-potential players flood ${tour.name} tryouts as season kicks off`,
           `Scouts predict exciting season ahead for ${tour.name} competitors`,
           `${tour.name} officials report record number of entrants this year`,
           `"This is the most talented rookie class in years" - ${tour.name} commissioner`,
           `Former champions return to mentor young talent on the ${tour.name}`,
-          `Weather forecast looks favorable for upcoming ${tour.name} events`
-        );
+          `Weather forecast looks favorable for upcoming ${tour.name} events`,
+          `Course maintenance crews working overtime to prepare pristine fairways`,
+          `New equipment regulations spark debate among ${tour.name} players`,
+          `${tour.name} announces expanded broadcast coverage for upcoming events`,
+          `Fitness trainers report increase in golfer workout programs`,
+          `Mental coaches in high demand as competition intensifies`,
+          `Local caddies share secrets of reading tournament greens`,
+          `Golf cart manufacturers showcase new electric models at expo`,
+          `Putting green innovation promises faster, truer rolls`,
+          `Sand trap redesigns challenge even veteran players`,
+          `${tour.name} launches youth outreach program in local schools`,
+          `Former baseball stars spotted at ${tour.name} pro-am event`
+        ];
+        headlines.push(...generalNews);
 
-        // Player-specific news occasionally
+        // Quirky/funny headlines
+        const funnyNews = [
+          `Wayward shot strikes hot dog cart; vendor demands free drop`,
+          `Golfer claims squirrel "deliberately moved" ball in viral video`,
+          `Local duck population increasingly bold around water hazards`,
+          `Player blames defeat on "suspiciously loud birds" near 18th`,
+          `Meteorologist forecasts "70% chance of bogeys" this weekend`,
+          `"My putter told me to do it" claims player after bold birdie attempt`,
+          `Club fitting expert: "Longest driver won't fix your slice"`,
+          `Caddie union demands better snacks at tournament venues`,
+          `Player's lucky socks confirmed unwashed for third consecutive win`,
+          `Golf ball manufacturers deny balls are "scared" of water hazards`
+        ];
+        headlines.push(...funnyNews);
+
+        // Player-specific headlines based on stats
         if (career.stats.tournamentsWon > 0) {
           headlines.push(
-            `${career.playerName} among rising stars making waves on ${tour.name}`,
-            `${career.playerName}'s ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} catching attention of sponsors`
+            `${playerName} among rising stars making waves on ${tour.name}`,
+            `${playerName}'s ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} catching attention of sponsors`,
+            `"${playerName} has that champion mindset" says former pro`,
+            `${playerName}'s victory speech inspires young golfers everywhere`,
+            `Coaches analyze ${playerName}'s winning technique in new viral breakdown`
+          );
+        }
+        if (career.stats.tournamentsWon >= 3) {
+          headlines.push(
+            `${playerName} dominance has competitors scrambling for answers`,
+            `"Nobody can stop ${playerName} right now" admits rival coach`,
+            `${playerName} proving to be generation-defining talent on ${tour.name}`
+          );
+        }
+        if (career.stats.birdies > 10) {
+          headlines.push(
+            `${playerName}'s birdie count (${career.stats.birdies}) leads ${tour.name} statistics`,
+            `"${playerName} sees birdies everywhere" marvels sports psychologist`
+          );
+        }
+        if (career.stats.holesInOne > 0) {
+          headlines.push(
+            `INCREDIBLE: ${playerName} has recorded ${career.stats.holesInOne} hole${career.stats.holesInOne > 1 ? 's' : ''}-in-one!`,
+            `${playerName}'s hole-in-one compilation goes viral on social media`
+          );
+        }
+        if (career.stats.eagleOrBetter > 2) {
+          headlines.push(
+            `Eagle-eyed ${playerName} continues spectacular scoring streak`,
+            `${playerName}'s ${career.stats.eagleOrBetter} eagles make statisticians swoon`
           );
         }
 
-        // Rival news
+        // Earnings-based headlines
+        if (career.careerGolfBucks >= 1000) {
+          headlines.push(
+            `${playerName} crosses $${career.careerGolfBucks.toLocaleString()} in career earnings`,
+            `Financial advisors eager to work with rising star ${playerName}`
+          );
+        }
+        if (career.tourCoins >= 100) {
+          headlines.push(
+            `${playerName} amasses impressive Tour Coin collection`,
+            `Players jealous of ${playerName}'s exclusive cosmetic collection`
+          );
+        }
+
+        // Rival-related headlines
         if (career.rival && career.rival.encounterCount > 0) {
           headlines.push(
-            `${this.rival.name} looking strong heading into tournament play`,
-            `"${tour.name} is mine" declares ${this.rival.name} at press conference`
+            `${rivalName} looking strong heading into tournament play`,
+            `"${tour.name} is mine" declares ${rivalName} at press conference`,
+            `${rivalName} seen practicing late into the evening before big match`,
+            `Tension between ${playerName} and ${rivalName} continues to build`,
+            `"${playerName}? Never heard of them." - ${rivalName} dismissively`,
+            `Rivalry watch: ${rivalName} makes pointed comments about ${playerName}'s style`,
+            `${rivalName} switches equipment sponsor in surprise announcement`,
+            `Fans create ${playerName} vs ${rivalName} prediction polls online`
           );
+          if (career.rival.winsAgainst > 0) {
+            headlines.push(
+              `${playerName}'s ${career.rival.winsAgainst} win${career.rival.winsAgainst > 1 ? 's' : ''} over ${rivalName} shift rivalry narrative`,
+              `${rivalName} reportedly "obsessing" over losses to ${playerName}`,
+              `"${playerName} is in my head" admits ${rivalName} to close friends`
+            );
+          }
+          if (career.rival.winsAgainst === 0 && career.rival.encounterCount >= 2) {
+            headlines.push(
+              `${rivalName}'s perfect record against ${playerName} a source of pride`,
+              `"${playerName} will never beat me" claims confident ${rivalName}`
+            );
+          }
+        }
+
+        // Tour-specific headlines
+        if (career.currentTour === 'local') {
+          headlines.push(
+            `Local Tour qualifying rounds see fierce competition`,
+            `Small-town courses becoming proving grounds for future champions`,
+            `"Every legend started on the Local Tour" reminds veteran coach`
+          );
+        } else if (career.currentTour === 'amateur') {
+          headlines.push(
+            `Amateur Tour attracting nationwide television interest`,
+            `Corporate sponsors increasingly targeting Amateur Tour rising stars`,
+            `Amateur Tour players debate "going pro" timing strategies`
+          );
+        } else if (career.currentTour === 'pro') {
+          headlines.push(
+            `Pro Tour intensity "unlike anything else in golf" says newcomer`,
+            `Pro Tour prize pools hit new records this season`,
+            `Elite courses push Pro Tour players to their limits`,
+            `Legend Tour scouts watching Pro Tour closely for promotions`
+          );
+        } else if (career.currentTour === 'legend') {
+          headlines.push(
+            `Legend Tour: Where golf immortals are made`,
+            `Legend Tour courses push boundaries of course design`,
+            `"Only the best survive here" - Legend Tour veteran`,
+            `Historic Legend Tour venues draw global spectator crowds`,
+            `Legend Tour champions secure endorsement deals worth millions`,
+            `Aurora Borealis Course named "most beautiful hole" in golf history`
+          );
+        }
+
+        // Sponsor-related headlines
+        if (career.sponsors && career.sponsors.length > 0) {
+          const sponsor = career.sponsors[Math.floor(Math.random() * career.sponsors.length)];
+          headlines.push(
+            `${sponsor.name} expands golf sponsorship portfolio`,
+            `Sponsor watch: ${sponsor.name} seeking new ${tour.name} partnerships`,
+            `${sponsor.name} executives spotted at multiple ${tour.name} events`
+          );
+        }
+
+        // Promotion/season headlines
+        if (career.rankingPoints >= tour.promotionPoints * 0.7) {
+          headlines.push(
+            `Several players on cusp of tour promotion as season heats up`,
+            `Promotion race intensifies in final stretch of ${tour.name} season`
+          );
+        }
+
+        // Random chance for "breaking news" style
+        if (Math.random() < 0.1) {
+          const breakingNews = [
+            `BREAKING: Surprise weather delay possible for weekend events`,
+            `BREAKING: Famous actor spotted in ${tour.name} gallery`,
+            `BREAKING: New course record set at nearby amateur event`,
+            `UPDATE: Equipment malfunction rules clarified by tour officials`,
+            `DEVELOPING: Controversy over slow play penalties sparks debate`
+          ];
+          return '🚨 ' + breakingNews[Math.floor(Math.random() * breakingNews.length)];
         }
 
         return '📰 DAILY NEWS: ' + headlines[Math.floor(Math.random() * headlines.length)];
@@ -13926,10 +15435,13 @@
           this.showDebutCutscene();
         }
         // Check for rival encounter
-        else if (this.shouldShowRival()) {
-          this.showRivalEncounter();
-        } else {
-          this.actuallyStartTournament();
+        else {
+          const rivalType = this.shouldShowRival();
+          if (rivalType) {
+            this.showRivalEncounter(rivalType);
+          } else {
+            this.actuallyStartTournament();
+          }
         }
       },
 
@@ -13989,8 +15501,9 @@
         } else {
           // End cutscene, start tournament
           document.getElementById('debut-cutscene-overlay').classList.add('hidden');
-          if (this.shouldShowRival()) {
-            this.showRivalEncounter();
+          const rivalType = this.shouldShowRival();
+          if (rivalType) {
+            this.showRivalEncounter(rivalType);
           } else {
             this.actuallyStartTournament();
           }
@@ -13999,12 +15512,45 @@
 
       shouldShowRival() {
         const career = this.activeCareer;
-        // Show rival every 3rd tournament or at key moments
-        return (career.stats.roundsPlayed + 1) % 3 === 0;
+        const roundsPlayed = career.stats.roundsPlayed;
+
+        // First encounter after debut (round 2)
+        if (roundsPlayed === 1 && !career.rival?.firstMet) return 'firstMeet';
+
+        // Show rival on Legend Tour first tournament
+        if (career.currentTour === 'legend' && !career.rival?.legendMet) return 'legend';
+
+        // Regular encounters every 3-4 tournaments
+        if (roundsPlayed > 1 && roundsPlayed % 3 === 0) return 'regular';
+
+        // Random chance (20%) for any tournament
+        if (Math.random() < 0.2) return 'regular';
+
+        return false;
       },
 
-      showRivalEncounter() {
-        const phrases = this.rival.phrases.intro;
+      showRivalEncounter(type = 'regular') {
+        const career = this.activeCareer;
+
+        // Initialize rival tracking if needed
+        if (!career.rival) {
+          career.rival = { encounterCount: 0, winsAgainst: 0, firstMet: false, legendMet: false };
+        }
+
+        let phrases;
+        if (type === 'firstMeet') {
+          phrases = this.rival.phrases.firstMeet;
+          career.rival.firstMet = true;
+        } else if (type === 'legend') {
+          phrases = this.rival.phrases.legend;
+          career.rival.legendMet = true;
+        } else {
+          phrases = this.rival.phrases.intro;
+        }
+
+        career.rival.encounterCount++;
+        this.saveActiveCareer();
+
         const phrase = phrases[Math.floor(Math.random() * phrases.length)];
 
         document.getElementById('dialogue-portrait').textContent = this.rival.portrait;
@@ -14018,11 +15564,325 @@
         this.actuallyStartTournament();
       },
 
+      // === TOUR COINS SHOP ===
+      openShop() {
+        document.getElementById('career-hub-overlay').classList.add('hidden');
+        document.getElementById('tour-coins-shop-overlay').classList.remove('hidden');
+        document.getElementById('shop-coin-balance').textContent = this.activeCareer.tourCoins;
+        this.currentShopTab = 'hats';
+        this.selectedShopItem = null;
+        this.shopPreviewItem = null; // Item being "tried on"
+        this.renderShopItems();
+        this.updateShopCharacter();
+        this.updateEquippedList();
+      },
+
+      closeShop() {
+        document.getElementById('tour-coins-shop-overlay').classList.add('hidden');
+        this.shopPreviewItem = null;
+        this.showCareerHub();
+      },
+
+      switchShopTab(tab) {
+        this.currentShopTab = tab;
+        this.selectedShopItem = null;
+        this.shopPreviewItem = null;
+        document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.shop-tab[data-tab="${tab}"]`).classList.add('active');
+        this.renderShopItems();
+        this.updateShopCharacter();
+        document.getElementById('shop-trying-on').textContent = '';
+      },
+
+      renderShopItems() {
+        const items = this.shopItems[this.currentShopTab];
+        const grid = document.getElementById('shop-items-grid');
+        const career = this.activeCareer;
+
+        grid.innerHTML = items.map(item => {
+          const owned = career.character.accessories?.includes(item.id) ||
+                        career.character.ownedOutfits?.includes(item.id);
+          const equipped = career.character.equippedHat === item.id ||
+                          career.character.equippedGlasses === item.id ||
+                          (this.currentShopTab === 'outfits' && career.character.outfitShirt === item.shirtColor);
+          const selected = this.selectedShopItem?.id === item.id;
+
+          let badge = '';
+          if (equipped) badge = '<span class="shop-item-badge equipped-badge">EQUIPPED</span>';
+          else if (owned) badge = '<span class="shop-item-badge owned-badge">OWNED</span>';
+
+          let itemClass = selected ? 'selected ' : '';
+          itemClass += equipped ? 'equipped' : (owned ? 'owned' : '');
+
+          // Button for each item
+          let btnHtml = '';
+          if (equipped) {
+            btnHtml = `<button class="shop-item-btn unequip-btn" data-action="unequip" data-item-id="${item.id}">Unequip</button>`;
+          } else if (owned) {
+            btnHtml = `<button class="shop-item-btn equip-btn" data-action="equip" data-item-id="${item.id}">Equip</button>`;
+          } else {
+            const canAfford = career.tourCoins >= item.price;
+            btnHtml = `<button class="shop-item-btn buy-btn" data-action="buy" data-item-id="${item.id}" ${canAfford ? '' : 'disabled'}>Buy 🪙${item.price}</button>`;
+          }
+
+          return `
+            <div class="shop-item ${itemClass}" data-item-id="${item.id}">
+              ${badge}
+              <div class="shop-item-preview">${item.icon}</div>
+              <div class="shop-item-name">${item.name}</div>
+              ${btnHtml}
+            </div>
+          `;
+        }).join('');
+
+        // Add click handlers for item cards (try on)
+        grid.querySelectorAll('.shop-item').forEach(el => {
+          el.addEventListener('click', (e) => {
+            // Don't trigger if clicking the button
+            if (e.target.classList.contains('shop-item-btn')) return;
+            const itemId = el.dataset.itemId;
+            this.selectShopItem(itemId);
+          });
+        });
+
+        // Add click handlers for action buttons
+        grid.querySelectorAll('.shop-item-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const itemId = btn.dataset.itemId;
+            const action = btn.dataset.action;
+            this.shopItemAction(itemId, action);
+          });
+        });
+      },
+
+      selectShopItem(itemId) {
+        const items = this.shopItems[this.currentShopTab];
+        const item = items.find(i => i.id === itemId);
+        if (!item) return;
+
+        // Toggle selection - if same item clicked, deselect
+        if (this.selectedShopItem?.id === itemId) {
+          this.selectedShopItem = null;
+          this.shopPreviewItem = null;
+          document.getElementById('shop-trying-on').textContent = '';
+        } else {
+          this.selectedShopItem = item;
+          this.shopPreviewItem = item;
+          document.getElementById('shop-trying-on').textContent = `Trying: ${item.name}`;
+        }
+
+        // Update visual selection
+        document.querySelectorAll('.shop-item').forEach(el => {
+          el.classList.toggle('selected', el.dataset.itemId === this.selectedShopItem?.id);
+        });
+
+        // Update character preview with item
+        this.updateShopCharacter();
+      },
+
+      async updateShopCharacter() {
+        const canvas = document.getElementById('shop-character-canvas');
+        const previewChar = { ...this.activeCareer.character };
+
+        // If trying on an item, apply it temporarily
+        if (this.shopPreviewItem) {
+          const item = this.shopPreviewItem;
+          if (this.currentShopTab === 'hats') {
+            previewChar.equippedHat = item.id;
+          } else if (this.currentShopTab === 'glasses') {
+            previewChar.equippedGlasses = item.id;
+          } else if (this.currentShopTab === 'outfits') {
+            if (item.shirtColor) previewChar.outfitShirt = item.shirtColor;
+            if (item.pantsColor) previewChar.outfitPants = item.pantsColor;
+            previewChar.outfitDesign = item.design || null;
+            previewChar.outfitStripeColor = item.stripeColor || null;
+            previewChar.outfitGradientTo = item.gradientTo || null;
+            previewChar.outfitPatternColor = item.patternColor || null;
+          }
+        }
+
+        await this.drawCharacter(canvas, previewChar, 'idle');
+      },
+
+      updateEquippedList() {
+        const career = this.activeCareer;
+        const container = document.getElementById('shop-equipped-list');
+        let html = '';
+
+        // Find equipped hat name
+        if (career.character.equippedHat) {
+          const hat = this.shopItems.hats.find(h => h.id === career.character.equippedHat);
+          if (hat) html += `<div class="shop-equipped-item"><span>🧢</span><span>${hat.name}</span></div>`;
+        }
+
+        // Find equipped glasses name
+        if (career.character.equippedGlasses) {
+          const glasses = this.shopItems.glasses.find(g => g.id === career.character.equippedGlasses);
+          if (glasses) html += `<div class="shop-equipped-item"><span>🕶️</span><span>${glasses.name}</span></div>`;
+        }
+
+        if (!html) html = '<div style="text-align:center; color: rgba(255,255,255,0.4); font-size: 10px;">No accessories equipped</div>';
+        container.innerHTML = html;
+      },
+
+      shopItemAction(itemId, action) {
+        const career = this.activeCareer;
+        const allItems = [...this.shopItems.hats, ...this.shopItems.glasses, ...this.shopItems.outfits];
+        const item = allItems.find(i => i.id === itemId);
+        if (!item) return;
+
+        // Determine item type
+        let itemType = 'hats';
+        if (this.shopItems.glasses.find(g => g.id === itemId)) itemType = 'glasses';
+        else if (this.shopItems.outfits.find(o => o.id === itemId)) itemType = 'outfits';
+
+        if (action === 'unequip') {
+          if (itemType === 'hats') {
+            career.character.equippedHat = null;
+          } else if (itemType === 'glasses') {
+            career.character.equippedGlasses = null;
+          }
+          // Outfits can't be unequipped
+        } else if (action === 'equip') {
+          if (itemType === 'hats') {
+            career.character.equippedHat = item.id;
+          } else if (itemType === 'glasses') {
+            career.character.equippedGlasses = item.id;
+          } else if (itemType === 'outfits') {
+            if (item.shirtColor) career.character.outfitShirt = item.shirtColor;
+            if (item.pantsColor) career.character.outfitPants = item.pantsColor;
+            career.character.outfitDesign = item.design || null;
+            career.character.outfitStripeColor = item.stripeColor || null;
+            career.character.outfitGradientTo = item.gradientTo || null;
+            career.character.outfitPatternColor = item.patternColor || null;
+          }
+        } else if (action === 'buy') {
+          if (career.tourCoins < item.price) return;
+
+          career.tourCoins -= item.price;
+          document.getElementById('shop-coin-balance').textContent = career.tourCoins;
+
+          // Add to owned and auto-equip
+          if (itemType === 'outfits') {
+            if (!career.character.ownedOutfits) career.character.ownedOutfits = [];
+            career.character.ownedOutfits.push(item.id);
+            if (item.shirtColor) career.character.outfitShirt = item.shirtColor;
+            if (item.pantsColor) career.character.outfitPants = item.pantsColor;
+            career.character.outfitDesign = item.design || null;
+            career.character.outfitStripeColor = item.stripeColor || null;
+            career.character.outfitGradientTo = item.gradientTo || null;
+            career.character.outfitPatternColor = item.patternColor || null;
+          } else {
+            if (!career.character.accessories) career.character.accessories = [];
+            career.character.accessories.push(item.id);
+            if (itemType === 'hats') {
+              career.character.equippedHat = item.id;
+            } else if (itemType === 'glasses') {
+              career.character.equippedGlasses = item.id;
+            }
+          }
+        }
+
+        // Clear try-on state since item was just equipped
+        this.selectedShopItem = null;
+        this.shopPreviewItem = null;
+        document.getElementById('shop-trying-on').textContent = '';
+
+        this.saveActiveCareer();
+        this.renderShopItems();
+        this.updateShopCharacter();
+        this.updateEquippedList();
+      },
+
+      // === SPONSORS MANAGEMENT ===
+      showSponsors() {
+        document.getElementById('career-hub-overlay').classList.add('hidden');
+        document.getElementById('sponsors-overlay').classList.remove('hidden');
+        this.renderSponsorsContent();
+      },
+
+      renderSponsorsContent() {
+        const career = this.activeCareer;
+        const container = document.getElementById('sponsors-content');
+
+        let html = '';
+
+        // Equipment Sponsor Section
+        html += '<div class="sponsor-section"><h3>🏌️ Equipment Sponsor</h3>';
+        if (career.equipmentSponsor) {
+          const sponsor = this.equipmentSponsors[career.equipmentSponsor.id];
+          const currentTier = sponsor.tiers.find(t => t.level === career.equipmentSponsor.level);
+          const nextTier = sponsor.tiers.find(t => t.level === career.equipmentSponsor.level + 1);
+          const xp = career.equipmentSponsor.xp || 0;
+          const progress = nextTier ? Math.min(100, (xp / nextTier.xpRequired) * 100) : 100;
+
+          html += `
+            <div class="sponsor-card active">
+              <div class="sponsor-info">
+                <span class="sponsor-icon-large">${sponsor.icon}</span>
+                <div class="sponsor-details">
+                  <div class="sponsor-name">${sponsor.name}</div>
+                  <div class="sponsor-level">Level ${career.equipmentSponsor.level}${nextTier ? ` • ${xp}/${nextTier.xpRequired} XP` : ' • MAX'}</div>
+                </div>
+              </div>
+              <div class="sponsor-progress">
+                <div class="sponsor-progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <div class="sponsor-bonuses">
+                <span class="sponsor-bonus">+${Math.round(currentTier.powerBonus * 100)}% Power</span>
+                <span class="sponsor-bonus">+${Math.round(currentTier.accuracyBonus * 100)}% Accuracy</span>
+                ${currentTier.reward ? `<span class="sponsor-bonus">${currentTier.reward}</span>` : ''}
+              </div>
+            </div>
+          `;
+        } else {
+          html += '<div class="sponsor-card empty">No equipment sponsor yet.<br>Win tournaments to attract sponsors!</div>';
+        }
+        html += '</div>';
+
+        // Apparel Sponsor Section
+        html += '<div class="sponsor-section"><h3>👕 Apparel Sponsor</h3>';
+        if (career.apparelSponsor) {
+          const sponsor = this.apparelSponsors[career.apparelSponsor.id];
+          const currentTier = sponsor.tiers.find(t => t.level === career.apparelSponsor.level);
+          const nextTier = sponsor.tiers.find(t => t.level === career.apparelSponsor.level + 1);
+          const xp = career.apparelSponsor.xp || 0;
+          const progress = nextTier ? Math.min(100, (xp / nextTier.xpRequired) * 100) : 100;
+
+          html += `
+            <div class="sponsor-card active">
+              <div class="sponsor-info">
+                <span class="sponsor-icon-large">${sponsor.icon}</span>
+                <div class="sponsor-details">
+                  <div class="sponsor-name">${sponsor.name}</div>
+                  <div class="sponsor-level">Level ${career.apparelSponsor.level}${nextTier ? ` • ${xp}/${nextTier.xpRequired} XP` : ' • MAX'}</div>
+                </div>
+              </div>
+              <div class="sponsor-progress">
+                <div class="sponsor-progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <div class="sponsor-bonuses">
+                <span class="sponsor-bonus">+${currentTier.coinsPerRound} 🪙/round</span>
+                ${currentTier.exclusiveOutfit ? `<span class="sponsor-bonus">Exclusive Outfit</span>` : ''}
+              </div>
+            </div>
+          `;
+        } else {
+          html += '<div class="sponsor-card empty">No apparel sponsor yet.<br>Keep playing to get noticed!</div>';
+        }
+        html += '</div>';
+
+        container.innerHTML = html;
+      },
+
       async actuallyStartTournament() {
         this.isInCareerTournament = true;
         window.careerModeActive = true;
 
-        const themes = ['classic', 'desert', 'winter', 'tropical'];
+        // Use tour-specific themes (includes career-exclusive courses at higher tiers)
+        const tour = this.tours[this.activeCareer.currentTour];
+        const themes = tour.themes || ['classic', 'desert', 'winter', 'tropical'];
         const theme = themes[Math.floor(Math.random() * themes.length)];
 
         if (typeof gameEngine !== 'undefined') {
