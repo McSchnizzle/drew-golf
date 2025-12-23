@@ -4544,6 +4544,22 @@
       font-weight: bold;
       margin-bottom: 6px;
     }
+    .shop-set-contents {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 9px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+    .shop-set-contents span {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .set-item {
+      min-height: 140px;
+    }
     .shop-item-price {
       display: flex;
       align-items: center;
@@ -5809,6 +5825,7 @@
             <button class="shop-tab active" data-tab="hats">🧢 Hats</button>
             <button class="shop-tab" data-tab="glasses">🕶️ Glasses</button>
             <button class="shop-tab" data-tab="outfits">👔 Outfits</button>
+            <button class="shop-tab" data-tab="sets">✨ Sets</button>
           </div>
           <div class="shop-items" id="shop-items-grid">
             <!-- Items populated by JS -->
@@ -13354,8 +13371,11 @@
           { id: 'visor_white', name: 'White Visor', icon: '🧢', price: 25, desc: 'Classic golf visor' },
           { id: 'cap_blue', name: 'Blue Cap', icon: '🧢', price: 30, desc: 'Sporty baseball cap' },
           { id: 'cap_red', name: 'Red Cap', icon: '🧢', price: 30, desc: 'Bold red cap' },
+          { id: 'cap_black', name: 'Black Cap', icon: '🧢', price: 30, desc: 'Sleek black cap' },
           { id: 'bucket_hat', name: 'Bucket Hat', icon: '🎩', price: 50, desc: 'Trendy bucket style' },
           { id: 'cowboy', name: 'Cowboy Hat', icon: '🤠', price: 75, desc: 'Yeehaw!' },
+          { id: 'cowboy_black', name: 'Black Cowboy', icon: '🤠', price: 85, desc: 'Outlaw style' },
+          { id: 'beanie', name: 'Beanie', icon: '🧶', price: 40, desc: 'Cozy vibes' },
           { id: 'top_hat', name: 'Top Hat', icon: '🎩', price: 100, desc: 'Fancy and formal' },
           { id: 'crown', name: 'Champion Crown', icon: '👑', price: 200, desc: 'For true legends only' }
         ],
@@ -13363,8 +13383,10 @@
           { id: 'sunglasses', name: 'Sunglasses', icon: '🕶️', price: 20, desc: 'Cool shades' },
           { id: 'sport_shades', name: 'Sport Shades', icon: '🕶️', price: 35, desc: 'Wraparound style' },
           { id: 'aviators', name: 'Aviators', icon: '🕶️', price: 50, desc: 'Top Gun vibes' },
+          { id: 'round_shades', name: 'Round Shades', icon: '🕶️', price: 45, desc: 'Retro cool' },
           { id: 'nerd_glasses', name: 'Nerd Glasses', icon: '🤓', price: 40, desc: 'Smart look' },
           { id: 'star_glasses', name: 'Star Glasses', icon: '⭐', price: 80, desc: 'Be a star!' },
+          { id: 'heart_glasses', name: 'Heart Glasses', icon: '💖', price: 60, desc: 'Spread the love' },
           { id: 'vr_headset', name: 'VR Headset', icon: '🥽', price: 150, desc: 'Future golfer' }
         ],
         outfits: [
@@ -13377,7 +13399,28 @@
           { id: 'outfit_tiger', name: 'Tiger Stripes', icon: '🐅', price: 110, desc: 'Fierce competitor', shirtColor: '#FF9800', design: 'tiger', pantsColor: '#1a1a1a' },
           { id: 'outfit_lightning', name: 'Lightning Strike', icon: '⚡', price: 120, desc: 'Electric energy', shirtColor: '#311B92', design: 'lightning', patternColor: '#FFEB3B' },
           { id: 'outfit_champion', name: 'Champion Gold', icon: '🏆', price: 150, desc: 'For true winners', shirtColor: '#FFD700', design: 'champion', pantsColor: '#1a1a1a' },
-          { id: 'outfit_neon', name: 'Neon Nights', icon: '💜', price: 130, desc: 'Glow in style', shirtColor: '#E91E63', design: 'neon', patternColor: '#00FFFF' }
+          { id: 'outfit_neon', name: 'Neon Nights', icon: '💜', price: 130, desc: 'Glow in style', shirtColor: '#E91E63', design: 'neon', patternColor: '#00FFFF' },
+          { id: 'outfit_tuxedo', name: 'Tuxedo', icon: '🤵', price: 140, desc: 'Classy formal', shirtColor: '#212121', design: 'tuxedo', patternColor: '#FFFFFF' },
+          { id: 'outfit_tropical', name: 'Tropical', icon: '🌴', price: 85, desc: 'Island vibes', shirtColor: '#00BCD4', design: 'tropical', patternColor: '#FFEB3B' },
+          { id: 'outfit_galaxy', name: 'Galaxy', icon: '🌌', price: 160, desc: 'Out of this world', shirtColor: '#1A237E', design: 'galaxy', patternColor: '#E040FB' },
+          { id: 'outfit_retro', name: 'Retro 80s', icon: '📼', price: 95, desc: 'Rad throwback', shirtColor: '#E91E63', design: 'retro', patternColor: '#00FFFF' },
+          { id: 'outfit_western', name: 'Western', icon: '🤠', price: 100, desc: 'Howdy partner', shirtColor: '#795548', design: 'western', patternColor: '#FFC107' }
+        ],
+        sets: [
+          { id: 'set_cowboy', name: 'The Cowboy', icon: '🤠', price: 200, desc: 'Yeehaw! Complete western look', hat: 'cowboy', glasses: 'aviators', outfit: { shirtColor: '#795548', design: 'western', patternColor: '#FFC107', pantsColor: '#4E342E' } },
+          { id: 'set_rockstar', name: 'Rockstar', icon: '🎸', price: 280, desc: 'Born to be wild', hat: 'top_hat', glasses: 'star_glasses', outfit: { shirtColor: '#E91E63', design: 'neon', patternColor: '#00FFFF', pantsColor: '#1a1a1a' } },
+          { id: 'set_pro', name: 'Pro Classic', icon: '🏌️', price: 100, desc: 'Clean pro look', hat: 'visor_white', glasses: 'sport_shades', outfit: { shirtColor: '#1565C0', design: 'stripes', stripeColor: '#FFFFFF', pantsColor: '#37474F' } },
+          { id: 'set_beach', name: 'Beach Vibes', icon: '🏖️', price: 150, desc: 'Chill island style', hat: 'bucket_hat', glasses: 'aviators', outfit: { shirtColor: '#00BCD4', design: 'tropical', patternColor: '#FFEB3B', pantsColor: '#ECEFF1' } },
+          { id: 'set_champion', name: 'The Champion', icon: '🏆', price: 400, desc: 'Ultimate winner set', hat: 'crown', glasses: 'aviators', outfit: { shirtColor: '#FFD700', design: 'champion', pantsColor: '#1a1a1a' } },
+          { id: 'set_cyber', name: 'Cyber Golfer', icon: '🤖', price: 350, desc: 'Future of golf', hat: null, glasses: 'vr_headset', outfit: { shirtColor: '#1A237E', design: 'galaxy', patternColor: '#E040FB', pantsColor: '#263238' } },
+          { id: 'set_nightsky', name: 'Night Sky', icon: '🌙', price: 180, desc: 'Stargazer style', hat: 'beanie', glasses: 'round_shades', outfit: { shirtColor: '#1A237E', design: 'stars', patternColor: '#FFD700', pantsColor: '#0D47A1' } },
+          { id: 'set_fire', name: 'Fire Starter', icon: '🔥', price: 160, desc: 'Bring the heat', hat: 'cap_red', glasses: 'sunglasses', outfit: { shirtColor: '#F44336', design: 'flames', pantsColor: '#212121' } },
+          { id: 'set_gentleman', name: 'The Gentleman', icon: '🎩', price: 220, desc: 'Dapper and refined', hat: 'top_hat', glasses: 'nerd_glasses', outfit: { shirtColor: '#212121', design: 'tuxedo', patternColor: '#FFFFFF', pantsColor: '#212121' } },
+          { id: 'set_speed', name: 'Speed Demon', icon: '⚡', price: 190, desc: 'Lightning fast', hat: 'cap_black', glasses: 'sport_shades', outfit: { shirtColor: '#311B92', design: 'lightning', patternColor: '#FFEB3B', pantsColor: '#1a1a1a' } },
+          { id: 'set_tiger', name: 'Tiger Mode', icon: '🐅', price: 200, desc: 'Fierce like Sunday red', hat: 'cap_red', glasses: 'sunglasses', outfit: { shirtColor: '#F44336', design: 'tiger', pantsColor: '#1a1a1a' } },
+          { id: 'set_retro', name: 'Totally Rad', icon: '📼', price: 170, desc: '80s throwback vibes', hat: 'bucket_hat', glasses: 'round_shades', outfit: { shirtColor: '#E91E63', design: 'retro', patternColor: '#00FFFF', pantsColor: '#7B1FA2' } },
+          { id: 'set_military', name: 'Golf Force', icon: '🎖️', price: 140, desc: 'Tactical golfer', hat: 'cap_blue', glasses: 'sport_shades', outfit: { shirtColor: '#4CAF50', design: 'camo', pantsColor: '#33691E' } },
+          { id: 'set_love', name: 'Love Machine', icon: '💖', price: 150, desc: 'Spread the love', hat: 'bucket_hat', glasses: 'heart_glasses', outfit: { shirtColor: '#FF6B6B', design: 'gradient', gradientTo: '#E91E63', pantsColor: '#FFFFFF' } }
         ]
       },
 
@@ -14725,6 +14768,106 @@
             ctx.lineTo(6 * scale, -18 * scale);
             ctx.stroke();
             ctx.shadowBlur = 0;
+          } else if (outfitDesign === 'tuxedo') {
+            // Tuxedo - lapels and bow tie
+            const patternColor = character.outfitPatternColor || '#FFFFFF';
+            // White shirt front
+            ctx.fillStyle = patternColor;
+            ctx.beginPath();
+            ctx.moveTo(-3 * scale, -50 * scale);
+            ctx.lineTo(5 * scale, -50 * scale);
+            ctx.lineTo(4 * scale, -18 * scale);
+            ctx.lineTo(-2 * scale, -18 * scale);
+            ctx.closePath();
+            ctx.fill();
+            // Bow tie
+            ctx.fillStyle = '#D32F2F';
+            ctx.beginPath();
+            ctx.ellipse(1 * scale, -48 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#B71C1C';
+            ctx.beginPath();
+            ctx.arc(1 * scale, -48 * scale, 1.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (outfitDesign === 'tropical') {
+            // Tropical - palm leaf pattern
+            const patternColor = character.outfitPatternColor || '#FFEB3B';
+            ctx.strokeStyle = patternColor;
+            ctx.lineWidth = 1.5 * scale;
+            // Palm leaves
+            for (let i = 0; i < 3; i++) {
+              const x = -6 * scale + i * 8 * scale;
+              const y = -45 * scale + i * 10 * scale;
+              ctx.beginPath();
+              ctx.moveTo(x, y);
+              ctx.quadraticCurveTo(x + 4 * scale, y - 5 * scale, x + 8 * scale, y);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(x + 2 * scale, y);
+              ctx.quadraticCurveTo(x + 4 * scale, y + 4 * scale, x + 6 * scale, y);
+              ctx.stroke();
+            }
+          } else if (outfitDesign === 'galaxy') {
+            // Galaxy - stars and nebula swirls
+            const patternColor = character.outfitPatternColor || '#E040FB';
+            ctx.fillStyle = patternColor;
+            // Stars scattered
+            const stars = [[0, -45], [-5, -35], [7, -40], [-3, -25], [5, -30], [2, -20]];
+            for (const [sx, sy] of stars) {
+              ctx.beginPath();
+              ctx.arc(sx * scale, sy * scale, 1.5 * scale, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            // Nebula swirl
+            ctx.strokeStyle = patternColor;
+            ctx.lineWidth = 1 * scale;
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(-6 * scale, -42 * scale);
+            ctx.quadraticCurveTo(0, -48 * scale, 6 * scale, -42 * scale);
+            ctx.quadraticCurveTo(3 * scale, -35 * scale, -3 * scale, -30 * scale);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          } else if (outfitDesign === 'retro') {
+            // Retro 80s - geometric shapes
+            const patternColor = character.outfitPatternColor || '#00FFFF';
+            ctx.strokeStyle = patternColor;
+            ctx.lineWidth = 2 * scale;
+            // Horizontal lines
+            ctx.beginPath();
+            ctx.moveTo(-8 * scale, -40 * scale);
+            ctx.lineTo(10 * scale, -40 * scale);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-8 * scale, -32 * scale);
+            ctx.lineTo(10 * scale, -32 * scale);
+            ctx.stroke();
+            // Triangle
+            ctx.fillStyle = '#FFEB3B';
+            ctx.beginPath();
+            ctx.moveTo(0, -48 * scale);
+            ctx.lineTo(-5 * scale, -38 * scale);
+            ctx.lineTo(5 * scale, -38 * scale);
+            ctx.closePath();
+            ctx.fill();
+          } else if (outfitDesign === 'western') {
+            // Western - fringe pattern
+            const patternColor = character.outfitPatternColor || '#FFC107';
+            ctx.strokeStyle = patternColor;
+            ctx.lineWidth = 1 * scale;
+            // Yoke design (V-shape on chest)
+            ctx.beginPath();
+            ctx.moveTo(-10 * scale, -50 * scale);
+            ctx.lineTo(1 * scale, -42 * scale);
+            ctx.lineTo(12 * scale, -50 * scale);
+            ctx.stroke();
+            // Fringe under yoke
+            for (let i = -8; i <= 10; i += 3) {
+              ctx.beginPath();
+              ctx.moveTo(i * scale, -42 * scale + Math.abs(i) * 0.3 * scale);
+              ctx.lineTo(i * scale, -36 * scale + Math.abs(i) * 0.3 * scale);
+              ctx.stroke();
+            }
           }
           ctx.restore();
         }
@@ -14980,6 +15123,48 @@
             ctx.beginPath();
             ctx.roundRect(1.5 * gs, -1.5 * gs, 6 * gs, 4 * gs, 1);
             ctx.fill();
+          } else if (equippedGlasses === 'round_shades') {
+            // Round retro sunglasses
+            ctx.fillStyle = 'rgba(60, 40, 30, 0.9)';
+            ctx.beginPath();
+            ctx.arc(-5 * gs, 0, 4 * gs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5 * gs, 0, 4 * gs, 0, Math.PI * 2);
+            ctx.fill();
+            // Gold frame
+            ctx.strokeStyle = '#B8860B';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(-5 * gs, 0, 4 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(5 * gs, 0, 4 * gs, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-1 * gs, 0);
+            ctx.lineTo(1 * gs, 0);
+            ctx.stroke();
+          } else if (equippedGlasses === 'heart_glasses') {
+            // Heart shaped glasses
+            ctx.fillStyle = '#E91E63';
+            const drawHeart = (cx, cy, size) => {
+              ctx.beginPath();
+              ctx.moveTo(cx, cy + size * 0.3);
+              ctx.bezierCurveTo(cx - size, cy - size * 0.5, cx - size, cy + size * 0.5, cx, cy + size);
+              ctx.bezierCurveTo(cx + size, cy + size * 0.5, cx + size, cy - size * 0.5, cx, cy + size * 0.3);
+              ctx.closePath();
+              ctx.fill();
+            };
+            drawHeart(-5 * gs, -1 * gs, 4 * gs);
+            drawHeart(5 * gs, -1 * gs, 4 * gs);
+            // Bridge
+            ctx.strokeStyle = '#E91E63';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-1 * gs, 0);
+            ctx.lineTo(1 * gs, 0);
+            ctx.stroke();
           }
           ctx.restore();
         }
@@ -15003,10 +15188,10 @@
             ctx.beginPath();
             ctx.ellipse(5 * hs, 6 * hs, 13 * hs, 5 * hs, 0.1, Math.PI, 0);
             ctx.fill();
-          } else if (equippedHat === 'cap_blue' || equippedHat === 'cap_red') {
+          } else if (equippedHat === 'cap_blue' || equippedHat === 'cap_red' || equippedHat === 'cap_black') {
             // Baseball cap - covers more head
-            const capColor = equippedHat === 'cap_blue' ? '#1976D2' : '#D32F2F';
-            const darkColor = equippedHat === 'cap_blue' ? '#0D47A1' : '#B71C1C';
+            const capColor = equippedHat === 'cap_blue' ? '#1976D2' : (equippedHat === 'cap_red' ? '#D32F2F' : '#333333');
+            const darkColor = equippedHat === 'cap_blue' ? '#0D47A1' : (equippedHat === 'cap_red' ? '#B71C1C' : '#1a1a1a');
 
             // Cap dome - larger, covers hair
             ctx.fillStyle = capColor;
@@ -15066,9 +15251,9 @@
             ctx.beginPath();
             ctx.ellipse(0, 3 * hs, 15 * hs, 4 * hs, 0, 0, Math.PI);
             ctx.fill();
-          } else if (equippedHat === 'cowboy') {
+          } else if (equippedHat === 'cowboy' || equippedHat === 'cowboy_black') {
             // Cowboy hat
-            ctx.fillStyle = '#8B4513';
+            ctx.fillStyle = equippedHat === 'cowboy_black' ? '#1a1a1a' : '#8B4513';
             // Crown
             ctx.beginPath();
             ctx.moveTo(-10 * hs, 4 * hs);
@@ -15079,6 +15264,28 @@
             ctx.beginPath();
             ctx.ellipse(0, 5 * hs, 22 * hs, 6 * hs, 0, 0, Math.PI * 2);
             ctx.fill();
+            // Band
+            ctx.fillStyle = equippedHat === 'cowboy_black' ? '#444' : '#654321';
+            ctx.fillRect(-10 * hs, 0, 20 * hs, 3 * hs);
+          } else if (equippedHat === 'beanie') {
+            // Beanie - cozy knit hat
+            ctx.fillStyle = '#5D4037';
+            // Main dome
+            ctx.beginPath();
+            ctx.arc(0, 4 * hs, 14 * hs, Math.PI, 0);
+            ctx.fill();
+            // Folded brim
+            ctx.fillStyle = '#4E342E';
+            ctx.fillRect(-14 * hs, 2 * hs, 28 * hs, 6 * hs);
+            // Knit lines
+            ctx.strokeStyle = '#3E2723';
+            ctx.lineWidth = 0.5;
+            for (let i = -10; i <= 10; i += 4) {
+              ctx.beginPath();
+              ctx.moveTo(i * hs, -8 * hs);
+              ctx.lineTo(i * hs, 2 * hs);
+              ctx.stroke();
+            }
           } else if (equippedHat === 'top_hat') {
             // Top hat
             ctx.fillStyle = '#1a1a1a';
@@ -15599,41 +15806,80 @@
         const grid = document.getElementById('shop-items-grid');
         const career = this.activeCareer;
 
-        grid.innerHTML = items.map(item => {
-          const owned = career.character.accessories?.includes(item.id) ||
-                        career.character.ownedOutfits?.includes(item.id);
-          const equipped = career.character.equippedHat === item.id ||
-                          career.character.equippedGlasses === item.id ||
-                          (this.currentShopTab === 'outfits' && career.character.outfitShirt === item.shirtColor);
-          const selected = this.selectedShopItem?.id === item.id;
+        if (this.currentShopTab === 'sets') {
+          // Special rendering for sets
+          grid.innerHTML = items.map(item => {
+            const owned = career.character.ownedSets?.includes(item.id);
+            const selected = this.selectedShopItem?.id === item.id;
 
-          let badge = '';
-          if (equipped) badge = '<span class="shop-item-badge equipped-badge">EQUIPPED</span>';
-          else if (owned) badge = '<span class="shop-item-badge owned-badge">OWNED</span>';
+            let badge = owned ? '<span class="shop-item-badge owned-badge">OWNED</span>' : '';
+            let itemClass = selected ? 'selected ' : '';
+            itemClass += owned ? 'owned' : '';
 
-          let itemClass = selected ? 'selected ' : '';
-          itemClass += equipped ? 'equipped' : (owned ? 'owned' : '');
+            // Show what's in the set
+            const hatName = item.hat ? this.shopItems.hats.find(h => h.id === item.hat)?.name || item.hat : 'None';
+            const glassesName = item.glasses ? this.shopItems.glasses.find(g => g.id === item.glasses)?.name || item.glasses : 'None';
 
-          // Button for each item
-          let btnHtml = '';
-          if (equipped) {
-            btnHtml = `<button class="shop-item-btn unequip-btn" data-action="unequip" data-item-id="${item.id}">Unequip</button>`;
-          } else if (owned) {
-            btnHtml = `<button class="shop-item-btn equip-btn" data-action="equip" data-item-id="${item.id}">Equip</button>`;
-          } else {
-            const canAfford = career.tourCoins >= item.price;
-            btnHtml = `<button class="shop-item-btn buy-btn" data-action="buy" data-item-id="${item.id}" ${canAfford ? '' : 'disabled'}>Buy 🪙${item.price}</button>`;
-          }
+            let btnHtml = '';
+            if (owned) {
+              btnHtml = `<button class="shop-item-btn equip-btn" data-action="equip" data-item-id="${item.id}">Equip Set</button>`;
+            } else {
+              const canAfford = career.tourCoins >= item.price;
+              btnHtml = `<button class="shop-item-btn buy-btn" data-action="buy" data-item-id="${item.id}" ${canAfford ? '' : 'disabled'}>Buy 🪙${item.price}</button>`;
+            }
 
-          return `
-            <div class="shop-item ${itemClass}" data-item-id="${item.id}">
-              ${badge}
-              <div class="shop-item-preview">${item.icon}</div>
-              <div class="shop-item-name">${item.name}</div>
-              ${btnHtml}
-            </div>
-          `;
-        }).join('');
+            return `
+              <div class="shop-item set-item ${itemClass}" data-item-id="${item.id}">
+                ${badge}
+                <div class="shop-item-preview">${item.icon}</div>
+                <div class="shop-item-name">${item.name}</div>
+                <div class="shop-set-contents">
+                  <span>🧢 ${hatName}</span>
+                  <span>🕶️ ${glassesName}</span>
+                  <span>👔 Outfit</span>
+                </div>
+                ${btnHtml}
+              </div>
+            `;
+          }).join('');
+        } else {
+          // Regular items (hats, glasses, outfits)
+          grid.innerHTML = items.map(item => {
+            const owned = career.character.accessories?.includes(item.id) ||
+                          career.character.ownedOutfits?.includes(item.id);
+            const equipped = career.character.equippedHat === item.id ||
+                            career.character.equippedGlasses === item.id ||
+                            (this.currentShopTab === 'outfits' && career.character.outfitDesign === item.design);
+            const selected = this.selectedShopItem?.id === item.id;
+
+            let badge = '';
+            if (equipped) badge = '<span class="shop-item-badge equipped-badge">EQUIPPED</span>';
+            else if (owned) badge = '<span class="shop-item-badge owned-badge">OWNED</span>';
+
+            let itemClass = selected ? 'selected ' : '';
+            itemClass += equipped ? 'equipped' : (owned ? 'owned' : '');
+
+            // Button for each item
+            let btnHtml = '';
+            if (equipped) {
+              btnHtml = `<button class="shop-item-btn unequip-btn" data-action="unequip" data-item-id="${item.id}">Unequip</button>`;
+            } else if (owned) {
+              btnHtml = `<button class="shop-item-btn equip-btn" data-action="equip" data-item-id="${item.id}">Equip</button>`;
+            } else {
+              const canAfford = career.tourCoins >= item.price;
+              btnHtml = `<button class="shop-item-btn buy-btn" data-action="buy" data-item-id="${item.id}" ${canAfford ? '' : 'disabled'}>Buy 🪙${item.price}</button>`;
+            }
+
+            return `
+              <div class="shop-item ${itemClass}" data-item-id="${item.id}">
+                ${badge}
+                <div class="shop-item-preview">${item.icon}</div>
+                <div class="shop-item-name">${item.name}</div>
+                ${btnHtml}
+              </div>
+            `;
+          }).join('');
+        }
 
         // Add click handlers for item cards (try on)
         grid.querySelectorAll('.shop-item').forEach(el => {
@@ -15699,6 +15945,18 @@
             previewChar.outfitStripeColor = item.stripeColor || null;
             previewChar.outfitGradientTo = item.gradientTo || null;
             previewChar.outfitPatternColor = item.patternColor || null;
+          } else if (this.currentShopTab === 'sets') {
+            // Preview full set
+            previewChar.equippedHat = item.hat || null;
+            previewChar.equippedGlasses = item.glasses || null;
+            if (item.outfit) {
+              if (item.outfit.shirtColor) previewChar.outfitShirt = item.outfit.shirtColor;
+              if (item.outfit.pantsColor) previewChar.outfitPants = item.outfit.pantsColor;
+              previewChar.outfitDesign = item.outfit.design || null;
+              previewChar.outfitStripeColor = item.outfit.stripeColor || null;
+              previewChar.outfitGradientTo = item.outfit.gradientTo || null;
+              previewChar.outfitPatternColor = item.outfit.patternColor || null;
+            }
           }
         }
 
@@ -15728,63 +15986,73 @@
 
       shopItemAction(itemId, action) {
         const career = this.activeCareer;
-        const allItems = [...this.shopItems.hats, ...this.shopItems.glasses, ...this.shopItems.outfits];
-        const item = allItems.find(i => i.id === itemId);
-        if (!item) return;
 
-        // Determine item type
-        let itemType = 'hats';
-        if (this.shopItems.glasses.find(g => g.id === itemId)) itemType = 'glasses';
-        else if (this.shopItems.outfits.find(o => o.id === itemId)) itemType = 'outfits';
+        // Check if it's a set
+        const setItem = this.shopItems.sets.find(s => s.id === itemId);
+        if (setItem) {
+          if (action === 'buy') {
+            if (career.tourCoins < setItem.price) return;
+            career.tourCoins -= setItem.price;
+            document.getElementById('shop-coin-balance').textContent = career.tourCoins;
 
-        if (action === 'unequip') {
-          if (itemType === 'hats') {
-            career.character.equippedHat = null;
-          } else if (itemType === 'glasses') {
-            career.character.equippedGlasses = null;
+            // Add set to owned
+            if (!career.character.ownedSets) career.character.ownedSets = [];
+            career.character.ownedSets.push(setItem.id);
+
+            // Auto-equip the set
+            this.equipSet(setItem);
+          } else if (action === 'equip') {
+            this.equipSet(setItem);
           }
-          // Outfits can't be unequipped
-        } else if (action === 'equip') {
-          if (itemType === 'hats') {
-            career.character.equippedHat = item.id;
-          } else if (itemType === 'glasses') {
-            career.character.equippedGlasses = item.id;
-          } else if (itemType === 'outfits') {
-            if (item.shirtColor) career.character.outfitShirt = item.shirtColor;
-            if (item.pantsColor) career.character.outfitPants = item.pantsColor;
-            career.character.outfitDesign = item.design || null;
-            career.character.outfitStripeColor = item.stripeColor || null;
-            career.character.outfitGradientTo = item.gradientTo || null;
-            career.character.outfitPatternColor = item.patternColor || null;
-          }
-        } else if (action === 'buy') {
-          if (career.tourCoins < item.price) return;
+        } else {
+          // Regular item
+          const allItems = [...this.shopItems.hats, ...this.shopItems.glasses, ...this.shopItems.outfits];
+          const item = allItems.find(i => i.id === itemId);
+          if (!item) return;
 
-          career.tourCoins -= item.price;
-          document.getElementById('shop-coin-balance').textContent = career.tourCoins;
+          // Determine item type
+          let itemType = 'hats';
+          if (this.shopItems.glasses.find(g => g.id === itemId)) itemType = 'glasses';
+          else if (this.shopItems.outfits.find(o => o.id === itemId)) itemType = 'outfits';
 
-          // Add to owned and auto-equip
-          if (itemType === 'outfits') {
-            if (!career.character.ownedOutfits) career.character.ownedOutfits = [];
-            career.character.ownedOutfits.push(item.id);
-            if (item.shirtColor) career.character.outfitShirt = item.shirtColor;
-            if (item.pantsColor) career.character.outfitPants = item.pantsColor;
-            career.character.outfitDesign = item.design || null;
-            career.character.outfitStripeColor = item.stripeColor || null;
-            career.character.outfitGradientTo = item.gradientTo || null;
-            career.character.outfitPatternColor = item.patternColor || null;
-          } else {
-            if (!career.character.accessories) career.character.accessories = [];
-            career.character.accessories.push(item.id);
+          if (action === 'unequip') {
+            if (itemType === 'hats') {
+              career.character.equippedHat = null;
+            } else if (itemType === 'glasses') {
+              career.character.equippedGlasses = null;
+            }
+          } else if (action === 'equip') {
             if (itemType === 'hats') {
               career.character.equippedHat = item.id;
             } else if (itemType === 'glasses') {
               career.character.equippedGlasses = item.id;
+            } else if (itemType === 'outfits') {
+              this.applyOutfit(item);
+            }
+          } else if (action === 'buy') {
+            if (career.tourCoins < item.price) return;
+
+            career.tourCoins -= item.price;
+            document.getElementById('shop-coin-balance').textContent = career.tourCoins;
+
+            // Add to owned and auto-equip
+            if (itemType === 'outfits') {
+              if (!career.character.ownedOutfits) career.character.ownedOutfits = [];
+              career.character.ownedOutfits.push(item.id);
+              this.applyOutfit(item);
+            } else {
+              if (!career.character.accessories) career.character.accessories = [];
+              career.character.accessories.push(item.id);
+              if (itemType === 'hats') {
+                career.character.equippedHat = item.id;
+              } else if (itemType === 'glasses') {
+                career.character.equippedGlasses = item.id;
+              }
             }
           }
         }
 
-        // Clear try-on state since item was just equipped
+        // Clear try-on state
         this.selectedShopItem = null;
         this.shopPreviewItem = null;
         document.getElementById('shop-trying-on').textContent = '';
@@ -15793,6 +16061,28 @@
         this.renderShopItems();
         this.updateShopCharacter();
         this.updateEquippedList();
+      },
+
+      applyOutfit(outfit) {
+        const char = this.activeCareer.character;
+        if (outfit.shirtColor) char.outfitShirt = outfit.shirtColor;
+        if (outfit.pantsColor) char.outfitPants = outfit.pantsColor;
+        char.outfitDesign = outfit.design || null;
+        char.outfitStripeColor = outfit.stripeColor || null;
+        char.outfitGradientTo = outfit.gradientTo || null;
+        char.outfitPatternColor = outfit.patternColor || null;
+      },
+
+      equipSet(set) {
+        const char = this.activeCareer.character;
+        // Equip hat (or remove if null)
+        char.equippedHat = set.hat || null;
+        // Equip glasses (or remove if null)
+        char.equippedGlasses = set.glasses || null;
+        // Apply outfit
+        if (set.outfit) {
+          this.applyOutfit(set.outfit);
+        }
       },
 
       // === SPONSORS MANAGEMENT ===
