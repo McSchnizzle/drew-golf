@@ -5691,6 +5691,10 @@
             <label>Hair Color</label>
             <div class="color-options" id="hair-color-options"></div>
           </div>
+          <div class="creator-section" id="facial-hair-section">
+            <label>Facial Hair</label>
+            <div class="style-options" id="facial-hair-options"></div>
+          </div>
           <div class="creator-section">
             <label>Skin Tone</label>
             <div class="color-options" id="skin-options"></div>
@@ -7963,6 +7967,81 @@
         ctx.beginPath();
         ctx.arc(3 * scale, -18 * scale, 1.5 * scale, 0, Math.PI * 2);
         ctx.fill();
+
+        // Facial hair (boys only)
+        if (character.facialHair && character.gender !== 'girl') {
+          const hairColor = character.hairColor || '#4A3728';
+          // Darken the hair color for facial hair
+          const c = hairColor.replace('#', '');
+          const num = parseInt(c, 16);
+          const r = Math.max(0, (num >> 16) - 10);
+          const g = Math.max(0, ((num >> 8) & 0x00FF) - 10);
+          const b = Math.max(0, (num & 0x0000FF) - 10);
+          const facialHairColor = '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+
+          ctx.fillStyle = facialHairColor;
+          ctx.strokeStyle = facialHairColor;
+          const mouthY = -13 * scale;
+
+          if (character.facialHair === 'stubble') {
+            // Dense stubble pattern
+            ctx.globalAlpha = 0.55;
+            const stubblePoints = [
+              [-5, 1], [-3, 0], [-1, 1], [1, 0], [3, 1], [5, 0],
+              [-4, 3], [-2, 2], [0, 3], [2, 2], [4, 3],
+              [-3, 5], [-1, 4], [1, 5], [3, 4],
+              [-2, 7], [0, 6], [2, 7]
+            ];
+            stubblePoints.forEach(([px, py]) => {
+              ctx.beginPath();
+              ctx.arc(px * scale * 0.8, mouthY + py * scale * 0.8, 0.5 * scale, 0, Math.PI * 2);
+              ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+          } else if (character.facialHair === 'beard') {
+            // Full beard
+            ctx.beginPath();
+            ctx.moveTo(-6 * scale, mouthY - 1 * scale);
+            ctx.quadraticCurveTo(-7 * scale, mouthY + 4 * scale, -5 * scale, mouthY + 7 * scale);
+            ctx.quadraticCurveTo(0, mouthY + 10 * scale, 5 * scale, mouthY + 7 * scale);
+            ctx.quadraticCurveTo(7 * scale, mouthY + 4 * scale, 6 * scale, mouthY - 1 * scale);
+            ctx.fill();
+            // Mustache
+            ctx.beginPath();
+            ctx.moveTo(-5 * scale, mouthY);
+            ctx.quadraticCurveTo(0, mouthY - 2 * scale, 5 * scale, mouthY);
+            ctx.quadraticCurveTo(0, mouthY + 1 * scale, -5 * scale, mouthY);
+            ctx.fill();
+          } else if (character.facialHair === 'goatee') {
+            // Goatee with chin and small mustache
+            ctx.beginPath();
+            ctx.moveTo(-3 * scale, mouthY + 2 * scale);
+            ctx.quadraticCurveTo(-3 * scale, mouthY + 5 * scale, 0, mouthY + 8 * scale);
+            ctx.quadraticCurveTo(3 * scale, mouthY + 5 * scale, 3 * scale, mouthY + 2 * scale);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-3 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(0, mouthY - 1 * scale, 3 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(0, mouthY + 2 * scale, -3 * scale, mouthY + 1 * scale);
+            ctx.fill();
+          } else if (character.facialHair === 'mustache') {
+            // Thick mustache
+            ctx.beginPath();
+            ctx.moveTo(-5 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(-3 * scale, mouthY - 1 * scale, 0, mouthY);
+            ctx.quadraticCurveTo(3 * scale, mouthY - 1 * scale, 5 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(3 * scale, mouthY + 2 * scale, 0, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(-3 * scale, mouthY + 2 * scale, -5 * scale, mouthY + 1 * scale);
+            ctx.fill();
+          } else if (character.facialHair === 'soulpatch') {
+            // Soul patch
+            ctx.beginPath();
+            ctx.moveTo(-1 * scale, mouthY + 3 * scale);
+            ctx.quadraticCurveTo(0, mouthY + 6 * scale, 1 * scale, mouthY + 3 * scale);
+            ctx.quadraticCurveTo(0, mouthY + 3.5 * scale, -1 * scale, mouthY + 3 * scale);
+            ctx.fill();
+          }
+        }
 
         // Golf club
         ctx.strokeStyle = '#888';
@@ -13190,7 +13269,8 @@
           { id: 6, file: '13-boy-light-red.svg', name: 'Messy Red', skinHex: '#FFE4C4', hairHex: ['#C0392B', '#E74C3C', '#A93226'] },
           { id: 7, file: '14-boy-medium-mohawk.svg', name: 'Mohawk', skinHex: '#DEB887', hairHex: ['#9B59B6', '#8E44AD', '#7D3C98'] },
           { id: 8, file: '17-boy-tan-longhair.svg', name: 'Long Hair', skinHex: '#D2A679', hairHex: ['#1a1a1a', '#333'] },
-          { id: 9, file: '19-boy-light-shortblonde.svg', name: 'Short Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] }
+          { id: 9, file: '19-boy-light-shortblonde.svg', name: 'Short Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] },
+          { id: 10, file: '20-boy-bald.svg', name: 'Bald', skinHex: '#FFDAB9', hairHex: ['#4A3728'] }
         ],
         girl: [
           { id: 0, file: '07-girl-light-blonde.svg', name: 'Long Blonde', skinHex: '#FFDAB9', hairHex: ['#F4D03F', '#FFEB3B', '#DAA520'] },
@@ -13201,7 +13281,8 @@
           { id: 5, file: '12-girl-dark-puffs.svg', name: 'Afro Puffs', skinHex: '#6B4423', hairHex: ['#1a1a1a', '#333'] },
           { id: 6, file: '15-girl-light-pigtails.svg', name: 'Pigtails', skinHex: '#FFDAB9', hairHex: ['#FF69B4', '#FF8DC7'] },
           { id: 7, file: '16-girl-medium-bob.svg', name: 'Bob Cut', skinHex: '#DEB887', hairHex: ['#4A3728', '#5D4A35'] },
-          { id: 8, file: '18-girl-tan-bangs.svg', name: 'Bangs', skinHex: '#D2A679', hairHex: ['#8B4513', '#A0522D'] }
+          { id: 8, file: '18-girl-tan-bangs.svg', name: 'Bangs', skinHex: '#D2A679', hairHex: ['#8B4513', '#A0522D'] },
+          { id: 9, file: '21-girl-bald.svg', name: 'Bald', skinHex: '#FFDAB9', hairHex: ['#4A3728'] }
         ]
       },
 
@@ -13232,6 +13313,16 @@
         { id: 11, name: 'Teal', hex: '#1ABC9C' },
         { id: 12, name: 'Gray', hex: '#7F8C8D' },
         { id: 13, name: 'White', hex: '#ECF0F1' }
+      ],
+
+      // Facial hair options (boy only)
+      facialHairOptions: [
+        { id: 0, name: 'None', type: null },
+        { id: 1, name: 'Stubble', type: 'stubble' },
+        { id: 2, name: 'Full Beard', type: 'beard' },
+        { id: 3, name: 'Goatee', type: 'goatee' },
+        { id: 4, name: 'Mustache', type: 'mustache' },
+        { id: 5, name: 'Soul Patch', type: 'soulpatch' }
       ],
 
       // Hairstyles per gender - now using sprite map
@@ -13884,6 +13975,7 @@
             document.querySelectorAll('#gender-options .gender-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             this.updateHairstyleOptions(); // Show correct sprites for selected gender
+            this.updateFacialHairOptions(); // Show/hide facial hair for boys only
             this.updateCharacterPreview();
           }
         });
@@ -14009,6 +14101,9 @@
         // Hairstyles
         this.updateHairstyleOptions();
 
+        // Facial hair options
+        this.updateFacialHairOptions();
+
         // Shirt colors
         const shirtContainer = document.getElementById('shirt-options');
         shirtContainer.innerHTML = '';
@@ -14081,6 +14176,129 @@
         });
       },
 
+      updateFacialHairOptions() {
+        const gender = document.querySelector('#gender-options .gender-btn.selected')?.dataset.value || 'boy';
+        const section = document.getElementById('facial-hair-section');
+        const container = document.getElementById('facial-hair-options');
+
+        // Only show facial hair for boys
+        if (gender === 'girl') {
+          section.style.display = 'none';
+          return;
+        }
+        section.style.display = 'block';
+
+        container.innerHTML = '';
+        this.facialHairOptions.forEach((option, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'style-option facial-hair-option' + (i === 0 ? ' selected' : '');
+          opt.dataset.value = option.type || 'none';
+          opt.title = option.name;
+
+          // Create canvas for visual icon
+          const canvas = document.createElement('canvas');
+          canvas.width = 36;
+          canvas.height = 36;
+          canvas.style.width = '100%';
+          canvas.style.height = '100%';
+          opt.appendChild(canvas);
+
+          // Draw the facial hair icon
+          const ctx = canvas.getContext('2d');
+          const cx = 18, cy = 18;
+          const hairColor = '#4A3728';
+
+          // Draw face outline (light)
+          ctx.fillStyle = '#FFDAB9';
+          ctx.beginPath();
+          ctx.arc(cx, cy - 2, 14, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Draw eyes
+          ctx.fillStyle = '#333';
+          ctx.beginPath();
+          ctx.arc(cx - 5, cy - 5, 2, 0, Math.PI * 2);
+          ctx.arc(cx + 5, cy - 5, 2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Draw smile
+          ctx.strokeStyle = '#333';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(cx, cy + 2, 5, 0.2, Math.PI - 0.2);
+          ctx.stroke();
+
+          // Draw facial hair based on type
+          ctx.fillStyle = hairColor;
+          ctx.strokeStyle = hairColor;
+          const mouthY = cy + 2;
+
+          if (option.type === null) {
+            // None - just clean face, nothing to draw
+          } else if (option.type === 'stubble') {
+            // Stubble - dots pattern
+            ctx.globalAlpha = 0.6;
+            const dots = [[-6,3],[-3,2],[0,3],[3,2],[6,3],[-5,6],[-2,5],[1,6],[4,5],[-4,9],[-1,8],[2,9],[0,11]];
+            dots.forEach(([dx, dy]) => {
+              ctx.beginPath();
+              ctx.arc(cx + dx, mouthY + dy, 0.8, 0, Math.PI * 2);
+              ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+          } else if (option.type === 'beard') {
+            // Full beard
+            ctx.beginPath();
+            ctx.moveTo(cx - 10, mouthY - 1);
+            ctx.quadraticCurveTo(cx - 12, mouthY + 6, cx - 8, mouthY + 10);
+            ctx.quadraticCurveTo(cx, mouthY + 14, cx + 8, mouthY + 10);
+            ctx.quadraticCurveTo(cx + 12, mouthY + 6, cx + 10, mouthY - 1);
+            ctx.fill();
+            // Mustache part
+            ctx.beginPath();
+            ctx.moveTo(cx - 7, mouthY);
+            ctx.quadraticCurveTo(cx, mouthY - 3, cx + 7, mouthY);
+            ctx.quadraticCurveTo(cx, mouthY + 2, cx - 7, mouthY);
+            ctx.fill();
+          } else if (option.type === 'goatee') {
+            // Goatee
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, mouthY + 3);
+            ctx.quadraticCurveTo(cx - 5, mouthY + 8, cx, mouthY + 12);
+            ctx.quadraticCurveTo(cx + 5, mouthY + 8, cx + 5, mouthY + 3);
+            ctx.fill();
+            // Small mustache
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, mouthY + 1);
+            ctx.quadraticCurveTo(cx, mouthY - 2, cx + 5, mouthY + 1);
+            ctx.quadraticCurveTo(cx, mouthY + 3, cx - 5, mouthY + 1);
+            ctx.fill();
+          } else if (option.type === 'mustache') {
+            // Handlebar mustache
+            ctx.beginPath();
+            ctx.moveTo(cx - 9, mouthY + 2);
+            ctx.quadraticCurveTo(cx - 5, mouthY - 2, cx, mouthY);
+            ctx.quadraticCurveTo(cx + 5, mouthY - 2, cx + 9, mouthY + 2);
+            ctx.quadraticCurveTo(cx + 5, mouthY + 4, cx, mouthY + 2);
+            ctx.quadraticCurveTo(cx - 5, mouthY + 4, cx - 9, mouthY + 2);
+            ctx.fill();
+          } else if (option.type === 'soulpatch') {
+            // Soul patch
+            ctx.beginPath();
+            ctx.moveTo(cx - 2, mouthY + 4);
+            ctx.quadraticCurveTo(cx, mouthY + 10, cx + 2, mouthY + 4);
+            ctx.quadraticCurveTo(cx, mouthY + 5, cx - 2, mouthY + 4);
+            ctx.fill();
+          }
+
+          opt.addEventListener('click', () => {
+            container.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            this.updateCharacterPreview();
+          });
+          container.appendChild(opt);
+        });
+      },
+
       getCreatorSelections() {
         const gender = document.querySelector('#gender-options .gender-btn.selected')?.dataset.value || 'boy';
         const hairstyle = parseInt(document.querySelector('#hair-style-options .style-option.selected')?.dataset.value || '0');
@@ -14093,12 +14311,17 @@
         const hairColorValue = document.querySelector('#hair-color-options .color-option.selected')?.dataset.value;
         const selectedHairHex = (hairColorValue === 'original' || !hairColorValue) ? null : hairColorValue;
 
+        // Get facial hair selection (boys only)
+        const facialHairValue = document.querySelector('#facial-hair-options .style-option.selected')?.dataset.value;
+        const facialHair = (facialHairValue === 'none' || !facialHairValue) ? null : facialHairValue;
+
         return {
           gender,
           skinTone: skinToneIndex,
           skinHex: selectedSkinHex, // null means keep sprite's original
           hairstyle,
           hairColor: selectedHairHex, // null means keep sprite's original
+          facialHair: gender === 'boy' ? facialHair : null, // Only boys can have facial hair
           outfitShirt: document.querySelector('#shirt-options .color-option.selected')?.dataset.value || '#E53935',
           outfitPants: document.querySelector('#pants-options .color-option.selected')?.dataset.value || '#1565C0'
         };
@@ -14270,6 +14493,127 @@
           ctx.beginPath();
           ctx.arc(centerX, centerY + size * 0.08, size * 0.1, 0.3, Math.PI - 0.3);
           ctx.stroke();
+        }
+
+        // LAYER 3.5: Draw facial hair (boys only)
+        if (character.facialHair && character.gender !== 'girl') {
+          const hairColor = character.hairColor || '#4A3728';
+          const facialHairColor = this.darkenColor(hairColor, 10);
+          const facialHairDark = this.darkenColor(hairColor, 25);
+          // Position to overlay the mouth on avatar
+          const mouthY = centerY + size * 0.06;
+          const chinY = centerY + size * 0.14;
+          const sc = size / 100; // Scale factor
+
+          ctx.save();
+
+          if (character.facialHair === 'stubble') {
+            // 5 o'clock shadow - dense stippling pattern
+            ctx.fillStyle = facialHairColor;
+            ctx.globalAlpha = 0.65;
+            const stubblePoints = [
+              [-18, 2], [-14, 0], [-10, -2], [-6, 0], [-2, -2], [2, 0], [6, -2], [10, 0], [14, 0], [18, 2],
+              [-20, 6], [-16, 4], [-12, 6], [-8, 4], [-4, 6], [0, 4], [4, 6], [8, 4], [12, 6], [16, 4], [20, 5],
+              [-18, 10], [-14, 8], [-10, 10], [-6, 8], [-2, 10], [2, 8], [6, 10], [10, 8], [14, 10], [18, 9],
+              [-16, 14], [-12, 12], [-8, 14], [-4, 12], [0, 14], [4, 12], [8, 14], [12, 12], [16, 13],
+              [-12, 18], [-8, 16], [-4, 18], [0, 16], [4, 18], [8, 16], [12, 17],
+              [-8, 22], [-4, 20], [0, 22], [4, 20], [8, 21],
+              [-4, 26], [0, 24], [4, 26]
+            ];
+            stubblePoints.forEach(([px, py]) => {
+              ctx.beginPath();
+              ctx.arc(centerX + px * sc, mouthY + py * sc, 1.2 * sc, 0, Math.PI * 2);
+              ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+          } else if (character.facialHair === 'beard') {
+            // Natural beard with mouth opening
+            ctx.fillStyle = facialHairColor;
+
+            // Left side of beard
+            ctx.beginPath();
+            ctx.moveTo(centerX - 18 * sc, mouthY - 2 * sc);
+            ctx.quadraticCurveTo(centerX - 20 * sc, mouthY + 6 * sc, centerX - 16 * sc, chinY + 2 * sc);
+            ctx.quadraticCurveTo(centerX - 8 * sc, chinY + 8 * sc, centerX - 4 * sc, chinY + 10 * sc);
+            ctx.lineTo(centerX - 4 * sc, mouthY + 6 * sc);
+            ctx.quadraticCurveTo(centerX - 10 * sc, mouthY + 4 * sc, centerX - 18 * sc, mouthY - 2 * sc);
+            ctx.fill();
+
+            // Right side of beard
+            ctx.beginPath();
+            ctx.moveTo(centerX + 18 * sc, mouthY - 2 * sc);
+            ctx.quadraticCurveTo(centerX + 20 * sc, mouthY + 6 * sc, centerX + 16 * sc, chinY + 2 * sc);
+            ctx.quadraticCurveTo(centerX + 8 * sc, chinY + 8 * sc, centerX + 4 * sc, chinY + 10 * sc);
+            ctx.lineTo(centerX + 4 * sc, mouthY + 6 * sc);
+            ctx.quadraticCurveTo(centerX + 10 * sc, mouthY + 4 * sc, centerX + 18 * sc, mouthY - 2 * sc);
+            ctx.fill();
+
+            // Chin beard (below mouth)
+            ctx.beginPath();
+            ctx.moveTo(centerX - 6 * sc, mouthY + 6 * sc);
+            ctx.quadraticCurveTo(centerX - 8 * sc, chinY + 6 * sc, centerX, chinY + 12 * sc);
+            ctx.quadraticCurveTo(centerX + 8 * sc, chinY + 6 * sc, centerX + 6 * sc, mouthY + 6 * sc);
+            ctx.lineTo(centerX - 6 * sc, mouthY + 6 * sc);
+            ctx.fill();
+
+            // Mustache (above mouth)
+            ctx.beginPath();
+            ctx.moveTo(centerX - 12 * sc, mouthY + 2 * sc);
+            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY - 2 * sc, centerX, mouthY - 1 * sc);
+            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY - 2 * sc, centerX + 12 * sc, mouthY + 2 * sc);
+            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY + 3 * sc, centerX, mouthY + 2 * sc);
+            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY + 3 * sc, centerX - 12 * sc, mouthY + 2 * sc);
+            ctx.fill();
+          } else if (character.facialHair === 'goatee') {
+            // Classic goatee
+            ctx.fillStyle = facialHairColor;
+            // Chin portion
+            ctx.beginPath();
+            ctx.moveTo(centerX - 10 * sc, mouthY + 8 * sc);
+            ctx.quadraticCurveTo(centerX - 12 * sc, chinY + 8 * sc, centerX, chinY + 20 * sc);
+            ctx.quadraticCurveTo(centerX + 12 * sc, chinY + 8 * sc, centerX + 10 * sc, mouthY + 8 * sc);
+            ctx.quadraticCurveTo(centerX + 4 * sc, mouthY + 12 * sc, centerX, mouthY + 10 * sc);
+            ctx.quadraticCurveTo(centerX - 4 * sc, mouthY + 12 * sc, centerX - 10 * sc, mouthY + 8 * sc);
+            ctx.fill();
+            // Small mustache
+            ctx.beginPath();
+            ctx.moveTo(centerX - 10 * sc, mouthY + 2 * sc);
+            ctx.quadraticCurveTo(centerX, mouthY - 4 * sc, centerX + 10 * sc, mouthY + 2 * sc);
+            ctx.quadraticCurveTo(centerX, mouthY + 6 * sc, centerX - 10 * sc, mouthY + 2 * sc);
+            ctx.fill();
+          } else if (character.facialHair === 'mustache') {
+            // Thick handlebar mustache
+            ctx.fillStyle = facialHairColor;
+            // Left side
+            ctx.beginPath();
+            ctx.moveTo(centerX - 18 * sc, mouthY + 4 * sc);
+            ctx.quadraticCurveTo(centerX - 12 * sc, mouthY - 4 * sc, centerX - 4 * sc, mouthY - 2 * sc);
+            ctx.lineTo(centerX, mouthY);
+            ctx.lineTo(centerX - 4 * sc, mouthY + 4 * sc);
+            ctx.quadraticCurveTo(centerX - 10 * sc, mouthY + 6 * sc, centerX - 18 * sc, mouthY + 4 * sc);
+            ctx.fill();
+            // Right side
+            ctx.beginPath();
+            ctx.moveTo(centerX + 18 * sc, mouthY + 4 * sc);
+            ctx.quadraticCurveTo(centerX + 12 * sc, mouthY - 4 * sc, centerX + 4 * sc, mouthY - 2 * sc);
+            ctx.lineTo(centerX, mouthY);
+            ctx.lineTo(centerX + 4 * sc, mouthY + 4 * sc);
+            ctx.quadraticCurveTo(centerX + 10 * sc, mouthY + 6 * sc, centerX + 18 * sc, mouthY + 4 * sc);
+            ctx.fill();
+            // Center
+            ctx.beginPath();
+            ctx.arc(centerX, mouthY, 4 * sc, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (character.facialHair === 'soulpatch') {
+            // Soul patch below lip
+            ctx.fillStyle = facialHairColor;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 4 * sc, mouthY + 8 * sc);
+            ctx.quadraticCurveTo(centerX, mouthY + 20 * sc, centerX + 4 * sc, mouthY + 8 * sc);
+            ctx.quadraticCurveTo(centerX, mouthY + 10 * sc, centerX - 4 * sc, mouthY + 8 * sc);
+            ctx.fill();
+          }
+          ctx.restore();
         }
 
         // LAYER 4: Draw accessories (hats and glasses) on avatar
@@ -15166,6 +15510,127 @@
           ctx.beginPath();
           ctx.arc(0, -62 * scale, 5 * scale, 0.2, Math.PI - 0.2);
           ctx.stroke();
+        }
+
+        // LAYER 3.5: Draw facial hair (boys only)
+        if (character.facialHair && character.gender !== 'girl') {
+          const facialHairColor = darken(character.hairColor || '#4A3728', 10);
+          const facialHairDark = darken(character.hairColor || '#4A3728', 25);
+          // Position to overlay the mouth (smile is at -62)
+          const mouthY = -60 * scale;
+          const chinY = -52 * scale;
+          const jawWidth = 12 * scale;
+
+          ctx.save();
+
+          if (character.facialHair === 'stubble') {
+            // 5 o'clock shadow - dense stippling pattern
+            ctx.fillStyle = facialHairColor;
+            ctx.globalAlpha = 0.7;
+            // Use seeded positions for consistent look
+            const stubblePoints = [
+              [-8, 1], [-6, 0], [-4, -1], [-2, 0], [0, -1], [2, 0], [4, -1], [6, 0], [8, 1],
+              [-9, 3], [-7, 2], [-5, 3], [-3, 2], [-1, 3], [1, 2], [3, 3], [5, 2], [7, 3], [9, 2],
+              [-8, 5], [-6, 4], [-4, 5], [-2, 4], [0, 5], [2, 4], [4, 5], [6, 4], [8, 5],
+              [-7, 7], [-5, 6], [-3, 7], [-1, 6], [1, 7], [3, 6], [5, 7], [7, 6],
+              [-6, 9], [-4, 8], [-2, 9], [0, 8], [2, 9], [4, 8], [6, 9],
+              [-4, 11], [-2, 10], [0, 11], [2, 10], [4, 11],
+              [-2, 13], [0, 12], [2, 13]
+            ];
+            stubblePoints.forEach(([px, py]) => {
+              ctx.beginPath();
+              ctx.arc(headX + px * scale * 0.9, mouthY + py * scale * 0.8, 0.8 * scale, 0, Math.PI * 2);
+              ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+          } else if (character.facialHair === 'beard') {
+            // Natural beard with mouth opening
+            ctx.fillStyle = facialHairColor;
+
+            // Left side of beard (jaw/cheek area)
+            ctx.beginPath();
+            ctx.moveTo(headX - 9 * scale, mouthY - 1 * scale);
+            ctx.quadraticCurveTo(headX - 10 * scale, mouthY + 3 * scale, headX - 8 * scale, chinY + 1 * scale);
+            ctx.quadraticCurveTo(headX - 4 * scale, chinY + 4 * scale, headX - 2 * scale, chinY + 5 * scale);
+            ctx.lineTo(headX - 2 * scale, mouthY + 3 * scale);
+            ctx.quadraticCurveTo(headX - 5 * scale, mouthY + 2 * scale, headX - 9 * scale, mouthY - 1 * scale);
+            ctx.fill();
+
+            // Right side of beard (jaw/cheek area)
+            ctx.beginPath();
+            ctx.moveTo(headX + 9 * scale, mouthY - 1 * scale);
+            ctx.quadraticCurveTo(headX + 10 * scale, mouthY + 3 * scale, headX + 8 * scale, chinY + 1 * scale);
+            ctx.quadraticCurveTo(headX + 4 * scale, chinY + 4 * scale, headX + 2 * scale, chinY + 5 * scale);
+            ctx.lineTo(headX + 2 * scale, mouthY + 3 * scale);
+            ctx.quadraticCurveTo(headX + 5 * scale, mouthY + 2 * scale, headX + 9 * scale, mouthY - 1 * scale);
+            ctx.fill();
+
+            // Chin beard (below mouth)
+            ctx.beginPath();
+            ctx.moveTo(headX - 3 * scale, mouthY + 3 * scale);
+            ctx.quadraticCurveTo(headX - 4 * scale, chinY + 3 * scale, headX, chinY + 6 * scale);
+            ctx.quadraticCurveTo(headX + 4 * scale, chinY + 3 * scale, headX + 3 * scale, mouthY + 3 * scale);
+            ctx.lineTo(headX - 3 * scale, mouthY + 3 * scale);
+            ctx.fill();
+
+            // Mustache (above mouth)
+            ctx.beginPath();
+            ctx.moveTo(headX - 6 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(headX - 3 * scale, mouthY - 1 * scale, headX, mouthY - 0.5 * scale);
+            ctx.quadraticCurveTo(headX + 3 * scale, mouthY - 1 * scale, headX + 6 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(headX + 3 * scale, mouthY + 1.5 * scale, headX, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(headX - 3 * scale, mouthY + 1.5 * scale, headX - 6 * scale, mouthY + 1 * scale);
+            ctx.fill();
+          } else if (character.facialHair === 'goatee') {
+            // Classic goatee - chin beard + mustache connected
+            ctx.fillStyle = facialHairColor;
+            // Chin portion
+            ctx.beginPath();
+            ctx.moveTo(headX - 5 * scale, mouthY + 4 * scale);
+            ctx.quadraticCurveTo(headX - 6 * scale, chinY + 4 * scale, headX, chinY + 10 * scale);
+            ctx.quadraticCurveTo(headX + 6 * scale, chinY + 4 * scale, headX + 5 * scale, mouthY + 4 * scale);
+            ctx.quadraticCurveTo(headX + 2 * scale, mouthY + 6 * scale, headX, mouthY + 5 * scale);
+            ctx.quadraticCurveTo(headX - 2 * scale, mouthY + 6 * scale, headX - 5 * scale, mouthY + 4 * scale);
+            ctx.fill();
+            // Small mustache
+            ctx.beginPath();
+            ctx.moveTo(headX - 5 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(headX, mouthY - 2 * scale, headX + 5 * scale, mouthY + 1 * scale);
+            ctx.quadraticCurveTo(headX, mouthY + 3 * scale, headX - 5 * scale, mouthY + 1 * scale);
+            ctx.fill();
+          } else if (character.facialHair === 'mustache') {
+            // Thick handlebar-style mustache
+            ctx.fillStyle = facialHairColor;
+            ctx.beginPath();
+            // Left side
+            ctx.moveTo(headX - 9 * scale, mouthY + 2 * scale);
+            ctx.quadraticCurveTo(headX - 6 * scale, mouthY - 2 * scale, headX - 2 * scale, mouthY - 1 * scale);
+            ctx.lineTo(headX, mouthY);
+            ctx.lineTo(headX - 2 * scale, mouthY + 2 * scale);
+            ctx.quadraticCurveTo(headX - 5 * scale, mouthY + 3 * scale, headX - 9 * scale, mouthY + 2 * scale);
+            ctx.fill();
+            // Right side
+            ctx.beginPath();
+            ctx.moveTo(headX + 9 * scale, mouthY + 2 * scale);
+            ctx.quadraticCurveTo(headX + 6 * scale, mouthY - 2 * scale, headX + 2 * scale, mouthY - 1 * scale);
+            ctx.lineTo(headX, mouthY);
+            ctx.lineTo(headX + 2 * scale, mouthY + 2 * scale);
+            ctx.quadraticCurveTo(headX + 5 * scale, mouthY + 3 * scale, headX + 9 * scale, mouthY + 2 * scale);
+            ctx.fill();
+            // Center connector
+            ctx.beginPath();
+            ctx.arc(headX, mouthY, 2 * scale, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (character.facialHair === 'soulpatch') {
+            // Small triangle/oval below lower lip
+            ctx.fillStyle = facialHairColor;
+            ctx.beginPath();
+            ctx.moveTo(headX - 2 * scale, mouthY + 4 * scale);
+            ctx.quadraticCurveTo(headX, mouthY + 10 * scale, headX + 2 * scale, mouthY + 4 * scale);
+            ctx.quadraticCurveTo(headX, mouthY + 5 * scale, headX - 2 * scale, mouthY + 4 * scale);
+            ctx.fill();
+          }
+          ctx.restore();
         }
 
         // LAYER 4: Draw accessories (hats and glasses) on top of head
