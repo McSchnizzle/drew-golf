@@ -34,6 +34,17 @@ build/
 *.temp
 .cache/
 
+# Node modules
+node_modules/
+
+# Test artifacts
+test-results/
+playwright-report/
+test-*.js
+test-*.png
+visual-*.png
+facial-hair-*.png
+
 # Optional: Development source if using build process
 # Uncomment if you want to deploy only game.html and keep src/ private
 # src/

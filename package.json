@@ -5,11 +5,17 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug"
+    "test:debug": "playwright test --debug",
+    "validate": "node scripts/validate-deploy.js",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
+    "husky": "^9.1.7",
     "playwright": "^1.57.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   },
   "main": "generate-sprites.js",
   "directories": {
@@ -17,7 +23,6 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
-    "fsevents": "^2.3.2",
     "playwright-core": "^1.57.0"
   },
   "repository": {
