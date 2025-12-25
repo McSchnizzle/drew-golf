@@ -13838,8 +13838,10 @@
           character: {
             gender: character.gender || 'boy',
             skinTone: character.skinTone || 2,
+            skinHex: character.skinHex || null,
             hairstyle: character.hairstyle || 0,
-            hairColor: character.hairColor || '#4A3728',
+            hairColor: character.hairColor || null,
+            facialHair: character.facialHair || null,
             outfitShirt: character.outfitShirt || '#E53935',
             outfitPants: character.outfitPants || '#1565C0',
             accessories: []
@@ -14458,6 +14460,7 @@
           ctx.clip();
           ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);
           ctx.restore();
+
         } else {
           // Fallback: Shirt/shoulders at bottom
           ctx.fillStyle = character.outfitShirt || '#E53935';
@@ -14491,7 +14494,7 @@
           ctx.lineWidth = 2;
           ctx.lineCap = 'round';
           ctx.beginPath();
-          ctx.arc(centerX, centerY + size * 0.08, size * 0.1, 0.3, Math.PI - 0.3);
+          ctx.arc(centerX, centerY + size * 0.16, size * 0.08, 0.3, Math.PI - 0.3);
           ctx.stroke();
         }
 
@@ -14501,8 +14504,8 @@
           const facialHairColor = this.darkenColor(hairColor, 10);
           const facialHairDark = this.darkenColor(hairColor, 25);
           // Position to overlay the mouth on avatar
-          const mouthY = centerY + size * 0.06;
-          const chinY = centerY + size * 0.14;
+          const mouthY = centerY + size * 0.02;
+          const chinY = centerY + size * 0.10;
           const sc = size / 100; // Scale factor
 
           ctx.save();
@@ -14556,13 +14559,13 @@
             ctx.lineTo(centerX - 6 * sc, mouthY + 6 * sc);
             ctx.fill();
 
-            // Mustache (above mouth)
+            // Mustache (above mouth) - positioned higher
             ctx.beginPath();
-            ctx.moveTo(centerX - 12 * sc, mouthY + 2 * sc);
-            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY - 2 * sc, centerX, mouthY - 1 * sc);
-            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY - 2 * sc, centerX + 12 * sc, mouthY + 2 * sc);
-            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY + 3 * sc, centerX, mouthY + 2 * sc);
-            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY + 3 * sc, centerX - 12 * sc, mouthY + 2 * sc);
+            ctx.moveTo(centerX - 12 * sc, mouthY - 2 * sc);
+            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY - 6 * sc, centerX, mouthY - 5 * sc);
+            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY - 6 * sc, centerX + 12 * sc, mouthY - 2 * sc);
+            ctx.quadraticCurveTo(centerX + 6 * sc, mouthY - 1 * sc, centerX, mouthY - 2 * sc);
+            ctx.quadraticCurveTo(centerX - 6 * sc, mouthY - 1 * sc, centerX - 12 * sc, mouthY - 2 * sc);
             ctx.fill();
           } else if (character.facialHair === 'goatee') {
             // Classic goatee
