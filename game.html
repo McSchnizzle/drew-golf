@@ -4910,6 +4910,252 @@
       margin-top: 30px;
     }
 
+    /* Pre-Tournament Interview Overlay */
+    #interview-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1760;
+    }
+    #interview-overlay.hidden { display: none; }
+
+    .interview-scene {
+      width: 100%;
+      height: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .interview-broadcast-banner {
+      background: linear-gradient(90deg, #c41e3a 0%, #8b0000 100%);
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .broadcast-live {
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .broadcast-network {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .interview-stage {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 60px;
+      padding: 20px;
+      background: linear-gradient(180deg, #2c5f2d 0%, #1e4d2b 50%, #143d1a 100%);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interview-stage::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+    }
+
+    .interview-reporter-side, .interview-player-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #interview-reporter-canvas, #interview-player-canvas {
+      border-radius: 8px;
+    }
+
+    .reporter-nameplate, .player-nameplate {
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      border-bottom: 3px solid #c41e3a;
+    }
+
+    #interview-player-canvas {
+      border-radius: 8px;
+    }
+
+    .interview-dialogue-box {
+      background: rgba(0,0,0,0.9);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #c41e3a;
+    }
+
+    .interview-speaker {
+      color: #c41e3a;
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .interview-text {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .interview-controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .interview-responses {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .interview-response-btn {
+      background: linear-gradient(145deg, #1e3a5f, #0d1f3c);
+      border: 2px solid rgba(100, 150, 200, 0.3);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .interview-response-btn:hover {
+      background: linear-gradient(145deg, #2a4a7f, #15294f);
+      border-color: rgba(100, 150, 200, 0.6);
+      transform: translateX(5px);
+    }
+
+    .interview-response-btn.selected {
+      background: linear-gradient(145deg, #2e7d32, #1b5e20);
+      border-color: #4CAF50;
+    }
+
+    .fanbase-gain {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #6B46C1, #553C9A);
+      color: #fff;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      animation: fanbasePopup 2s ease forwards;
+      z-index: 2000;
+      box-shadow: 0 10px 40px rgba(107, 70, 193, 0.5);
+    }
+
+    @keyframes fanbasePopup {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      40% { transform: translate(-50%, -50%) scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -70%); }
+    }
+
+    .milestone-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      border: 3px solid #FFD700;
+      border-radius: 20px;
+      padding: 30px 50px;
+      text-align: center;
+      z-index: 2100;
+      animation: milestoneAppear 4s ease forwards;
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes milestoneAppear {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      25% { transform: translate(-50%, -50%) scale(1); }
+      85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    }
+
+    .milestone-badge {
+      font-size: 60px;
+      margin-bottom: 10px;
+      animation: starPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes starPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .milestone-title {
+      color: #FFD700;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .milestone-fans {
+      color: #fff;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .milestone-message {
+      color: #A78BFA;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .milestone-rewards {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .milestone-rewards span {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 16px;
+    }
+
     /* Sponsor Offer Overlay */
     #sponsor-offer-overlay {
       position: fixed;
@@ -5626,7 +5872,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.2 | Built: 2025-12-25</div>
+    <div id="version-footer">v1.0.3 | Built: 2025-12-30</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -5705,6 +5951,10 @@
           <div class="creator-section" id="facial-hair-section">
             <label>Facial Hair</label>
             <div class="style-options" id="facial-hair-options"></div>
+          </div>
+          <div class="creator-section" id="beard-color-section" style="display: none;">
+            <label>Beard Color</label>
+            <div class="color-options" id="beard-color-options"></div>
           </div>
           <div class="creator-section">
             <label>Skin Tone</label>
@@ -5786,6 +6036,10 @@
         <div class="hub-stat">
           <span>Total Earnings</span>
           <span id="hub-total-earnings">$0</span>
+        </div>
+        <div class="hub-stat">
+          <span>Fanbase</span>
+          <span id="hub-fanbase">0 fans</span>
         </div>
         <div class="hub-progress-bar">
           <div class="progress-fill" id="hub-promotion-progress"></div>
@@ -5922,6 +6176,34 @@
       </div>
       <div class="debut-continue">
         <button class="career-btn primary" id="debut-continue-btn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pre-Tournament Interview Overlay -->
+  <div id="interview-overlay" class="hidden">
+    <div class="interview-scene">
+      <div class="interview-broadcast-banner">
+        <span class="broadcast-live">● LIVE</span>
+        <span class="broadcast-network">GOLF NETWORK</span>
+      </div>
+      <div class="interview-stage">
+        <div class="interview-reporter-side">
+          <canvas id="interview-reporter-canvas" width="140" height="220"></canvas>
+          <div class="reporter-nameplate">Sarah Collins</div>
+        </div>
+        <div class="interview-player-side">
+          <canvas id="interview-player-canvas" width="140" height="220"></canvas>
+          <div class="player-nameplate" id="interview-player-name"></div>
+        </div>
+      </div>
+      <div class="interview-dialogue-box">
+        <div class="interview-speaker" id="interview-speaker">Reporter</div>
+        <div class="interview-text" id="interview-text"></div>
+      </div>
+      <div class="interview-controls">
+        <button class="career-btn primary" id="interview-continue-btn">Continue</button>
+        <button class="career-btn secondary hidden" id="interview-skip-btn">Skip Interview</button>
       </div>
     </div>
   </div>
@@ -6260,6 +6542,7 @@
           if (!ball.collisionSoundPlayed) {
             AudioManager.playLandSound('sand');
             AudioManager.playCrowdGasp();  // Crowd reacts to bunker
+            Announcer.announceShot('bunker');
             ball.collisionSoundPlayed = true;
           }
 
@@ -6292,6 +6575,7 @@
           if (!ball.collisionSoundPlayed) {
             AudioManager.playLandSound('water');
             AudioManager.playCrowdGasp();  // Crowd reacts to water hazard
+            Announcer.announceShot('water');
             ball.collisionSoundPlayed = true;
           }
           if (ball.lastSafePosition) {
@@ -6446,9 +6730,15 @@
             GhostSystem.renderGhost(this.ctx, performance.now());
           }
 
-          // Draw golfer next to ball (only when ball is not moving)
-          if (!gameState.ball.isMoving) {
-            this.drawGolfer(gameState.ball);
+          // Draw golfer next to ball (only in Career Mode)
+          // Show during address (ball not moving) or during follow-through animation
+          if (typeof CareerSystem !== 'undefined' && CareerSystem.activeCareer) {
+            const inFollowThrough = this.followThroughEndTime && performance.now() < this.followThroughEndTime;
+            if (!gameState.ball.isMoving) {
+              this.drawGolfer(gameState.ball, null, false);
+            } else if (inFollowThrough) {
+              this.drawGolfer(gameState.ball, null, true); // Show follow-through pose
+            }
           }
 
           this.drawBall(gameState.ball);
@@ -6503,15 +6793,34 @@
           ctx.fillStyle = greenGradient;
           ctx.fillRect(0, 0, canvasW, canvasH);
 
-          // Draw subtle putting green texture
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-          for (let i = 0; i < 200; i++) {
+          // Draw mow lines (alternating stripes like a real putting green)
+          const stripeWidth = 30;
+          for (let i = 0; i < Math.ceil(canvasW / stripeWidth); i++) {
+            if (i % 2 === 0) {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            } else {
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+            }
+            ctx.fillRect(i * stripeWidth, 0, stripeWidth, canvasH);
+          }
+
+          // Draw subtle putting green texture (grain dots)
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+          for (let i = 0; i < 300; i++) {
             const x = (i * 137) % canvasW;
             const y = (i * 173) % canvasH;
             ctx.beginPath();
-            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
             ctx.fill();
           }
+
+          // Draw fringe/rough border around edges
+          ctx.strokeStyle = '#1B5E20';
+          ctx.lineWidth = 8;
+          ctx.strokeRect(4, 4, canvasW - 8, canvasH - 8);
+          ctx.strokeStyle = '#2E7D32';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(8, 8, canvasW - 16, canvasH - 16);
 
           // Draw the hole
           this.drawHole(hole.holePosition, animationTime);
@@ -6917,6 +7226,129 @@
         ctx.stroke();
 
         // Flag highlight (with wave)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.beginPath();
+        ctx.moveTo(3, 3);
+        ctx.quadraticCurveTo(12, 6 + wave1 * 0.3, 20 + wave2 * 0.5, 4 + wave1 * 0.5);
+        ctx.quadraticCurveTo(14, 10 + wave2 * 0.3, 8, 12);
+        ctx.quadraticCurveTo(5, 8, 3, 3);
+        ctx.fill();
+
+        // Ball on top of flagstick
+        ctx.beginPath();
+        ctx.arc(0, -3, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
+        ctx.strokeStyle = '#DAA520';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.restore();
+      },
+
+      drawHole(holePosition, animationTime) {
+        const ctx = this.ctx;
+        const hx = holePosition.x;
+        const hy = holePosition.y;
+
+        // Hole shadow/depth
+        ctx.fillStyle = '#1a1a1a';
+        ctx.beginPath();
+        ctx.ellipse(hx, hy + 2, 18, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hole opening with gradient for depth
+        const holeGradient = ctx.createRadialGradient(hx, hy, 0, hx, hy, 15);
+        holeGradient.addColorStop(0, '#000000');
+        holeGradient.addColorStop(0.7, '#1a1a1a');
+        holeGradient.addColorStop(1, '#333333');
+        ctx.fillStyle = holeGradient;
+        ctx.beginPath();
+        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hole rim (white cup edge)
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Stylized flagstick with cartoon 3D effect
+        // Flagstick shadow
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(hx + 3, hy);
+        ctx.lineTo(hx + 3, hy - 70);
+        ctx.stroke();
+
+        // Main flagstick
+        const poleGradient = ctx.createLinearGradient(hx - 3, 0, hx + 3, 0);
+        poleGradient.addColorStop(0, '#FFE4B5');
+        poleGradient.addColorStop(0.5, '#FAFAD2');
+        poleGradient.addColorStop(1, '#DAA520');
+        ctx.strokeStyle = poleGradient;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx, hy - 75);
+        ctx.stroke();
+
+        // Stylized flag with animated wave effect
+        ctx.save();
+        ctx.translate(hx, hy - 75);
+
+        // Get wind direction and flip flag accordingly
+        const windDir = WindSystem.direction || 0;
+        const windSpeed = WindSystem.speed || 0;
+        const windX = Math.cos(windDir);
+        const flipFlag = windX < 0;
+
+        // Wave animation
+        const baseAmplitude = 2;
+        const windAmplitude = Math.min(windSpeed / 5, 3);
+        const waveAmplitude = baseAmplitude + windAmplitude;
+        const waveSpeed = 3 + windSpeed * 0.2;
+        const wave1 = Math.sin(animationTime * waveSpeed * Math.PI * 2) * waveAmplitude;
+        const wave2 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 1) * waveAmplitude;
+        const wave3 = Math.sin(animationTime * waveSpeed * Math.PI * 2 + 2) * waveAmplitude;
+
+        if (flipFlag) {
+          ctx.scale(-1, 1);
+        }
+
+        // Flag shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.beginPath();
+        ctx.moveTo(2, 2);
+        ctx.quadraticCurveTo(18, 8 + wave1 * 0.5, 30 + wave2, 4 + wave1);
+        ctx.quadraticCurveTo(22, 17 + wave2 * 0.5, 30 + wave3, 27 + wave2);
+        ctx.quadraticCurveTo(15, 22 + wave3 * 0.5, 2, 27);
+        ctx.closePath();
+        ctx.fill();
+
+        // Flag main color with gradient
+        const flagGradient = ctx.createLinearGradient(0, 0, 28, 25);
+        flagGradient.addColorStop(0, '#FF4757');
+        flagGradient.addColorStop(0.5, '#FF6B81');
+        flagGradient.addColorStop(1, '#EE3B4D');
+        ctx.fillStyle = flagGradient;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(15, 5 + wave1 * 0.5, 28 + wave2, 2 + wave1);
+        ctx.quadraticCurveTo(20, 15 + wave2 * 0.5, 28 + wave3, 25 + wave2);
+        ctx.quadraticCurveTo(12, 20 + wave3 * 0.5, 0, 25);
+        ctx.closePath();
+        ctx.fill();
+
+        // Flag outline
+        ctx.strokeStyle = '#CC2936';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Flag highlight
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.beginPath();
         ctx.moveTo(3, 3);
@@ -7889,119 +8321,239 @@
         ctx.restore();
       },
 
-      drawGolfer(ball, swingPreview) {
+      drawGolfer(ball, swingPreview, followThrough = false) {
         const ctx = this.ctx;
 
         // Get character from career mode if available, otherwise use defaults
         const career = typeof CareerSystem !== 'undefined' && CareerSystem.activeCareer;
-        const character = career?.character || {
-          gender: 'boy',
-          skinTone: '#DEB887',
-          hairColor: '#4A3728',
-          shirtColor: '#E53935',
-          pantsColor: '#1565C0'
-        };
+        const char = career?.character || {};
 
-        // Position golfer to the left of the ball
-        const golferX = ball.x - 25;
-        const golferY = ball.y + 5;
-        const scale = 0.35; // Small scale for course view
+        // Robust color extraction with correct property names from character creator
+        // skinHex contains the hex color, skinTone is just the index
+        const skinTone = char.skinHex || '#DEB887';
+        const hairColor = char.hairColor || '#4A3728';
+        // Character uses outfitShirt and outfitPants
+        const shirtColor = char.outfitShirt || '#E53935';
+        const pantsColor = char.outfitPants || '#1565C0';
+
+        // Position golfer ABOVE the ball so it looks like they're swinging at it
+        const golferX = ball.x - 10;     // Slightly left of ball center
+        const golferY = ball.y - 50;     // Above the ball
+        const scale = 1.0;
+
+        // Check if player is currently swinging (dragging)
+        const isSwinging = typeof InputHandler !== 'undefined' && InputHandler.isSwinging;
+
+        // Calculate swing phase based on drag distance
+        // 0 = address, 1 = backswing, 2 = follow-through
+        let swingPhase = followThrough ? 2 : 0;
+        let swingAngle = 0;
+        if (isSwinging && InputHandler.touchStartPos && InputHandler.currentTouchPos) {
+          const dx = InputHandler.currentTouchPos.x - InputHandler.touchStartPos.x;
+          const dy = InputHandler.currentTouchPos.y - InputHandler.touchStartPos.y;
+          const dragDist = Math.sqrt(dx * dx + dy * dy);
+          swingAngle = Math.min(dragDist / 150, 1) * 0.7;
+          swingPhase = 1;
+        }
 
         ctx.save();
         ctx.translate(golferX, golferY);
 
-        // Shadow
+        // Shadow on ground (positioned at ball level)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.beginPath();
-        ctx.ellipse(0, 18 * scale, 12 * scale, 4 * scale, 0, 0, Math.PI * 2);
+        ctx.ellipse(10, 50, 15 * scale, 5 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Legs
-        ctx.fillStyle = character.pantsColor || character.outfitPants || '#1565C0';
+        // === DRAW GOLFER FACING THE BALL (top-down golf stance) ===
+
+        // Golf shoes (white golf shoes)
+        ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
-        ctx.ellipse(-4 * scale, 12 * scale, 3 * scale, 8 * scale, 0.1, 0, Math.PI * 2);
+        ctx.ellipse(-6 * scale, 32 * scale, 5 * scale, 3 * scale, 0.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(4 * scale, 12 * scale, 3 * scale, 8 * scale, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(6 * scale, 32 * scale, 5 * scale, 3 * scale, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        // Shoe soles
+        ctx.fillStyle = '#555';
+        ctx.beginPath();
+        ctx.ellipse(-6 * scale, 34 * scale, 4 * scale, 1.5 * scale, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(6 * scale, 34 * scale, 4 * scale, 1.5 * scale, -0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Shoes
-        ctx.fillStyle = '#333';
+        // Legs (golf stance - slightly bent)
+        ctx.fillStyle = pantsColor;
         ctx.beginPath();
-        ctx.ellipse(-4 * scale, 20 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+        ctx.ellipse(-5 * scale, 22 * scale, 4 * scale, 10 * scale, 0.1, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(4 * scale, 20 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Body/Shirt
-        ctx.fillStyle = character.shirtColor || character.outfitShirt || '#E53935';
-        ctx.beginPath();
-        ctx.ellipse(0, -2 * scale, 8 * scale, 12 * scale, 0, 0, Math.PI * 2);
+        ctx.ellipse(5 * scale, 22 * scale, 4 * scale, 10 * scale, -0.1, 0, Math.PI * 2);
         ctx.fill();
 
-        // Arms
-        ctx.fillStyle = character.skinTone || '#DEB887';
-        // Left arm (holding club)
+        // Body/Torso - rotate during swing
+        ctx.save();
+        if (swingPhase === 1) {
+          ctx.rotate(-swingAngle * 0.25);
+        }
+        ctx.fillStyle = shirtColor;
         ctx.beginPath();
-        ctx.ellipse(-10 * scale, 2 * scale, 3 * scale, 6 * scale, 0.5, 0, Math.PI * 2);
+        ctx.ellipse(0, 5 * scale, 10 * scale, 12 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
-        // Right arm
-        ctx.beginPath();
-        ctx.ellipse(10 * scale, 0 * scale, 3 * scale, 6 * scale, -0.3, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.restore();
 
-        // Hands
-        ctx.beginPath();
-        ctx.arc(-12 * scale, 6 * scale, 2.5 * scale, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(11 * scale, 5 * scale, 2.5 * scale, 0, Math.PI * 2);
-        ctx.fill();
+        // Arms and club
+        ctx.fillStyle = skinTone;
 
-        // Head
+        if (swingPhase === 1) {
+          // Backswing pose
+          ctx.save();
+          ctx.rotate(-swingAngle);
+
+          // Arms together raised
+          ctx.beginPath();
+          ctx.ellipse(-6 * scale, -8 * scale, 3.5 * scale, 7 * scale, 0.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(0 * scale, -10 * scale, 3.5 * scale, 6 * scale, 0.3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Hands
+          ctx.beginPath();
+          ctx.arc(-8 * scale, -14 * scale, 3 * scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Golf club raised
+          ctx.strokeStyle = '#888';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(-8 * scale, -14 * scale);
+          ctx.lineTo(-30 * scale, -35 * scale);
+          ctx.stroke();
+          // Club head
+          ctx.fillStyle = '#444';
+          ctx.beginPath();
+          ctx.ellipse(-33 * scale, -38 * scale, 5 * scale, 2.5 * scale, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        } else if (swingPhase === 2) {
+          // Follow-through pose - club swung through, arms extended upward
+          ctx.save();
+          ctx.rotate(0.5); // Slight rotation to show follow-through
+
+          // Arms extended up and through
+          ctx.fillStyle = skinTone;
+          ctx.beginPath();
+          ctx.ellipse(6 * scale, -10 * scale, 3.5 * scale, 7 * scale, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(2 * scale, -12 * scale, 3.5 * scale, 6 * scale, -0.3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Hands up high
+          ctx.beginPath();
+          ctx.arc(10 * scale, -16 * scale, 3 * scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Golf club extended through - wrapping around body
+          ctx.strokeStyle = '#888';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(10 * scale, -16 * scale);
+          ctx.quadraticCurveTo(25 * scale, -25 * scale, 20 * scale, -40 * scale);
+          ctx.stroke();
+          // Club head wrapped around
+          ctx.fillStyle = '#444';
+          ctx.beginPath();
+          ctx.ellipse(18 * scale, -43 * scale, 5 * scale, 2.5 * scale, 0.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        } else {
+          // Address position - ready to swing, club pointing at ball
+          ctx.fillStyle = skinTone;
+
+          // Left arm
+          ctx.beginPath();
+          ctx.ellipse(-8 * scale, 0 * scale, 3.5 * scale, 7 * scale, 0.4, 0, Math.PI * 2);
+          ctx.fill();
+          // Right arm
+          ctx.beginPath();
+          ctx.ellipse(8 * scale, -2 * scale, 3.5 * scale, 7 * scale, -0.3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Hands together
+          ctx.beginPath();
+          ctx.arc(0 * scale, 8 * scale, 3.5 * scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Golf club pointing down at ball
+          ctx.strokeStyle = '#888';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(0 * scale, 8 * scale);
+          ctx.lineTo(12 * scale, 48 * scale);  // Points toward ball
+          ctx.stroke();
+          // Club head near ball
+          ctx.fillStyle = '#444';
+          ctx.beginPath();
+          ctx.ellipse(14 * scale, 50 * scale, 5 * scale, 2.5 * scale, 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Head - rotate slightly during swing
+        ctx.save();
+        if (swingPhase === 1) {
+          ctx.rotate(-swingAngle * 0.15);
+        }
+        ctx.fillStyle = skinTone;
         ctx.beginPath();
-        ctx.arc(0, -18 * scale, 8 * scale, 0, Math.PI * 2);
+        ctx.arc(0, -12 * scale, 10 * scale, 0, Math.PI * 2);
         ctx.fill();
 
         // Hair
-        ctx.fillStyle = character.hairColor || '#4A3728';
+        ctx.fillStyle = hairColor;
         ctx.beginPath();
-        ctx.arc(0, -20 * scale, 7 * scale, Math.PI, 0);
+        ctx.arc(0, -14 * scale, 9 * scale, Math.PI, 0);
         ctx.fill();
 
-        // Eyes
+        // Eyes - looking down at ball
         ctx.fillStyle = '#333';
         ctx.beginPath();
-        ctx.arc(-3 * scale, -18 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.arc(-3 * scale, -10 * scale, 2 * scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(3 * scale, -18 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.arc(4 * scale, -10 * scale, 2 * scale, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
 
         // Facial hair (boys only)
-        if (character.facialHair && character.gender !== 'girl') {
-          const hairColor = character.hairColor || '#4A3728';
-          // Darken the hair color for facial hair
-          const c = hairColor.replace('#', '');
-          const num = parseInt(c, 16);
-          const r = Math.max(0, (num >> 16) - 10);
-          const g = Math.max(0, ((num >> 8) & 0x00FF) - 10);
-          const b = Math.max(0, (num & 0x0000FF) - 10);
-          const facialHairColor = '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+        if (char.facialHair && char.gender !== 'girl') {
+          let facialHairColor;
+          if (char.beardColor) {
+            facialHairColor = char.beardColor;
+          } else {
+            const hc = hairColor.replace('#', '');
+            const num = parseInt(hc, 16);
+            const r = Math.max(0, (num >> 16) - 10);
+            const g = Math.max(0, ((num >> 8) & 0x00FF) - 10);
+            const b = Math.max(0, (num & 0x0000FF) - 10);
+            facialHairColor = '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+          }
 
           ctx.fillStyle = facialHairColor;
           ctx.strokeStyle = facialHairColor;
-          const mouthY = -13 * scale;
+          const mouthY = -5 * scale;
 
-          if (character.facialHair === 'stubble') {
-            // Dense stubble pattern
+          if (char.facialHair === 'stubble') {
             ctx.globalAlpha = 0.55;
             const stubblePoints = [
               [-5, 1], [-3, 0], [-1, 1], [1, 0], [3, 1], [5, 0],
               [-4, 3], [-2, 2], [0, 3], [2, 2], [4, 3],
-              [-3, 5], [-1, 4], [1, 5], [3, 4],
-              [-2, 7], [0, 6], [2, 7]
+              [-3, 5], [-1, 4], [1, 5], [3, 4]
             ];
             stubblePoints.forEach(([px, py]) => {
               ctx.beginPath();
@@ -8009,22 +8561,19 @@
               ctx.fill();
             });
             ctx.globalAlpha = 1;
-          } else if (character.facialHair === 'beard') {
-            // Full beard
+          } else if (char.facialHair === 'beard') {
             ctx.beginPath();
             ctx.moveTo(-6 * scale, mouthY - 1 * scale);
             ctx.quadraticCurveTo(-7 * scale, mouthY + 4 * scale, -5 * scale, mouthY + 7 * scale);
             ctx.quadraticCurveTo(0, mouthY + 10 * scale, 5 * scale, mouthY + 7 * scale);
             ctx.quadraticCurveTo(7 * scale, mouthY + 4 * scale, 6 * scale, mouthY - 1 * scale);
             ctx.fill();
-            // Mustache
             ctx.beginPath();
             ctx.moveTo(-5 * scale, mouthY);
             ctx.quadraticCurveTo(0, mouthY - 2 * scale, 5 * scale, mouthY);
             ctx.quadraticCurveTo(0, mouthY + 1 * scale, -5 * scale, mouthY);
             ctx.fill();
-          } else if (character.facialHair === 'goatee') {
-            // Goatee with chin and small mustache
+          } else if (char.facialHair === 'goatee') {
             ctx.beginPath();
             ctx.moveTo(-3 * scale, mouthY + 2 * scale);
             ctx.quadraticCurveTo(-3 * scale, mouthY + 5 * scale, 0, mouthY + 8 * scale);
@@ -8035,8 +8584,7 @@
             ctx.quadraticCurveTo(0, mouthY - 1 * scale, 3 * scale, mouthY + 1 * scale);
             ctx.quadraticCurveTo(0, mouthY + 2 * scale, -3 * scale, mouthY + 1 * scale);
             ctx.fill();
-          } else if (character.facialHair === 'mustache') {
-            // Thick mustache
+          } else if (char.facialHair === 'mustache') {
             ctx.beginPath();
             ctx.moveTo(-5 * scale, mouthY + 1 * scale);
             ctx.quadraticCurveTo(-3 * scale, mouthY - 1 * scale, 0, mouthY);
@@ -8044,8 +8592,7 @@
             ctx.quadraticCurveTo(3 * scale, mouthY + 2 * scale, 0, mouthY + 1 * scale);
             ctx.quadraticCurveTo(-3 * scale, mouthY + 2 * scale, -5 * scale, mouthY + 1 * scale);
             ctx.fill();
-          } else if (character.facialHair === 'soulpatch') {
-            // Soul patch
+          } else if (char.facialHair === 'soulpatch') {
             ctx.beginPath();
             ctx.moveTo(-1 * scale, mouthY + 3 * scale);
             ctx.quadraticCurveTo(0, mouthY + 6 * scale, 1 * scale, mouthY + 3 * scale);
@@ -8054,46 +8601,32 @@
           }
         }
 
-        // Golf club
-        ctx.strokeStyle = '#888';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(-12 * scale, 6 * scale);
-        ctx.lineTo(15 * scale, 18 * scale);
-        ctx.stroke();
-        // Club head
-        ctx.fillStyle = '#666';
-        ctx.beginPath();
-        ctx.ellipse(17 * scale, 19 * scale, 4 * scale, 2 * scale, 0.8, 0, Math.PI * 2);
-        ctx.fill();
-
         // Hat if equipped
-        const equippedHat = character.equippedHat;
+        const equippedHat = char.equippedHat;
         if (equippedHat) {
           ctx.fillStyle = equippedHat.includes('blue') ? '#1976D2' :
                           equippedHat.includes('red') ? '#D32F2F' :
                           equippedHat === 'crown' ? '#FFD700' :
                           equippedHat === 'cowboy' ? '#8B4513' : '#FFFFFF';
           ctx.beginPath();
-          ctx.arc(0, -26 * scale, 6 * scale, Math.PI, 0);
+          ctx.arc(0, -20 * scale, 7 * scale, Math.PI, 0);
           ctx.fill();
-          // Brim for caps
           if (equippedHat.includes('cap') || equippedHat === 'visor') {
             ctx.beginPath();
-            ctx.ellipse(5 * scale, -20 * scale, 8 * scale, 3 * scale, 0.2, Math.PI, 0);
+            ctx.ellipse(5 * scale, -14 * scale, 9 * scale, 3 * scale, 0.2, Math.PI, 0);
             ctx.fill();
           }
         }
 
         // Glasses if equipped
-        const equippedGlasses = character.equippedGlasses;
+        const equippedGlasses = char.equippedGlasses;
         if (equippedGlasses) {
           ctx.fillStyle = equippedGlasses === 'star_glasses' ? '#FFD700' : '#1a1a1a';
           ctx.beginPath();
-          ctx.ellipse(-3 * scale, -18 * scale, 2.5 * scale, 1.5 * scale, 0, 0, Math.PI * 2);
+          ctx.ellipse(-3 * scale, -10 * scale, 3 * scale, 2 * scale, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.beginPath();
-          ctx.ellipse(3 * scale, -18 * scale, 2.5 * scale, 1.5 * scale, 0, 0, Math.PI * 2);
+          ctx.ellipse(4 * scale, -10 * scale, 3 * scale, 2 * scale, 0, 0, Math.PI * 2);
           ctx.fill();
         }
 
@@ -8282,20 +8815,27 @@
 
         document.getElementById('reset-shot-btn').classList.add('hidden');
 
-        const swingVector = this.calculateSwingVector();
-        if (swingVector && this.gameEngine) {
-          // Check if pro mode - show timing meter instead of immediate swing
-          if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial) {
-            this.waitingForTiming = true;
-            TimingMeter.show(swingVector, (modifiedSwing) => {
-              this.waitingForTiming = false;
-              this.gameEngine.executeSwing(modifiedSwing);
-            });
-          } else {
-            this.gameEngine.executeSwing(swingVector);
+        try {
+          const swingVector = this.calculateSwingVector();
+          if (swingVector && this.gameEngine) {
+            // Check if pro mode - show timing meter instead of immediate swing
+            // Skip timing meter for minigames (especially putting) - direct swing
+            const isMiniGame = this.gameEngine.gameState.isMiniGame;
+            if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial && !isMiniGame) {
+              this.waitingForTiming = true;
+              TimingMeter.show(swingVector, (modifiedSwing) => {
+                this.waitingForTiming = false;
+                this.gameEngine.executeSwing(modifiedSwing);
+              });
+            } else {
+              this.gameEngine.executeSwing(swingVector);
+            }
           }
+        } catch (err) {
+          console.error('Swing error:', err);
         }
 
+        // Always cleanup state, even if swing failed
         this.touchStartPos = null;
         this.currentTouchPos = null;
         this.isSwinging = false;
@@ -8334,20 +8874,27 @@
 
         document.getElementById('reset-shot-btn').classList.add('hidden');
 
-        const swingVector = this.calculateSwingVector();
-        if (swingVector && this.gameEngine) {
-          // Check if pro mode - show timing meter instead of immediate swing
-          if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial) {
-            this.waitingForTiming = true;
-            TimingMeter.show(swingVector, (modifiedSwing) => {
-              this.waitingForTiming = false;
-              this.gameEngine.executeSwing(modifiedSwing);
-            });
-          } else {
-            this.gameEngine.executeSwing(swingVector);
+        try {
+          const swingVector = this.calculateSwingVector();
+          if (swingVector && this.gameEngine) {
+            // Check if pro mode - show timing meter instead of immediate swing
+            // Skip timing meter for minigames (especially putting) - direct swing
+            const isMiniGame = this.gameEngine.gameState.isMiniGame;
+            if (TimingMeter.isProMode() && !this.gameEngine.gameState.isTutorial && !isMiniGame) {
+              this.waitingForTiming = true;
+              TimingMeter.show(swingVector, (modifiedSwing) => {
+                this.waitingForTiming = false;
+                this.gameEngine.executeSwing(modifiedSwing);
+              });
+            } else {
+              this.gameEngine.executeSwing(swingVector);
+            }
           }
+        } catch (err) {
+          console.error('Swing error:', err);
         }
 
+        // Always cleanup state, even if swing failed
         this.touchStartPos = null;
         this.currentTouchPos = null;
         this.isSwinging = false;
@@ -12466,6 +13013,193 @@
       }
     };
 
+    // === Announcer Module: Voice commentary system ===
+    const Announcer = {
+      synth: window.speechSynthesis,
+      voice: null,
+      enabled: false, // Disabled for now
+      queue: [],
+      speaking: false,
+      unlocked: false,
+
+      init() {
+        if (!this.synth) {
+          console.warn('Speech synthesis not supported');
+          return;
+        }
+        // Wait for voices to load
+        if (this.synth.getVoices().length === 0) {
+          this.synth.addEventListener('voiceschanged', () => this.selectVoice());
+        } else {
+          this.selectVoice();
+        }
+
+        // Unlock speech synthesis on first user interaction
+        const unlockHandler = () => {
+          this.unlock();
+          document.removeEventListener('click', unlockHandler);
+          document.removeEventListener('touchstart', unlockHandler);
+        };
+        document.addEventListener('click', unlockHandler);
+        document.addEventListener('touchstart', unlockHandler);
+      },
+
+      unlock() {
+        if (this.unlocked || !this.synth) return;
+        // Speak a silent utterance to unlock
+        const utterance = new SpeechSynthesisUtterance('');
+        utterance.volume = 0;
+        this.synth.speak(utterance);
+        this.unlocked = true;
+        console.log('Speech synthesis unlocked');
+      },
+
+      selectVoice() {
+        const voices = this.synth.getVoices();
+        // Prefer a male English voice for announcer feel
+        this.voice = voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male')) ||
+                     voices.find(v => v.lang.startsWith('en-US')) ||
+                     voices.find(v => v.lang.startsWith('en')) ||
+                     voices[0];
+      },
+
+      speak(text, options = {}) {
+        if (!this.synth || !this.enabled || AudioManager.muted) return;
+
+        // Resume if paused (browser can pause speech)
+        if (this.synth.paused) {
+          this.synth.resume();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = this.voice;
+        utterance.rate = options.rate || 1.0;
+        utterance.pitch = options.pitch || 1.0;
+        utterance.volume = options.volume || 0.9;
+
+        // Queue management
+        utterance.onend = () => {
+          this.speaking = false;
+          this.processQueue();
+        };
+        utterance.onerror = () => {
+          this.speaking = false;
+          this.processQueue();
+        };
+
+        if (options.immediate || !this.speaking) {
+          if (options.immediate) {
+            this.synth.cancel(); // Clear queue for immediate announcements
+          }
+          this.speaking = true;
+          this.synth.speak(utterance);
+        } else {
+          this.queue.push(utterance);
+        }
+      },
+
+      processQueue() {
+        if (this.queue.length > 0 && !this.speaking) {
+          this.speaking = true;
+          this.synth.speak(this.queue.shift());
+        }
+      },
+
+      // Pre-defined announcements
+      announceOnTee(playerName) {
+        const intros = [
+          `Next on the tee, ${playerName}`,
+          `Now playing, ${playerName}`,
+          `On the tee, ${playerName}`,
+          `Please welcome to the tee, ${playerName}`
+        ];
+        const intro = intros[Math.floor(Math.random() * intros.length)];
+        this.speak(intro, { rate: 0.9, pitch: 0.9 });
+      },
+
+      announceShot(type, distance) {
+        const comments = {
+          great_drive: [
+            'What a drive!',
+            'Crushed it!',
+            'That ball is gone!',
+            'Absolutely smashed!',
+            'A monster drive!'
+          ],
+          good_shot: [
+            'Nice shot!',
+            'Well played!',
+            'Good swing!',
+            'That\'ll play!'
+          ],
+          close_to_pin: [
+            'That\'s close!',
+            'Pin high!',
+            'Looking at birdie!',
+            'What a shot!'
+          ],
+          in_hole: [
+            'It\'s in the hole!',
+            'Get in there! Yes!',
+            'Down it goes!',
+            'What a putt!'
+          ],
+          hole_in_one: [
+            'HOLE IN ONE! Unbelievable!',
+            'ACE! What a shot!',
+            'IT WENT IN! A hole in one!',
+            'Incredible! A hole in one!'
+          ],
+          eagle: [
+            'Eagle! What a score!',
+            'That\'s an eagle!',
+            'Two under par! Incredible!'
+          ],
+          birdie: [
+            'Birdie!',
+            'One under!',
+            'Nice birdie!'
+          ],
+          water: [
+            'Oh no, it found the water!',
+            'That\'s wet!',
+            'In the drink!'
+          ],
+          bunker: [
+            'That\'s found the bunker',
+            'Sandy lie ahead',
+            'Beach time!'
+          ]
+        };
+
+        const phrases = comments[type];
+        if (phrases) {
+          const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+          this.speak(phrase, { rate: 1.1, pitch: 1.0 });
+        }
+      },
+
+      announceHole(holeNumber, par) {
+        this.speak(`Hole ${holeNumber}. Par ${par}.`, { rate: 0.95 });
+      },
+
+      announceRivalry(rivalName, message) {
+        this.speak(`${rivalName} says: ${message}`, { rate: 1.0, pitch: 0.85 });
+      },
+
+      announcePressure(message) {
+        this.speak(message, { rate: 0.85, pitch: 0.9 });
+      },
+
+      setEnabled(enabled) {
+        this.enabled = enabled;
+        if (!enabled) {
+          this.synth?.cancel();
+          this.queue = [];
+        }
+      }
+    };
+
     // === ConfettiSystem Module (T102-T105: Visual Polish) ===
     const ConfettiSystem = {
       particles: [],
@@ -13336,6 +14070,20 @@
         { id: 5, name: 'Soul Patch', type: 'soulpatch' }
       ],
 
+      // Beard color options
+      beardColors: [
+        { id: 0, name: 'Match Hair', hex: null },
+        { id: 1, name: 'Black', hex: '#1a1a1a' },
+        { id: 2, name: 'Dark Brown', hex: '#3d2314' },
+        { id: 3, name: 'Brown', hex: '#5c4033' },
+        { id: 4, name: 'Light Brown', hex: '#8b7355' },
+        { id: 5, name: 'Blonde', hex: '#c4a574' },
+        { id: 6, name: 'Ginger', hex: '#b5651d' },
+        { id: 7, name: 'Red', hex: '#8b2500' },
+        { id: 8, name: 'Gray', hex: '#6e6e6e' },
+        { id: 9, name: 'White', hex: '#d3d3d3' }
+      ],
+
       // Hairstyles per gender - now using sprite map
       get hairstyles() {
         return {
@@ -13853,6 +14601,7 @@
             hairstyle: character.hairstyle || 0,
             hairColor: character.hairColor || null,
             facialHair: character.facialHair || null,
+            beardColor: character.beardColor || null,
             outfitShirt: character.outfitShirt || '#E53935',
             outfitPants: character.outfitPants || '#1565C0',
             accessories: []
@@ -14306,6 +15055,54 @@
           opt.addEventListener('click', () => {
             container.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
             opt.classList.add('selected');
+            // Show/hide beard color section and populate options
+            const beardSection = document.getElementById('beard-color-section');
+            if (beardSection) {
+              if (option.type === null) {
+                beardSection.style.display = 'none';
+              } else {
+                beardSection.style.display = 'block';
+                this.setupBeardColorOptions('boy'); // Populate options when showing
+              }
+            }
+            this.updateCharacterPreview();
+          });
+          container.appendChild(opt);
+        });
+
+        // Setup beard color options
+        this.setupBeardColorOptions(gender);
+      },
+
+      setupBeardColorOptions(gender) {
+        const section = document.getElementById('beard-color-section');
+        const container = document.getElementById('beard-color-options');
+        if (!section || !container) return;
+
+        // Hide for girls or if no facial hair selected
+        const facialHairValue = document.querySelector('#facial-hair-options .style-option.selected')?.dataset.value;
+        if (gender === 'girl' || !facialHairValue || facialHairValue === 'none') {
+          section.style.display = 'none';
+          return;
+        }
+        section.style.display = 'block';
+
+        container.innerHTML = '';
+        this.beardColors.forEach((color, i) => {
+          const opt = document.createElement('div');
+          opt.className = 'color-option' + (i === 0 ? ' selected' : '');
+          if (color.hex === null) {
+            // "Match Hair" option - show link icon
+            opt.style.background = 'linear-gradient(135deg, #4A3728 50%, #8B7355 50%)';
+            opt.title = 'Match Hair Color';
+          } else {
+            opt.style.background = color.hex;
+          }
+          opt.dataset.value = color.hex || 'match';
+          opt.title = color.name;
+          opt.addEventListener('click', () => {
+            container.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
             this.updateCharacterPreview();
           });
           container.appendChild(opt);
@@ -14328,6 +15125,10 @@
         const facialHairValue = document.querySelector('#facial-hair-options .style-option.selected')?.dataset.value;
         const facialHair = (facialHairValue === 'none' || !facialHairValue) ? null : facialHairValue;
 
+        // Get beard color selection (null/"match" = derive from hair color)
+        const beardColorValue = document.querySelector('#beard-color-options .color-option.selected')?.dataset.value;
+        const beardColor = (beardColorValue === 'match' || !beardColorValue) ? null : beardColorValue;
+
         return {
           gender,
           skinTone: skinToneIndex,
@@ -14335,6 +15136,7 @@
           hairstyle,
           hairColor: selectedHairHex, // null means keep sprite's original
           facialHair: gender === 'boy' ? facialHair : null, // Only boys can have facial hair
+          beardColor: gender === 'boy' ? beardColor : null, // null means match hair color
           outfitShirt: document.querySelector('#shirt-options .color-option.selected')?.dataset.value || '#E53935',
           outfitPants: document.querySelector('#pants-options .color-option.selected')?.dataset.value || '#1565C0'
         };
@@ -14512,8 +15314,9 @@
         // LAYER 3.5: Draw facial hair (boys only)
         if (character.facialHair && character.gender !== 'girl') {
           const hairColor = character.hairColor || '#4A3728';
-          const facialHairColor = this.darkenColor(hairColor, 10);
-          const facialHairDark = this.darkenColor(hairColor, 25);
+          // Use custom beard color if set, otherwise darken hair color
+          const facialHairColor = character.beardColor || this.darkenColor(hairColor, 10);
+          const facialHairDark = character.beardColor ? this.darkenColor(character.beardColor, 15) : this.darkenColor(hairColor, 25);
           // Position to overlay the mouth on avatar
           const mouthY = centerY + size * 0.02;
           const chinY = centerY + size * 0.10;
@@ -15528,8 +16331,9 @@
 
         // LAYER 3.5: Draw facial hair (boys only)
         if (character.facialHair && character.gender !== 'girl') {
-          const facialHairColor = darken(character.hairColor || '#4A3728', 10);
-          const facialHairDark = darken(character.hairColor || '#4A3728', 25);
+          // Use custom beard color if set, otherwise darken hair color
+          const facialHairColor = character.beardColor || darken(character.hairColor || '#4A3728', 10);
+          const facialHairDark = character.beardColor ? darken(character.beardColor, 15) : darken(character.hairColor || '#4A3728', 25);
           // Position to overlay the mouth (smile is at -62)
           const mouthY = -60 * scale;
           const chinY = -52 * scale;
@@ -15960,6 +16764,304 @@
         ctx.restore();
       },
 
+      // Draw full-body reporter for interview scene
+      async drawReporter(canvas) {
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const centerX = width / 2;
+        const groundY = height * 0.92;
+        const scale = height / 220; // Scale based on canvas height
+
+        ctx.save();
+        ctx.translate(centerX, groundY);
+
+        // Reporter colors
+        const skinTone = '#E8C4A0';
+        const hairColor = '#5D4037';
+        const blazerColor = '#1A237E'; // Navy blue
+        const blouseColor = '#FFFFFF';
+        const skirtColor = '#1A237E';
+        const shoeColor = '#212121';
+
+        // Helper functions
+        const darken = (hex, amt) => {
+          const num = parseInt(hex.slice(1), 16);
+          const r = Math.max(0, (num >> 16) - amt);
+          const g = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+          const b = Math.max(0, (num & 0x0000FF) - amt);
+          return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+        };
+        const lighten = (hex, amt) => {
+          const num = parseInt(hex.slice(1), 16);
+          const r = Math.min(255, (num >> 16) + amt);
+          const g = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+          const b = Math.min(255, (num & 0x0000FF) + amt);
+          return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+        };
+
+        // === FEET/SHOES ===
+        ctx.fillStyle = shoeColor;
+        // Left shoe - heels
+        ctx.beginPath();
+        ctx.ellipse(-6 * scale, -2 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Right shoe
+        ctx.beginPath();
+        ctx.ellipse(6 * scale, -2 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Heels
+        ctx.fillRect(-7 * scale, -4 * scale, 2 * scale, 4 * scale);
+        ctx.fillRect(5 * scale, -4 * scale, 2 * scale, 4 * scale);
+
+        // === LEGS ===
+        ctx.fillStyle = skinTone;
+        // Left leg
+        ctx.beginPath();
+        ctx.moveTo(-8 * scale, -4 * scale);
+        ctx.quadraticCurveTo(-7 * scale, -20 * scale, -6 * scale, -35 * scale);
+        ctx.lineTo(-4 * scale, -35 * scale);
+        ctx.quadraticCurveTo(-5 * scale, -20 * scale, -4 * scale, -4 * scale);
+        ctx.closePath();
+        ctx.fill();
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(4 * scale, -4 * scale);
+        ctx.quadraticCurveTo(5 * scale, -20 * scale, 6 * scale, -35 * scale);
+        ctx.lineTo(8 * scale, -35 * scale);
+        ctx.quadraticCurveTo(7 * scale, -20 * scale, 8 * scale, -4 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // === SKIRT ===
+        ctx.fillStyle = skirtColor;
+        ctx.beginPath();
+        ctx.moveTo(-12 * scale, -35 * scale);
+        ctx.lineTo(-10 * scale, -55 * scale);
+        ctx.lineTo(10 * scale, -55 * scale);
+        ctx.lineTo(12 * scale, -35 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Skirt shading
+        ctx.fillStyle = darken(skirtColor, 30);
+        ctx.beginPath();
+        ctx.moveTo(-2 * scale, -35 * scale);
+        ctx.lineTo(-1 * scale, -55 * scale);
+        ctx.lineTo(1 * scale, -55 * scale);
+        ctx.lineTo(2 * scale, -35 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // === TORSO/BLOUSE ===
+        ctx.fillStyle = blouseColor;
+        ctx.beginPath();
+        ctx.moveTo(-8 * scale, -55 * scale);
+        ctx.lineTo(-7 * scale, -75 * scale);
+        ctx.lineTo(7 * scale, -75 * scale);
+        ctx.lineTo(8 * scale, -55 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Blouse details (slight shading)
+        ctx.strokeStyle = '#E0E0E0';
+        ctx.lineWidth = 0.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(0, -75 * scale);
+        ctx.lineTo(0, -58 * scale);
+        ctx.stroke();
+
+        // === BLAZER ===
+        ctx.fillStyle = blazerColor;
+        // Left side of blazer
+        ctx.beginPath();
+        ctx.moveTo(-10 * scale, -55 * scale);
+        ctx.lineTo(-12 * scale, -75 * scale);
+        ctx.lineTo(-7 * scale, -75 * scale);
+        ctx.lineTo(-6 * scale, -55 * scale);
+        ctx.closePath();
+        ctx.fill();
+        // Right side of blazer
+        ctx.beginPath();
+        ctx.moveTo(10 * scale, -55 * scale);
+        ctx.lineTo(12 * scale, -75 * scale);
+        ctx.lineTo(7 * scale, -75 * scale);
+        ctx.lineTo(6 * scale, -55 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Blazer lapels
+        ctx.fillStyle = lighten(blazerColor, 20);
+        ctx.beginPath();
+        ctx.moveTo(-5 * scale, -75 * scale);
+        ctx.lineTo(-3 * scale, -65 * scale);
+        ctx.lineTo(-6 * scale, -65 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(5 * scale, -75 * scale);
+        ctx.lineTo(3 * scale, -65 * scale);
+        ctx.lineTo(6 * scale, -65 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // === ARMS ===
+        // Left arm (at side)
+        ctx.fillStyle = blazerColor;
+        ctx.beginPath();
+        ctx.moveTo(-12 * scale, -75 * scale);
+        ctx.quadraticCurveTo(-15 * scale, -60 * scale, -14 * scale, -45 * scale);
+        ctx.lineTo(-11 * scale, -45 * scale);
+        ctx.quadraticCurveTo(-12 * scale, -60 * scale, -10 * scale, -70 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Left hand
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(-12.5 * scale, -43 * scale, 3 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Right arm (holding microphone, bent up)
+        ctx.fillStyle = blazerColor;
+        ctx.beginPath();
+        ctx.moveTo(12 * scale, -75 * scale);
+        ctx.quadraticCurveTo(16 * scale, -68 * scale, 18 * scale, -60 * scale);
+        ctx.quadraticCurveTo(17 * scale, -65 * scale, 15 * scale, -55 * scale);
+        ctx.lineTo(12 * scale, -57 * scale);
+        ctx.quadraticCurveTo(13 * scale, -65 * scale, 10 * scale, -70 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Right hand holding mic
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(16 * scale, -58 * scale, 3 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // === MICROPHONE ===
+        // Mic handle
+        ctx.fillStyle = '#424242';
+        ctx.fillRect(14 * scale, -70 * scale, 4 * scale, 15 * scale);
+        // Mic head
+        ctx.fillStyle = '#616161';
+        ctx.beginPath();
+        ctx.arc(16 * scale, -73 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        // Mic mesh pattern
+        ctx.strokeStyle = '#757575';
+        ctx.lineWidth = 0.5 * scale;
+        ctx.beginPath();
+        ctx.arc(16 * scale, -73 * scale, 2.5 * scale, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // === NECK ===
+        ctx.fillStyle = skinTone;
+        ctx.fillRect(-3 * scale, -82 * scale, 6 * scale, 8 * scale);
+
+        // === HEAD ===
+        ctx.fillStyle = skinTone;
+        ctx.beginPath();
+        ctx.arc(0, -95 * scale, 14 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // === HAIR ===
+        ctx.fillStyle = hairColor;
+        // Main hair volume
+        ctx.beginPath();
+        ctx.arc(0, -98 * scale, 15 * scale, Math.PI + 0.4, -0.4);
+        ctx.fill();
+        // Side hair (bob cut style)
+        ctx.beginPath();
+        ctx.ellipse(-12 * scale, -90 * scale, 5 * scale, 12 * scale, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(12 * scale, -90 * scale, 5 * scale, 12 * scale, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        // Hair shine
+        ctx.fillStyle = lighten(hairColor, 30);
+        ctx.beginPath();
+        ctx.arc(-5 * scale, -105 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // === FACE ===
+        // Eyes
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-5 * scale, -96 * scale, 3 * scale, 2.5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(5 * scale, -96 * scale, 3 * scale, 2.5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Irises
+        ctx.fillStyle = '#5D4037';
+        ctx.beginPath();
+        ctx.arc(-5 * scale, -96 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(5 * scale, -96 * scale, 1.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pupils
+        ctx.fillStyle = '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(-5 * scale, -96 * scale, 0.8 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(5 * scale, -96 * scale, 0.8 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyebrows
+        ctx.strokeStyle = darken(hairColor, 20);
+        ctx.lineWidth = 1.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(-8 * scale, -100 * scale);
+        ctx.quadraticCurveTo(-5 * scale, -102 * scale, -2 * scale, -100 * scale);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(8 * scale, -100 * scale);
+        ctx.quadraticCurveTo(5 * scale, -102 * scale, 2 * scale, -100 * scale);
+        ctx.stroke();
+
+        // Nose
+        ctx.strokeStyle = darken(skinTone, 30);
+        ctx.lineWidth = 1 * scale;
+        ctx.beginPath();
+        ctx.moveTo(0, -95 * scale);
+        ctx.lineTo(1 * scale, -90 * scale);
+        ctx.lineTo(0, -89 * scale);
+        ctx.stroke();
+
+        // Smile
+        ctx.strokeStyle = '#C62828';
+        ctx.lineWidth = 2 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, -88 * scale, 5 * scale, 0.2, Math.PI - 0.2);
+        ctx.stroke();
+
+        // Lips color
+        ctx.fillStyle = '#E57373';
+        ctx.beginPath();
+        ctx.ellipse(0, -86 * scale, 4 * scale, 1.5 * scale, 0, 0, Math.PI);
+        ctx.fill();
+
+        // Earrings
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(-13 * scale, -93 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(13 * scale, -93 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      },
+
       createCareerFromCreator() {
         const name = document.getElementById('career-name-input').value.trim() || 'Golfer';
         const character = this.getCreatorSelections();
@@ -15989,6 +17091,7 @@
         document.getElementById('hub-tour-ranking').textContent = '#' + career.tourRanking;
         document.getElementById('hub-wins').textContent = career.stats.tournamentsWon;
         document.getElementById('hub-total-earnings').textContent = '$' + (career.stats.totalEarnings || 0);
+        document.getElementById('hub-fanbase').textContent = (career.fanbase || 0).toLocaleString() + ' fans';
 
         // Update headline with career news
         const headline = this.generateHeadline(career);
@@ -16265,19 +17368,314 @@
 
         document.getElementById('career-tournament-overlay').classList.add('hidden');
 
-        // Check for debut cutscene (first tournament ever)
-        if (this.activeCareer.stats.roundsPlayed === 0) {
-          this.showDebutCutscene();
+        // Show pre-tournament interview for all tournaments
+        this.showPreTournamentInterview();
+      },
+
+      // Interview questions with response options and fanbase gains
+      interviewQuestions: [
+        {
+          question: "How are you feeling heading into today's tournament?",
+          responses: [
+            { text: "I'm confident. I've been practicing hard and I'm ready to compete.", fans: 50 },
+            { text: "A little nervous honestly, but that's what keeps you sharp out there.", fans: 75 },
+            { text: "I just want to thank my fans for all their support. This one's for them!", fans: 100 },
+            { text: "Ready to dominate. Everyone else is playing for second place.", fans: 25 }
+          ]
+        },
+        {
+          question: "What's your game plan for today?",
+          responses: [
+            { text: "Stay patient, hit smart shots, and let the birdies come naturally.", fans: 75 },
+            { text: "Attack the course. I'm going for pins and making putts.", fans: 50 },
+            { text: "Focus on each shot one at a time. The score takes care of itself.", fans: 60 },
+            { text: "Whatever it takes to win. I didn't come here to play safe.", fans: 40 }
+          ]
+        },
+        {
+          question: "Your fans have been incredible. Any message for them?",
+          responses: [
+            { text: "Every single one of you means the world to me. Thank you!", fans: 150 },
+            { text: "Keep cheering! Your energy pushes me to be better.", fans: 100 },
+            { text: "The support has been amazing. I won't let you down.", fans: 125 },
+            { text: "Tell them to keep watching. They're about to see something special.", fans: 75 }
+          ]
+        },
+        {
+          question: "What drives you to compete at this level?",
+          responses: [
+            { text: "I love the game. Golf has given me everything.", fans: 80 },
+            { text: "Proving doubters wrong. They said I couldn't make it.", fans: 60 },
+            { text: "My family. Everything I do is to make them proud.", fans: 100 },
+            { text: "The thrill of competition. There's nothing like it.", fans: 70 }
+          ]
+        },
+        {
+          question: "Any thoughts on your competition today?",
+          responses: [
+            { text: "Talented field, but I'm focused on my own game.", fans: 75 },
+            { text: "Respect to everyone, but I came here to win.", fans: 60 },
+            { text: "Some great players out here. May the best golfer win!", fans: 90 },
+            { text: "They should be worried about me, not the other way around.", fans: 30 }
+          ]
         }
-        // Check for rival encounter
+      ],
+
+      interviewStep: 0,
+      selectedResponses: [],
+      totalFansGained: 0,
+
+      async showPreTournamentInterview() {
+        const career = this.activeCareer;
+
+        // Initialize fanbase if not exists
+        if (!career.fanbase) career.fanbase = 0;
+
+        this.interviewStep = 0;
+        this.selectedResponses = [];
+        this.totalFansGained = 0;
+
+        // Pick 2 random questions
+        const shuffled = [...this.interviewQuestions].sort(() => Math.random() - 0.5);
+        this.currentInterviewQuestions = shuffled.slice(0, 2);
+
+        document.getElementById('interview-overlay').classList.remove('hidden');
+        document.getElementById('interview-player-name').textContent = career.playerName;
+
+        // Draw player character - full body
+        const playerCanvas = document.getElementById('interview-player-canvas');
+        await this.drawCharacter(playerCanvas, career.character, 'idle');
+
+        // Draw reporter - full body
+        const reporterCanvas = document.getElementById('interview-reporter-canvas');
+        await this.drawReporter(reporterCanvas);
+
+        // Setup continue button
+        document.getElementById('interview-continue-btn').onclick = () => this.advanceInterview();
+        document.getElementById('interview-skip-btn').onclick = () => this.skipInterview();
+
+        // Show first dialogue
+        this.showInterviewDialogue();
+      },
+
+      showInterviewDialogue() {
+        const career = this.activeCareer;
+        const textEl = document.getElementById('interview-text');
+        const speakerEl = document.getElementById('interview-speaker');
+        const continueBtn = document.getElementById('interview-continue-btn');
+        const skipBtn = document.getElementById('interview-skip-btn');
+
+        // Step 0: Reporter intro
+        if (this.interviewStep === 0) {
+          speakerEl.textContent = 'Sarah Collins';
+          textEl.innerHTML = `Good morning golf fans! I'm here with <strong>${career.playerName}</strong> just before tee time at the ${this.activeTournament.name}. Let's get their thoughts heading into today's round.`;
+          continueBtn.textContent = 'Continue';
+          continueBtn.classList.remove('hidden');
+          skipBtn.classList.add('hidden');
+        }
+        // Question steps
+        else if (this.interviewStep <= this.currentInterviewQuestions.length) {
+          const q = this.currentInterviewQuestions[this.interviewStep - 1];
+          speakerEl.textContent = 'Sarah Collins';
+          textEl.innerHTML = `"${q.question}"`;
+
+          // Add response buttons
+          const responsesHTML = q.responses.map((r, i) =>
+            `<button class="interview-response-btn" data-index="${i}">${r.text}</button>`
+          ).join('');
+
+          textEl.innerHTML += `<div class="interview-responses">${responsesHTML}</div>`;
+
+          // Setup response handlers
+          textEl.querySelectorAll('.interview-response-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const idx = parseInt(e.target.dataset.index);
+              this.selectInterviewResponse(idx);
+            });
+          });
+
+          continueBtn.classList.add('hidden');
+          skipBtn.classList.remove('hidden');
+        }
+        // Final step: closing
         else {
-          const rivalType = this.shouldShowRival();
-          if (rivalType) {
-            this.showRivalEncounter(rivalType);
-          } else {
-            this.actuallyStartTournament();
+          speakerEl.textContent = 'Sarah Collins';
+          textEl.innerHTML = `Thank you ${career.playerName}! Best of luck out there today. Back to you in the booth.`;
+          continueBtn.textContent = 'Start Tournament';
+          continueBtn.classList.remove('hidden');
+          skipBtn.classList.add('hidden');
+
+          // Show fanbase gain
+          if (this.totalFansGained > 0) {
+            this.showFanbaseGain(this.totalFansGained);
           }
         }
+      },
+
+      selectInterviewResponse(index) {
+        const q = this.currentInterviewQuestions[this.interviewStep - 1];
+        const response = q.responses[index];
+
+        // Mark selected
+        document.querySelectorAll('.interview-response-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        document.querySelector(`.interview-response-btn[data-index="${index}"]`).classList.add('selected');
+
+        // Track response
+        this.selectedResponses.push({ question: q.question, response: response.text, fans: response.fans });
+        this.totalFansGained += response.fans;
+
+        // Show player saying the response
+        setTimeout(() => {
+          const speakerEl = document.getElementById('interview-speaker');
+          const textEl = document.getElementById('interview-text');
+          const career = this.activeCareer;
+
+          speakerEl.textContent = career.playerName;
+          textEl.innerHTML = `"${response.text}"`;
+
+          // Show continue button
+          document.getElementById('interview-continue-btn').classList.remove('hidden');
+          document.getElementById('interview-continue-btn').textContent = 'Continue';
+          document.getElementById('interview-skip-btn').classList.add('hidden');
+        }, 300);
+      },
+
+      advanceInterview() {
+        this.interviewStep++;
+        if (this.interviewStep > this.currentInterviewQuestions.length + 1) {
+          // Apply fanbase gains and start tournament
+          const career = this.activeCareer;
+          career.fanbase = (career.fanbase || 0) + this.totalFansGained;
+          this.saveActiveCareer();
+
+          document.getElementById('interview-overlay').classList.add('hidden');
+
+          // Check for milestone rewards
+          const milestones = this.checkFanbaseMilestones();
+
+          // Delay tournament start if milestone was reached
+          const delay = milestones.length > 0 ? 4500 : 500;
+
+          // Announce on tee after interview
+          setTimeout(() => {
+            Announcer.announceOnTee(career.playerName);
+          }, delay);
+
+          setTimeout(() => {
+            this.actuallyStartTournament();
+          }, delay + 500);
+        } else {
+          this.showInterviewDialogue();
+        }
+      },
+
+      skipInterview() {
+        // Skip gives minimal fanbase
+        this.totalFansGained += 10;
+        this.interviewStep++;
+        if (this.interviewStep > this.currentInterviewQuestions.length) {
+          this.interviewStep = this.currentInterviewQuestions.length + 1;
+        }
+        this.showInterviewDialogue();
+      },
+
+      showFanbaseGain(amount) {
+        const popup = document.createElement('div');
+        popup.className = 'fanbase-gain';
+        popup.innerHTML = `+${amount} Fans!`;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.remove(), 2500);
+      },
+
+      // Fanbase milestone rewards
+      fanbaseMilestones: [
+        { fans: 100, name: 'Rising Star', reward: { tourCoins: 50 }, message: 'You\'re getting noticed!' },
+        { fans: 500, name: 'Fan Favorite', reward: { tourCoins: 100, golfBucks: 200 }, message: 'Fans are wearing your colors!' },
+        { fans: 1000, name: 'Local Celebrity', reward: { tourCoins: 200, golfBucks: 500, bonusEarnings: 0.05 }, message: '+5% tournament earnings!' },
+        { fans: 2500, name: 'Tour Star', reward: { tourCoins: 300, golfBucks: 1000, bonusEarnings: 0.10 }, message: '+10% tournament earnings!' },
+        { fans: 5000, name: 'Golf Icon', reward: { tourCoins: 500, golfBucks: 2000, bonusEarnings: 0.15, unlock: 'gold_club' }, message: '+15% earnings + Gold Club unlocked!' },
+        { fans: 10000, name: 'Superstar', reward: { tourCoins: 750, golfBucks: 5000, bonusEarnings: 0.20, unlock: 'diamond_ball' }, message: '+20% earnings + Diamond Ball unlocked!' },
+        { fans: 25000, name: 'Legend', reward: { tourCoins: 1000, golfBucks: 10000, bonusEarnings: 0.25, unlock: 'legend_outfit' }, message: '+25% earnings + Legend Outfit unlocked!' },
+        { fans: 50000, name: 'GOAT', reward: { tourCoins: 2000, golfBucks: 25000, bonusEarnings: 0.30, unlock: 'goat_trophy' }, message: 'The Greatest of All Time! +30% earnings!' }
+      ],
+
+      checkFanbaseMilestones() {
+        const career = this.activeCareer;
+        if (!career.fanbaseMilestonesReached) {
+          career.fanbaseMilestonesReached = [];
+        }
+
+        const newMilestones = [];
+        for (const milestone of this.fanbaseMilestones) {
+          if (career.fanbase >= milestone.fans && !career.fanbaseMilestonesReached.includes(milestone.fans)) {
+            career.fanbaseMilestonesReached.push(milestone.fans);
+            newMilestones.push(milestone);
+
+            // Apply rewards
+            if (milestone.reward.tourCoins) {
+              career.tourCoins += milestone.reward.tourCoins;
+            }
+            if (milestone.reward.golfBucks) {
+              career.careerGolfBucks += milestone.reward.golfBucks;
+            }
+            if (milestone.reward.bonusEarnings) {
+              career.fanbaseBonus = milestone.reward.bonusEarnings;
+            }
+            if (milestone.reward.unlock) {
+              if (!career.unlockedItems) career.unlockedItems = [];
+              career.unlockedItems.push(milestone.reward.unlock);
+            }
+          }
+        }
+
+        if (newMilestones.length > 0) {
+          this.saveActiveCareer();
+          this.showMilestoneReward(newMilestones[newMilestones.length - 1]);
+        }
+
+        return newMilestones;
+      },
+
+      showMilestoneReward(milestone) {
+        const popup = document.createElement('div');
+        popup.className = 'milestone-popup';
+        popup.innerHTML = `
+          <div class="milestone-badge">⭐</div>
+          <div class="milestone-title">${milestone.name}</div>
+          <div class="milestone-fans">${milestone.fans.toLocaleString()} Fans!</div>
+          <div class="milestone-message">${milestone.message}</div>
+          <div class="milestone-rewards">
+            ${milestone.reward.tourCoins ? `<span>🪙 +${milestone.reward.tourCoins}</span>` : ''}
+            ${milestone.reward.golfBucks ? `<span>💵 +$${milestone.reward.golfBucks}</span>` : ''}
+          </div>
+        `;
+        document.body.appendChild(popup);
+
+        // Announce it
+        Announcer.speak(`Congratulations! You've reached ${milestone.name} status with ${milestone.fans.toLocaleString()} fans!`, { rate: 0.9 });
+
+        setTimeout(() => popup.remove(), 4000);
+      },
+
+      getFanbaseBonus() {
+        const career = this.activeCareer;
+        return career?.fanbaseBonus || 0;
+      },
+
+      getFanbaseLevel() {
+        const career = this.activeCareer;
+        if (!career?.fanbase) return null;
+
+        let currentLevel = null;
+        for (const milestone of this.fanbaseMilestones) {
+          if (career.fanbase >= milestone.fans) {
+            currentLevel = milestone;
+          }
+        }
+        return currentLevel;
       },
 
       debutScene: 0,
@@ -16819,6 +18217,11 @@
           if (typeof CareerPlayerRenderer !== 'undefined') {
             CareerPlayerRenderer.init();
           }
+
+          // Announce player on the tee after a short delay
+          setTimeout(() => {
+            Announcer.announceOnTee(this.activeCareer.playerName);
+          }, 1500);
         }
       },
 
@@ -17626,9 +19029,11 @@
 
       createPuttingGreen() {
         const canvas = document.getElementById('game-canvas');
-        // Use the actual canvas dimensions (not getBoundingClientRect which can be different)
-        const canvasW = canvas.width || canvas.getBoundingClientRect().width || 800;
-        const canvasH = canvas.height || canvas.getBoundingClientRect().height || 600;
+        // Use CSS display dimensions (getBoundingClientRect), NOT canvas.width which is DPR-scaled
+        // The rendering context is scaled by devicePixelRatio, so all coordinates should be in CSS display space
+        const rect = canvas.getBoundingClientRect();
+        const canvasW = rect.width || 800;
+        const canvasH = rect.height || 600;
         const centerX = canvasW / 2;
         const centerY = canvasH / 2;
 
@@ -17639,22 +19044,23 @@
         // Generate obstacles around the hole (but not blocking direct paths)
         const obstacles = this.generatePuttingObstacles(holeX, holeY, { width: canvasW, height: canvasH });
 
-        // Generate 10 preset tee positions - SHORT distances for putter (15-50 feet = 45-150 pixels)
+        // Generate 10 preset tee positions at visually good distances
+        // Use screen-relative distances that look and play well
         this.puttingState.teePositions = [];
-        for (let i = 0; i < 10; i++) {
-          // Putter-friendly distances: 15-50 feet (roughly 45-150 pixels)
-          const minDist = 45;
-          const maxDist = 130;
+        const minScreenDist = Math.min(canvasW, canvasH) * 0.15; // 15% of smaller dimension
+        const maxScreenDist = Math.min(canvasW, canvasH) * 0.4;  // 40% of smaller dimension
 
+        for (let i = 0; i < 10; i++) {
           const angle = this.seededRandom() * Math.PI * 2;
-          const distance = minDist + this.seededRandom() * (maxDist - minDist);
+          const distance = minScreenDist + this.seededRandom() * (maxScreenDist - minScreenDist);
 
           let ballX = holeX + Math.cos(angle) * distance;
           let ballY = holeY + Math.sin(angle) * distance;
 
-          // Keep within bounds
-          ballX = Math.max(60, Math.min(canvasW - 60, ballX));
-          ballY = Math.max(60, Math.min(canvasH - 60, ballY));
+          // Keep within bounds with good margin
+          const margin = 60;
+          ballX = Math.max(margin, Math.min(canvasW - margin, ballX));
+          ballY = Math.max(margin, Math.min(canvasH - margin, ballY));
 
           this.puttingState.teePositions.push({ x: ballX, y: ballY });
         }
@@ -17683,26 +19089,30 @@
 
       generatePuttingObstacles(holeX, holeY, rect) {
         const obstacles = [];
-        const numObstacles = 2 + Math.floor(this.seededRandom() * 2); // 2-3 obstacles
+        const numObstacles = 3 + Math.floor(this.seededRandom() * 3); // 3-5 obstacles
+        const screenMin = Math.min(rect.width, rect.height);
 
         for (let i = 0; i < numObstacles; i++) {
           const angle = this.seededRandom() * Math.PI * 2;
-          const distance = 60 + this.seededRandom() * 60; // 60-120px from hole
+          // Place obstacles at 20-45% of screen size from hole
+          const distance = screenMin * (0.2 + this.seededRandom() * 0.25);
 
           const obsX = holeX + Math.cos(angle) * distance;
           const obsY = holeY + Math.sin(angle) * distance;
 
           // Keep within bounds
-          if (obsX < 80 || obsX > rect.width - 80 || obsY < 80 || obsY > rect.height - 80) {
+          const margin = 80;
+          if (obsX < margin || obsX > rect.width - margin || obsY < margin || obsY > rect.height - margin) {
             continue;
           }
 
-          // Only use small rocks for putting green
+          // Screen-relative rock sizes (2-4% of screen)
+          const rockRadius = screenMin * (0.02 + this.seededRandom() * 0.02);
           obstacles.push({
             type: 'rock',
             x: obsX,
             y: obsY,
-            radius: 15 + this.seededRandom() * 10,
+            radius: rockRadius,
             width: 0,
             height: 0,
             shape: 'circle'
@@ -17751,6 +19161,16 @@
         // Replace the ball entirely
         window.gameEngine.gameState.ball = newBall;
 
+        // Reset holeCompleting flag - this gets set to true when ball sinks in mini-game
+        // but needs to be reset for the next putt to work properly
+        window.gameEngine.holeCompleting = false;
+
+        // Reset round state for fresh putt
+        if (window.gameEngine.gameState.round) {
+          window.gameEngine.gameState.round.isComplete = false;
+          window.gameEngine.gameState.round.currentStrokeCount = 0;
+        }
+
         // Force putter only - lock club selection
         window.gameEngine.gameState.selectedClub = 'putter';
         window.gameEngine.gameState.puttingMiniGame = true; // Flag to lock club
@@ -17764,21 +19184,23 @@
         const hud = document.getElementById('minigame-hud');
         hud.classList.remove('hidden');
 
-        // Calculate distance to hole in feet
+        // Calculate distance as approximate power needed (putter-friendly scale)
         const ball = window.gameEngine.gameState.ball;
         const hole = window.gameEngine.gameState.currentHole;
         const distPixels = PhysicsEngine.distance(ball, hole.holePosition);
-        const distFeet = Math.round(distPixels / 3); // ~3 pixels per foot
+        // Scale distance to feel right: ~150px = short putt, ~300px = medium, ~450px = long
+        // Show as percentage of "max putt" to help player gauge power
+        const powerNeeded = Math.min(100, Math.round((distPixels / 300) * 50));
 
         // Repurpose the HUD for putting
         document.getElementById('minigame-timer').textContent = `${state.currentPutt + 1}/${state.totalPutts}`;
-        document.getElementById('minigame-score').textContent = `${state.sunkCount} | ${distFeet}ft`;
+        document.getElementById('minigame-score').textContent = `${state.sunkCount} | ~${powerNeeded}%`;
 
         // Update labels
         const timerLabel = hud.querySelector('.minigame-hud-item:first-child .minigame-hud-label');
         const scoreLabel = hud.querySelector('.minigame-hud-item:last-child .minigame-hud-label');
         if (timerLabel) timerLabel.textContent = 'Putt';
-        if (scoreLabel) scoreLabel.textContent = 'Sunk | Dist';
+        if (scoreLabel) scoreLabel.textContent = 'Sunk | Power';
       },
 
       showMessage(title, msg, duration) {
@@ -17828,6 +19250,14 @@
           const dx = ball.x - hole.teePosition.x;
           const distanceYards = Math.round(dx * PIXELS_TO_YARDS);
 
+          // Check if ball went backwards or didn't really go forward (out of bounds)
+          if (distanceYards <= 0) {
+            // Ball went backwards or didn't move forward - doesn't count, give attempt back
+            this.showMessage('⚠️ Out of Bounds!', 'Ball went backwards - try again!', 1500);
+            setTimeout(() => this.setupLongestDrive(), 2000);
+            return; // Don't decrement attempts
+          }
+
           if (distanceYards > this.bestAttempt) {
             this.bestAttempt = distanceYards;
           }
@@ -17869,6 +19299,73 @@
             this.showMessage(result, `Putt ${state.currentPutt + 1} of ${state.totalPutts}`, 1000);
             setTimeout(() => this.setupNextPutt(), 1200);
           }
+        }
+      },
+
+      // Handle out of bounds for minigames - gives the attempt back
+      handleOutOfBounds() {
+        if (!this.isActive) return;
+
+        const ball = window.gameEngine.gameState.ball;
+        const hole = window.gameEngine.gameState.currentHole;
+        const canvas = window.gameEngine.canvas;
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // Determine which boundary was crossed for a specific message
+        let boundaryMsg = 'Ball left the playing area';
+        if (ball.x < 0) {
+          boundaryMsg = 'Ball went off the left side';
+        } else if (ball.x > canvasRect.width) {
+          boundaryMsg = 'Ball went off the right side';
+        } else if (ball.y < 0) {
+          boundaryMsg = 'Ball went off the top';
+        } else if (ball.y > canvasRect.height) {
+          boundaryMsg = 'Ball went off the bottom';
+        }
+
+        // For longest drive, check if ball went backwards
+        if (this.currentGame === 'longestDrive' && hole && hole.teePosition) {
+          if (ball.x < hole.teePosition.x) {
+            boundaryMsg = 'Ball went backwards';
+          }
+        }
+
+        // Show out of bounds message with specific boundary info
+        this.showMessage('⚠️ Out of Bounds!', `${boundaryMsg} - try again!`, 1500);
+
+        // Reset ball to last safe position (the starting position for current attempt)
+        if (ball.lastSafePosition) {
+          ball.x = ball.lastSafePosition.x;
+          ball.y = ball.lastSafePosition.y;
+        } else if (hole && hole.teePosition) {
+          ball.x = hole.teePosition.x;
+          ball.y = hole.teePosition.y;
+        }
+
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        ball.isMoving = false;
+        ball.isAirborne = false;
+
+        // Reset hole state in case ball was heading into hole
+        ball.inHole = false;
+        ball.holeProgress = undefined;
+        delete ball.holeStartTime;
+
+        // Clear hole completing flag to allow next shot
+        window.gameEngine.holeCompleting = false;
+
+        // Game-specific handling to give attempt back
+        if (this.currentGame === 'longestDrive') {
+          // Reset for next attempt
+          setTimeout(() => this.setupLongestDrive(), 2000);
+        } else if (this.currentGame === 'puttingChallenge') {
+          // Reset for same putt attempt (don't advance counter)
+          // The putt counter is incremented in onShotComplete, which won't be called for OOB
+        } else if (this.currentGame === 'closestToPin') {
+          // For closest to pin, reset to allow another shot
+          // This is a single-shot game, but if they hit OOB they should get another try
+          this.isActive = true; // Re-enable in case it was disabled
         }
       },
 
@@ -19178,6 +20675,9 @@
         if (this.gameState.ball.isMoving) return;
         if (this.gameState.round.isComplete) return; // Prevent strokes after round ends
 
+        // Start follow-through animation timer (show golfer for 800ms after hitting)
+        this.followThroughEndTime = performance.now() + 800;
+
         // Track tee shot position for long drive achievement
         const isTeeShot = this.gameState.round.currentStrokeCount === 0;
         if (isTeeShot) {
@@ -19241,10 +20741,7 @@
 
         AudioManager.playHitSound(swingVector.power);
 
-        // Trigger career mode cinematic cutaway
-        if (CareerSystem.activeCareer && CareerSystem.isInCareerTournament) {
-          CareerPlayerRenderer.triggerSwing();
-        }
+        // Cutscene removed - user prefers direct gameplay without cinematic interruption
 
         if (this.gameState.ball.waterPenalty) {
           ScoreKeeper.recordStroke(this.gameState.round);
@@ -19302,7 +20799,12 @@
 
             // Check for out of bounds
             if (this.isBallOutOfBounds(this.gameState.ball) && !this.gameState.ball.inHole) {
-              this.handleOutOfBounds();
+              // For minigames, handle out of bounds differently
+              if (this.gameState.isMiniGame && MiniGameManager.isActive) {
+                MiniGameManager.handleOutOfBounds();
+              } else {
+                this.handleOutOfBounds();
+              }
             }
 
             // Check if ball can enter hole (tutorial blocks until "Sink the Ball!" step)
@@ -19443,6 +20945,10 @@
             const distanceYards = Math.round(distancePixels * PIXELS_TO_YARDS);
             AchievementManager.onDriveHit(distanceYards);
             DailyChallengeSystem.onLongDrive(distanceYards);
+            // Announce great drives (250+ yards)
+            if (distanceYards >= 250) {
+              Announcer.announceShot('great_drive');
+            }
             ball.teePosition = null; // Clear after checking
           }
 
@@ -19614,6 +21120,7 @@
           ConfettiSystem.spawn(holeX, holeY, 80, 'eagle');
           ShopSystem.addBucks(250 * goldenMultiplier, 'Hole in One!' + goldenSuffix);
           DailyChallengeSystem.onHoleInOne();
+          Announcer.announceShot('hole_in_one');
         } else if (scoreRelativeToPar <= -2) {
           console.log('🎉 EAGLE OR BETTER! 🎉');
           AudioManager.playCheerSound();
@@ -19622,6 +21129,7 @@
           ConfettiSystem.spawn(holeX, holeY, 60, 'eagle');
           ShopSystem.addBucks(75 * goldenMultiplier, 'Eagle!' + goldenSuffix);
           DailyChallengeSystem.onEagle();
+          Announcer.announceShot('eagle');
         } else if (scoreRelativeToPar === -1) {
           console.log('🎊 BIRDIE! 🎊');
           AudioManager.playCheerSound();
@@ -19630,6 +21138,7 @@
           ConfettiSystem.spawn(holeX, holeY, 40, 'birdie');
           ShopSystem.addBucks(25 * goldenMultiplier, 'Birdie!' + goldenSuffix);
           DailyChallengeSystem.onBirdie();
+          Announcer.announceShot('birdie');
         }
       }
 
@@ -19678,6 +21187,25 @@
         GhostSystem.startRecording(round.currentHoleNumber);
 
         StorageManager.saveGameState(this.gameState);
+
+        // Announce hole (with delay for transition)
+        setTimeout(() => {
+          Announcer.announceHole(round.currentHoleNumber, hole.par);
+
+          // Final hole pressure moment
+          if (round.currentHoleNumber === 9) {
+            setTimeout(() => {
+              const summary = ScoreKeeper.getRoundSummary(round);
+              if (summary.scoreRelativeToPar <= 0) {
+                Announcer.announcePressure("Final hole. A chance to finish under par!");
+              } else if (summary.scoreRelativeToPar <= 2) {
+                Announcer.announcePressure("Last hole. Everything to play for!");
+              } else {
+                Announcer.announcePressure("The final hole.");
+              }
+            }, 2500);
+          }
+        }, 800);
       }
 
       async showRoundSummary() {
@@ -19771,6 +21299,34 @@
           }
 
           TournamentSystem.updateIndicator();
+        }
+
+        // === Career Mode Tournament Completion ===
+        if (CareerSystem.isInCareerTournament && CareerSystem.activeCareer) {
+          // Get tournament name before completing (it gets cleared after)
+          const tournamentName = CareerSystem.activeTournament?.name || 'Tournament';
+          const result = CareerSystem.completeTournament(summary.scoreRelativeToPar);
+          if (result) {
+            // Generate position text
+            const positionText = result.position === 1 ? '1st' :
+                                 result.position === 2 ? '2nd' :
+                                 result.position === 3 ? '3rd' :
+                                 result.position + 'th';
+
+            const scorecardContent = document.getElementById('scorecard-content');
+            scorecardContent.innerHTML += `
+              <div class="tournament-complete-banner">
+                <h3>🏆 ${tournamentName} Complete!</h3>
+                <div class="tournament-final-position ${result.position <= 3 ? (result.position === 1 ? 'gold' : (result.position === 2 ? 'silver' : 'bronze')) : ''}">${positionText} Place</div>
+                <div class="tournament-final-details">out of 25 players</div>
+                ${result.earnings > 0 ?
+                  `<div class="tournament-prize-won">+$${result.earnings} Prize Money!</div>` :
+                  `<div class="tournament-lost-entry">No prize this time - keep practicing!</div>`
+                }
+                ${result.points > 0 ? `<div class="tournament-points">+${result.points} Ranking Points</div>` : ''}
+              </div>
+            `;
+          }
         }
 
         // Reset flag for next round
@@ -19931,6 +21487,7 @@
       }
 
       AudioManager.init();
+      Announcer.init();
       AchievementManager.init();
       ShopSystem.init();
       DailyChallengeSystem.init();
