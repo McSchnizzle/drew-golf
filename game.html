@@ -758,6 +758,36 @@
       border-color: #E91E63;
       box-shadow: 0 0 15px rgba(233, 30, 99, 0.3);
     }
+    .shop-ball-card.fanbase-exclusive {
+      border-color: #FFD700;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+    }
+    .shop-ball-card.fanbase-exclusive:hover {
+      border-color: #FFA500;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .shop-club-skin-card.fanbase-exclusive {
+      border-color: #FFD700;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+    }
+    .shop-club-skin-card.fanbase-exclusive:hover {
+      border-color: #FFA500;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .exclusive-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      font-size: 14px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
     .shop-ball-preview {
       width: 40px;
       height: 40px;
@@ -5156,6 +5186,22 @@
       font-size: 16px;
     }
 
+    .milestone-sponsor {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.15));
+      border: 2px solid #FFD700;
+      border-radius: 12px;
+      color: #FFD700;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .milestone-sponsor small {
+      color: #4CAF50;
+      font-weight: normal;
+    }
+
     /* Sponsor Offer Overlay */
     #sponsor-offer-overlay {
       position: fixed;
@@ -5872,7 +5918,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.3 | Built: 2025-12-30</div>
+    <div id="version-footer">v1.0.4 | Built: 2025-12-31</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6040,6 +6086,10 @@
         <div class="hub-stat">
           <span>Fanbase</span>
           <span id="hub-fanbase">0 fans</span>
+        </div>
+        <div class="hub-stat" id="hub-sponsor-stat" style="display: none;">
+          <span>Sponsor</span>
+          <span id="hub-sponsor">None</span>
         </div>
         <div class="hub-progress-bar">
           <div class="progress-fill" id="hub-promotion-progress"></div>
@@ -6271,7 +6321,11 @@
       // Animated/special effects
       galaxy:   { highlight: '#9B59B6', base: '#8E44AD', stroke: '#6C3483', animated: 'galaxy' },
       fire:     { highlight: '#FF4500', base: '#FF6347', stroke: '#DC143C', animated: 'fire' },
-      rainbow:  { highlight: '#FF0000', base: '#FF7F00', stroke: '#FFFF00', animated: 'rainbow' }
+      rainbow:  { highlight: '#FF0000', base: '#FF7F00', stroke: '#FFFF00', animated: 'rainbow' },
+      // Fanbase exclusive balls (unlocked via fanbase milestones)
+      diamond:  { highlight: '#E0FFFF', base: '#B0E0E6', stroke: '#87CEEB', animated: 'diamond' },
+      legend:   { highlight: '#FFE135', base: '#CFB53B', stroke: '#8B7500', animated: 'shimmer' },
+      goat:     { highlight: '#FF69B4', base: '#9400D3', stroke: '#4B0082', animated: 'rainbow' }
     };
 
     // === SeededRandom Class (T006) ===
@@ -9143,12 +9197,20 @@
         rainbow: 750
       },
 
+      // Fanbase-exclusive ball skins (can't be bought, only unlocked via fanbase)
+      fanbaseExclusiveBalls: {
+        diamond: { requiredFans: 10000, name: 'Diamond', description: 'Sparkles like a champion' },
+        legend: { requiredFans: 25000, name: 'Legend Gold', description: 'For true legends only' },
+        goat: { requiredFans: 50000, name: 'GOAT Edition', description: 'The Greatest of All Time' }
+      },
+
       // Ball skin display names
       ballSkinNames: {
         white: 'White', yellow: 'Yellow', orange: 'Orange', pink: 'Pink',
         red: 'Red', blue: 'Blue', green: 'Green', purple: 'Purple',
         gold: 'Gold', chrome: 'Chrome', neon: 'Neon Green', midnight: 'Midnight',
-        rose: 'Rose', galaxy: 'Galaxy Swirl', fire: 'Fire Trail', rainbow: 'Rainbow Shift'
+        rose: 'Rose', galaxy: 'Galaxy Swirl', fire: 'Fire Trail', rainbow: 'Rainbow Shift',
+        diamond: 'Diamond', legend: 'Legend Gold', goat: 'GOAT Edition'
       },
 
       // Club skins - default is always owned
@@ -9168,6 +9230,13 @@
         galaxy: 800
       },
 
+      // Fanbase-exclusive club skins (can't be bought, only unlocked via fanbase)
+      fanbaseExclusiveClubs: {
+        goldclub: { requiredFans: 5000, name: 'Gold Club', description: 'Pure gold finish' },
+        platinum: { requiredFans: 25000, name: 'Platinum', description: 'Legendary status' },
+        goatclub: { requiredFans: 50000, name: 'GOAT Edition', description: 'The ultimate club skin' }
+      },
+
       // Club skin display names
       clubSkinNames: {
         default: 'Default',
@@ -9179,7 +9248,10 @@
         fire: 'Inferno',
         ice: 'Frost',
         lightning: 'Lightning',
-        galaxy: 'Galaxy'
+        galaxy: 'Galaxy',
+        goldclub: 'Gold Club',
+        platinum: 'Platinum',
+        goatclub: 'GOAT Edition'
       },
 
       // Club skin visual definitions
@@ -9193,11 +9265,42 @@
         fire: { type: 'animated', animation: 'fire', headColors: ['#ff4500', '#ff6600', '#ff8c00'], shaftColor: '#cc3300', accent: '#ffcc00' },
         ice: { type: 'animated', animation: 'ice', headColors: ['#87ceeb', '#b0e0e6', '#e0ffff'], shaftColor: '#5f9ea0', accent: '#ffffff' },
         lightning: { type: 'animated', animation: 'lightning', headColors: ['#ffff00', '#ffd700', '#ffffff'], shaftColor: '#4169e1', accent: '#00ffff' },
-        galaxy: { type: 'animated', animation: 'galaxy', headColors: ['#4b0082', '#8a2be2', '#9400d3'], shaftColor: '#2e0854', accent: '#ff69b4' }
+        galaxy: { type: 'animated', animation: 'galaxy', headColors: ['#4b0082', '#8a2be2', '#9400d3'], shaftColor: '#2e0854', accent: '#ff69b4' },
+        // Fanbase exclusive skins
+        goldclub: { type: 'animated', animation: 'shimmer', headColors: ['#ffd700', '#ffec8b', '#ffd700'], shaftColor: '#b8860b', accent: '#fff8dc', shine: true },
+        platinum: { type: 'animated', animation: 'shimmer', headColors: ['#e5e4e2', '#ffffff', '#e5e4e2'], shaftColor: '#c0c0c0', accent: '#f5f5f5', shine: true },
+        goatclub: { type: 'animated', animation: 'rainbow', headColors: ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8b00ff'], shaftColor: '#1a1a1a', accent: '#ffffff', shine: true }
       },
 
       init() {
         this.load();
+      },
+
+      // Check if a fanbase-exclusive item is unlocked via career fanbase
+      isFanbaseUnlocked(itemType, itemId) {
+        const career = typeof CareerSystem !== 'undefined' ? CareerSystem.activeCareer : null;
+        if (!career) return false;
+
+        const fanbase = career.fanbase || 0;
+
+        if (itemType === 'ball') {
+          const exclusive = this.fanbaseExclusiveBalls[itemId];
+          return exclusive && fanbase >= exclusive.requiredFans;
+        } else if (itemType === 'club') {
+          const exclusive = this.fanbaseExclusiveClubs[itemId];
+          return exclusive && fanbase >= exclusive.requiredFans;
+        }
+        return false;
+      },
+
+      // Get required fans for a fanbase-exclusive item
+      getFanbaseRequirement(itemType, itemId) {
+        if (itemType === 'ball') {
+          return this.fanbaseExclusiveBalls[itemId]?.requiredFans || 0;
+        } else if (itemType === 'club') {
+          return this.fanbaseExclusiveClubs[itemId]?.requiredFans || 0;
+        }
+        return 0;
       },
 
       load() {
@@ -9635,22 +9738,25 @@
 
         container.innerHTML = '';
 
-        // All ball skins: free colors first, then premium
+        // All ball skins: free colors first, then premium, then fanbase exclusive
         const freeSkins = ['white', 'yellow', 'orange', 'pink', 'red', 'blue', 'green', 'purple'];
         const premiumSkins = Object.keys(this.ballSkinPrices);
-        const allSkins = [...freeSkins, ...premiumSkins];
+        const exclusiveSkins = Object.keys(this.fanbaseExclusiveBalls);
+        const allSkins = [...freeSkins, ...premiumSkins, ...exclusiveSkins];
 
         for (const skinId of allSkins) {
           const isFree = freeSkins.includes(skinId);
-          const isOwned = this.ownsBallSkin(skinId);
+          const isFanbaseExclusive = this.fanbaseExclusiveBalls[skinId] !== undefined;
+          const isOwned = isFanbaseExclusive ? this.isFanbaseUnlocked('ball', skinId) : this.ownsBallSkin(skinId);
           const price = isFree ? 0 : this.getBallSkinPrice(skinId);
-          const canBuy = !isOwned && this.canAfford(price);
+          const canBuy = !isOwned && !isFanbaseExclusive && this.canAfford(price);
           const isAnimated = PremiumBallColors[skinId]?.animated;
 
           const card = document.createElement('div');
           let cardClass = 'shop-ball-card';
           if (isOwned) cardClass += ' owned';
           if (isAnimated) cardClass += ' animated';
+          if (isFanbaseExclusive) cardClass += ' fanbase-exclusive';
           card.className = cardClass;
           card.dataset.skin = skinId;
 
@@ -9659,14 +9765,27 @@
           const gradientStyle = `background: radial-gradient(circle at 30% 30%, ${colors.highlight}, ${colors.base})`;
 
           const name = this.ballSkinNames[skinId] || skinId;
+          const requiredFans = isFanbaseExclusive ? this.getFanbaseRequirement('ball', skinId) : 0;
+
+          let priceText;
+          if (isOwned) {
+            priceText = '✓ UNLOCKED';
+          } else if (isFanbaseExclusive) {
+            priceText = `🌟 ${requiredFans.toLocaleString()} Fans`;
+          } else if (isFree) {
+            priceText = 'FREE';
+          } else {
+            priceText = price + ' Golf Bucks';
+          }
 
           card.innerHTML = `
             <div class="shop-ball-preview" style="${gradientStyle}">
               ${isAnimated ? '<div class="animated-indicator">✨</div>' : ''}
+              ${isFanbaseExclusive && !isOwned ? '<div class="exclusive-badge">⭐</div>' : ''}
             </div>
             <div class="shop-ball-name">${name}</div>
-            <div class="shop-ball-price">${isOwned ? '✓ OWNED' : (isFree ? 'FREE' : price + ' Golf Bucks')}</div>
-            ${!isOwned && !isFree ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-skin="${skinId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyBallSkin('${skinId}')">Buy</button>` : ''}
+            <div class="shop-ball-price">${priceText}</div>
+            ${!isOwned && !isFree && !isFanbaseExclusive ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" data-skin="${skinId}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyBallSkin('${skinId}')">Buy</button>` : ''}
           `;
 
           container.appendChild(card);
@@ -9691,15 +9810,18 @@
 
         container.innerHTML = '';
 
-        // All club skins
-        const allSkins = ['default', ...Object.keys(this.clubSkinPrices)];
+        // All club skins: default, then premium, then fanbase exclusive
+        const premiumSkins = Object.keys(this.clubSkinPrices);
+        const exclusiveSkins = Object.keys(this.fanbaseExclusiveClubs);
+        const allSkins = ['default', ...premiumSkins, ...exclusiveSkins];
 
         for (const skinId of allSkins) {
           const isDefault = skinId === 'default';
-          const isOwned = this.ownsClubSkin(skinId);
+          const isFanbaseExclusive = this.fanbaseExclusiveClubs[skinId] !== undefined;
+          const isOwned = isFanbaseExclusive ? this.isFanbaseUnlocked('club', skinId) : this.ownsClubSkin(skinId);
           const isSelected = this.selectedClubSkin === skinId;
           const price = isDefault ? 0 : this.getClubSkinPrice(skinId);
-          const canBuy = !isOwned && this.canAfford(price);
+          const canBuy = !isOwned && !isFanbaseExclusive && this.canAfford(price);
           const skinStyle = this.clubSkinStyles[skinId];
           const isAnimated = skinStyle?.type === 'animated';
 
@@ -9708,28 +9830,44 @@
           if (isOwned) cardClass += ' owned';
           if (isSelected) cardClass += ' selected';
           if (isAnimated) cardClass += ' animated';
+          if (isFanbaseExclusive) cardClass += ' fanbase-exclusive';
           card.className = cardClass;
           card.dataset.skin = skinId;
 
           // Generate preview colors
           let previewColor = '#666';
-          if (skinStyle.headColor) {
+          if (skinStyle?.headColor) {
             previewColor = skinStyle.headColor;
-          } else if (skinStyle.headColors) {
+          } else if (skinStyle?.headColors) {
             previewColor = `linear-gradient(135deg, ${skinStyle.headColors.join(', ')})`;
           }
 
           const name = this.clubSkinNames[skinId] || skinId;
           const animatedBadge = isAnimated ? '<span class="skin-animated-badge">✨ Animated</span>' : '';
+          const requiredFans = isFanbaseExclusive ? this.getFanbaseRequirement('club', skinId) : 0;
+
+          let priceText;
+          if (isSelected) {
+            priceText = '✓ EQUIPPED';
+          } else if (isOwned) {
+            priceText = 'OWNED';
+          } else if (isFanbaseExclusive) {
+            priceText = `🌟 ${requiredFans.toLocaleString()} Fans`;
+          } else if (isDefault) {
+            priceText = 'FREE';
+          } else {
+            priceText = price + ' Golf Bucks';
+          }
 
           card.innerHTML = `
             <div class="shop-club-skin-preview ${isAnimated ? 'anim-' + skinId : ''}" style="background: ${previewColor}">
-              <div class="club-skin-shaft-preview" style="background: ${skinStyle.shaftColor || '#888'}"></div>
+              <div class="club-skin-shaft-preview" style="background: ${skinStyle?.shaftColor || '#888'}"></div>
+              ${isFanbaseExclusive && !isOwned ? '<div class="exclusive-badge">⭐</div>' : ''}
             </div>
             <div class="shop-club-skin-name">${name}</div>
             ${animatedBadge}
-            <div class="shop-club-skin-price">${isSelected ? '✓ EQUIPPED' : (isOwned ? 'OWNED' : (isDefault ? 'FREE' : price + ' Golf Bucks'))}</div>
-            ${!isOwned && !isDefault ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyClubSkin('${skinId}')">Buy</button>` : ''}
+            <div class="shop-club-skin-price">${priceText}</div>
+            ${!isOwned && !isDefault && !isFanbaseExclusive ? `<button class="shop-buy-btn ${canBuy ? '' : 'disabled'}" ${canBuy ? '' : 'disabled'} onclick="ShopSystem.buyClubSkin('${skinId}')">Buy</button>` : ''}
             ${isOwned && !isSelected ? `<button class="shop-equip-btn" onclick="ShopSystem.selectClubSkin('${skinId}')">Equip</button>` : ''}
           `;
 
@@ -17093,6 +17231,16 @@
         document.getElementById('hub-total-earnings').textContent = '$' + (career.stats.totalEarnings || 0);
         document.getElementById('hub-fanbase').textContent = (career.fanbase || 0).toLocaleString() + ' fans';
 
+        // Update sponsor display
+        const sponsor = this.getCurrentSponsor();
+        const sponsorStat = document.getElementById('hub-sponsor-stat');
+        if (sponsor && sponsorStat) {
+          sponsorStat.style.display = '';
+          document.getElementById('hub-sponsor').textContent = `${sponsor.logo} ${sponsor.name} (+$${sponsor.incomePerRound}/round)`;
+        } else if (sponsorStat) {
+          sponsorStat.style.display = 'none';
+        }
+
         // Update headline with career news
         const headline = this.generateHeadline(career);
         document.getElementById('hub-headline-text').textContent = headline;
@@ -17590,17 +17738,47 @@
         setTimeout(() => popup.remove(), 2500);
       },
 
-      // Fanbase milestone rewards
+      // Fanbase milestone rewards with sponsors and exclusive unlocks
       fanbaseMilestones: [
         { fans: 100, name: 'Rising Star', reward: { tourCoins: 50 }, message: 'You\'re getting noticed!' },
         { fans: 500, name: 'Fan Favorite', reward: { tourCoins: 100, golfBucks: 200 }, message: 'Fans are wearing your colors!' },
-        { fans: 1000, name: 'Local Celebrity', reward: { tourCoins: 200, golfBucks: 500, bonusEarnings: 0.05 }, message: '+5% tournament earnings!' },
-        { fans: 2500, name: 'Tour Star', reward: { tourCoins: 300, golfBucks: 1000, bonusEarnings: 0.10 }, message: '+10% tournament earnings!' },
-        { fans: 5000, name: 'Golf Icon', reward: { tourCoins: 500, golfBucks: 2000, bonusEarnings: 0.15, unlock: 'gold_club' }, message: '+15% earnings + Gold Club unlocked!' },
-        { fans: 10000, name: 'Superstar', reward: { tourCoins: 750, golfBucks: 5000, bonusEarnings: 0.20, unlock: 'diamond_ball' }, message: '+20% earnings + Diamond Ball unlocked!' },
-        { fans: 25000, name: 'Legend', reward: { tourCoins: 1000, golfBucks: 10000, bonusEarnings: 0.25, unlock: 'legend_outfit' }, message: '+25% earnings + Legend Outfit unlocked!' },
-        { fans: 50000, name: 'GOAT', reward: { tourCoins: 2000, golfBucks: 25000, bonusEarnings: 0.30, unlock: 'goat_trophy' }, message: 'The Greatest of All Time! +30% earnings!' }
+        { fans: 1000, name: 'Local Celebrity', reward: { tourCoins: 200, golfBucks: 500, bonusEarnings: 0.05, sponsor: 'local' }, message: '+5% earnings + Local Sponsor!' },
+        { fans: 2500, name: 'Tour Star', reward: { tourCoins: 300, golfBucks: 1000, bonusEarnings: 0.10, sponsor: 'regional' }, message: '+10% earnings + Regional Sponsor!' },
+        { fans: 5000, name: 'Golf Icon', reward: { tourCoins: 500, golfBucks: 2000, bonusEarnings: 0.15, unlockClub: 'goldclub', sponsor: 'national' }, message: '+15% earnings + Gold Club + National Sponsor!' },
+        { fans: 10000, name: 'Superstar', reward: { tourCoins: 750, golfBucks: 5000, bonusEarnings: 0.20, unlockBall: 'diamond', sponsor: 'major' }, message: '+20% earnings + Diamond Ball + Major Sponsor!' },
+        { fans: 25000, name: 'Legend', reward: { tourCoins: 1000, golfBucks: 10000, bonusEarnings: 0.25, unlockBall: 'legend', unlockClub: 'platinum', sponsor: 'elite' }, message: '+25% earnings + Legend Ball & Platinum Club!' },
+        { fans: 50000, name: 'GOAT', reward: { tourCoins: 2000, golfBucks: 25000, bonusEarnings: 0.30, unlockBall: 'goat', unlockClub: 'goatclub', sponsor: 'goat' }, message: 'GOAT Status! +30% earnings + All GOAT items!' }
       ],
+
+      // Sponsor tiers - provide passive income per round
+      sponsors: {
+        local: { name: 'Local Golf Shop', incomePerRound: 25, logo: '🏌️' },
+        regional: { name: 'GolfPro Equipment', incomePerRound: 50, logo: '⛳' },
+        national: { name: 'SwingMaster Golf', incomePerRound: 100, logo: '🏆' },
+        major: { name: 'TourElite Gear', incomePerRound: 200, logo: '🌟' },
+        elite: { name: 'ProTour International', incomePerRound: 400, logo: '💎' },
+        goat: { name: 'GOAT Athletics', incomePerRound: 750, logo: '🐐' }
+      },
+
+      // Get current sponsor based on fanbase
+      getCurrentSponsor() {
+        const career = this.activeCareer;
+        if (!career?.fanbase) return null;
+
+        let currentSponsor = null;
+        for (const milestone of this.fanbaseMilestones) {
+          if (career.fanbase >= milestone.fans && milestone.reward.sponsor) {
+            currentSponsor = milestone.reward.sponsor;
+          }
+        }
+        return currentSponsor ? this.sponsors[currentSponsor] : null;
+      },
+
+      // Get sponsor income for a round
+      getSponsorIncome() {
+        const sponsor = this.getCurrentSponsor();
+        return sponsor ? sponsor.incomePerRound : 0;
+      },
 
       checkFanbaseMilestones() {
         const career = this.activeCareer;
@@ -17624,9 +17802,19 @@
             if (milestone.reward.bonusEarnings) {
               career.fanbaseBonus = milestone.reward.bonusEarnings;
             }
-            if (milestone.reward.unlock) {
-              if (!career.unlockedItems) career.unlockedItems = [];
-              career.unlockedItems.push(milestone.reward.unlock);
+            // Track unlocked ball skins (fanbase exclusive)
+            if (milestone.reward.unlockBall) {
+              if (!career.unlockedBalls) career.unlockedBalls = [];
+              career.unlockedBalls.push(milestone.reward.unlockBall);
+            }
+            // Track unlocked club skins (fanbase exclusive)
+            if (milestone.reward.unlockClub) {
+              if (!career.unlockedClubs) career.unlockedClubs = [];
+              career.unlockedClubs.push(milestone.reward.unlockClub);
+            }
+            // Track sponsor
+            if (milestone.reward.sponsor) {
+              career.currentSponsor = milestone.reward.sponsor;
             }
           }
         }
@@ -17642,6 +17830,7 @@
       showMilestoneReward(milestone) {
         const popup = document.createElement('div');
         popup.className = 'milestone-popup';
+        const sponsor = milestone.reward.sponsor ? this.sponsors[milestone.reward.sponsor] : null;
         popup.innerHTML = `
           <div class="milestone-badge">⭐</div>
           <div class="milestone-title">${milestone.name}</div>
@@ -17650,7 +17839,10 @@
           <div class="milestone-rewards">
             ${milestone.reward.tourCoins ? `<span>🪙 +${milestone.reward.tourCoins}</span>` : ''}
             ${milestone.reward.golfBucks ? `<span>💵 +$${milestone.reward.golfBucks}</span>` : ''}
+            ${milestone.reward.unlockBall ? `<span>🎱 ${ShopSystem.ballSkinNames[milestone.reward.unlockBall]} Ball</span>` : ''}
+            ${milestone.reward.unlockClub ? `<span>🏌️ ${ShopSystem.clubSkinNames[milestone.reward.unlockClub]} Skin</span>` : ''}
           </div>
+          ${sponsor ? `<div class="milestone-sponsor">${sponsor.logo} New Sponsor: ${sponsor.name}<br><small>+$${sponsor.incomePerRound} per round!</small></div>` : ''}
         `;
         document.body.appendChild(popup);
 
@@ -21097,6 +21289,15 @@
               ShopSystem.addBucks(roundReward, 'Round Complete (Under Par!)');
             } else {
               ShopSystem.addBucks(roundReward, 'Round Complete');
+            }
+
+            // Add sponsor income if player has a sponsor (from fanbase)
+            if (typeof CareerSystem !== 'undefined' && CareerSystem.activeCareer) {
+              const sponsorIncome = CareerSystem.getSponsorIncome();
+              if (sponsorIncome > 0) {
+                const sponsor = CareerSystem.getCurrentSponsor();
+                ShopSystem.addBucks(sponsorIncome, `${sponsor.logo} ${sponsor.name} Sponsor`);
+              }
             }
 
             this.showRoundSummary();
