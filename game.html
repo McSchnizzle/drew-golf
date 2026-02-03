@@ -4241,6 +4241,45 @@
       font-weight: bold;
       text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
+    .hub-rival-panel {
+      background: linear-gradient(135deg, rgba(255, 50, 50, 0.15), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+    .rival-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .rival-portrait {
+      font-size: 28px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .rival-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .rival-name {
+      font-weight: bold;
+      color: #FF6B6B;
+      font-size: 14px;
+    }
+    .rival-record {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .rival-message {
+      font-style: italic;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      border-left: 3px solid #FF6B6B;
+    }
     .hub-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -5918,7 +5957,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.4 | Built: 2025-12-31</div>
+    <div id="version-footer">v1.0.5 | Built: 2026-02-03</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6097,6 +6136,18 @@
         </div>
       </div>
 
+      <!-- Rival Watch Section -->
+      <div class="hub-rival-panel" id="hub-rival-panel">
+        <div class="rival-header">
+          <span class="rival-portrait">😎</span>
+          <div class="rival-info">
+            <span class="rival-name">Ace McStroke</span>
+            <span class="rival-record" id="hub-rival-record">Record: 0-0</span>
+          </div>
+        </div>
+        <div class="rival-message" id="hub-rival-message">"Who's this new kid on the tour?"</div>
+      </div>
+
       <div class="hub-actions">
         <button class="hub-btn primary" id="hub-play-tournament-btn">
           <div class="primary-btn-content">
@@ -6106,6 +6157,10 @@
               <span class="btn-sub">9 holes • Earn ranking points</span>
             </div>
           </div>
+        </button>
+        <button class="hub-btn" id="hub-practice-btn">
+          <span class="btn-icon">🏌️</span>
+          <span id="hub-practice-text">Practice Range</span>
         </button>
         <button class="hub-btn" id="hub-standings-btn">
           <span class="btn-icon">📊</span>
@@ -6387,6 +6442,7 @@
       airResistance: 0.995,
       baseStopThreshold: 5,
       holeRadius: 15,
+      puttingChallengeHoleRadius: 22, // Larger hole for putting mini-game
 
       // Stop threshold scaled to screen size (in yards, converted to pixels)
       get stopThreshold() {
@@ -6722,12 +6778,18 @@
         }
       },
 
-      isBallInHole(ball) {
-        if (ball.distanceFromHole >= this.holeRadius) return false;
+      isBallInHole(ball, hole) {
+        // Use larger hole radius for putting challenge mini-game
+        const isPuttingMiniGame = hole && hole.isMinigamePuttingGreen;
+        const radius = isPuttingMiniGame ? this.puttingChallengeHoleRadius : this.holeRadius;
 
-        // Ball goes in if it's in the hole radius and moving slowly or stopped
+        if (ball.distanceFromHole >= radius) return false;
+
+        // Ball goes in if it's in the hole radius and moving slowly enough
         const speed = Math.sqrt(ball.velocityX * ball.velocityX + ball.velocityY * ball.velocityY);
-        const slowEnough = speed < 50; // Ball moving slower than 50 units/second
+        // Putting challenge uses higher threshold - real golf holes catch balls at decent speed
+        const speedThreshold = isPuttingMiniGame ? 120 : 50;
+        const slowEnough = speed < speedThreshold;
 
         return slowEnough;
       }
@@ -6877,7 +6939,7 @@
           ctx.strokeRect(8, 8, canvasW - 16, canvasH - 16);
 
           // Draw the hole
-          this.drawHole(hole.holePosition, animationTime);
+          this.drawHole(hole.holePosition, animationTime, hole);
 
           // Draw obstacles
           if (hole.obstacles) {
@@ -7300,32 +7362,47 @@
         ctx.restore();
       },
 
-      drawHole(holePosition, animationTime) {
+      drawHole(holePosition, animationTime, hole) {
         const ctx = this.ctx;
         const hx = holePosition.x;
         const hy = holePosition.y;
+        const isPuttingMiniGame = hole && hole.isMinigamePuttingGreen;
 
-        // Hole shadow/depth
+        // Putting mini-game: draw a glowing target ring around the hole
+        if (isPuttingMiniGame) {
+          const pulseAlpha = 0.15 + Math.sin(animationTime * 4) * 0.1;
+          ctx.strokeStyle = `rgba(255, 215, 0, ${pulseAlpha})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.ellipse(hx, hy, 35, 28, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Hole shadow/depth (larger for putting challenge)
+        const shadowRx = isPuttingMiniGame ? 24 : 18;
+        const shadowRy = isPuttingMiniGame ? 19 : 14;
         ctx.fillStyle = '#1a1a1a';
         ctx.beginPath();
-        ctx.ellipse(hx, hy + 2, 18, 14, 0, 0, Math.PI * 2);
+        ctx.ellipse(hx, hy + 2, shadowRx, shadowRy, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Hole opening with gradient for depth
-        const holeGradient = ctx.createRadialGradient(hx, hy, 0, hx, hy, 15);
+        const holeRx = isPuttingMiniGame ? 22 : 15;
+        const holeRy = isPuttingMiniGame ? 17 : 12;
+        const holeGradient = ctx.createRadialGradient(hx, hy, 0, hx, hy, holeRx);
         holeGradient.addColorStop(0, '#000000');
         holeGradient.addColorStop(0.7, '#1a1a1a');
         holeGradient.addColorStop(1, '#333333');
         ctx.fillStyle = holeGradient;
         ctx.beginPath();
-        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(hx, hy, holeRx, holeRy, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Hole rim (white cup edge)
+        // Hole rim (white cup edge - thicker for putting challenge)
         ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = isPuttingMiniGame ? 4 : 3;
         ctx.beginPath();
-        ctx.ellipse(hx, hy, 15, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(hx, hy, holeRx, holeRy, 0, 0, Math.PI * 2);
         ctx.stroke();
 
         // Stylized flagstick with cartoon 3D effect
@@ -14454,11 +14531,18 @@
         name: 'Ace McStroke',
         portrait: '😎',
         phrases: {
-          // First encounter
+          // First encounter - multi-line dialogue
           firstMeet: [
-            "Well, well... fresh meat on the tour. I'm Ace McStroke. Remember that name - you'll be seeing it at the top of every leaderboard.",
-            "A new face? How adorable. I'm Ace, the one you'll never beat. Enjoy your brief time in the spotlight.",
-            "So YOU'RE the rookie everyone's talking about? I've seen dozens like you come and go. I'm Ace McStroke - the king of this tour."
+            [
+              "Well, well, well... what do we have here? Fresh meat on the tour.",
+              "I'm Ace McStroke. THE Ace McStroke. Remember that name, because you'll be seeing it at the top of every leaderboard.",
+              "But hey, welcome to the show. Someone's gotta finish last, right?"
+            ],
+            [
+              "Oh! A new face! How adorable.",
+              "The name's Ace. McStroke. And I've been running this tour since before you could hold a putter.",
+              "Enjoy your brief time in the spotlight, kid. It won't last."
+            ]
           ],
           // Regular encounters
           intro: [
@@ -14467,7 +14551,9 @@
             "Ready to watch me lift another trophy?",
             "You again? Don't you ever learn?",
             "The rookie's back! How's second place treating you?",
-            "Hope you stretched - you'll be chasing me all day."
+            "Hope you stretched - you'll be chasing me all day.",
+            "I had a dream last night that you beat me. Woke up laughing.",
+            "My caddie asked who I'm worried about today. I said 'certainly not this one.'"
           ],
           // When rival wins
           win: [
@@ -14487,18 +14573,70 @@
             "Fine, you got ONE win. Savor it.",
             "I wasn't feeling well today. Next time you're done."
           ],
-          // When player is promoted to next tier
-          promotion: [
-            "Oh, moving up? Don't get comfortable - I'll be there too.",
-            "Congrats on the promotion. Now the REAL competition begins.",
-            "You made it to the next level? Good. I was getting bored beating you down there."
+          // When player wins multiple times - escalating frustration
+          loseFrustrated: [
+            "Okay, okay... you can play a LITTLE. But don't let it go to your head.",
+            "My coach says I need to 'respect the competition.' Whatever.",
+            "I switched putters because of you. THAT'S how annoyed I am.",
+            "I'm not sleeping well. Don't flatter yourself - it's definitely not because of you. Definitely not."
           ],
-          // Legend tier encounters
+          // When player has 5+ wins - grudging respect
+          loseRespect: [
+            "...You know what? Fine. You've earned my attention. Don't waste it.",
+            "I've been doing this for years, and you're the first person to actually make me sweat. Congratulations.",
+            "I still don't like you. But I respect you. A little. Barely."
+          ],
+          // When player is promoted to next tier - multi-line
+          promotion: [
+            [
+              "Well, look who got promoted.",
+              "Don't get comfortable up here. The competition's about to get REAL.",
+              "I'll see you on the leaderboard... from above."
+            ],
+            [
+              "Oh, you made it? Cute.",
+              "Welcome to the next level. I was getting bored down there without any real competition.",
+              "But don't think for a second this changes anything between us."
+            ]
+          ],
+          // Legend tier encounters - multi-line
           legend: [
-            "So you've made it to the Legend Tour. Impressive. But THIS is MY domain.",
-            "Welcome to the big leagues, rookie. Here's where legends are made... or broken.",
-            "You've come far. But no one's ever beaten me on the Legend Tour. NO ONE."
+            [
+              "...So you actually made it to the Legend Tour.",
+              "I gotta be honest - I didn't think you had it in you. Most don't make it this far.",
+              "But this? THIS is MY domain. Nobody beats me here. Nobody.",
+              "Bring everything you've got. You're gonna need it."
+            ]
           ]
+        },
+
+        // Dynamic phrases that reference actual stats (generated at runtime)
+        getDynamicPhrase(career) {
+          const wins = career.rival?.winsAgainst || 0;
+          const losses = career.rival?.lossesAgainst || 0;
+          const name = career.playerName;
+          const dynamic = [];
+
+          if (career.stats.tournamentsWon > 0) {
+            dynamic.push(`I see you've won ${career.stats.tournamentsWon} tournament${career.stats.tournamentsWon > 1 ? 's' : ''}. Cute. I have... well, let's just say more.`);
+          }
+          if (career.stats.bestScore && career.stats.bestScore < 0) {
+            dynamic.push(`Your best score is ${career.stats.bestScore}? I've shot better than that blindfolded. In the rain. On a Tuesday.`);
+          }
+          if (wins > 0 && wins <= 2) {
+            dynamic.push(`${wins} win${wins > 1 ? 's' : ''} against me? That's like a participation trophy. Come back when it means something.`);
+          }
+          if (wins >= 3 && wins < 5) {
+            dynamic.push(`Alright, ${wins} wins against me is... look, I've had some off days. That's all.`);
+          }
+          if (career.fanbase >= 5000) {
+            dynamic.push(`${career.fanbase.toLocaleString()} fans? Impressive for a rookie. I had that many before breakfast.`);
+          }
+          if (career.stats.holesInOne > 0) {
+            dynamic.push(`Heard you got a hole-in-one. Yeah, so have I. TWELVE of them. But who's counting?`);
+          }
+
+          return dynamic.length > 0 ? dynamic[Math.floor(Math.random() * dynamic.length)] : null;
         }
       },
 
@@ -14821,6 +14959,11 @@
           this.saveActiveCareer();
           document.getElementById('career-hub-overlay').classList.add('hidden');
           document.getElementById('game-mode-overlay').classList.remove('hidden');
+        });
+
+        // Practice Range button
+        document.getElementById('hub-practice-btn')?.addEventListener('click', () => {
+          this.startPracticeRange();
         });
 
         // Shop button (Customize)
@@ -17264,9 +17407,196 @@
         document.getElementById('hub-promotion-label').textContent = tour.promotionPoints ?
           `${career.rankingPoints} / ${tour.promotionPoints} pts to promote` : 'Legend Status Achieved!';
 
+        // Update rival watch section
+        this.updateRivalWatch(career);
+
+        // Update practice button
+        const practiceBtn = document.getElementById('hub-practice-btn');
+        const practiceText = document.getElementById('hub-practice-text');
+        if (practiceBtn && practiceText) {
+          const canPractice = !career.lastPracticeWeek || career.lastPracticeWeek !== career.seasonWeek;
+          practiceText.textContent = canPractice ? 'Practice Range' : 'Practiced';
+          practiceBtn.style.opacity = canPractice ? '1' : '0.5';
+        }
+
         // Draw avatar
         const avatarCanvas = document.getElementById('hub-avatar-canvas');
         await this.drawCharacterAvatar(avatarCanvas, career.character, 0.9);
+      },
+
+      updateRivalWatch(career) {
+        const rivalPanel = document.getElementById('hub-rival-panel');
+        if (!rivalPanel) return;
+
+        const rival = career.rival || { encounterCount: 0, winsAgainst: 0, lossesAgainst: 0 };
+        const wins = rival.winsAgainst || 0;
+        const losses = rival.lossesAgainst || 0;
+
+        document.getElementById('hub-rival-record').textContent = `Record: ${wins}W - ${losses}L`;
+
+        // Context-aware rival messages for the hub
+        const msg = this.getRivalHubMessage(career, wins, losses);
+        document.getElementById('hub-rival-message').textContent = msg;
+      },
+
+      getRivalHubMessage(career, wins, losses) {
+        const name = career.playerName;
+
+        // Before first encounter
+        if (!career.rival?.firstMet) {
+          const preEncounter = [
+            `"I keep hearing about some rookie named ${name}. Can't wait to crush their dreams."`,
+            `"Another season, another batch of nobodies trying to take my crown."`,
+            `"The tour better have some real competition this year. I'm bored."`,
+          ];
+          return preEncounter[Math.floor(Math.random() * preEncounter.length)];
+        }
+
+        // After player has beaten Ace multiple times
+        if (wins >= 5) {
+          const respect = [
+            `"...Fine. ${name} can play. But I'm still the GOAT."`,
+            `"I'll admit it - ${name}'s got game. Doesn't mean I like them."`,
+            `"${wins} losses to ${name}... I'm having nightmares about this kid."`,
+          ];
+          return respect[Math.floor(Math.random() * respect.length)];
+        }
+
+        // After player has beaten Ace at least once
+        if (wins > 0 && wins > losses) {
+          const frustrated = [
+            `"${name} got lucky ${wins} time${wins > 1 ? 's' : ''}. It won't happen again."`,
+            `"I've been studying ${name}'s game. Next time, they're DONE."`,
+            `"Everyone keeps asking me about ${name}. It's getting old."`,
+          ];
+          return frustrated[Math.floor(Math.random() * frustrated.length)];
+        }
+
+        // Ace is winning the rivalry
+        if (losses > wins && losses > 0) {
+          const gloating = [
+            `"${losses}-${wins} against ${name}. Like I said - levels to this game."`,
+            `"${name} keeps coming back for more punishment. Respect the hustle, I guess."`,
+            `"My record against ${name} speaks for itself. Next."`,
+          ];
+          return gloating[Math.floor(Math.random() * gloating.length)];
+        }
+
+        // General taunts
+        const general = [
+          `"Hope ${name} brought their A-game. They're gonna need it."`,
+          `"Another tournament, another chance to remind everyone who's #1."`,
+          `"I've been working on something new. ${name} won't know what hit them."`,
+          `"The leaderboard only has room for one name at the top. Mine."`,
+        ];
+        return general[Math.floor(Math.random() * general.length)];
+      },
+
+      startPracticeRange() {
+        const career = this.activeCareer;
+        if (!career) return;
+
+        // Check cooldown (once per tournament week)
+        if (career.lastPracticeWeek === career.seasonWeek) {
+          MiniGameManager.showMessage('Already Practiced', "You've already hit the range this week. Play a tournament first!", 2000);
+          return;
+        }
+
+        // Hide hub and start a quick driving range session
+        document.getElementById('career-hub-overlay').classList.add('hidden');
+
+        // Use the MiniGameManager's longestDrive infrastructure
+        MiniGameManager.currentGame = 'longestDrive';
+        MiniGameManager.isActive = true;
+        MiniGameManager.score = 0;
+        MiniGameManager.attempts = 3;
+        MiniGameManager.bestAttempt = 0;
+
+        // Flag this as career practice (not daily challenge)
+        MiniGameManager.isCareerPractice = true;
+
+        const canvas = document.getElementById('game-canvas');
+        const rect = canvas.getBoundingClientRect();
+
+        // Generate a simple hole for practice
+        const seed = Date.now();
+        CourseGenerator.init(seed);
+        const practiceHole = CourseGenerator.generateHole(1, rect.width, rect.height);
+
+        if (window.gameEngine) {
+          window.gameEngine.gameState = {
+            currentHole: practiceHole,
+            round: {
+              roundId: 'practice-' + Date.now(),
+              startTime: Date.now(),
+              endTime: null,
+              currentHoleNumber: 1,
+              isComplete: false,
+              holeScores: [],
+              totalStrokes: 0,
+              totalPar: 0,
+              scoreRelativeToPar: 0,
+              currentStrokeCount: 0
+            },
+            ball: window.gameEngine.createBall(practiceHole, 'white'),
+            selectedClub: 'driver',
+            seed: seed,
+            playerName: career.playerName,
+            ballColor: 'white',
+            isMiniGame: true
+          };
+
+          window.gameEngine.currentHole = practiceHole;
+          window.gameEngine.holeCompleting = false;
+          WindSystem.generateWind(1);
+          window.gameEngine.start();
+        }
+
+        // Hide HUD (single-shot games)
+        document.getElementById('minigame-hud').classList.add('hidden');
+
+        MiniGameManager.showMessage('Practice Range', 'Hit 3 drives! Best distance earns Golf Bucks.', 2000);
+
+        // Override endGame for practice to return to hub with reward
+        MiniGameManager._originalEndGame = MiniGameManager.endGame;
+        MiniGameManager.endGame = function() {
+          this.isActive = false;
+          this.isCareerPractice = false;
+
+          document.getElementById('minigame-hud').classList.add('hidden');
+
+          // Calculate reward based on best drive
+          const best = this.bestAttempt;
+          let reward = 5;
+          if (best >= 200) reward = 10;
+          if (best >= 250) reward = 15;
+
+          career.careerGolfBucks += reward;
+          career.lastPracticeWeek = career.seasonWeek;
+          CareerSystem.saveActiveCareer();
+
+          // Show results popup
+          const overlay = document.getElementById('minigame-overlay');
+          const content = document.getElementById('minigame-content');
+          content.innerHTML = `
+            <div class="minigame-result">
+              <h3>Practice Complete!</h3>
+              <div class="final-score" style="font-size: 36px; color: #4CAF50; margin: 15px 0;">${best} yards</div>
+              <div style="font-size: 18px; color: #FFD700; margin: 10px 0;">+$${reward} Golf Bucks</div>
+              <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Great warm-up! Now go crush that tournament.</p>
+            </div>
+          `;
+          overlay.classList.remove('hidden');
+
+          // Auto-return to hub
+          setTimeout(() => {
+            overlay.classList.add('hidden');
+            CareerSystem.showCareerHub();
+          }, 3000);
+
+          // Restore original endGame
+          MiniGameManager.endGame = MiniGameManager._originalEndGame;
+        };
       },
 
       generateHeadline(career) {
@@ -17520,7 +17850,38 @@
         this.showPreTournamentInterview();
       },
 
-      // Interview questions with response options and fanbase gains
+      // Debut interview questions (only for first ever tournament)
+      debutInterviewQuestions: [
+        {
+          question: "This is your FIRST professional tournament! How does it feel to finally be here?",
+          responses: [
+            { text: "Honestly? Surreal. I've dreamed about this moment my whole life.", fans: 150 },
+            { text: "I'm buzzing! Can't wait to show everyone what I've got.", fans: 125 },
+            { text: "Nervous as hell, but that's how you know it matters, right?", fans: 175 },
+            { text: "It's just another round of golf. The course doesn't know I'm a rookie.", fans: 100 }
+          ]
+        },
+        {
+          question: "What made you pick up a golf club in the first place?",
+          responses: [
+            { text: "My grandpa taught me when I was five. Been hooked ever since.", fans: 150 },
+            { text: "I saw Tiger on TV and thought 'I want to do THAT.' Simple as that.", fans: 125 },
+            { text: "I was terrible at every other sport. Golf was the one that clicked.", fans: 175 },
+            { text: "The outfits, obviously. Have you SEEN my polo game?", fans: 200 }
+          ]
+        },
+        {
+          question: "Any words for the folks watching your debut?",
+          responses: [
+            { text: "Watch closely - you're witnessing the start of something special.", fans: 125 },
+            { text: "Just grateful to be here. Every journey starts with a first step... or swing.", fans: 175 },
+            { text: "If I shank one into the parking lot, pretend you didn't see it.", fans: 200 },
+            { text: "Mom, Dad - I made it! This one's for you!", fans: 150 }
+          ]
+        }
+      ],
+
+      // Regular interview questions with response options and fanbase gains
       interviewQuestions: [
         {
           question: "How are you feeling heading into today's tournament?",
@@ -17566,12 +17927,41 @@
             { text: "Some great players out here. May the best golfer win!", fans: 90 },
             { text: "They should be worried about me, not the other way around.", fans: 30 }
           ]
+        },
+        {
+          question: "You've been putting in a lot of work this season. What's your secret?",
+          responses: [
+            { text: "No secret - just grinding on the range every single day.", fans: 65 },
+            { text: "Honestly? A good playlist and a short memory. Forget the bad shots.", fans: 100 },
+            { text: "I stopped trying to hit it perfect and started trying to hit it smart.", fans: 85 },
+            { text: "Sleep, eat, golf, repeat. My social life is nonexistent right now.", fans: 75 }
+          ]
+        },
+        {
+          question: "What's your favorite part of tournament day?",
+          responses: [
+            { text: "That first tee shot. Nothing beats that feeling.", fans: 75 },
+            { text: "Walking up to a birdie putt with the crowd watching. Pure adrenaline.", fans: 100 },
+            { text: "The 19th hole afterwards, honestly. Win or lose.", fans: 125 },
+            { text: "Proving to myself I belong out here with these players.", fans: 85 }
+          ]
+        },
+        {
+          question: "If you could play golf anywhere in the world, where would it be?",
+          responses: [
+            { text: "Augusta National. Walking those fairways would be a dream.", fans: 75 },
+            { text: "St Andrews - the home of golf. It's a pilgrimage.", fans: 80 },
+            { text: "Anywhere with a view. Golf on a cliff overlooking the ocean? Yes please.", fans: 100 },
+            { text: "Right here is perfect. Bloom where you're planted, you know?", fans: 90 }
+          ]
         }
       ],
 
       interviewStep: 0,
       selectedResponses: [],
       totalFansGained: 0,
+
+      isDebutInterview: false,
 
       async showPreTournamentInterview() {
         const career = this.activeCareer;
@@ -17583,9 +17973,17 @@
         this.selectedResponses = [];
         this.totalFansGained = 0;
 
-        // Pick 2 random questions
-        const shuffled = [...this.interviewQuestions].sort(() => Math.random() - 0.5);
-        this.currentInterviewQuestions = shuffled.slice(0, 2);
+        // Debut interview for first ever tournament
+        this.isDebutInterview = career.stats.roundsPlayed === 0;
+
+        if (this.isDebutInterview) {
+          // Special debut: use all 3 debut questions
+          this.currentInterviewQuestions = [...this.debutInterviewQuestions];
+        } else {
+          // Pick 2 random questions from the regular pool
+          const shuffled = [...this.interviewQuestions].sort(() => Math.random() - 0.5);
+          this.currentInterviewQuestions = shuffled.slice(0, 2);
+        }
 
         document.getElementById('interview-overlay').classList.remove('hidden');
         document.getElementById('interview-player-name').textContent = career.playerName;
@@ -17606,6 +18004,44 @@
         this.showInterviewDialogue();
       },
 
+      // Build a context-aware reporter intro based on career stats
+      getReporterIntro(career) {
+        const name = career.playerName;
+        const tournament = this.activeTournament.name;
+        const tour = this.tours[career.currentTour];
+
+        // Debut interview - special intro
+        if (this.isDebutInterview) {
+          return `Ladies and gentlemen, we have a BRAND NEW face joining the ${tour.name} today! <strong>${name}</strong> is making their professional debut right here at the ${tournament}! I'm Sarah Collins, and I have to say - the buzz around this rookie has been incredible. Let's meet them!`;
+        }
+
+        // Context-aware intros for returning players
+        const intros = [];
+        if (career.stats.tournamentsWon > 0 && career.stats.roundsPlayed <= 3) {
+          intros.push(`Welcome back everyone! I'm with <strong>${name}</strong>, who's been making waves early in their ${tour.name} career with ${career.stats.tournamentsWon} win${career.stats.tournamentsWon > 1 ? 's' : ''} already! We're here at the ${tournament}.`);
+        }
+        if (career.stats.tournamentsWon >= 3) {
+          intros.push(`I'm here with ${tour.name} standout <strong>${name}</strong> - ${career.stats.tournamentsWon} career wins and counting! The ${tournament} is about to get interesting.`);
+        }
+        if (career.rival && career.rival.winsAgainst > 0) {
+          intros.push(`Big day at the ${tournament}! <strong>${name}</strong> has been on a tear lately, including ${career.rival.winsAgainst} win${career.rival.winsAgainst > 1 ? 's' : ''} against rival ${this.rival.name}. Let's hear from them.`);
+        }
+        if (career.stats.holesInOne > 0) {
+          intros.push(`I'm with <strong>${name}</strong>, who amazingly has ${career.stats.holesInOne} hole${career.stats.holesInOne > 1 ? 's' : ''}-in-one this season! We're live at the ${tournament}.`);
+        }
+        if (career.fanbase >= 1000) {
+          intros.push(`Fan favorite <strong>${name}</strong> is here at the ${tournament}! With ${career.fanbase.toLocaleString()} fans and growing, this player is becoming a household name on the ${tour.name}.`);
+        }
+
+        // Fallback generic intros (better than original)
+        intros.push(
+          `We're live at the ${tournament}! I'm Sarah Collins with <strong>${name}</strong>, who's looking to make a statement today on the ${tour.name}. How are we feeling?`,
+          `Another big day on the ${tour.name}! I've got <strong>${name}</strong> here just before they head to the first tee at the ${tournament}. Let's chat!`
+        );
+
+        return intros[Math.floor(Math.random() * intros.length)];
+      },
+
       showInterviewDialogue() {
         const career = this.activeCareer;
         const textEl = document.getElementById('interview-text');
@@ -17616,7 +18052,7 @@
         // Step 0: Reporter intro
         if (this.interviewStep === 0) {
           speakerEl.textContent = 'Sarah Collins';
-          textEl.innerHTML = `Good morning golf fans! I'm here with <strong>${career.playerName}</strong> just before tee time at the ${this.activeTournament.name}. Let's get their thoughts heading into today's round.`;
+          textEl.innerHTML = this.getReporterIntro(career);
           continueBtn.textContent = 'Continue';
           continueBtn.classList.remove('hidden');
           skipBtn.classList.add('hidden');
@@ -17648,8 +18084,11 @@
         // Final step: closing
         else {
           speakerEl.textContent = 'Sarah Collins';
-          textEl.innerHTML = `Thank you ${career.playerName}! Best of luck out there today. Back to you in the booth.`;
-          continueBtn.textContent = 'Start Tournament';
+          const closingText = this.isDebutInterview
+            ? `What a moment! ${career.playerName}'s professional career starts RIGHT NOW. Good luck out there, rookie - we'll all be watching!`
+            : `Thank you ${career.playerName}! Best of luck out there today. Back to you in the booth.`;
+          textEl.innerHTML = closingText;
+          continueBtn.textContent = this.isDebutInterview ? 'Make Your Debut!' : 'Start Tournament';
           continueBtn.classList.remove('hidden');
           skipBtn.classList.add('hidden');
 
@@ -17954,12 +18393,16 @@
         return false;
       },
 
+      // Multi-line dialogue queue for rival encounters
+      dialogueQueue: [],
+      dialogueCallback: null,
+
       showRivalEncounter(type = 'regular') {
         const career = this.activeCareer;
 
         // Initialize rival tracking if needed
         if (!career.rival) {
-          career.rival = { encounterCount: 0, winsAgainst: 0, firstMet: false, legendMet: false };
+          career.rival = { encounterCount: 0, winsAgainst: 0, lossesAgainst: 0, firstMet: false, legendMet: false };
         }
 
         let phrases;
@@ -17970,23 +18413,74 @@
           phrases = this.rival.phrases.legend;
           career.rival.legendMet = true;
         } else {
-          phrases = this.rival.phrases.intro;
+          // For regular encounters, sometimes use dynamic stat-aware phrase
+          const dynamicPhrase = this.rival.getDynamicPhrase(career);
+          const wins = career.rival.winsAgainst || 0;
+
+          // Use frustrated/respect phrases based on rivalry state
+          if (wins >= 5 && this.rival.phrases.loseRespect) {
+            phrases = this.rival.phrases.loseRespect;
+          } else if (wins >= 3 && this.rival.phrases.loseFrustrated) {
+            phrases = this.rival.phrases.loseFrustrated;
+          } else if (dynamicPhrase && Math.random() < 0.4) {
+            // 40% chance to use a dynamic stat-aware phrase
+            phrases = [dynamicPhrase];
+          } else {
+            phrases = this.rival.phrases.intro;
+          }
         }
 
         career.rival.encounterCount++;
         this.saveActiveCareer();
 
-        const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+        const chosen = phrases[Math.floor(Math.random() * phrases.length)];
 
+        // Handle multi-line dialogue (arrays of strings)
+        if (Array.isArray(chosen)) {
+          this.dialogueQueue = [...chosen];
+          this.dialogueCallback = () => this.actuallyStartTournament();
+          this.showNextDialogueLine();
+        } else {
+          this.dialogueQueue = [];
+          this.dialogueCallback = () => this.actuallyStartTournament();
+          document.getElementById('dialogue-portrait').textContent = this.rival.portrait;
+          document.getElementById('dialogue-speaker').textContent = this.rival.name;
+          document.getElementById('dialogue-text').textContent = chosen;
+          document.getElementById('career-dialogue-overlay').classList.remove('hidden');
+        }
+      },
+
+      showNextDialogueLine() {
+        if (this.dialogueQueue.length === 0) {
+          document.getElementById('career-dialogue-overlay').classList.add('hidden');
+          if (this.dialogueCallback) this.dialogueCallback();
+          return;
+        }
+
+        const line = this.dialogueQueue.shift();
         document.getElementById('dialogue-portrait').textContent = this.rival.portrait;
         document.getElementById('dialogue-speaker').textContent = this.rival.name;
-        document.getElementById('dialogue-text').textContent = phrase;
+        document.getElementById('dialogue-text').textContent = line;
         document.getElementById('career-dialogue-overlay').classList.remove('hidden');
+
+        // Update button text based on remaining lines
+        const continueBtn = document.getElementById('dialogue-continue-btn');
+        if (continueBtn) {
+          continueBtn.textContent = this.dialogueQueue.length > 0 ? 'Continue...' : 'Let\'s Go!';
+        }
       },
 
       continueDialogue() {
-        document.getElementById('career-dialogue-overlay').classList.add('hidden');
-        this.actuallyStartTournament();
+        if (this.dialogueQueue.length > 0) {
+          this.showNextDialogueLine();
+        } else {
+          document.getElementById('career-dialogue-overlay').classList.add('hidden');
+          if (this.dialogueCallback) {
+            this.dialogueCallback();
+          } else {
+            this.actuallyStartTournament();
+          }
+        }
       },
 
       // === TOUR COINS SHOP ===
@@ -18423,6 +18917,27 @@
         const career = this.activeCareer;
         const tour = this.tours[career.currentTour];
 
+        // Simulate Ace McStroke's score (competitive but beatable)
+        const difficultyMod = { easy: 1, medium: 0, hard: -1, expert: -2 };
+        const aceMod = difficultyMod[tour.aiDifficulty] || 0;
+        const aceVariance = Math.floor(Math.random() * 5) - 2; // -2 to +2 random swing
+        const aceScore = scoreRelativeToPar + aceMod + aceVariance;
+        const beatAce = scoreRelativeToPar < aceScore;
+        const tiedAce = scoreRelativeToPar === aceScore;
+
+        // Track rivalry results
+        if (!career.rival) career.rival = { encounterCount: 0, winsAgainst: 0, lossesAgainst: 0, firstMet: false };
+        if (beatAce) {
+          career.rival.winsAgainst = (career.rival.winsAgainst || 0) + 1;
+          career.lastRivalResult = 'win';
+        } else if (!tiedAce) {
+          career.rival.lossesAgainst = (career.rival.lossesAgainst || 0) + 1;
+          career.lastRivalResult = 'loss';
+        } else {
+          career.lastRivalResult = 'tie';
+        }
+        career.aceLastScore = aceScore;
+
         // Calculate position (simplified - based on score)
         let position = 1;
         if (scoreRelativeToPar > -5) position = Math.min(25, 1 + Math.floor((scoreRelativeToPar + 5) * 2));
@@ -18436,6 +18951,16 @@
         else if (position <= 5) earnings = Math.floor(prizePool * 0.2);
         else if (position <= 10) earnings = Math.floor(prizePool * 0.1);
 
+        // Apply fanbase earnings bonus
+        const fanBonus = career.fanbaseBonus || 0;
+        if (fanBonus > 0) {
+          earnings = Math.floor(earnings * (1 + fanBonus));
+        }
+
+        // Add sponsor income
+        const sponsorIncome = this.getSponsorIncome();
+        earnings += sponsorIncome;
+
         // Calculate ranking points
         let points = 0;
         if (position === 1) points = 100;
@@ -18444,6 +18969,11 @@
         else if (position <= 5) points = 30;
         else if (position <= 10) points = 15;
         else if (position <= 15) points = 5;
+
+        // Bonus ranking points for beating Ace
+        if (beatAce) points += 10;
+
+        const oldRanking = career.tourRanking || 100;
 
         // Update career
         career.careerGolfBucks += earnings;
@@ -18455,13 +18985,18 @@
           career.tourCoins += 10; // Bonus tour coins for winning
         }
 
+        // Update ranking (simulate movement)
+        career.tourRanking = Math.max(1, Math.min(100, oldRanking - Math.floor(points / 10)));
+
         // Update best score
         if (!career.stats.bestScore || scoreRelativeToPar < career.stats.bestScore) {
           career.stats.bestScore = scoreRelativeToPar;
         }
 
         // Check for promotion
+        let promoted = false;
         if (tour.promotionPoints && career.rankingPoints >= tour.promotionPoints) {
+          promoted = true;
           this.promoteTour();
         }
 
@@ -18482,21 +19017,65 @@
           setTimeout(() => this.showSponsorOffers(position), 1000);
         }
 
-        return { position, earnings, points };
+        return { position, earnings, points, beatAce, aceScore, promoted, oldRanking, sponsorIncome };
       },
 
       promoteTour() {
         const tourOrder = ['local', 'amateur', 'pro', 'legend'];
         const currentIndex = tourOrder.indexOf(this.activeCareer.currentTour);
         if (currentIndex < tourOrder.length - 1) {
+          const oldTour = this.activeCareer.currentTour;
           this.activeCareer.currentTour = tourOrder[currentIndex + 1];
           this.activeCareer.tourCoins += 50; // Bonus for promotion
+          this.activeCareer.tourRanking = 50; // Reset ranking in new tour
           this.activeCareer.tourHistory.push({
-            tour: tourOrder[currentIndex],
+            tour: oldTour,
             season: this.activeCareer.currentSeason,
             finalRanking: this.activeCareer.tourRanking
           });
+
+          // Show promotion celebration after a delay (tournament results show first)
+          const newTour = this.tours[this.activeCareer.currentTour];
+          const oldTourName = this.tours[oldTour].name;
+          setTimeout(() => {
+            this.showPromotionCelebration(oldTourName, newTour);
+          }, 2000);
         }
+      },
+
+      showPromotionCelebration(oldTourName, newTour) {
+        // Fire confetti
+        if (typeof ConfettiSystem !== 'undefined') {
+          const canvas = document.getElementById('game-canvas');
+          const rect = canvas?.getBoundingClientRect();
+          if (rect) {
+            ConfettiSystem.burst(rect.width / 2, rect.height / 3, 60);
+            setTimeout(() => ConfettiSystem.burst(rect.width / 3, rect.height / 4, 40), 300);
+            setTimeout(() => ConfettiSystem.burst(rect.width * 2 / 3, rect.height / 4, 40), 600);
+          }
+        }
+
+        // Show promotion popup
+        const popup = document.createElement('div');
+        popup.style.cssText = `
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(0,0,0,0.85);
+        `;
+        popup.innerHTML = `
+          <div style="background: linear-gradient(135deg, #1a1040, #2d1b69); border: 2px solid ${newTour.color}; border-radius: 20px; padding: 30px; text-align: center; max-width: 360px; box-shadow: 0 0 40px ${newTour.color}40;">
+            <div style="font-size: 48px; margin-bottom: 10px;">${newTour.icon}</div>
+            <h2 style="color: ${newTour.color}; margin: 0 0 5px; font-size: 24px;">PROMOTED!</h2>
+            <p style="color: rgba(255,255,255,0.7); margin: 0 0 15px; font-size: 14px;">You've graduated from the ${oldTourName}!</p>
+            <h3 style="color: #FFD700; margin: 0 0 15px; font-size: 20px;">Welcome to the ${newTour.name}</h3>
+            <div style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 15px;">
+              New courses, tougher competition, bigger prizes.<br>
+              +50 Tour Coins bonus!
+            </div>
+            <button onclick="this.closest('div[style]').parentElement.remove()" style="background: ${newTour.color}; color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;">Let's Go!</button>
+          </div>
+        `;
+        document.body.appendChild(popup);
       },
 
       getEquipmentPowerBonus() {
@@ -18619,6 +19198,7 @@
 
         this.isPlaying = true;
         this.startTime = performance.now();
+        this.debris = []; // Reset particles
         this.resizeCanvas();
 
         this.canvas.classList.remove('hidden');
@@ -18641,6 +19221,20 @@
         }
       },
 
+      // Debris particles for impact effect
+      debris: [],
+
+      // Easing function for smoother animation
+      easeOutBack(t) {
+        const c1 = 1.70158;
+        const c3 = c1 + 1;
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+      },
+
+      easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      },
+
       render(progress) {
         if (!this.ctx || !CareerSystem.activeCareer) return;
 
@@ -18653,15 +19247,40 @@
 
         const letterboxHeight = height * 0.12;
 
+        // Camera shake on impact
+        let shakeX = 0, shakeY = 0;
+        if (progress > 0.33 && progress < 0.45) {
+          const shakeIntensity = (1 - Math.abs(progress - 0.37) / 0.04) * 4;
+          shakeX = (Math.random() - 0.5) * shakeIntensity;
+          shakeY = (Math.random() - 0.5) * shakeIntensity;
+        }
+
+        ctx.save();
+        ctx.translate(shakeX, shakeY);
+
         // Sky gradient
         const skyGradient = ctx.createLinearGradient(0, letterboxHeight, 0, height - letterboxHeight);
         skyGradient.addColorStop(0, '#87CEEB');
-        skyGradient.addColorStop(0.4, '#B0E0E6');
+        skyGradient.addColorStop(0.3, '#B0E0E6');
+        skyGradient.addColorStop(0.6, '#98D8C8');
         skyGradient.addColorStop(1, '#4CAF50');
         ctx.fillStyle = skyGradient;
         ctx.fillRect(0, letterboxHeight, width, height - letterboxHeight * 2);
 
-        // Ground
+        // Distant trees/treeline
+        ctx.fillStyle = '#2E7D32';
+        for (let i = 0; i < 8; i++) {
+          const tx = (i * width / 7) - 20;
+          const ty = height * 0.52;
+          const treeH = 30 + Math.sin(i * 2.3) * 15;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(tx + 15, ty - treeH);
+          ctx.lineTo(tx + 30, ty);
+          ctx.fill();
+        }
+
+        // Ground with subtle mow stripes
         const groundY = height * 0.65;
         const groundGradient = ctx.createLinearGradient(0, groundY, 0, height - letterboxHeight);
         groundGradient.addColorStop(0, '#4CAF50');
@@ -18670,154 +19289,439 @@
         ctx.fillStyle = groundGradient;
         ctx.fillRect(0, groundY, width, height - groundY - letterboxHeight);
 
+        // Mow stripes
+        for (let i = 0; i < Math.ceil(width / 40); i++) {
+          ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+          ctx.fillRect(i * 40, groundY, 40, height - groundY - letterboxHeight);
+        }
+
         const charX = width * 0.4;
         const charY = height * 0.75;
         const scale = Math.min(width, height) / 180;
 
-        // Swing animation
-        let swingAngle = 0, clubAngle = 0, bodyRotation = 0;
+        // Get sprite info for skin tone
+        const spriteInfo = CareerSystem.spriteMap[char.gender]?.[char.hairstyle];
+        const skinTone = char.skinHex || spriteInfo?.skinHex || CareerSystem.skinTones[char.skinTone]?.hex || '#D4A574';
+        const hairColor = char.hairColor || spriteInfo?.hairHex?.[0] || '#4A3728';
+        const shirtColor = char.outfitShirt || '#E53935';
+        const pantsColor = char.outfitPants || '#1565C0';
+
+        // Smooth swing animation with easing
+        let swingAngle = 0, clubAngle = 0, bodyRotation = 0, headTilt = 0;
 
         if (progress < 0.15) {
-          const p = progress / 0.15;
-          swingAngle = -Math.PI * 0.6 * p;
-          clubAngle = -Math.PI * 0.7 * p;
-          bodyRotation = -0.15 * p;
+          // Backswing (ease out for smooth start)
+          const p = this.easeInOutCubic(progress / 0.15);
+          swingAngle = -Math.PI * 0.65 * p;
+          clubAngle = -Math.PI * 0.75 * p;
+          bodyRotation = -0.18 * p;
+          headTilt = -0.05 * p;
         } else if (progress < 0.35) {
-          const p = (progress - 0.15) / 0.2;
-          swingAngle = -Math.PI * 0.6 + Math.PI * 0.9 * p;
-          clubAngle = -Math.PI * 0.7 + Math.PI * 1.1 * p;
-          bodyRotation = -0.15 + 0.25 * p;
+          // Downswing (fast, aggressive)
+          const p = this.easeInOutCubic((progress - 0.15) / 0.2);
+          swingAngle = -Math.PI * 0.65 + Math.PI * 0.95 * p;
+          clubAngle = -Math.PI * 0.75 + Math.PI * 1.15 * p;
+          bodyRotation = -0.18 + 0.28 * p;
+          headTilt = -0.05 + 0.1 * p;
         } else if (progress < 0.5) {
-          const p = (progress - 0.35) / 0.15;
-          swingAngle = Math.PI * 0.3 + Math.PI * 0.2 * p;
-          clubAngle = Math.PI * 0.4 + Math.PI * 0.2 * p;
-          bodyRotation = 0.1 + 0.05 * p;
+          // Follow through
+          const p = this.easeOutBack((progress - 0.35) / 0.15);
+          swingAngle = Math.PI * 0.3 + Math.PI * 0.25 * p;
+          clubAngle = Math.PI * 0.4 + Math.PI * 0.25 * p;
+          bodyRotation = 0.1 + 0.08 * p;
+          headTilt = 0.05 + 0.03 * p;
         } else {
+          // Hold finish pose
           const p = (progress - 0.5) / 0.5;
-          swingAngle = Math.PI * 0.5 + Math.PI * 0.15 * p;
-          clubAngle = Math.PI * 0.6 + Math.PI * 0.2 * p;
-          bodyRotation = 0.15 + 0.05 * p;
+          swingAngle = Math.PI * 0.55 + Math.PI * 0.1 * p;
+          clubAngle = Math.PI * 0.65 + Math.PI * 0.15 * p;
+          bodyRotation = 0.18 + 0.02 * p;
+          headTilt = 0.08;
         }
 
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        // Shadow (dynamic based on body rotation)
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
         ctx.beginPath();
-        ctx.ellipse(charX + 10, charY + 5, 40 * scale, 12 * scale, 0.2, 0, Math.PI * 2);
+        const shadowOffsetX = bodyRotation * 30;
+        ctx.ellipse(charX + shadowOffsetX, charY + 8, 42 * scale, 10 * scale, bodyRotation * 0.3, 0, Math.PI * 2);
         ctx.fill();
+
+        // Ball on tee (before impact)
+        if (progress < 0.35) {
+          const ballX = charX + 60;
+          const ballY = charY - 5;
+          // Tee
+          ctx.fillStyle = '#D2B48C';
+          ctx.fillRect(ballX - 2, ballY, 4, 10);
+          // Ball
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(ballX, ballY - 1, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
 
         ctx.save();
         ctx.translate(charX, charY);
         ctx.rotate(bodyRotation);
 
-        // Get sprite info for "Original" skin tone fallback
-        const spriteInfo = CareerSystem.spriteMap[char.gender]?.[char.hairstyle];
-        const skinTone = char.skinHex || spriteInfo?.skinHex || CareerSystem.skinTones[char.skinTone]?.hex || '#D4A574';
-
-        // Legs
-        ctx.fillStyle = char.outfitPants || '#1565C0';
+        // === SHOES ===
+        ctx.fillStyle = '#1a1a1a';
+        // Left shoe
         ctx.beginPath();
-        ctx.ellipse(-8 * scale, 0, 10 * scale, 30 * scale, 0.1, 0, Math.PI * 2);
+        ctx.ellipse(-10 * scale, 28 * scale, 12 * scale, 5 * scale, 0.1, 0, Math.PI * 2);
         ctx.fill();
+        // Right shoe
         ctx.beginPath();
-        ctx.ellipse(12 * scale, 0, 10 * scale, 30 * scale, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(14 * scale, 28 * scale, 12 * scale, 5 * scale, -0.1, 0, Math.PI * 2);
         ctx.fill();
 
-        // Torso
-        ctx.fillStyle = char.outfitShirt || '#E53935';
+        // === LEGS ===
+        ctx.fillStyle = pantsColor;
+        // Left leg
         ctx.beginPath();
-        ctx.ellipse(2 * scale, -45 * scale, 22 * scale, 30 * scale, 0, 0, Math.PI * 2);
+        ctx.moveTo(-15 * scale, 25 * scale);
+        ctx.lineTo(-12 * scale, -8 * scale);
+        ctx.lineTo(-2 * scale, -8 * scale);
+        ctx.lineTo(-5 * scale, 25 * scale);
+        ctx.closePath();
+        ctx.fill();
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(7 * scale, 25 * scale);
+        ctx.lineTo(8 * scale, -8 * scale);
+        ctx.lineTo(18 * scale, -8 * scale);
+        ctx.lineTo(19 * scale, 25 * scale);
+        ctx.closePath();
         ctx.fill();
 
-        // Arms
+        // === BELT ===
+        ctx.fillStyle = '#2c2c2c';
+        ctx.fillRect(-16 * scale, -10 * scale, 36 * scale, 4 * scale);
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(0 * scale, -10 * scale, 6 * scale, 4 * scale); // Belt buckle
+
+        // === TORSO ===
+        ctx.fillStyle = shirtColor;
+        ctx.beginPath();
+        ctx.moveTo(-18 * scale, -10 * scale);
+        ctx.lineTo(-20 * scale, -55 * scale);
+        ctx.quadraticCurveTo(2 * scale, -65 * scale, 22 * scale, -55 * scale);
+        ctx.lineTo(20 * scale, -10 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Collar
+        ctx.fillStyle = shirtColor === '#FFFFFF' ? '#E0E0E0' : '#fff';
+        ctx.beginPath();
+        ctx.moveTo(-8 * scale, -55 * scale);
+        ctx.lineTo(0, -60 * scale);
+        ctx.lineTo(8 * scale, -55 * scale);
+        ctx.lineTo(4 * scale, -52 * scale);
+        ctx.lineTo(0, -55 * scale);
+        ctx.lineTo(-4 * scale, -52 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // === ARMS (with swing) ===
         ctx.save();
-        ctx.translate(5 * scale, -55 * scale);
+        ctx.translate(5 * scale, -50 * scale);
         ctx.rotate(swingAngle);
 
+        // Upper arm
+        ctx.fillStyle = shirtColor;
+        ctx.beginPath();
+        ctx.ellipse(0, 12 * scale, 9 * scale, 16 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Forearm (skin)
         ctx.fillStyle = skinTone;
         ctx.beginPath();
-        ctx.ellipse(0, 20 * scale, 8 * scale, 22 * scale, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 28 * scale, 7 * scale, 14 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
 
+        // Glove/hand
+        ctx.fillStyle = '#eee';
         ctx.beginPath();
-        ctx.arc(0, 38 * scale, 7 * scale, 0, Math.PI * 2);
+        ctx.arc(0, 40 * scale, 6 * scale, 0, Math.PI * 2);
         ctx.fill();
 
-        // Club
+        // === CLUB ===
         ctx.save();
-        ctx.translate(0, 38 * scale);
+        ctx.translate(0, 40 * scale);
         ctx.rotate(clubAngle - swingAngle);
 
-        ctx.strokeStyle = '#555';
-        ctx.lineWidth = 4 * scale;
+        // Club grip (dark)
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 5 * scale;
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(0, 0);
+        ctx.lineTo(0, 15 * scale);
+        ctx.stroke();
+
+        // Club shaft (metallic gradient)
+        const shaftGrad = ctx.createLinearGradient(-2 * scale, 15 * scale, 2 * scale, 55 * scale);
+        shaftGrad.addColorStop(0, '#888');
+        shaftGrad.addColorStop(0.5, '#CCC');
+        shaftGrad.addColorStop(1, '#888');
+        ctx.strokeStyle = shaftGrad;
+        ctx.lineWidth = 3 * scale;
+        ctx.beginPath();
+        ctx.moveTo(0, 15 * scale);
         ctx.lineTo(0, 55 * scale);
         ctx.stroke();
 
-        ctx.fillStyle = '#333';
+        // Club head (shaped like a driver)
+        ctx.fillStyle = '#222';
         ctx.beginPath();
-        ctx.ellipse(0, 60 * scale, 12 * scale, 5 * scale, 0.4, 0, Math.PI * 2);
+        ctx.moveTo(-6 * scale, 55 * scale);
+        ctx.quadraticCurveTo(-14 * scale, 58 * scale, -12 * scale, 64 * scale);
+        ctx.quadraticCurveTo(-8 * scale, 68 * scale, 6 * scale, 64 * scale);
+        ctx.quadraticCurveTo(8 * scale, 58 * scale, 4 * scale, 55 * scale);
+        ctx.closePath();
+        ctx.fill();
+        // Club face highlight
+        ctx.fillStyle = '#555';
+        ctx.beginPath();
+        ctx.moveTo(-4 * scale, 56 * scale);
+        ctx.quadraticCurveTo(-10 * scale, 58 * scale, -8 * scale, 63 * scale);
+        ctx.quadraticCurveTo(-4 * scale, 65 * scale, 2 * scale, 63 * scale);
+        ctx.quadraticCurveTo(4 * scale, 58 * scale, 0, 56 * scale);
+        ctx.closePath();
         ctx.fill();
 
-        ctx.restore();
-        ctx.restore();
+        ctx.restore(); // club
+        ctx.restore(); // arms
 
-        // Head
+        // === HEAD ===
+        ctx.save();
+        ctx.rotate(headTilt);
+
+        // Neck
+        ctx.fillStyle = skinTone;
+        ctx.fillRect(-5 * scale, -60 * scale, 10 * scale, 8 * scale);
+
+        // Head shape
         ctx.fillStyle = skinTone;
         ctx.beginPath();
-        ctx.arc(0, -80 * scale, 18 * scale, 0, Math.PI * 2);
+        ctx.ellipse(0, -78 * scale, 16 * scale, 19 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Hair
-        ctx.fillStyle = char.hairColor || '#4A3728';
+        // Hair based on style
+        const spriteData = CareerSystem.spriteMap[char.gender]?.[char.hairstyle];
+        const isBald = spriteData?.name?.includes('Bald');
+        ctx.fillStyle = hairColor;
+
+        if (isBald) {
+          // Bald - just a subtle shine
+          ctx.fillStyle = `rgba(255,255,255,0.1)`;
+          ctx.beginPath();
+          ctx.ellipse(-3 * scale, -88 * scale, 8 * scale, 5 * scale, -0.3, 0, Math.PI);
+          ctx.fill();
+        } else if (char.gender === 'girl') {
+          // Longer hair
+          ctx.beginPath();
+          ctx.ellipse(0, -82 * scale, 18 * scale, 16 * scale, 0, Math.PI + 0.2, -0.2);
+          ctx.fill();
+          // Hair falling down
+          ctx.beginPath();
+          ctx.moveTo(-17 * scale, -75 * scale);
+          ctx.quadraticCurveTo(-20 * scale, -55 * scale, -15 * scale, -45 * scale);
+          ctx.lineTo(-12 * scale, -45 * scale);
+          ctx.quadraticCurveTo(-16 * scale, -60 * scale, -14 * scale, -75 * scale);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          // Short hair
+          ctx.beginPath();
+          ctx.ellipse(0, -83 * scale, 17 * scale, 14 * scale, 0, Math.PI + 0.3, -0.3);
+          ctx.fill();
+        }
+
+        // Eyebrow
+        ctx.strokeStyle = hairColor;
+        ctx.lineWidth = 2 * scale;
         ctx.beginPath();
-        ctx.arc(0, -83 * scale, 17 * scale, Math.PI + 0.3, -0.3);
-        ctx.fill();
+        ctx.moveTo(6 * scale, -85 * scale);
+        ctx.lineTo(14 * scale, -86 * scale);
+        ctx.stroke();
 
         // Eye
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.ellipse(10 * scale, -81 * scale, 4 * scale, 3 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
         ctx.fillStyle = '#333';
         ctx.beginPath();
-        ctx.arc(10 * scale, -82 * scale, 3 * scale, 0, Math.PI * 2);
+        ctx.arc(11 * scale, -81 * scale, 2 * scale, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.restore();
+        // Mouth (slight smile/determination)
+        ctx.strokeStyle = '#8B6C5C';
+        ctx.lineWidth = 1.5 * scale;
+        ctx.beginPath();
+        if (progress > 0.4) {
+          // Smile after hit
+          ctx.arc(8 * scale, -73 * scale, 4 * scale, 0.2, Math.PI - 0.2);
+        } else {
+          // Focused line
+          ctx.moveTo(5 * scale, -73 * scale);
+          ctx.lineTo(12 * scale, -73 * scale);
+        }
+        ctx.stroke();
 
-        // Impact flash
-        if (progress > 0.33 && progress < 0.45) {
-          const flashIntensity = 1 - Math.abs(progress - 0.39) / 0.06;
-          ctx.fillStyle = `rgba(255, 255, 255, ${flashIntensity * 0.4})`;
+        // Hat (if equipped)
+        const hat = char.equippedHat;
+        if (hat) {
+          if (hat.includes('cap') || hat.includes('visor')) {
+            ctx.fillStyle = hat.includes('red') ? '#E53935' : hat.includes('blue') ? '#1565C0' : hat.includes('black') ? '#1a1a1a' : '#fff';
+            // Cap brim
+            ctx.beginPath();
+            ctx.ellipse(6 * scale, -92 * scale, 18 * scale, 5 * scale, 0.15, -0.5, Math.PI + 0.5);
+            ctx.fill();
+            // Cap dome
+            ctx.beginPath();
+            ctx.arc(0, -90 * scale, 16 * scale, Math.PI, 0);
+            ctx.fill();
+          } else if (hat.includes('cowboy')) {
+            ctx.fillStyle = hat.includes('black') ? '#2a2a2a' : '#8B7355';
+            ctx.beginPath();
+            ctx.ellipse(0, -95 * scale, 24 * scale, 5 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, -97 * scale, 13 * scale, Math.PI, 0);
+            ctx.fill();
+          }
+        }
+
+        // Glasses (if equipped)
+        const glasses = char.equippedGlasses;
+        if (glasses) {
+          ctx.strokeStyle = glasses.includes('aviator') ? '#C0C0C0' : '#333';
+          ctx.lineWidth = 1.5 * scale;
+          ctx.beginPath();
+          ctx.ellipse(10 * scale, -81 * scale, 6 * scale, 4 * scale, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          if (glasses.includes('sunglasses') || glasses.includes('aviator') || glasses.includes('sport')) {
+            ctx.fillStyle = 'rgba(50,50,50,0.7)';
+            ctx.fill();
+          }
+        }
+
+        ctx.restore(); // head
+
+        ctx.restore(); // main body transform
+
+        // === DEBRIS/DIVOT PARTICLES on impact ===
+        if (progress > 0.34 && progress < 0.36 && this.debris.length === 0) {
+          const impactX = charX + 60;
+          const impactY = charY - 2;
+          for (let i = 0; i < 12; i++) {
+            this.debris.push({
+              x: impactX,
+              y: impactY,
+              vx: (Math.random() - 0.3) * 8,
+              vy: -Math.random() * 6 - 2,
+              size: 2 + Math.random() * 3,
+              color: Math.random() > 0.5 ? '#4CAF50' : '#388E3C',
+              life: 1
+            });
+          }
+        }
+
+        // Update and draw debris
+        for (let i = this.debris.length - 1; i >= 0; i--) {
+          const d = this.debris[i];
+          d.x += d.vx;
+          d.y += d.vy;
+          d.vy += 0.3; // gravity
+          d.life -= 0.03;
+          if (d.life <= 0) {
+            this.debris.splice(i, 1);
+            continue;
+          }
+          ctx.globalAlpha = d.life;
+          ctx.fillStyle = d.color;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Impact flash (subtle radial)
+        if (progress > 0.33 && progress < 0.42) {
+          const flashIntensity = 1 - Math.abs(progress - 0.37) / 0.05;
+          const flashGrad = ctx.createRadialGradient(charX + 60, charY - 5, 0, charX + 60, charY - 5, 80);
+          flashGrad.addColorStop(0, `rgba(255, 255, 200, ${flashIntensity * 0.5})`);
+          flashGrad.addColorStop(1, 'rgba(255, 255, 200, 0)');
+          ctx.fillStyle = flashGrad;
           ctx.fillRect(0, letterboxHeight, width, height - letterboxHeight * 2);
         }
 
-        // Ball flying
-        if (progress > 0.4) {
-          const ballProgress = (progress - 0.4) / 0.6;
-          const ballX = charX + 80 + ballProgress * width * 0.5;
-          const ballY = charY - 50 - Math.sin(ballProgress * Math.PI * 0.6) * 200;
-          const ballSize = Math.max(2, 6 - ballProgress * 4);
+        // Ball flying (with trail)
+        if (progress > 0.37) {
+          const ballProgress = (progress - 0.37) / 0.63;
+          const ballX = charX + 60 + ballProgress * width * 0.55;
+          const ballY = charY - 10 - Math.sin(ballProgress * Math.PI * 0.55) * height * 0.4;
+          const ballSize = Math.max(2, 6 - ballProgress * 3.5);
 
+          // Ball trail
+          for (let t = 0; t < 5; t++) {
+            const tp = Math.max(0, ballProgress - t * 0.02);
+            const tx = charX + 60 + tp * width * 0.55;
+            const ty = charY - 10 - Math.sin(tp * Math.PI * 0.55) * height * 0.4;
+            ctx.fillStyle = `rgba(255,255,255,${0.15 - t * 0.03})`;
+            ctx.beginPath();
+            ctx.arc(tx, ty, ballSize * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Ball
           ctx.fillStyle = '#fff';
           ctx.beginPath();
           ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
           ctx.fill();
+          // Ball shadow on ground
+          if (ballY < charY) {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.beginPath();
+            ctx.ellipse(ballX, charY + 5, ballSize * 1.5, ballSize * 0.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
+
+        ctx.restore(); // camera shake
 
         // Letterbox bars
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, width, letterboxHeight);
         ctx.fillRect(0, height - letterboxHeight, width, letterboxHeight);
 
-        // Player name
+        // Player name (bottom bar)
+        const fontSize = Math.max(10, 14 * (scale / 5));
         ctx.fillStyle = '#fff';
-        ctx.font = `bold ${14 * (scale / 5)}px -apple-system, sans-serif`;
+        ctx.font = `bold ${fontSize}px -apple-system, sans-serif`;
         ctx.textAlign = 'left';
-        ctx.fillText(CareerSystem.activeCareer.playerName, 20, letterboxHeight - 8);
+        ctx.fillText(CareerSystem.activeCareer.playerName, 20, height - letterboxHeight + fontSize + 4);
 
+        // Club name + Career Mode label
         ctx.textAlign = 'right';
-        ctx.font = `${12 * (scale / 5)}px -apple-system, sans-serif`;
+        ctx.font = `${Math.max(8, 11 * (scale / 5))}px -apple-system, sans-serif`;
         ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.fillText('Career Mode', width - 20, letterboxHeight - 8);
+        const clubName = window.gameEngine?.gameState?.selectedClub || 'driver';
+        ctx.fillText(clubName.charAt(0).toUpperCase() + clubName.slice(1), width - 20, height - letterboxHeight + fontSize + 4);
+
+        // Tour badge (top bar)
+        const tour = CareerSystem.tours[CareerSystem.activeCareer.currentTour];
+        if (tour) {
+          ctx.font = `${Math.max(8, 10 * (scale / 5))}px -apple-system, sans-serif`;
+          ctx.textAlign = 'right';
+          ctx.fillStyle = tour.color || '#fff';
+          ctx.fillText(`${tour.icon} ${tour.name}`, width - 20, letterboxHeight - 6);
+        }
       },
 
       update(gameState) {
@@ -18849,6 +19753,15 @@
       dailySeed: 0, // Seeded random for consistent daily layouts
 
       games: {
+        puttingChallenge: {
+          name: 'Putting Challenge',
+          icon: '⛳',
+          desc: 'Sink as many putts as you can! 10 attempts.',
+          duration: 0, // No time limit
+          scoreUnit: ' sunk',
+          lowerIsBetter: false,
+          totalAttempts: 10
+        },
         closestToPin: {
           name: 'Closest to Pin',
           icon: '🎯',
@@ -18864,15 +19777,6 @@
           duration: 0,
           scoreUnit: 'yds',
           lowerIsBetter: false
-        },
-        puttingChallenge: {
-          name: 'Putting Challenge',
-          icon: '⛳',
-          desc: 'Sink as many putts as you can! 10 attempts.',
-          duration: 0, // No time limit
-          scoreUnit: ' sunk',
-          lowerIsBetter: false,
-          totalAttempts: 10
         }
       },
 
@@ -19353,9 +20257,10 @@
         // Replace the ball entirely
         window.gameEngine.gameState.ball = newBall;
 
-        // Reset holeCompleting flag - this gets set to true when ball sinks in mini-game
-        // but needs to be reset for the next putt to work properly
+        // Reset ALL hole completion state to prevent blocking next putt's hole detection
         window.gameEngine.holeCompleting = false;
+        // Reset ballWasMoving tracker so the next swing properly detects ball stop
+        window.gameEngine.ballWasMoving = false;
 
         // Reset round state for fresh putt
         if (window.gameEngine.gameState.round) {
@@ -19375,24 +20280,24 @@
         const state = this.puttingState;
         const hud = document.getElementById('minigame-hud');
         hud.classList.remove('hidden');
+        hud.style.padding = '12px 30px';
+        hud.style.background = 'rgba(0,0,0,0.85)';
 
-        // Calculate distance as approximate power needed (putter-friendly scale)
+        // Calculate distance in feet for intuitive putting display
         const ball = window.gameEngine.gameState.ball;
         const hole = window.gameEngine.gameState.currentHole;
         const distPixels = PhysicsEngine.distance(ball, hole.holePosition);
-        // Scale distance to feel right: ~150px = short putt, ~300px = medium, ~450px = long
-        // Show as percentage of "max putt" to help player gauge power
-        const powerNeeded = Math.min(100, Math.round((distPixels / 300) * 50));
+        const distFeet = Math.round(distPixels / 3); // ~3 pixels per foot
 
-        // Repurpose the HUD for putting
-        document.getElementById('minigame-timer').textContent = `${state.currentPutt + 1}/${state.totalPutts}`;
-        document.getElementById('minigame-score').textContent = `${state.sunkCount} | ~${powerNeeded}%`;
+        // Clear, readable HUD
+        document.getElementById('minigame-timer').textContent = `Putt ${state.currentPutt + 1} of ${state.totalPutts}`;
+        document.getElementById('minigame-score').textContent = `Sunk: ${state.sunkCount} | ${distFeet} ft`;
 
         // Update labels
         const timerLabel = hud.querySelector('.minigame-hud-item:first-child .minigame-hud-label');
         const scoreLabel = hud.querySelector('.minigame-hud-item:last-child .minigame-hud-label');
-        if (timerLabel) timerLabel.textContent = 'Putt';
-        if (scoreLabel) scoreLabel.textContent = 'Sunk | Power';
+        if (timerLabel) timerLabel.textContent = 'Progress';
+        if (scoreLabel) scoreLabel.textContent = 'Score & Distance';
       },
 
       showMessage(title, msg, duration) {
@@ -21001,7 +21906,8 @@
 
             // Check if ball can enter hole (tutorial blocks until "Sink the Ball!" step)
             const canEnterHole = TutorialManager.canBallEnterHole();
-            if (PhysicsEngine.isBallInHole(this.gameState.ball) && !this.holeCompleting && canEnterHole) {
+            const currentHoleForCheck = this.gameState.currentHole || this.currentHole;
+            if (PhysicsEngine.isBallInHole(this.gameState.ball, currentHoleForCheck) && !this.holeCompleting && canEnterHole) {
               if (!this.gameState.ball.inHole) {
                 this.gameState.ball.inHole = true;
                 this.gameState.ball.holeProgress = 0;
@@ -21514,6 +22420,33 @@
                                  result.position === 3 ? '3rd' :
                                  result.position + 'th';
 
+            // Format scores for display
+            const playerScoreText = summary.scoreRelativeToPar === 0 ? 'E' :
+              (summary.scoreRelativeToPar > 0 ? '+' : '') + summary.scoreRelativeToPar;
+            const aceScoreText = result.aceScore === 0 ? 'E' :
+              (result.aceScore > 0 ? '+' : '') + result.aceScore;
+
+            // Ace result message
+            let aceResultHTML = '';
+            if (result.beatAce) {
+              aceResultHTML = `<div style="color: #4CAF50; font-weight: bold; margin-top: 8px;">You BEAT Ace McStroke! (${aceScoreText} vs your ${playerScoreText}) +10 bonus pts!</div>`;
+            } else if (result.aceScore === summary.scoreRelativeToPar) {
+              aceResultHTML = `<div style="color: #FFD700; margin-top: 8px;">Tied with Ace McStroke! (Both ${playerScoreText})</div>`;
+            } else {
+              aceResultHTML = `<div style="color: #FF6B6B; margin-top: 8px;">Ace McStroke shot ${aceScoreText} (You: ${playerScoreText})</div>`;
+            }
+
+            // Ranking change
+            const rankChange = result.oldRanking - (CareerSystem.activeCareer.tourRanking);
+            const rankHTML = rankChange > 0
+              ? `<div style="color: #4CAF50; font-size: 13px;">Ranking: #${CareerSystem.activeCareer.tourRanking} (up ${rankChange})</div>`
+              : `<div style="color: rgba(255,255,255,0.6); font-size: 13px;">Ranking: #${CareerSystem.activeCareer.tourRanking}</div>`;
+
+            // Promotion banner
+            const promoHTML = result.promoted
+              ? `<div style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 10px; border-radius: 8px; margin-top: 10px; font-weight: bold; text-align: center;">PROMOTED to ${CareerSystem.tours[CareerSystem.activeCareer.currentTour].name}!</div>`
+              : '';
+
             const scorecardContent = document.getElementById('scorecard-content');
             scorecardContent.innerHTML += `
               <div class="tournament-complete-banner">
@@ -21521,10 +22454,13 @@
                 <div class="tournament-final-position ${result.position <= 3 ? (result.position === 1 ? 'gold' : (result.position === 2 ? 'silver' : 'bronze')) : ''}">${positionText} Place</div>
                 <div class="tournament-final-details">out of 25 players</div>
                 ${result.earnings > 0 ?
-                  `<div class="tournament-prize-won">+$${result.earnings} Prize Money!</div>` :
+                  `<div class="tournament-prize-won">+$${result.earnings} Prize Money!${result.sponsorIncome > 0 ? ' (incl. $' + result.sponsorIncome + ' sponsor)' : ''}</div>` :
                   `<div class="tournament-lost-entry">No prize this time - keep practicing!</div>`
                 }
                 ${result.points > 0 ? `<div class="tournament-points">+${result.points} Ranking Points</div>` : ''}
+                ${rankHTML}
+                ${aceResultHTML}
+                ${promoHTML}
               </div>
             `;
           }
