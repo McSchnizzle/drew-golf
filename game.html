@@ -5029,12 +5029,13 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 60px;
-      padding: 20px;
-      background: linear-gradient(180deg, #2c5f2d 0%, #1e4d2b 50%, #143d1a 100%);
+      gap: 40px;
+      padding: 20px 30px;
+      background: linear-gradient(180deg, #87CEEB 0%, #2c5f2d 35%, #1e4d2b 60%, #143d1a 100%);
       border-radius: 12px;
       position: relative;
       overflow: hidden;
+      min-height: 240px;
     }
 
     .interview-stage::before {
@@ -5043,8 +5044,18 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 30px;
+      height: 40px;
       background: linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+    }
+
+    .interview-stage::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.15) 50%, transparent 90%);
     }
 
     .interview-reporter-side, .interview-player-side {
@@ -5073,24 +5084,41 @@
     }
 
     .interview-dialogue-box {
-      background: rgba(0,0,0,0.9);
+      background: linear-gradient(135deg, rgba(10,10,30,0.95), rgba(20,20,50,0.95));
       border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      border: 1px solid rgba(196,30,58,0.3);
       border-left: 4px solid #c41e3a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      position: relative;
+    }
+
+    .interview-dialogue-box::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 30px;
+      width: 16px;
+      height: 16px;
+      background: rgba(10,10,30,0.95);
+      border-top: 1px solid rgba(196,30,58,0.3);
+      border-left: 1px solid rgba(196,30,58,0.3);
+      transform: rotate(45deg);
     }
 
     .interview-speaker {
       color: #c41e3a;
       font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 8px;
+      font-size: 13px;
+      margin-bottom: 6px;
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .interview-text {
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1.5;
     }
 
@@ -5466,27 +5494,31 @@
     }
     .minigame-hud {
       position: fixed;
-      top: 20px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      padding: 10px 30px;
-      border-radius: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 20px;
+      border-radius: 16px;
       display: flex;
-      gap: 30px;
+      gap: 20px;
       z-index: 1601;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .minigame-hud.hidden { display: none; }
     .minigame-hud-item {
       text-align: center;
     }
     .minigame-hud-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.6);
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .minigame-hud-value {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: bold;
       color: #fff;
     }
@@ -5957,7 +5989,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.5 | Built: 2026-02-03</div>
+    <div id="version-footer">v1.0.6 | Built: 2026-02-05</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6294,11 +6326,11 @@
       </div>
       <div class="interview-stage">
         <div class="interview-reporter-side">
-          <canvas id="interview-reporter-canvas" width="140" height="220"></canvas>
+          <canvas id="interview-reporter-canvas" width="280" height="440" style="width: 140px; height: 220px;"></canvas>
           <div class="reporter-nameplate">Sarah Collins</div>
         </div>
         <div class="interview-player-side">
-          <canvas id="interview-player-canvas" width="140" height="220"></canvas>
+          <canvas id="interview-player-canvas" width="280" height="440" style="width: 140px; height: 220px;"></canvas>
           <div class="player-nameplate" id="interview-player-name"></div>
         </div>
       </div>
@@ -17354,6 +17386,12 @@
 
       showCareerHub() {
         if (!this.activeCareer) return;
+
+        // Safety cleanup: reset any lingering MiniGameManager state
+        MiniGameManager.isActive = false;
+        MiniGameManager.isCareerPractice = false;
+        MiniGameManager.currentGame = null;
+
         document.getElementById('career-hub-overlay').classList.remove('hidden');
         this.updateHubDisplay();
       },
@@ -17502,101 +17540,17 @@
           return;
         }
 
-        // Hide hub and start a quick driving range session
+        // Hide hub
         document.getElementById('career-hub-overlay').classList.add('hidden');
 
-        // Use the MiniGameManager's longestDrive infrastructure
-        MiniGameManager.currentGame = 'longestDrive';
-        MiniGameManager.isActive = true;
-        MiniGameManager.score = 0;
-        MiniGameManager.attempts = 3;
-        MiniGameManager.bestAttempt = 0;
-
-        // Flag this as career practice (not daily challenge)
+        // Flag as career practice before starting
         MiniGameManager.isCareerPractice = true;
+        MiniGameManager.careerPracticeData = { career: career };
 
-        const canvas = document.getElementById('game-canvas');
-        const rect = canvas.getBoundingClientRect();
+        // Use MiniGameManager's proper startGame flow
+        MiniGameManager.startGame('longestDrive');
 
-        // Generate a simple hole for practice
-        const seed = Date.now();
-        CourseGenerator.init(seed);
-        const practiceHole = CourseGenerator.generateHole(1, rect.width, rect.height);
-
-        if (window.gameEngine) {
-          window.gameEngine.gameState = {
-            currentHole: practiceHole,
-            round: {
-              roundId: 'practice-' + Date.now(),
-              startTime: Date.now(),
-              endTime: null,
-              currentHoleNumber: 1,
-              isComplete: false,
-              holeScores: [],
-              totalStrokes: 0,
-              totalPar: 0,
-              scoreRelativeToPar: 0,
-              currentStrokeCount: 0
-            },
-            ball: window.gameEngine.createBall(practiceHole, 'white'),
-            selectedClub: 'driver',
-            seed: seed,
-            playerName: career.playerName,
-            ballColor: 'white',
-            isMiniGame: true
-          };
-
-          window.gameEngine.currentHole = practiceHole;
-          window.gameEngine.holeCompleting = false;
-          WindSystem.generateWind(1);
-          window.gameEngine.start();
-        }
-
-        // Hide HUD (single-shot games)
-        document.getElementById('minigame-hud').classList.add('hidden');
-
-        MiniGameManager.showMessage('Practice Range', 'Hit 3 drives! Best distance earns Golf Bucks.', 2000);
-
-        // Override endGame for practice to return to hub with reward
-        MiniGameManager._originalEndGame = MiniGameManager.endGame;
-        MiniGameManager.endGame = function() {
-          this.isActive = false;
-          this.isCareerPractice = false;
-
-          document.getElementById('minigame-hud').classList.add('hidden');
-
-          // Calculate reward based on best drive
-          const best = this.bestAttempt;
-          let reward = 5;
-          if (best >= 200) reward = 10;
-          if (best >= 250) reward = 15;
-
-          career.careerGolfBucks += reward;
-          career.lastPracticeWeek = career.seasonWeek;
-          CareerSystem.saveActiveCareer();
-
-          // Show results popup
-          const overlay = document.getElementById('minigame-overlay');
-          const content = document.getElementById('minigame-content');
-          content.innerHTML = `
-            <div class="minigame-result">
-              <h3>Practice Complete!</h3>
-              <div class="final-score" style="font-size: 36px; color: #4CAF50; margin: 15px 0;">${best} yards</div>
-              <div style="font-size: 18px; color: #FFD700; margin: 10px 0;">+$${reward} Golf Bucks</div>
-              <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Great warm-up! Now go crush that tournament.</p>
-            </div>
-          `;
-          overlay.classList.remove('hidden');
-
-          // Auto-return to hub
-          setTimeout(() => {
-            overlay.classList.add('hidden');
-            CareerSystem.showCareerHub();
-          }, 3000);
-
-          // Restore original endGame
-          MiniGameManager.endGame = MiniGameManager._originalEndGame;
-        };
+        MiniGameManager.showMessage('🏌️ Practice Range', 'Hit 3 drives! Best distance earns Golf Bucks.', 2000);
       },
 
       generateHeadline(career) {
@@ -20499,6 +20453,12 @@
 
         document.getElementById('minigame-hud').classList.add('hidden');
 
+        // Career practice has its own results flow
+        if (this.isCareerPractice) {
+          this.endCareerPractice();
+          return;
+        }
+
         const game = this.games[this.currentGame];
         const oldHighScore = this.highScores[this.currentGame];
         let isNewRecord = false;
@@ -20575,11 +20535,65 @@
         );
       },
 
+      endCareerPractice() {
+        const data = this.careerPracticeData;
+        const career = data ? data.career : CareerSystem.activeCareer;
+
+        // Calculate reward based on best drive
+        const best = this.bestAttempt;
+        let reward = 5;
+        if (best >= 200) reward = 10;
+        if (best >= 250) reward = 15;
+
+        if (career) {
+          career.careerGolfBucks += reward;
+          career.lastPracticeWeek = career.seasonWeek;
+          CareerSystem.saveActiveCareer();
+        }
+
+        // Clean up practice state
+        this.isCareerPractice = false;
+        this.careerPracticeData = null;
+        this.currentGame = null;
+        this.puttingState = null;
+
+        // Clear mini-game engine state
+        if (window.gameEngine && window.gameEngine.gameState) {
+          window.gameEngine.gameState.isMiniGame = false;
+          window.gameEngine.gameState = null;
+        }
+        if (window.gameEngine) window.gameEngine.holeCompleting = false;
+
+        // Show results popup
+        const overlay = document.getElementById('minigame-overlay');
+        const content = document.getElementById('minigame-content');
+        content.innerHTML = `
+          <div class="minigame-result">
+            <h3>Practice Complete!</h3>
+            <div class="final-score" style="font-size: 36px; color: #4CAF50; margin: 15px 0;">${best} yards</div>
+            <div style="font-size: 18px; color: #FFD700; margin: 10px 0;">+$${reward} Golf Bucks</div>
+            <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Great warm-up! Now go crush that tournament.</p>
+          </div>
+        `;
+        overlay.classList.remove('hidden');
+        document.getElementById('scoreboard').classList.remove('hidden');
+
+        // Auto-return to career hub
+        const returnToHub = () => {
+          overlay.classList.add('hidden');
+          CareerSystem.showCareerHub();
+        };
+        setTimeout(returnToHub, 3000);
+        overlay.addEventListener('click', () => returnToHub(), { once: true });
+      },
+
       returnToLobby() {
         const overlay = document.getElementById('minigame-overlay');
         overlay.classList.add('hidden');
         this.currentGame = null;
         this.puttingState = null;
+        this.isCareerPractice = false;
+        this.careerPracticeData = null;
 
         // Return to main menu
         document.getElementById('game-mode-overlay').classList.add('hidden');
@@ -20591,7 +20605,7 @@
           window.gameEngine.gameState.puttingMiniGame = false;
           window.gameEngine.gameState = null;
         }
-        window.gameEngine.holeCompleting = false;
+        if (window.gameEngine) window.gameEngine.holeCompleting = false;
       }
     };
 
@@ -21771,6 +21785,11 @@
         if (!this.gameState || !this.gameState.ball) return;
         if (this.gameState.ball.isMoving) return;
         if (this.gameState.round.isComplete) return; // Prevent strokes after round ends
+
+        // Trigger career swing animation cutaway
+        if (typeof CareerPlayerRenderer !== 'undefined') {
+          CareerPlayerRenderer.triggerSwing();
+        }
 
         // Start follow-through animation timer (show golfer for 800ms after hitting)
         this.followThroughEndTime = performance.now() + 800;
