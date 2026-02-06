@@ -2141,7 +2141,7 @@
       max-width: 500px;
       max-height: 80vh;
       overflow-y: auto;
-      z-index: 1100;
+      z-index: 1600;
     }
 
     #scorecard-overlay h2 {
@@ -3319,6 +3319,56 @@
       padding: 40px 20px;
       font-size: 14px;
     }
+    .notification-expire-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      gap: 8px;
+    }
+
+    .notification-timer {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+    }
+
+    .notification-timer.urgent {
+      color: #FF6B6B;
+    }
+
+    .notification-keep-btn {
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.8);
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .notification-keep-btn:hover {
+      background: rgba(76, 175, 80, 0.3);
+      border-color: #4CAF50;
+      color: #fff;
+    }
+
+    .notification-item.kept {
+      border-left-color: #FFD700;
+    }
+
+    .notification-item.fading {
+      opacity: 0;
+      transform: translateX(-20px);
+      max-height: 0;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
     .mailbox-view-btn {
       margin-top: 10px;
       padding: 8px 16px;
@@ -5739,7 +5789,7 @@
     <div id="scorecard-overlay" class="hidden">
       <h2>Scorecard</h2>
       <div id="scorecard-content"></div>
-      <button class="button" onclick="document.getElementById('scorecard-overlay').classList.add('hidden')">Close</button>
+      <button class="button" onclick="handleScorecardClose()">Close</button>
     </div>
 
     <div id="leaderboard-overlay" class="hidden">
@@ -6094,7 +6144,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.8 | Built: 2026-02-06</div>
+    <div id="version-footer">v1.0.9 | Built: 2026-02-06</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -13638,9 +13688,12 @@
       notifications: [],
       maxNotifications: 50,
       storageKey: 'golf-mailbox',
+      readExpireTime: 5 * 60 * 1000, // 5 minutes
+      expireTimerInterval: null,
 
       init() {
         this.load();
+        this.cleanExpired();
         this.updateBadge();
       },
 
@@ -13690,6 +13743,7 @@
         const notification = this.notifications.find(n => n.id === id);
         if (notification && !notification.read) {
           notification.read = true;
+          notification.readTimestamp = Date.now();
           this.save();
           this.updateBadge();
         }
@@ -13697,9 +13751,11 @@
 
       markAllAsRead() {
         let changed = false;
+        const now = Date.now();
         for (const n of this.notifications) {
           if (!n.read) {
             n.read = true;
+            n.readTimestamp = now;
             changed = true;
           }
         }
@@ -13707,6 +13763,82 @@
           this.save();
           this.updateBadge();
         }
+      },
+
+      keepNotification(id) {
+        const notification = this.notifications.find(n => n.id === id);
+        if (notification) {
+          notification.kept = true;
+          this.save();
+          this.renderMailbox();
+        }
+      },
+
+      cleanExpired() {
+        const now = Date.now();
+        const before = this.notifications.length;
+        this.notifications = this.notifications.filter(n => {
+          if (!n.read || n.kept) return true;
+          if (!n.readTimestamp) return true; // legacy items without timestamp
+          return (now - n.readTimestamp) < this.readExpireTime;
+        });
+        if (this.notifications.length !== before) {
+          this.save();
+          this.updateBadge();
+        }
+      },
+
+      getTimeRemaining(notification) {
+        if (!notification.read || notification.kept || !notification.readTimestamp) return null;
+        const elapsed = Date.now() - notification.readTimestamp;
+        const remaining = this.readExpireTime - elapsed;
+        return Math.max(0, remaining);
+      },
+
+      formatTimeRemaining(ms) {
+        if (ms <= 0) return '0:00';
+        const totalSecs = Math.ceil(ms / 1000);
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      },
+
+      startExpireTimer() {
+        this.stopExpireTimer();
+        this.expireTimerInterval = setInterval(() => {
+          this.cleanExpired();
+          // Update timer displays if mailbox is open
+          if (!document.getElementById('mailbox-overlay').classList.contains('hidden')) {
+            this.updateTimerDisplays();
+          }
+        }, 1000);
+      },
+
+      stopExpireTimer() {
+        if (this.expireTimerInterval) {
+          clearInterval(this.expireTimerInterval);
+          this.expireTimerInterval = null;
+        }
+      },
+
+      updateTimerDisplays() {
+        document.querySelectorAll('.notification-timer').forEach(timerEl => {
+          const id = timerEl.dataset.id;
+          const notification = this.notifications.find(n => n.id === id);
+          if (!notification) {
+            // Notification was removed - fade out the item
+            const item = timerEl.closest('.notification-item');
+            if (item) {
+              item.classList.add('fading');
+              setTimeout(() => { this.renderMailbox(); }, 500);
+            }
+            return;
+          }
+          const remaining = this.getTimeRemaining(notification);
+          if (remaining === null) return;
+          timerEl.textContent = this.formatTimeRemaining(remaining);
+          timerEl.classList.toggle('urgent', remaining < 60000);
+        });
       },
 
       getUnreadCount() {
@@ -13755,16 +13887,21 @@
         const container = document.getElementById('mailbox-content');
         if (!container) return;
 
+        // Clean expired before rendering
+        this.cleanExpired();
+
         if (this.notifications.length === 0) {
           container.innerHTML = '<div class="notification-empty">No notifications yet.<br>Play to earn Golf Bucks and achievements!</div>';
+          this.stopExpireTimer();
           return;
         }
 
         container.innerHTML = this.notifications.map(n => {
           const icon = this.getTypeIcon(n.type);
           const timeStr = this.formatTimestamp(n.timestamp);
+          const keptClass = n.kept ? ' kept' : '';
           let html = `
-            <div class="notification-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+            <div class="notification-item ${n.read ? '' : 'unread'}${keptClass}" data-id="${n.id}">
               <div class="notification-header">
                 <span class="notification-type">${icon} ${n.type}</span>
                 <span class="notification-timestamp">${timeStr}</span>
@@ -13781,6 +13918,17 @@
           // Add View Scorecard button for round completions
           if (n.type === 'round' && n.data && n.data.holeScores) {
             html += `<button class="mailbox-view-btn" data-action="scorecard" data-id="${n.id}">📋 View Scorecard</button>`;
+          }
+
+          // Show expire timer and keep button for read (non-kept) items
+          if (n.read && !n.kept && n.readTimestamp) {
+            const remaining = this.getTimeRemaining(n);
+            const timerText = remaining !== null ? this.formatTimeRemaining(remaining) : '';
+            const urgentClass = remaining !== null && remaining < 60000 ? ' urgent' : '';
+            html += `<div class="notification-expire-bar">
+              <span class="notification-timer${urgentClass}" data-id="${n.id}">${timerText}</span>
+              <button class="notification-keep-btn" data-keep-id="${n.id}">Keep</button>
+            </div>`;
           }
 
           html += '</div>';
@@ -13803,6 +13951,18 @@
             }
           });
         });
+
+        // Add click handlers for keep buttons
+        container.querySelectorAll('.notification-keep-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.keepId;
+            this.keepNotification(id);
+          });
+        });
+
+        // Start the expire timer for countdown updates
+        this.startExpireTimer();
       },
 
       showScorecardOverlay(data) {
@@ -15069,6 +15229,7 @@
       setupEventListeners() {
         // Career Mode button
         document.getElementById('career-play-btn')?.addEventListener('click', () => {
+          if (this.careerLoading) return;
           document.getElementById('game-mode-overlay').classList.add('hidden');
           this.showCareerEntry();
         });
@@ -15168,11 +15329,19 @@
         });
       },
 
+      careerLoading: false,
+
       async showCareerEntry() {
-        // Load sprites first
-        await this.loadSprites();
-        document.getElementById('career-entry-overlay').classList.remove('hidden');
-        this.populateCareerSlots();
+        if (this.careerLoading) return;
+        this.careerLoading = true;
+        try {
+          // Load sprites first
+          await this.loadSprites();
+          document.getElementById('career-entry-overlay').classList.remove('hidden');
+          this.populateCareerSlots();
+        } finally {
+          this.careerLoading = false;
+        }
       },
 
       populateCareerSlots() {
@@ -15194,9 +15363,13 @@
           // Click slot to load career
           slot.addEventListener('click', (e) => {
             if (e.target.classList.contains('career-slot-delete')) return;
+            if (this.careerLoading) return;
+            this.careerLoading = true;
             this.activeCareer = career;
             document.getElementById('career-entry-overlay').classList.add('hidden');
             this.showCareerHub();
+            // Reset loading flag after hub is up
+            setTimeout(() => { this.careerLoading = false; }, 500);
           });
 
           // Delete button
@@ -19492,9 +19665,17 @@
         }
         career.aceLastScore = aceScore;
 
-        // Calculate position (simplified - based on score)
-        let position = 1;
-        if (scoreRelativeToPar > -5) position = Math.min(25, 1 + Math.floor((scoreRelativeToPar + 5) * 2));
+        // Calculate position based on player vs Ace comparison + field
+        let position;
+        if (beatAce) {
+          position = 1; // Beat the rival = win the tournament
+        } else if (tiedAce) {
+          position = Math.random() < 0.5 ? 1 : 2; // Coin flip tiebreak
+        } else {
+          // Lost to Ace - position based on how far behind
+          const deficit = scoreRelativeToPar - aceScore; // always positive here
+          position = Math.min(25, 2 + Math.floor(deficit * 1.5));
+        }
 
         // Calculate earnings
         let earnings = 0;
@@ -23212,6 +23393,17 @@
     }
 
     // === Initialize Game (T005, T011, T012) ===
+    // Handle scorecard close - route back to career hub if in career mode
+    function handleScorecardClose() {
+      document.getElementById('scorecard-overlay').classList.add('hidden');
+
+      // If we just finished a career tournament, return to career hub
+      if (CareerSystem.activeCareer && !CareerSystem.isInCareerTournament) {
+        document.getElementById('menu-overlay').classList.add('hidden');
+        CareerSystem.showCareerHub();
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
       console.log('DOM Content Loaded');
 
@@ -23459,6 +23651,7 @@
 
       mailboxCloseBtn.addEventListener('click', () => {
         mailboxOverlay.classList.add('hidden');
+        MailboxManager.stopExpireTimer();
       });
 
       markAllReadBtn.addEventListener('click', () => {
@@ -23469,10 +23662,11 @@
       // Mark notifications as read when clicking on them
       document.getElementById('mailbox-content').addEventListener('click', (e) => {
         const notificationItem = e.target.closest('.notification-item');
-        if (notificationItem) {
+        if (notificationItem && notificationItem.classList.contains('unread')) {
           const id = notificationItem.dataset.id;
           MailboxManager.markAsRead(id);
-          notificationItem.classList.remove('unread');
+          // Re-render to show expire timer
+          MailboxManager.renderMailbox();
         }
       });
 
