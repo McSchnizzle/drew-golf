@@ -5031,11 +5031,21 @@
       align-items: flex-end;
       gap: 40px;
       padding: 20px 30px;
-      background: linear-gradient(180deg, #87CEEB 0%, #2c5f2d 35%, #1e4d2b 60%, #143d1a 100%);
+      background: transparent;
       border-radius: 12px;
       position: relative;
       overflow: hidden;
       min-height: 240px;
+    }
+
+    #interview-bg-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      border-radius: 12px;
     }
 
     .interview-stage::before {
@@ -5046,16 +5056,7 @@
       right: 0;
       height: 40px;
       background: linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%);
-    }
-
-    .interview-stage::after {
-      content: '';
-      position: absolute;
-      top: 15%;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.15) 50%, transparent 90%);
+      z-index: 1;
     }
 
     .interview-reporter-side, .interview-player-side {
@@ -5065,6 +5066,8 @@
       gap: 8px;
       flex: 1;
       max-width: 45%;
+      position: relative;
+      z-index: 2;
     }
 
     #interview-reporter-canvas, #interview-player-canvas {
@@ -5158,6 +5161,107 @@
     .interview-response-btn.selected {
       background: linear-gradient(145deg, #2e7d32, #1b5e20);
       border-color: #4CAF50;
+    }
+
+    .camera-flash-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0);
+      z-index: 10;
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    .camera-flash-overlay.flash {
+      animation: cameraFlash 0.3s ease-out forwards;
+    }
+
+    @keyframes cameraFlash {
+      0% { background: rgba(255, 255, 255, 0.7); }
+      100% { background: rgba(255, 255, 255, 0); }
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #c41e3a;
+      margin-left: 2px;
+      animation: blinkCursor 0.7s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .broadcast-fan-counter {
+      color: #fff;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .broadcast-fan-count {
+      font-weight: bold;
+      font-size: 15px;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .broadcast-fan-count.counting {
+      transform: scale(1.3);
+      color: #FFD700;
+    }
+
+    .crowd-reaction {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      font-weight: bold;
+      color: #FFD700;
+      z-index: 15;
+      pointer-events: none;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      opacity: 0;
+    }
+
+    .crowd-reaction.show {
+      animation: crowdReact 1.5s ease-out forwards;
+    }
+
+    @keyframes crowdReact {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+      30% { transform: translate(-50%, -50%) scale(1); }
+      70% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
+    }
+
+    .response-hint {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: #FFD700;
+      letter-spacing: 2px;
+    }
+
+    .interview-response-btn:hover .response-hint {
+      opacity: 0.7;
+    }
+
+    .interview-dialogue-box.speaker-reporter::before {
+      left: 25%;
+    }
+
+    .interview-dialogue-box.speaker-player::before {
+      left: 75%;
     }
 
     .fanbase-gain {
@@ -5990,7 +6094,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.7 | Built: 2026-02-05</div>
+    <div id="version-footer">v1.0.8 | Built: 2026-02-06</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6324,8 +6428,15 @@
       <div class="interview-broadcast-banner">
         <span class="broadcast-live">● LIVE</span>
         <span class="broadcast-network">GOLF NETWORK</span>
+        <div class="broadcast-fan-counter">
+          <span>Fans:</span>
+          <span class="broadcast-fan-count" id="interview-fan-count">0</span>
+        </div>
       </div>
       <div class="interview-stage">
+        <canvas id="interview-bg-canvas" width="700" height="400"></canvas>
+        <div class="camera-flash-overlay" id="interview-camera-flash"></div>
+        <div class="crowd-reaction" id="interview-crowd-reaction"></div>
         <div class="interview-reporter-side">
           <canvas id="interview-reporter-canvas" width="300" height="500"></canvas>
           <div class="reporter-nameplate">Sarah Collins</div>
@@ -17913,6 +18024,406 @@
       totalFansGained: 0,
 
       isDebutInterview: false,
+      interviewAnimationId: null,
+      interviewClouds: null,
+      typewriterTimeout: null,
+
+      // Tour-based fan multiplier - higher tours give more fans
+      getInterviewFanMultiplier() {
+        const tour = this.activeCareer?.currentTour || 'local';
+        const multipliers = { local: 1, amateur: 1.5, pro: 2.5, legend: 4 };
+        return multipliers[tour] || 1;
+      },
+
+      // Max fans per single response by tour tier
+      getMaxFansPerResponse() {
+        const tour = this.activeCareer?.currentTour || 'local';
+        const caps = { local: 100, amateur: 175, pro: 300, legend: 500 };
+        return caps[tour] || 100;
+      },
+
+      // Scale fan gain by tour level with cap
+      scaleFanGain(baseFans) {
+        const multiplied = Math.round(baseFans * this.getInterviewFanMultiplier());
+        return Math.min(multiplied, this.getMaxFansPerResponse());
+      },
+
+      drawInterviewBackground(canvas) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // 1. Sky gradient - golden hour feel
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5);
+        skyGrad.addColorStop(0, '#1a3a5c');
+        skyGrad.addColorStop(0.3, '#4a7fb5');
+        skyGrad.addColorStop(0.6, '#87CEEB');
+        skyGrad.addColorStop(1, '#e8c590');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, w, h * 0.5);
+
+        // 2. Clouds
+        if (this.interviewClouds) {
+          ctx.save();
+          this.interviewClouds.forEach(cloud => {
+            ctx.fillStyle = `rgba(255, 255, 255, ${cloud.opacity || 0.6})`;
+            ctx.beginPath();
+            ctx.ellipse(cloud.x, cloud.y, cloud.w, cloud.h, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // second puff
+            ctx.beginPath();
+            ctx.ellipse(cloud.x + cloud.w * 0.5, cloud.y - cloud.h * 0.3, cloud.w * 0.7, cloud.h * 0.8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // third puff
+            ctx.beginPath();
+            ctx.ellipse(cloud.x - cloud.w * 0.4, cloud.y + cloud.h * 0.1, cloud.w * 0.6, cloud.h * 0.7, 0, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.restore();
+        }
+
+        // 3. Distant hills - back layer
+        const hillGrad1 = ctx.createLinearGradient(0, h * 0.3, 0, h * 0.5);
+        hillGrad1.addColorStop(0, '#5a8a60');
+        hillGrad1.addColorStop(1, '#4a7a50');
+        ctx.fillStyle = hillGrad1;
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.5);
+        ctx.quadraticCurveTo(w * 0.15, h * 0.32, w * 0.3, h * 0.42);
+        ctx.quadraticCurveTo(w * 0.45, h * 0.35, w * 0.6, h * 0.4);
+        ctx.quadraticCurveTo(w * 0.8, h * 0.33, w, h * 0.44);
+        ctx.lineTo(w, h * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Mid hills
+        const hillGrad2 = ctx.createLinearGradient(0, h * 0.4, 0, h * 0.55);
+        hillGrad2.addColorStop(0, '#4a7a50');
+        hillGrad2.addColorStop(1, '#3a6a40');
+        ctx.fillStyle = hillGrad2;
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.55);
+        ctx.quadraticCurveTo(w * 0.1, h * 0.42, w * 0.25, h * 0.48);
+        ctx.quadraticCurveTo(w * 0.4, h * 0.4, w * 0.55, h * 0.46);
+        ctx.quadraticCurveTo(w * 0.7, h * 0.42, w * 0.85, h * 0.47);
+        ctx.quadraticCurveTo(w * 0.95, h * 0.43, w, h * 0.48);
+        ctx.lineTo(w, h * 0.55);
+        ctx.closePath();
+        ctx.fill();
+
+        // 4. Distant trees on hilltops
+        const treeScale = w / 700; // Scale tree sizes with canvas
+        const treePositions = [
+          { x: w * 0.08, y: h * 0.43, size: 12 * treeScale, type: 'pine' },
+          { x: w * 0.15, y: h * 0.4, size: 14 * treeScale, type: 'oak' },
+          { x: w * 0.22, y: h * 0.44, size: 10 * treeScale, type: 'pine' },
+          { x: w * 0.38, y: h * 0.41, size: 13 * treeScale, type: 'oak' },
+          { x: w * 0.5, y: h * 0.43, size: 11 * treeScale, type: 'pine' },
+          { x: w * 0.62, y: h * 0.4, size: 15 * treeScale, type: 'oak' },
+          { x: w * 0.72, y: h * 0.42, size: 10 * treeScale, type: 'pine' },
+          { x: w * 0.82, y: h * 0.44, size: 12 * treeScale, type: 'pine' },
+          { x: w * 0.92, y: h * 0.43, size: 14 * treeScale, type: 'oak' },
+        ];
+        treePositions.forEach(t => {
+          if (t.type === 'pine') {
+            // Simple pine silhouette
+            ctx.fillStyle = '#2d5a2d';
+            ctx.beginPath();
+            ctx.moveTo(t.x, t.y - t.size * 2.5);
+            ctx.lineTo(t.x - t.size * 0.8, t.y);
+            ctx.lineTo(t.x + t.size * 0.8, t.y);
+            ctx.closePath();
+            ctx.fill();
+            // Trunk
+            ctx.fillStyle = '#4a3528';
+            ctx.fillRect(t.x - 1.5 * treeScale, t.y, 3 * treeScale, t.size * 0.5);
+          } else {
+            // Oak - rounded canopy
+            ctx.fillStyle = '#3a6a35';
+            ctx.beginPath();
+            ctx.arc(t.x, t.y - t.size * 1.5, t.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2d5a2d';
+            ctx.beginPath();
+            ctx.arc(t.x - t.size * 0.4, t.y - t.size * 1.3, t.size * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+            // Trunk
+            ctx.fillStyle = '#4a3528';
+            ctx.fillRect(t.x - 2 * treeScale, t.y - t.size * 0.5, 4 * treeScale, t.size);
+          }
+        });
+
+        // 5. Fairway - perspective trapezoid
+        const fairwayGrad = ctx.createLinearGradient(0, h * 0.5, 0, h);
+        fairwayGrad.addColorStop(0, '#4a8a4a');
+        fairwayGrad.addColorStop(0.3, '#3a7a3a');
+        fairwayGrad.addColorStop(1, '#2a5a2a');
+        ctx.fillStyle = fairwayGrad;
+        ctx.beginPath();
+        ctx.moveTo(w * 0.35, h * 0.48);
+        ctx.lineTo(w * 0.65, h * 0.48);
+        ctx.lineTo(w * 0.85, h);
+        ctx.lineTo(w * 0.15, h);
+        ctx.closePath();
+        ctx.fill();
+
+        // Mow stripes on fairway
+        ctx.save();
+        ctx.clip();
+        for (let i = 0; i < 12; i++) {
+          if (i % 2 === 0) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            const stripeTop = h * 0.48 + (h * 0.52) * (i / 12);
+            const stripeBot = h * 0.48 + (h * 0.52) * ((i + 1) / 12);
+            ctx.fillRect(0, stripeTop, w, stripeBot - stripeTop);
+          }
+        }
+        ctx.restore();
+
+        // Rough on sides of fairway
+        const roughGrad = ctx.createLinearGradient(0, h * 0.48, 0, h);
+        roughGrad.addColorStop(0, '#3a6a3a');
+        roughGrad.addColorStop(1, '#1e4d1e');
+        ctx.fillStyle = roughGrad;
+        // Left rough
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.48);
+        ctx.lineTo(w * 0.35, h * 0.48);
+        ctx.lineTo(w * 0.15, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.fill();
+        // Right rough
+        ctx.beginPath();
+        ctx.moveTo(w * 0.65, h * 0.48);
+        ctx.lineTo(w, h * 0.48);
+        ctx.lineTo(w, h);
+        ctx.lineTo(w * 0.85, h);
+        ctx.closePath();
+        ctx.fill();
+
+        // 6. Distant green and flag
+        const s = treeScale; // reuse scale factor
+        const greenX = w * 0.48;
+        const greenY = h * 0.49;
+        // Green circle
+        ctx.fillStyle = '#4CAF50';
+        ctx.beginPath();
+        ctx.ellipse(greenX, greenY, 18 * s, 8 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#66BB6A';
+        ctx.beginPath();
+        ctx.ellipse(greenX, greenY, 12 * s, 5 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Flagstick
+        ctx.strokeStyle = '#D4A574';
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.moveTo(greenX + 5 * s, greenY);
+        ctx.lineTo(greenX + 5 * s, greenY - 30 * s);
+        ctx.stroke();
+        // Flag - waving
+        const flagT = Date.now() / 800;
+        ctx.fillStyle = '#c41e3a';
+        ctx.beginPath();
+        ctx.moveTo(greenX + 5 * s, greenY - 30 * s);
+        ctx.quadraticCurveTo(greenX + 15 * s, greenY - 27 * s + Math.sin(flagT) * 2 * s, greenX + 20 * s, greenY - 24 * s);
+        ctx.lineTo(greenX + 5 * s, greenY - 20 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        // 7. Sand bunker accent (near green)
+        ctx.fillStyle = '#D4C4A8';
+        ctx.beginPath();
+        ctx.ellipse(greenX + 30 * s, greenY + 3 * s, 10 * s, 5 * s, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#C4B498';
+        ctx.beginPath();
+        ctx.ellipse(greenX + 30 * s, greenY + 3 * s, 7 * s, 3 * s, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 8. Water hazard accent (left side)
+        ctx.fillStyle = 'rgba(60, 130, 180, 0.7)';
+        ctx.beginPath();
+        ctx.ellipse(w * 0.2, h * 0.54, 25 * s, 10 * s, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+        // Water sparkle
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(w * 0.19, h * 0.53, 4 * s, 2 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(w * 0.22, h * 0.545, 3 * s, 1.5 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 9. Foreground grass blades (pre-generated positions)
+        if (this.interviewGrassBlades) {
+          ctx.save();
+          this.interviewGrassBlades.forEach(blade => {
+            const gx = blade.xPct * w;
+            const gy = h - blade.yPct * h;
+            ctx.strokeStyle = `rgba(${Math.round(blade.r)}, ${Math.round(blade.g)}, ${Math.round(blade.b)}, 0.6)`;
+            ctx.lineWidth = blade.width;
+            ctx.beginPath();
+            ctx.moveTo(gx, gy);
+            ctx.quadraticCurveTo(gx + blade.lean * 0.5, gy - blade.h * 0.6, gx + blade.lean, gy - blade.h);
+            ctx.stroke();
+          });
+          ctx.restore();
+        }
+
+        // 10. Golden hour lighting overlay
+        const goldenGrad = ctx.createRadialGradient(w * 0.8, h * 0.25, 0, w * 0.5, h * 0.4, w * 0.8);
+        goldenGrad.addColorStop(0, 'rgba(255, 200, 100, 0.15)');
+        goldenGrad.addColorStop(0.5, 'rgba(255, 180, 80, 0.05)');
+        goldenGrad.addColorStop(1, 'rgba(255, 200, 100, 0)');
+        ctx.fillStyle = goldenGrad;
+        ctx.fillRect(0, 0, w, h);
+      },
+
+      animateInterviewScene() {
+        if (document.getElementById('interview-overlay').classList.contains('hidden')) {
+          return;
+        }
+
+        const canvas = document.getElementById('interview-bg-canvas');
+        if (!canvas) return;
+
+        // Drift clouds
+        if (this.interviewClouds) {
+          this.interviewClouds.forEach(cloud => {
+            cloud.x += cloud.speed;
+            if (cloud.x > canvas.width + 120) cloud.x = -120;
+          });
+        }
+
+        // Redraw background
+        this.drawInterviewBackground(canvas);
+
+        // Character idle sway
+        const t = Date.now() / 1000;
+        const reporterCanvas = document.getElementById('interview-reporter-canvas');
+        const playerCanvas = document.getElementById('interview-player-canvas');
+        if (reporterCanvas) {
+          const sway = Math.sin(t * 1.5) * 1.2;
+          reporterCanvas.style.transform = `translateY(${sway}px)`;
+        }
+        if (playerCanvas) {
+          const sway = Math.sin(t * 1.2 + 1) * 1.2;
+          playerCanvas.style.transform = `translateY(${sway}px)`;
+        }
+
+        // Random camera flash (~every 5 seconds at 60fps)
+        if (Math.random() < 0.003) {
+          this.triggerCameraFlash();
+        }
+
+        this.interviewAnimationId = requestAnimationFrame(() => this.animateInterviewScene());
+      },
+
+      typewriterText(element, text, speed = 30, callback = null) {
+        if (this.typewriterTimeout) clearTimeout(this.typewriterTimeout);
+
+        element.innerHTML = '';
+        let i = 0;
+        let isTag = false;
+        let currentHTML = '';
+
+        const type = () => {
+          if (i < text.length) {
+            const char = text[i];
+            if (char === '<') isTag = true;
+            if (isTag) {
+              currentHTML += char;
+              if (char === '>') isTag = false;
+              i++;
+              type();
+              return;
+            }
+            currentHTML += char;
+            element.innerHTML = currentHTML + '<span class="typewriter-cursor"></span>';
+            i++;
+            this.typewriterTimeout = setTimeout(type, speed);
+          } else {
+            element.innerHTML = currentHTML;
+            if (callback) callback();
+          }
+        };
+        type();
+      },
+
+      triggerCameraFlash() {
+        const flash = document.getElementById('interview-camera-flash');
+        if (!flash) return;
+        flash.classList.remove('flash');
+        void flash.offsetWidth;
+        flash.classList.add('flash');
+        setTimeout(() => flash.classList.remove('flash'), 300);
+      },
+
+      updateInterviewFanCounter(newTotal, gained) {
+        const countEl = document.getElementById('interview-fan-count');
+        if (!countEl) return;
+
+        const startVal = newTotal - gained;
+        const duration = 1000;
+        const startTime = Date.now();
+
+        countEl.classList.add('counting');
+
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(startVal + gained * eased);
+          countEl.textContent = current.toLocaleString();
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            countEl.classList.remove('counting');
+          }
+        };
+        requestAnimationFrame(animate);
+      },
+
+      showCrowdReaction(fans) {
+        const reactionEl = document.getElementById('interview-crowd-reaction');
+        if (!reactionEl) return;
+
+        let reactionText, reactionSize;
+        if (fans >= 300) {
+          reactionText = 'STANDING OVATION!';
+          reactionSize = '32px';
+        } else if (fans >= 150) {
+          reactionText = 'HUGE APPLAUSE!';
+          reactionSize = '28px';
+        } else if (fans >= 100) {
+          reactionText = 'Great Response!';
+          reactionSize = '24px';
+        } else if (fans >= 60) {
+          reactionText = 'Nice Answer';
+          reactionSize = '20px';
+        } else {
+          reactionText = 'Polite Claps';
+          reactionSize = '16px';
+        }
+
+        reactionEl.textContent = reactionText;
+        reactionEl.style.fontSize = reactionSize;
+        reactionEl.classList.remove('show');
+        void reactionEl.offsetWidth;
+        reactionEl.classList.add('show');
+        setTimeout(() => reactionEl.classList.remove('show'), 1500);
+      },
+
+      getResponseHintStars(fans) {
+        if (fans >= 150) return '<span class="response-hint">* * * *</span>';
+        if (fans >= 100) return '<span class="response-hint">* * *</span>';
+        if (fans >= 60) return '<span class="response-hint">* *</span>';
+        return '<span class="response-hint">*</span>';
+      },
 
       async showPreTournamentInterview() {
         const career = this.activeCareer;
@@ -17946,6 +18457,54 @@
         // Draw reporter - full body
         const reporterCanvas = document.getElementById('interview-reporter-canvas');
         await this.drawReporter(reporterCanvas);
+
+        // Initialize cloud positions for animated background
+        this.interviewClouds = [
+          { x: 50, y: 35, w: 40, h: 14, speed: 0.15, opacity: 0.5 },
+          { x: 200, y: 20, w: 35, h: 12, speed: 0.1, opacity: 0.6 },
+          { x: 380, y: 28, w: 50, h: 16, speed: 0.2, opacity: 0.45 },
+          { x: 520, y: 40, w: 30, h: 11, speed: 0.12, opacity: 0.55 },
+        ];
+
+        // Pre-generate grass blade positions to avoid flickering
+        this.interviewGrassBlades = [];
+        for (let i = 0; i < 60; i++) {
+          this.interviewGrassBlades.push({
+            xPct: Math.random(),
+            yPct: Math.random() * 0.03,
+            h: 8 + Math.random() * 15,
+            lean: (Math.random() - 0.5) * 6,
+            r: 30 + Math.random() * 40,
+            g: 80 + Math.random() * 60,
+            b: 20 + Math.random() * 30,
+            width: 1 + Math.random()
+          });
+        }
+
+        // Size and draw background canvas
+        const bgCanvas = document.getElementById('interview-bg-canvas');
+        const stage = document.querySelector('.interview-stage');
+        if (bgCanvas && stage) {
+          bgCanvas.width = stage.offsetWidth * 2;
+          bgCanvas.height = stage.offsetHeight * 2;
+          bgCanvas.style.width = stage.offsetWidth + 'px';
+          bgCanvas.style.height = stage.offsetHeight + 'px';
+          this.drawInterviewBackground(bgCanvas);
+        }
+
+        // Initialize fan counter display
+        const fanCountEl = document.getElementById('interview-fan-count');
+        if (fanCountEl) {
+          fanCountEl.textContent = (career.fanbase || 0).toLocaleString();
+        }
+
+        // Start animation loop
+        if (this.interviewAnimationId) cancelAnimationFrame(this.interviewAnimationId);
+        this.animateInterviewScene();
+
+        // Initial camera flashes
+        setTimeout(() => this.triggerCameraFlash(), 500);
+        setTimeout(() => this.triggerCameraFlash(), 900);
 
         // Setup continue button
         document.getElementById('interview-continue-btn').onclick = () => this.advanceInterview();
@@ -17999,11 +18558,14 @@
         const speakerEl = document.getElementById('interview-speaker');
         const continueBtn = document.getElementById('interview-continue-btn');
         const skipBtn = document.getElementById('interview-skip-btn');
+        const dialogueBox = document.querySelector('.interview-dialogue-box');
 
         // Step 0: Reporter intro
         if (this.interviewStep === 0) {
           speakerEl.textContent = 'Sarah Collins';
-          textEl.innerHTML = this.getReporterIntro(career);
+          dialogueBox.classList.add('speaker-reporter');
+          dialogueBox.classList.remove('speaker-player');
+          this.typewriterText(textEl, this.getReporterIntro(career), 25);
           continueBtn.textContent = 'Continue';
           continueBtn.classList.remove('hidden');
           skipBtn.classList.add('hidden');
@@ -18012,20 +18574,29 @@
         else if (this.interviewStep <= this.currentInterviewQuestions.length) {
           const q = this.currentInterviewQuestions[this.interviewStep - 1];
           speakerEl.textContent = 'Sarah Collins';
-          textEl.innerHTML = `"${q.question}"`;
+          dialogueBox.classList.add('speaker-reporter');
+          dialogueBox.classList.remove('speaker-player');
 
-          // Add response buttons
-          const responsesHTML = q.responses.map((r, i) =>
-            `<button class="interview-response-btn" data-index="${i}">${r.text}</button>`
-          ).join('');
+          const multiplier = this.getInterviewFanMultiplier();
+          const tourName = this.tours[career.currentTour]?.name || 'Tour';
 
-          textEl.innerHTML += `<div class="interview-responses">${responsesHTML}</div>`;
+          // Type the question, then show response buttons
+          this.typewriterText(textEl, `"${q.question}"`, 25, () => {
+            const responsesHTML = q.responses.map((r, i) => {
+              const scaledFans = this.scaleFanGain(r.fans);
+              return `<button class="interview-response-btn" data-index="${i}">${r.text}${this.getResponseHintStars(scaledFans)}</button>`;
+            }).join('');
 
-          // Setup response handlers
-          textEl.querySelectorAll('.interview-response-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const idx = parseInt(e.target.dataset.index);
-              this.selectInterviewResponse(idx);
+            textEl.innerHTML += `<div class="interview-responses">${responsesHTML}</div>`;
+
+            // Setup response handlers
+            textEl.querySelectorAll('.interview-response-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const btnEl = e.target.closest('.interview-response-btn');
+                if (!btnEl) return;
+                const idx = parseInt(btnEl.dataset.index);
+                this.selectInterviewResponse(idx);
+              });
             });
           });
 
@@ -18035,10 +18606,12 @@
         // Final step: closing
         else {
           speakerEl.textContent = 'Sarah Collins';
+          dialogueBox.classList.add('speaker-reporter');
+          dialogueBox.classList.remove('speaker-player');
           const closingText = this.isDebutInterview
             ? `What a moment! ${career.playerName}'s professional career starts RIGHT NOW. Good luck out there, rookie - we'll all be watching!`
             : `Thank you ${career.playerName}! Best of luck out there today. Back to you in the booth.`;
-          textEl.innerHTML = closingText;
+          this.typewriterText(textEl, closingText, 25);
           continueBtn.textContent = this.isDebutInterview ? 'Make Your Debut!' : 'Start Tournament';
           continueBtn.classList.remove('hidden');
           skipBtn.classList.add('hidden');
@@ -18053,36 +18626,62 @@
       selectInterviewResponse(index) {
         const q = this.currentInterviewQuestions[this.interviewStep - 1];
         const response = q.responses[index];
+        const scaledFans = this.scaleFanGain(response.fans);
 
         // Mark selected
         document.querySelectorAll('.interview-response-btn').forEach(btn => {
           btn.classList.remove('selected');
+          btn.style.pointerEvents = 'none';
         });
         document.querySelector(`.interview-response-btn[data-index="${index}"]`).classList.add('selected');
 
-        // Track response
-        this.selectedResponses.push({ question: q.question, response: response.text, fans: response.fans });
-        this.totalFansGained += response.fans;
+        // Track response with scaled fans
+        this.selectedResponses.push({ question: q.question, response: response.text, fans: scaledFans });
+        this.totalFansGained += scaledFans;
+
+        // Camera flash on response
+        this.triggerCameraFlash();
+
+        // Show crowd reaction
+        this.showCrowdReaction(scaledFans);
+
+        // Update live fan counter
+        const career = this.activeCareer;
+        const currentFanbase = (career.fanbase || 0) + this.totalFansGained;
+        this.updateInterviewFanCounter(currentFanbase, scaledFans);
 
         // Show player saying the response
         setTimeout(() => {
           const speakerEl = document.getElementById('interview-speaker');
           const textEl = document.getElementById('interview-text');
-          const career = this.activeCareer;
+          const dialogueBox = document.querySelector('.interview-dialogue-box');
 
           speakerEl.textContent = career.playerName;
-          textEl.innerHTML = `"${response.text}"`;
+          dialogueBox.classList.remove('speaker-reporter');
+          dialogueBox.classList.add('speaker-player');
 
-          // Show continue button
-          document.getElementById('interview-continue-btn').classList.remove('hidden');
-          document.getElementById('interview-continue-btn').textContent = 'Continue';
-          document.getElementById('interview-skip-btn').classList.add('hidden');
-        }, 300);
+          this.typewriterText(textEl, `"${response.text}"`, 20, () => {
+            // Show continue button after typing finishes
+            document.getElementById('interview-continue-btn').classList.remove('hidden');
+            document.getElementById('interview-continue-btn').textContent = 'Continue';
+            document.getElementById('interview-skip-btn').classList.add('hidden');
+          });
+        }, 400);
       },
 
       advanceInterview() {
         this.interviewStep++;
         if (this.interviewStep > this.currentInterviewQuestions.length + 1) {
+          // Stop animation loop
+          if (this.interviewAnimationId) {
+            cancelAnimationFrame(this.interviewAnimationId);
+            this.interviewAnimationId = null;
+          }
+          if (this.typewriterTimeout) {
+            clearTimeout(this.typewriterTimeout);
+            this.typewriterTimeout = null;
+          }
+
           // Apply fanbase gains and start tournament
           const career = this.activeCareer;
           career.fanbase = (career.fanbase || 0) + this.totalFansGained;
@@ -18110,11 +18709,15 @@
       },
 
       skipInterview() {
-        // Skip gives minimal fanbase
-        this.totalFansGained += 10;
+        // Skip gives minimal fanbase (also scaled by tour)
+        this.totalFansGained += this.scaleFanGain(10);
         this.interviewStep++;
         if (this.interviewStep > this.currentInterviewQuestions.length) {
           this.interviewStep = this.currentInterviewQuestions.length + 1;
+        }
+        if (this.typewriterTimeout) {
+          clearTimeout(this.typewriterTimeout);
+          this.typewriterTimeout = null;
         }
         this.showInterviewDialogue();
       },
