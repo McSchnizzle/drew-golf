@@ -3590,6 +3590,53 @@
     }
 
     /* Career Mode Entry Overlay */
+    #career-loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1800;
+      gap: 20px;
+    }
+    #career-loading-overlay.hidden { display: none; }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      border-top: 4px solid #4CAF50;
+      border-radius: 50%;
+      animation: spinLoader 0.8s linear infinite;
+    }
+
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .loading-golf-ball {
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle at 35% 35%, #fff, #e0e0e0);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      animation: bounceBall 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes bounceBall {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-15px); }
+    }
+
     #career-entry-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -5079,8 +5126,8 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 40px;
-      padding: 20px 30px;
+      gap: 20px;
+      padding: 0 20px 10px;
       background: transparent;
       border-radius: 12px;
       position: relative;
@@ -5113,16 +5160,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       flex: 1;
-      max-width: 45%;
+      max-width: 40%;
       position: relative;
       z-index: 2;
     }
 
     #interview-reporter-canvas, #interview-player-canvas {
       width: 100%;
-      max-width: 180px;
+      max-width: 110px;
       height: auto;
       aspect-ratio: 3/5;
     }
@@ -6144,7 +6191,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.9 | Built: 2026-02-06</div>
+    <div id="version-footer">v1.0.10 | Built: 2026-02-07</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6159,6 +6206,13 @@
   <!-- Tournament Indicator (shown during tournament play) -->
   <div id="tournament-indicator" class="hidden">
     <span id="tournament-indicator-text"></span>
+  </div>
+
+  <!-- Career Loading Screen -->
+  <div id="career-loading-overlay" class="hidden">
+    <div class="loading-golf-ball"></div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Loading Career...</div>
   </div>
 
   <!-- Career Mode Entry -->
@@ -15334,11 +15388,18 @@
       async showCareerEntry() {
         if (this.careerLoading) return;
         this.careerLoading = true;
+        const loadingOverlay = document.getElementById('career-loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        loadingText.textContent = 'Loading Career...';
+        loadingOverlay.classList.remove('hidden');
         try {
-          // Load sprites first
           await this.loadSprites();
+          loadingOverlay.classList.add('hidden');
           document.getElementById('career-entry-overlay').classList.remove('hidden');
           this.populateCareerSlots();
+        } catch(e) {
+          loadingOverlay.classList.add('hidden');
+          console.error('Failed to load career:', e);
         } finally {
           this.careerLoading = false;
         }
@@ -15361,15 +15422,21 @@
           `;
 
           // Click slot to load career
-          slot.addEventListener('click', (e) => {
+          slot.addEventListener('click', async (e) => {
             if (e.target.classList.contains('career-slot-delete')) return;
             if (this.careerLoading) return;
             this.careerLoading = true;
-            this.activeCareer = career;
+            const loadingOverlay = document.getElementById('career-loading-overlay');
+            const loadingText = document.getElementById('loading-text');
+            loadingText.textContent = `Loading ${career.playerName}'s Career...`;
+            loadingOverlay.classList.remove('hidden');
             document.getElementById('career-entry-overlay').classList.add('hidden');
+            this.activeCareer = career;
+            // Small delay to let loading screen render
+            await new Promise(r => setTimeout(r, 100));
             this.showCareerHub();
-            // Reset loading flag after hub is up
-            setTimeout(() => { this.careerLoading = false; }, 500);
+            loadingOverlay.classList.add('hidden');
+            this.careerLoading = false;
           });
 
           // Delete button
@@ -15400,8 +15467,12 @@
       },
 
       async showCharacterCreator() {
-        // Load sprites first
+        const loadingOverlay = document.getElementById('career-loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        loadingText.textContent = 'Preparing Character Creator...';
+        loadingOverlay.classList.remove('hidden');
         await this.loadSprites();
+        loadingOverlay.classList.add('hidden');
         document.getElementById('character-creator-overlay').classList.remove('hidden');
         this.populateCreatorOptions();
         this.updateCharacterPreview();
@@ -18225,16 +18296,21 @@
         const ctx = canvas.getContext('2d');
         const w = canvas.width;
         const h = canvas.height;
+        const s = w / 700; // universal scale factor
         ctx.clearRect(0, 0, w, h);
 
-        // 1. Sky gradient - golden hour feel
-        const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5);
+        // Layout: sky 0-35%, hills/course 35-70%, foreground ground 70-100%
+        const horizonY = h * 0.35;
+        const groundY = h * 0.68; // where foreground starts
+
+        // 1. Sky gradient
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
         skyGrad.addColorStop(0, '#1a3a5c');
-        skyGrad.addColorStop(0.3, '#4a7fb5');
-        skyGrad.addColorStop(0.6, '#87CEEB');
-        skyGrad.addColorStop(1, '#e8c590');
+        skyGrad.addColorStop(0.4, '#4a7fb5');
+        skyGrad.addColorStop(0.75, '#87CEEB');
+        skyGrad.addColorStop(1, '#a8d8ea');
         ctx.fillStyle = skyGrad;
-        ctx.fillRect(0, 0, w, h * 0.5);
+        ctx.fillRect(0, 0, w, horizonY);
 
         // 2. Clouds
         if (this.interviewClouds) {
@@ -18242,65 +18318,61 @@
           this.interviewClouds.forEach(cloud => {
             ctx.fillStyle = `rgba(255, 255, 255, ${cloud.opacity || 0.6})`;
             ctx.beginPath();
-            ctx.ellipse(cloud.x, cloud.y, cloud.w, cloud.h, 0, 0, Math.PI * 2);
+            ctx.ellipse(cloud.x, cloud.y * 0.8, cloud.w, cloud.h, 0, 0, Math.PI * 2);
             ctx.fill();
-            // second puff
             ctx.beginPath();
-            ctx.ellipse(cloud.x + cloud.w * 0.5, cloud.y - cloud.h * 0.3, cloud.w * 0.7, cloud.h * 0.8, 0, 0, Math.PI * 2);
+            ctx.ellipse(cloud.x + cloud.w * 0.5, cloud.y * 0.8 - cloud.h * 0.3, cloud.w * 0.7, cloud.h * 0.8, 0, 0, Math.PI * 2);
             ctx.fill();
-            // third puff
             ctx.beginPath();
-            ctx.ellipse(cloud.x - cloud.w * 0.4, cloud.y + cloud.h * 0.1, cloud.w * 0.6, cloud.h * 0.7, 0, 0, Math.PI * 2);
+            ctx.ellipse(cloud.x - cloud.w * 0.4, cloud.y * 0.8 + cloud.h * 0.1, cloud.w * 0.6, cloud.h * 0.7, 0, 0, Math.PI * 2);
             ctx.fill();
           });
           ctx.restore();
         }
 
-        // 3. Distant hills - back layer
-        const hillGrad1 = ctx.createLinearGradient(0, h * 0.3, 0, h * 0.5);
+        // 3. Distant hills behind the course
+        const hillGrad1 = ctx.createLinearGradient(0, horizonY * 0.7, 0, horizonY * 1.2);
         hillGrad1.addColorStop(0, '#5a8a60');
         hillGrad1.addColorStop(1, '#4a7a50');
         ctx.fillStyle = hillGrad1;
         ctx.beginPath();
-        ctx.moveTo(0, h * 0.5);
-        ctx.quadraticCurveTo(w * 0.15, h * 0.32, w * 0.3, h * 0.42);
-        ctx.quadraticCurveTo(w * 0.45, h * 0.35, w * 0.6, h * 0.4);
-        ctx.quadraticCurveTo(w * 0.8, h * 0.33, w, h * 0.44);
-        ctx.lineTo(w, h * 0.5);
+        ctx.moveTo(0, horizonY * 1.15);
+        ctx.quadraticCurveTo(w * 0.12, horizonY * 0.75, w * 0.28, horizonY * 0.95);
+        ctx.quadraticCurveTo(w * 0.42, horizonY * 0.72, w * 0.58, horizonY * 0.88);
+        ctx.quadraticCurveTo(w * 0.75, horizonY * 0.7, w, horizonY * 0.9);
+        ctx.lineTo(w, horizonY * 1.15);
         ctx.closePath();
         ctx.fill();
 
         // Mid hills
-        const hillGrad2 = ctx.createLinearGradient(0, h * 0.4, 0, h * 0.55);
+        const hillGrad2 = ctx.createLinearGradient(0, horizonY * 0.9, 0, horizonY * 1.3);
         hillGrad2.addColorStop(0, '#4a7a50');
         hillGrad2.addColorStop(1, '#3a6a40');
         ctx.fillStyle = hillGrad2;
         ctx.beginPath();
-        ctx.moveTo(0, h * 0.55);
-        ctx.quadraticCurveTo(w * 0.1, h * 0.42, w * 0.25, h * 0.48);
-        ctx.quadraticCurveTo(w * 0.4, h * 0.4, w * 0.55, h * 0.46);
-        ctx.quadraticCurveTo(w * 0.7, h * 0.42, w * 0.85, h * 0.47);
-        ctx.quadraticCurveTo(w * 0.95, h * 0.43, w, h * 0.48);
-        ctx.lineTo(w, h * 0.55);
+        ctx.moveTo(0, horizonY * 1.2);
+        ctx.quadraticCurveTo(w * 0.1, horizonY * 0.95, w * 0.22, horizonY * 1.05);
+        ctx.quadraticCurveTo(w * 0.35, horizonY * 0.9, w * 0.5, horizonY * 1.0);
+        ctx.quadraticCurveTo(w * 0.65, horizonY * 0.88, w * 0.8, horizonY * 1.02);
+        ctx.quadraticCurveTo(w * 0.92, horizonY * 0.92, w, horizonY * 1.0);
+        ctx.lineTo(w, horizonY * 1.2);
         ctx.closePath();
         ctx.fill();
 
-        // 4. Distant trees on hilltops
-        const treeScale = w / 700; // Scale tree sizes with canvas
+        // 4. Trees on hilltops (bigger for depth)
         const treePositions = [
-          { x: w * 0.08, y: h * 0.43, size: 12 * treeScale, type: 'pine' },
-          { x: w * 0.15, y: h * 0.4, size: 14 * treeScale, type: 'oak' },
-          { x: w * 0.22, y: h * 0.44, size: 10 * treeScale, type: 'pine' },
-          { x: w * 0.38, y: h * 0.41, size: 13 * treeScale, type: 'oak' },
-          { x: w * 0.5, y: h * 0.43, size: 11 * treeScale, type: 'pine' },
-          { x: w * 0.62, y: h * 0.4, size: 15 * treeScale, type: 'oak' },
-          { x: w * 0.72, y: h * 0.42, size: 10 * treeScale, type: 'pine' },
-          { x: w * 0.82, y: h * 0.44, size: 12 * treeScale, type: 'pine' },
-          { x: w * 0.92, y: h * 0.43, size: 14 * treeScale, type: 'oak' },
+          { x: w * 0.05, y: horizonY * 0.98, size: 16 * s, type: 'pine' },
+          { x: w * 0.14, y: horizonY * 0.88, size: 20 * s, type: 'oak' },
+          { x: w * 0.24, y: horizonY * 1.0, size: 14 * s, type: 'pine' },
+          { x: w * 0.36, y: horizonY * 0.92, size: 18 * s, type: 'oak' },
+          { x: w * 0.48, y: horizonY * 0.96, size: 15 * s, type: 'pine' },
+          { x: w * 0.6, y: horizonY * 0.87, size: 22 * s, type: 'oak' },
+          { x: w * 0.72, y: horizonY * 0.95, size: 14 * s, type: 'pine' },
+          { x: w * 0.83, y: horizonY * 1.0, size: 16 * s, type: 'pine' },
+          { x: w * 0.93, y: horizonY * 0.92, size: 19 * s, type: 'oak' },
         ];
         treePositions.forEach(t => {
           if (t.type === 'pine') {
-            // Simple pine silhouette
             ctx.fillStyle = '#2d5a2d';
             ctx.beginPath();
             ctx.moveTo(t.x, t.y - t.size * 2.5);
@@ -18308,11 +18380,9 @@
             ctx.lineTo(t.x + t.size * 0.8, t.y);
             ctx.closePath();
             ctx.fill();
-            // Trunk
             ctx.fillStyle = '#4a3528';
-            ctx.fillRect(t.x - 1.5 * treeScale, t.y, 3 * treeScale, t.size * 0.5);
+            ctx.fillRect(t.x - 1.5 * s, t.y, 3 * s, t.size * 0.5);
           } else {
-            // Oak - rounded canopy
             ctx.fillStyle = '#3a6a35';
             ctx.beginPath();
             ctx.arc(t.x, t.y - t.size * 1.5, t.size, 0, Math.PI * 2);
@@ -18321,122 +18391,118 @@
             ctx.beginPath();
             ctx.arc(t.x - t.size * 0.4, t.y - t.size * 1.3, t.size * 0.7, 0, Math.PI * 2);
             ctx.fill();
-            // Trunk
             ctx.fillStyle = '#4a3528';
-            ctx.fillRect(t.x - 2 * treeScale, t.y - t.size * 0.5, 4 * treeScale, t.size);
+            ctx.fillRect(t.x - 2 * s, t.y - t.size * 0.5, 4 * s, t.size);
           }
         });
 
-        // 5. Fairway - perspective trapezoid
-        const fairwayGrad = ctx.createLinearGradient(0, h * 0.5, 0, h);
-        fairwayGrad.addColorStop(0, '#4a8a4a');
-        fairwayGrad.addColorStop(0.3, '#3a7a3a');
-        fairwayGrad.addColorStop(1, '#2a5a2a');
-        ctx.fillStyle = fairwayGrad;
+        // 5. Mid-ground course area (fairway stretching away)
+        const courseGrad = ctx.createLinearGradient(0, horizonY, 0, groundY);
+        courseGrad.addColorStop(0, '#3a7a3a');
+        courseGrad.addColorStop(1, '#2a6a2a');
+        ctx.fillStyle = courseGrad;
+        ctx.fillRect(0, horizonY, w, groundY - horizonY);
+
+        // Fairway - perspective trapezoid narrowing to distance
+        const fwGrad = ctx.createLinearGradient(0, horizonY, 0, groundY);
+        fwGrad.addColorStop(0, '#4a8a4a');
+        fwGrad.addColorStop(1, '#3a7a3a');
+        ctx.fillStyle = fwGrad;
         ctx.beginPath();
-        ctx.moveTo(w * 0.35, h * 0.48);
-        ctx.lineTo(w * 0.65, h * 0.48);
-        ctx.lineTo(w * 0.85, h);
-        ctx.lineTo(w * 0.15, h);
+        ctx.moveTo(w * 0.4, horizonY);
+        ctx.lineTo(w * 0.6, horizonY);
+        ctx.lineTo(w * 0.75, groundY);
+        ctx.lineTo(w * 0.25, groundY);
         ctx.closePath();
         ctx.fill();
 
         // Mow stripes on fairway
         ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(w * 0.4, horizonY);
+        ctx.lineTo(w * 0.6, horizonY);
+        ctx.lineTo(w * 0.75, groundY);
+        ctx.lineTo(w * 0.25, groundY);
+        ctx.closePath();
         ctx.clip();
-        for (let i = 0; i < 12; i++) {
+        const stripeCount = 8;
+        for (let i = 0; i < stripeCount; i++) {
           if (i % 2 === 0) {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-            const stripeTop = h * 0.48 + (h * 0.52) * (i / 12);
-            const stripeBot = h * 0.48 + (h * 0.52) * ((i + 1) / 12);
-            ctx.fillRect(0, stripeTop, w, stripeBot - stripeTop);
+            const sy = horizonY + (groundY - horizonY) * (i / stripeCount);
+            const sh = (groundY - horizonY) / stripeCount;
+            ctx.fillRect(0, sy, w, sh);
           }
         }
         ctx.restore();
 
-        // Rough on sides of fairway
-        const roughGrad = ctx.createLinearGradient(0, h * 0.48, 0, h);
-        roughGrad.addColorStop(0, '#3a6a3a');
-        roughGrad.addColorStop(1, '#1e4d1e');
-        ctx.fillStyle = roughGrad;
-        // Left rough
-        ctx.beginPath();
-        ctx.moveTo(0, h * 0.48);
-        ctx.lineTo(w * 0.35, h * 0.48);
-        ctx.lineTo(w * 0.15, h);
-        ctx.lineTo(0, h);
-        ctx.closePath();
-        ctx.fill();
-        // Right rough
-        ctx.beginPath();
-        ctx.moveTo(w * 0.65, h * 0.48);
-        ctx.lineTo(w, h * 0.48);
-        ctx.lineTo(w, h);
-        ctx.lineTo(w * 0.85, h);
-        ctx.closePath();
-        ctx.fill();
-
-        // 6. Distant green and flag
-        const s = treeScale; // reuse scale factor
-        const greenX = w * 0.48;
-        const greenY = h * 0.49;
-        // Green circle
+        // Green with flag in the mid-distance
+        const greenX = w * 0.5;
+        const greenY2 = horizonY + (groundY - horizonY) * 0.25;
         ctx.fillStyle = '#4CAF50';
         ctx.beginPath();
-        ctx.ellipse(greenX, greenY, 18 * s, 8 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(greenX, greenY2, 28 * s, 12 * s, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#66BB6A';
         ctx.beginPath();
-        ctx.ellipse(greenX, greenY, 12 * s, 5 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(greenX, greenY2, 18 * s, 7 * s, 0, 0, Math.PI * 2);
         ctx.fill();
+
         // Flagstick
         ctx.strokeStyle = '#D4A574';
-        ctx.lineWidth = 1.5 * s;
+        ctx.lineWidth = 2 * s;
         ctx.beginPath();
-        ctx.moveTo(greenX + 5 * s, greenY);
-        ctx.lineTo(greenX + 5 * s, greenY - 30 * s);
+        ctx.moveTo(greenX + 8 * s, greenY2);
+        ctx.lineTo(greenX + 8 * s, greenY2 - 45 * s);
         ctx.stroke();
         // Flag - waving
         const flagT = Date.now() / 800;
         ctx.fillStyle = '#c41e3a';
         ctx.beginPath();
-        ctx.moveTo(greenX + 5 * s, greenY - 30 * s);
-        ctx.quadraticCurveTo(greenX + 15 * s, greenY - 27 * s + Math.sin(flagT) * 2 * s, greenX + 20 * s, greenY - 24 * s);
-        ctx.lineTo(greenX + 5 * s, greenY - 20 * s);
+        ctx.moveTo(greenX + 8 * s, greenY2 - 45 * s);
+        ctx.quadraticCurveTo(greenX + 22 * s, greenY2 - 41 * s + Math.sin(flagT) * 3 * s, greenX + 28 * s, greenY2 - 37 * s);
+        ctx.lineTo(greenX + 8 * s, greenY2 - 32 * s);
         ctx.closePath();
         ctx.fill();
 
-        // 7. Sand bunker accent (near green)
+        // Sand bunker
         ctx.fillStyle = '#D4C4A8';
         ctx.beginPath();
-        ctx.ellipse(greenX + 30 * s, greenY + 3 * s, 10 * s, 5 * s, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(greenX + 40 * s, greenY2 + 8 * s, 15 * s, 7 * s, 0.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#C4B498';
         ctx.beginPath();
-        ctx.ellipse(greenX + 30 * s, greenY + 3 * s, 7 * s, 3 * s, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(greenX + 40 * s, greenY2 + 8 * s, 10 * s, 4 * s, 0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // 8. Water hazard accent (left side)
+        // Water hazard on left
         ctx.fillStyle = 'rgba(60, 130, 180, 0.7)';
         ctx.beginPath();
-        ctx.ellipse(w * 0.2, h * 0.54, 25 * s, 10 * s, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(w * 0.18, greenY2 + 20 * s, 35 * s, 14 * s, -0.1, 0, Math.PI * 2);
         ctx.fill();
-        // Water sparkle
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
         ctx.beginPath();
-        ctx.ellipse(w * 0.19, h * 0.53, 4 * s, 2 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(w * 0.16, greenY2 + 17 * s, 6 * s, 3 * s, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(w * 0.22, h * 0.545, 3 * s, 1.5 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(w * 0.21, greenY2 + 22 * s, 4 * s, 2 * s, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 9. Foreground grass blades (pre-generated positions)
+        // 6. Foreground ground - where characters stand
+        const fgGrad = ctx.createLinearGradient(0, groundY, 0, h);
+        fgGrad.addColorStop(0, '#2a5a2a');
+        fgGrad.addColorStop(0.3, '#1e4d1e');
+        fgGrad.addColorStop(1, '#143d1a');
+        ctx.fillStyle = fgGrad;
+        ctx.fillRect(0, groundY, w, h - groundY);
+
+        // Foreground grass blades
         if (this.interviewGrassBlades) {
           ctx.save();
           this.interviewGrassBlades.forEach(blade => {
             const gx = blade.xPct * w;
-            const gy = h - blade.yPct * h;
-            ctx.strokeStyle = `rgba(${Math.round(blade.r)}, ${Math.round(blade.g)}, ${Math.round(blade.b)}, 0.6)`;
+            const gy = groundY + blade.yPct * (h - groundY) * 3 + 5;
+            ctx.strokeStyle = `rgba(${Math.round(blade.r)}, ${Math.round(blade.g)}, ${Math.round(blade.b)}, 0.5)`;
             ctx.lineWidth = blade.width;
             ctx.beginPath();
             ctx.moveTo(gx, gy);
@@ -18446,10 +18512,10 @@
           ctx.restore();
         }
 
-        // 10. Golden hour lighting overlay
-        const goldenGrad = ctx.createRadialGradient(w * 0.8, h * 0.25, 0, w * 0.5, h * 0.4, w * 0.8);
-        goldenGrad.addColorStop(0, 'rgba(255, 200, 100, 0.15)');
-        goldenGrad.addColorStop(0.5, 'rgba(255, 180, 80, 0.05)');
+        // 7. Golden hour lighting
+        const goldenGrad = ctx.createRadialGradient(w * 0.8, h * 0.2, 0, w * 0.5, h * 0.3, w * 0.8);
+        goldenGrad.addColorStop(0, 'rgba(255, 200, 100, 0.12)');
+        goldenGrad.addColorStop(0.5, 'rgba(255, 180, 80, 0.04)');
         goldenGrad.addColorStop(1, 'rgba(255, 200, 100, 0)');
         ctx.fillStyle = goldenGrad;
         ctx.fillRect(0, 0, w, h);
