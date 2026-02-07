@@ -6274,7 +6274,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.14 | Built: 2026-02-07</div>
+    <div id="version-footer">v1.0.15 | Built: 2026-02-07</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -17655,6 +17655,18 @@
         ctx.closePath();
         ctx.fill();
 
+        // === BACK HAIR (drawn first so it's behind body/neck) ===
+        ctx.fillStyle = hairColor;
+        ctx.beginPath();
+        ctx.moveTo(-15 * scale, -100 * scale);
+        ctx.quadraticCurveTo(-17 * scale, -85 * scale, -14 * scale, -74 * scale);
+        ctx.quadraticCurveTo(-10 * scale, -68 * scale, -6 * scale, -70 * scale);
+        ctx.lineTo(6 * scale, -70 * scale);
+        ctx.quadraticCurveTo(10 * scale, -68 * scale, 14 * scale, -74 * scale);
+        ctx.quadraticCurveTo(17 * scale, -85 * scale, 15 * scale, -100 * scale);
+        ctx.closePath();
+        ctx.fill();
+
         // === TORSO/BLOUSE ===
         ctx.fillStyle = blouseColor;
         ctx.beginPath();
@@ -17756,19 +17768,6 @@
         ctx.beginPath();
         ctx.arc(16 * scale, -73 * scale, 2.5 * scale, 0, Math.PI * 2);
         ctx.stroke();
-
-        // === BACK HAIR (drawn BEHIND head) ===
-        ctx.fillStyle = hairColor;
-        // Hair hanging behind the head down to shoulders
-        ctx.beginPath();
-        ctx.moveTo(-15 * scale, -100 * scale);
-        ctx.quadraticCurveTo(-17 * scale, -85 * scale, -14 * scale, -74 * scale);
-        ctx.quadraticCurveTo(-10 * scale, -68 * scale, -6 * scale, -70 * scale);
-        ctx.lineTo(6 * scale, -70 * scale);
-        ctx.quadraticCurveTo(10 * scale, -68 * scale, 14 * scale, -74 * scale);
-        ctx.quadraticCurveTo(17 * scale, -85 * scale, 15 * scale, -100 * scale);
-        ctx.closePath();
-        ctx.fill();
 
         // === NECK ===
         ctx.fillStyle = skinTone;
