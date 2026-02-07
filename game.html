@@ -6274,7 +6274,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.13 | Built: 2026-02-07</div>
+    <div id="version-footer">v1.0.14 | Built: 2026-02-07</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -17757,6 +17757,19 @@
         ctx.arc(16 * scale, -73 * scale, 2.5 * scale, 0, Math.PI * 2);
         ctx.stroke();
 
+        // === BACK HAIR (drawn BEHIND head) ===
+        ctx.fillStyle = hairColor;
+        // Hair hanging behind the head down to shoulders
+        ctx.beginPath();
+        ctx.moveTo(-15 * scale, -100 * scale);
+        ctx.quadraticCurveTo(-17 * scale, -85 * scale, -14 * scale, -74 * scale);
+        ctx.quadraticCurveTo(-10 * scale, -68 * scale, -6 * scale, -70 * scale);
+        ctx.lineTo(6 * scale, -70 * scale);
+        ctx.quadraticCurveTo(10 * scale, -68 * scale, 14 * scale, -74 * scale);
+        ctx.quadraticCurveTo(17 * scale, -85 * scale, 15 * scale, -100 * scale);
+        ctx.closePath();
+        ctx.fill();
+
         // === NECK ===
         ctx.fillStyle = skinTone;
         ctx.fillRect(-3 * scale, -82 * scale, 6 * scale, 8 * scale);
@@ -17767,23 +17780,42 @@
         ctx.arc(0, -95 * scale, 14 * scale, 0, Math.PI * 2);
         ctx.fill();
 
-        // === HAIR ===
+        // === FRONT HAIR (drawn ON TOP of head) ===
         ctx.fillStyle = hairColor;
-        // Main hair volume
+
+        // Top dome - sits on top half of head only
         ctx.beginPath();
-        ctx.arc(0, -98 * scale, 15 * scale, Math.PI + 0.4, -0.4);
+        ctx.moveTo(-15 * scale, -97 * scale);
+        ctx.quadraticCurveTo(-16 * scale, -112 * scale, 0, -114 * scale);
+        ctx.quadraticCurveTo(16 * scale, -112 * scale, 15 * scale, -97 * scale);
+        // Curve back across the forehead (not covering eyes)
+        ctx.quadraticCurveTo(10 * scale, -103 * scale, 0, -104 * scale);
+        ctx.quadraticCurveTo(-10 * scale, -103 * scale, -15 * scale, -97 * scale);
+        ctx.closePath();
         ctx.fill();
-        // Side hair (bob cut style)
+
+        // Left side hair framing face
         ctx.beginPath();
-        ctx.ellipse(-12 * scale, -90 * scale, 5 * scale, 12 * scale, 0.2, 0, Math.PI * 2);
+        ctx.moveTo(-15 * scale, -97 * scale);
+        ctx.quadraticCurveTo(-16.5 * scale, -90 * scale, -15.5 * scale, -82 * scale);
+        ctx.quadraticCurveTo(-15 * scale, -78 * scale, -13 * scale, -78 * scale);
+        ctx.quadraticCurveTo(-14 * scale, -86 * scale, -13.5 * scale, -95 * scale);
+        ctx.closePath();
         ctx.fill();
+
+        // Right side hair framing face
         ctx.beginPath();
-        ctx.ellipse(12 * scale, -90 * scale, 5 * scale, 12 * scale, -0.2, 0, Math.PI * 2);
+        ctx.moveTo(15 * scale, -97 * scale);
+        ctx.quadraticCurveTo(16.5 * scale, -90 * scale, 15.5 * scale, -82 * scale);
+        ctx.quadraticCurveTo(15 * scale, -78 * scale, 13 * scale, -78 * scale);
+        ctx.quadraticCurveTo(14 * scale, -86 * scale, 13.5 * scale, -95 * scale);
+        ctx.closePath();
         ctx.fill();
-        // Hair shine
-        ctx.fillStyle = lighten(hairColor, 30);
+
+        // Hair shine highlight
+        ctx.fillStyle = lighten(hairColor, 25);
         ctx.beginPath();
-        ctx.arc(-5 * scale, -105 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.ellipse(-4 * scale, -111 * scale, 5 * scale, 2 * scale, -0.2, 0, Math.PI * 2);
         ctx.fill();
 
         // === FACE (cute cartoon style matching player characters) ===
