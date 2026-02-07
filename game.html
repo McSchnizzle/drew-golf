@@ -3589,52 +3589,274 @@
       50% { transform: scale(1.1); }
     }
 
-    /* Career Mode Entry Overlay */
+    /* Career Loading Screen */
     #career-loading-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #1a1040 100%);
+      z-index: 1800;
+      overflow: hidden;
+    }
+    #career-loading-overlay.hidden { display: none; }
+
+    /* Animated golf course scene background */
+    .loading-scene {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .loading-sky {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 55%;
+      background: linear-gradient(180deg, #1a0a3e 0%, #2d1569 25%, #5c3d99 50%, #e8945a 80%, #f4c76b 100%);
+      overflow: hidden;
+    }
+    .loading-cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50px;
+      filter: blur(3px);
+    }
+    .loading-cloud-1 {
+      width: 120px; height: 30px; top: 15%; left: -120px;
+      animation: driftCloud 12s linear infinite;
+    }
+    .loading-cloud-2 {
+      width: 90px; height: 22px; top: 28%; left: -90px;
+      animation: driftCloud 16s linear infinite 4s;
+      opacity: 0.6;
+    }
+    .loading-cloud-3 {
+      width: 150px; height: 35px; top: 8%; left: -150px;
+      animation: driftCloud 20s linear infinite 8s;
+      opacity: 0.4;
+    }
+    @keyframes driftCloud {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(100vw + 200px)); }
+    }
+    .loading-hills {
+      position: absolute;
+      top: 42%; left: 0; right: 0; height: 25%;
+      background:
+        radial-gradient(ellipse 60% 100% at 20% 100%, #2d6b1e 0%, transparent 70%),
+        radial-gradient(ellipse 50% 100% at 75% 100%, #348726 0%, transparent 70%),
+        radial-gradient(ellipse 80% 100% at 50% 100%, #3a9c2a 0%, transparent 70%);
+    }
+    .loading-fairway {
+      position: absolute;
+      top: 58%; left: 0; right: 0; height: 22%;
+      background: linear-gradient(180deg, #3a9c2a 0%, #4CAF50 40%, #43A047 100%);
+    }
+    .loading-fairway::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 20%; right: 20%; bottom: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      transform: perspective(200px) rotateX(5deg);
+    }
+    .loading-ground {
+      position: absolute;
+      top: 76%; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, #43A047 0%, #2E7D32 30%, #1B5E20 100%);
+    }
+
+    /* Content overlay */
+    .loading-content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 1800;
-      gap: 20px;
-    }
-    #career-loading-overlay.hidden { display: none; }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255, 255, 255, 0.15);
-      border-top: 4px solid #4CAF50;
-      border-radius: 50%;
-      animation: spinLoader 0.8s linear infinite;
+      z-index: 2;
+      gap: 12px;
+      padding: 20px;
     }
 
-    @keyframes spinLoader {
-      to { transform: rotate(360deg); }
+    /* Flag + ball logo */
+    .loading-logo {
+      position: relative;
+      width: 80px;
+      height: 90px;
+      margin-bottom: 8px;
     }
-
-    .loading-text {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 16px;
-      font-weight: bold;
-      letter-spacing: 1px;
+    .loading-flag-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
-
+    .loading-flag-pole {
+      width: 3px;
+      height: 60px;
+      background: linear-gradient(180deg, #ddd, #999);
+      margin: 0 auto;
+      border-radius: 1px;
+    }
+    .loading-flag {
+      position: absolute;
+      top: 0;
+      left: 3px;
+      width: 28px;
+      height: 18px;
+      background: linear-gradient(135deg, #e53935, #c62828);
+      clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
+      animation: flagWave 2s ease-in-out infinite;
+      transform-origin: left center;
+    }
+    @keyframes flagWave {
+      0%, 100% { transform: scaleX(1) skewY(0deg); }
+      25% { transform: scaleX(0.92) skewY(-2deg); }
+      75% { transform: scaleX(1.04) skewY(1deg); }
+    }
+    .loading-ball-track {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
     .loading-golf-ball {
-      width: 24px;
-      height: 24px;
-      background: radial-gradient(circle at 35% 35%, #fff, #e0e0e0);
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle at 35% 30%, #ffffff, #e8e8e8 50%, #d0d0d0);
       border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      animation: bounceBall 0.6s ease-in-out infinite alternate;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 -2px 4px rgba(0,0,0,0.1);
+      animation: bounceBall 0.7s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 2;
     }
-
+    .loading-golf-ball::after {
+      content: '';
+      position: absolute;
+      top: 4px; left: 5px;
+      width: 12px; height: 8px;
+      background: repeating-radial-gradient(circle, transparent 0px, transparent 1px, rgba(200,200,200,0.3) 1px, rgba(200,200,200,0.3) 1.5px);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+    .loading-ball-shadow {
+      width: 20px;
+      height: 6px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 50%;
+      margin: 4px auto 0;
+      animation: ballShadow 0.7s ease-in-out infinite alternate;
+    }
     @keyframes bounceBall {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-15px); }
+      100% { transform: translateY(-18px); }
+    }
+    @keyframes ballShadow {
+      0% { transform: scaleX(1); opacity: 0.2; }
+      100% { transform: scaleX(0.6); opacity: 0.1; }
+    }
+
+    /* Title */
+    .loading-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 30px rgba(76, 175, 80, 0.3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Progress bar */
+    .loading-progress-bar {
+      width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .loading-progress-fill {
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, #4CAF50, #81C784, #4CAF50);
+      background-size: 200% 100%;
+      border-radius: 3px;
+      animation: progressShimmer 1.5s ease-in-out infinite, progressGrow 2.5s ease-out forwards;
+    }
+    @keyframes progressShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes progressGrow {
+      0% { width: 5%; }
+      30% { width: 40%; }
+      60% { width: 65%; }
+      80% { width: 80%; }
+      100% { width: 92%; }
+    }
+
+    /* Loading text */
+    .loading-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      animation: textPulse 2s ease-in-out infinite;
+    }
+    @keyframes textPulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Tips */
+    .loading-tips {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 8px;
+      max-width: 260px;
+      text-align: center;
+      min-height: 32px;
+      animation: fadeInTip 0.5s ease-out;
+    }
+    @keyframes fadeInTip {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating sparkles */
+    .loading-sparkles {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      animation: sparkleFloat 3s ease-in-out infinite;
+    }
+    .sparkle::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 6px; height: 6px;
+      background: radial-gradient(circle, rgba(255,255,255,0.6), transparent);
+      border-radius: 50%;
+    }
+    .sparkle-1 { top: 30%; left: 15%; animation-delay: 0s; animation-duration: 3.5s; }
+    .sparkle-2 { top: 50%; left: 80%; animation-delay: 0.8s; animation-duration: 2.8s; }
+    .sparkle-3 { top: 20%; left: 60%; animation-delay: 1.5s; animation-duration: 4s; }
+    .sparkle-4 { top: 65%; left: 30%; animation-delay: 2.2s; animation-duration: 3.2s; }
+    .sparkle-5 { top: 40%; left: 90%; animation-delay: 0.5s; animation-duration: 3.8s; }
+    .sparkle-6 { top: 75%; left: 55%; animation-delay: 1.8s; animation-duration: 2.5s; }
+    @keyframes sparkleFloat {
+      0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+      20% { opacity: 1; transform: translateY(-8px) scale(1); }
+      80% { opacity: 0.6; transform: translateY(-20px) scale(0.8); }
     }
 
     #career-entry-overlay {
@@ -5123,16 +5345,10 @@
 
     .interview-stage {
       flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 20px;
-      padding: 0 20px 10px;
-      background: transparent;
-      border-radius: 12px;
       position: relative;
       overflow: hidden;
-      min-height: 240px;
+      min-height: 280px;
+      border-radius: 12px;
     }
 
     #interview-bg-canvas {
@@ -5145,43 +5361,65 @@
       border-radius: 12px;
     }
 
+    /* Vignette + bottom darken for character grounding */
     .interview-stage::before {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse at center 30%, transparent 50%, rgba(0,0,0,0.3) 100%),
+        linear-gradient(0deg, rgba(0,0,0,0.4) 0%, transparent 40%);
       z-index: 1;
+      pointer-events: none;
+      border-radius: 12px;
     }
 
+    /* Characters positioned absolutely at bottom of stage, large bust-up */
     .interview-reporter-side, .interview-player-side {
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      flex: 1;
-      max-width: 40%;
+    }
+    .interview-reporter-side {
+      left: -25px;
+    }
+    .interview-player-side {
+      right: -25px;
+    }
+
+    /* Clip container - shows head + upper torso via scale zoom */
+    .interview-character-wrap {
+      width: 210px;
+      height: 240px;
+      overflow: hidden;
       position: relative;
-      z-index: 2;
     }
 
     #interview-reporter-canvas, #interview-player-canvas {
-      width: 100%;
-      max-width: 110px;
-      height: auto;
-      aspect-ratio: 3/5;
+      width: 300px;
+      height: 500px;
+      transform: scale(2.8);
+      transform-origin: center 33%;
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      margin-left: -150px;
     }
 
     .reporter-nameplate, .player-nameplate {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       color: #fff;
-      padding: 6px 16px;
+      padding: 5px 14px;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       border-bottom: 3px solid #c41e3a;
+      position: relative;
+      z-index: 3;
+      margin-top: -2px;
     }
 
     .interview-dialogue-box {
@@ -6191,7 +6429,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.10 | Built: 2026-02-07</div>
+    <div id="version-footer">v1.0.11 | Built: 2026-02-07</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -6210,9 +6448,42 @@
 
   <!-- Career Loading Screen -->
   <div id="career-loading-overlay" class="hidden">
-    <div class="loading-golf-ball"></div>
-    <div class="loading-spinner"></div>
-    <div class="loading-text" id="loading-text">Loading Career...</div>
+    <div class="loading-scene">
+      <div class="loading-sky">
+        <div class="loading-cloud loading-cloud-1"></div>
+        <div class="loading-cloud loading-cloud-2"></div>
+        <div class="loading-cloud loading-cloud-3"></div>
+      </div>
+      <div class="loading-hills"></div>
+      <div class="loading-fairway"></div>
+      <div class="loading-ground"></div>
+    </div>
+    <div class="loading-content">
+      <div class="loading-logo">
+        <div class="loading-flag-container">
+          <div class="loading-flag-pole"></div>
+          <div class="loading-flag"></div>
+        </div>
+        <div class="loading-ball-track">
+          <div class="loading-golf-ball"></div>
+          <div class="loading-ball-shadow"></div>
+        </div>
+      </div>
+      <div class="loading-title">Career Mode</div>
+      <div class="loading-progress-bar">
+        <div class="loading-progress-fill"></div>
+      </div>
+      <div class="loading-text" id="loading-text">Loading Career...</div>
+      <div class="loading-tips" id="loading-tips"></div>
+    </div>
+    <div class="loading-sparkles">
+      <div class="sparkle sparkle-1"></div>
+      <div class="sparkle sparkle-2"></div>
+      <div class="sparkle sparkle-3"></div>
+      <div class="sparkle sparkle-4"></div>
+      <div class="sparkle sparkle-5"></div>
+      <div class="sparkle sparkle-6"></div>
+    </div>
   </div>
 
   <!-- Career Mode Entry -->
@@ -6542,11 +6813,15 @@
         <div class="camera-flash-overlay" id="interview-camera-flash"></div>
         <div class="crowd-reaction" id="interview-crowd-reaction"></div>
         <div class="interview-reporter-side">
-          <canvas id="interview-reporter-canvas" width="300" height="500"></canvas>
+          <div class="interview-character-wrap">
+            <canvas id="interview-reporter-canvas" width="300" height="500"></canvas>
+          </div>
           <div class="reporter-nameplate">Sarah Collins</div>
         </div>
         <div class="interview-player-side">
-          <canvas id="interview-player-canvas" width="300" height="500"></canvas>
+          <div class="interview-character-wrap">
+            <canvas id="interview-player-canvas" width="300" height="500"></canvas>
+          </div>
           <div class="player-nameplate" id="interview-player-name"></div>
         </div>
       </div>
@@ -15384,21 +15659,55 @@
       },
 
       careerLoading: false,
+      loadingTipInterval: null,
+
+      loadingTips: [
+        'Tip: Wind affects your ball more on longer shots',
+        'Tip: Earn more fans by giving great interviews',
+        'Tip: Higher tours mean bigger prizes and tougher competition',
+        'Tip: Check your mailbox for tournament results',
+        'Tip: Sponsors give bonus income each round',
+        'Tip: Practice makes perfect at the driving range',
+        'Fun fact: The longest drive ever was 515 yards',
+        'Tip: Eagle putts are worth celebrating',
+        'Tip: Keep an eye on Ace McStroke\'s score',
+        'Tip: Build your fanbase to unlock rewards',
+      ],
+
+      showLoadingScreen(text) {
+        const loadingOverlay = document.getElementById('career-loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        const tipsEl = document.getElementById('loading-tips');
+        loadingText.textContent = text;
+        tipsEl.textContent = this.loadingTips[Math.floor(Math.random() * this.loadingTips.length)];
+        loadingOverlay.classList.remove('hidden');
+        this.loadingTipInterval = setInterval(() => {
+          tipsEl.style.animation = 'none';
+          void tipsEl.offsetWidth;
+          tipsEl.textContent = this.loadingTips[Math.floor(Math.random() * this.loadingTips.length)];
+          tipsEl.style.animation = 'fadeInTip 0.5s ease-out';
+        }, 3000);
+      },
+
+      hideLoadingScreen() {
+        document.getElementById('career-loading-overlay').classList.add('hidden');
+        if (this.loadingTipInterval) {
+          clearInterval(this.loadingTipInterval);
+          this.loadingTipInterval = null;
+        }
+      },
 
       async showCareerEntry() {
         if (this.careerLoading) return;
         this.careerLoading = true;
-        const loadingOverlay = document.getElementById('career-loading-overlay');
-        const loadingText = document.getElementById('loading-text');
-        loadingText.textContent = 'Loading Career...';
-        loadingOverlay.classList.remove('hidden');
+        this.showLoadingScreen('Loading Career...');
         try {
           await this.loadSprites();
-          loadingOverlay.classList.add('hidden');
+          this.hideLoadingScreen();
           document.getElementById('career-entry-overlay').classList.remove('hidden');
           this.populateCareerSlots();
         } catch(e) {
-          loadingOverlay.classList.add('hidden');
+          this.hideLoadingScreen();
           console.error('Failed to load career:', e);
         } finally {
           this.careerLoading = false;
@@ -15426,16 +15735,12 @@
             if (e.target.classList.contains('career-slot-delete')) return;
             if (this.careerLoading) return;
             this.careerLoading = true;
-            const loadingOverlay = document.getElementById('career-loading-overlay');
-            const loadingText = document.getElementById('loading-text');
-            loadingText.textContent = `Loading ${career.playerName}'s Career...`;
-            loadingOverlay.classList.remove('hidden');
+            this.showLoadingScreen(`Loading ${career.playerName}'s Career...`);
             document.getElementById('career-entry-overlay').classList.add('hidden');
             this.activeCareer = career;
-            // Small delay to let loading screen render
             await new Promise(r => setTimeout(r, 100));
             this.showCareerHub();
-            loadingOverlay.classList.add('hidden');
+            this.hideLoadingScreen();
             this.careerLoading = false;
           });
 
@@ -15467,12 +15772,9 @@
       },
 
       async showCharacterCreator() {
-        const loadingOverlay = document.getElementById('career-loading-overlay');
-        const loadingText = document.getElementById('loading-text');
-        loadingText.textContent = 'Preparing Character Creator...';
-        loadingOverlay.classList.remove('hidden');
+        this.showLoadingScreen('Preparing Character Creator...');
         await this.loadSprites();
-        loadingOverlay.classList.add('hidden');
+        this.hideLoadingScreen();
         document.getElementById('character-creator-overlay').classList.remove('hidden');
         this.populateCreatorOptions();
         this.updateCharacterPreview();
