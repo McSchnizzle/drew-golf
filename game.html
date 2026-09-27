@@ -2134,40 +2134,112 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.98);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-      max-width: 500px;
-      max-height: 80vh;
+      background: linear-gradient(180deg, #FFFEF8 0%, #F4F1E4 100%);
+      padding: 26px 28px 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(46, 125, 50, 0.25);
+      /* Second shadow doubles as a backdrop that dims whatever is behind the card */
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), 0 0 0 100vmax rgba(8, 20, 12, 0.55);
+      width: min(460px, calc(100vw - 32px));
+      max-height: 86vh;
       overflow-y: auto;
       z-index: 1600;
+      text-align: center;
     }
 
     #scorecard-overlay h2 {
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 14px;
+      color: #1B5E20;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 22px;
     }
 
     .scorecard-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
+      margin: 8px 0 16px;
+      font-variant-numeric: tabular-nums;
     }
 
     .scorecard-table th, .scorecard-table td {
-      padding: 10px;
+      padding: 8px 10px;
       text-align: center;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid rgba(27, 94, 32, 0.12);
+    }
+
+    .scorecard-table tr:nth-child(even) td {
+      background: rgba(27, 94, 32, 0.04);
     }
 
     .scorecard-table th {
-      background: #f5f5f5;
-      font-weight: bold;
+      background: #2E7D32;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
     }
 
-    .score-birdie { color: #4CAF50; font-weight: bold; }
-    .score-eagle { color: #FFD700; font-weight: bold; }
+    .scorecard-table th:first-child { border-top-left-radius: 8px; }
+    .scorecard-table th:last-child { border-top-right-radius: 8px; }
+
+    .scorecard-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 4px 0 18px;
+    }
+
+    .scorecard-stat {
+      background: #fff;
+      border: 1px solid rgba(27, 94, 32, 0.15);
+      border-radius: 12px;
+      padding: 10px 6px;
+    }
+
+    .scorecard-stat .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6B7B6E;
+    }
+
+    .scorecard-stat .value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1f2d22;
+    }
+
+    /* Real-scorecard convention: circles under par, squares over */
+    .scorecard-table td.score-birdie,
+    .scorecard-table td.score-eagle,
+    .scorecard-table td.score-bogey,
+    .scorecard-table td.score-double {
+      position: relative;
+    }
+    .scorecard-table td.score-birdie::after,
+    .scorecard-table td.score-eagle::after,
+    .scorecard-table td.score-bogey::after,
+    .scorecard-table td.score-double::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 30px;
+      height: 26px;
+      transform: translate(-50%, -50%);
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .scorecard-table td.score-eagle::after { box-shadow: 0 0 0 3px #fff, 0 0 0 5px currentColor; }
+    .scorecard-table td.score-bogey::after,
+    .scorecard-table td.score-double::after { border-radius: 4px; }
+    .scorecard-table td.score-double::after { box-shadow: 0 0 0 3px #fff, 0 0 0 5px currentColor; }
+
+    .score-birdie { color: #2E7D32; font-weight: bold; }
+    .score-eagle { color: #B8860B; font-weight: bold; }
     .score-par { color: #2196F3; }
     .score-bogey { color: #FF9800; }
     .score-double { color: #F44336; }
@@ -24327,10 +24399,11 @@
         }
 
         tableHTML += '</table>';
-        tableHTML += `<div style="margin-top: 20px; font-size: 18px;">`;
-        tableHTML += `<strong>Total Strokes:</strong> ${summary.totalStrokes}<br>`;
-        tableHTML += `<strong>Total Par:</strong> ${summary.totalPar}<br>`;
-        tableHTML += `<strong>Final Score:</strong> <span style="color: ${ScoreKeeper.getScoreColor(summary.scoreRelativeToPar)}; font-weight: bold; font-size: 24px;">${ScoreKeeper.getScoreDisplay(summary.scoreRelativeToPar)}</span>`;
+        const finalColor = summary.scoreRelativeToPar <= -2 ? '#B8860B' : ScoreKeeper.getScoreColor(summary.scoreRelativeToPar);
+        tableHTML += `<div class="scorecard-summary">`;
+        tableHTML += `<div class="scorecard-stat"><div class="label">Strokes</div><div class="value">${summary.totalStrokes}</div></div>`;
+        tableHTML += `<div class="scorecard-stat"><div class="label">Par</div><div class="value">${summary.totalPar}</div></div>`;
+        tableHTML += `<div class="scorecard-stat"><div class="label">Final</div><div class="value" style="color: ${finalColor};">${ScoreKeeper.getScoreDisplay(summary.scoreRelativeToPar)}</div></div>`;
         tableHTML += `</div>`;
 
         document.getElementById('scorecard-content').innerHTML = tableHTML;
