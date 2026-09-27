@@ -18,26 +18,43 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { playerName, scoreRelativeToPar, totalStrokes } = req.body;
+      // Body may be missing or unparsed (e.g. wrong Content-Type)
+      let body = req.body;
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (e) { body = null; }
+      }
+      if (!body || typeof body !== 'object') {
+        return res.status(400).json({ error: 'Invalid input' });
+      }
+      const { playerName, scoreRelativeToPar, totalStrokes } = body;
 
-      // Validate input
-      if (!playerName || typeof scoreRelativeToPar !== 'number' || typeof totalStrokes !== 'number') {
+      // Validate input - whole numbers within plausible round bounds (rejects NaN-free
+      // but absurd values like -1e9 that would permanently own the top spot)
+      if (typeof playerName !== 'string' ||
+          !Number.isInteger(scoreRelativeToPar) || !Number.isInteger(totalStrokes) ||
+          totalStrokes < 1 || totalStrokes > 500 ||
+          scoreRelativeToPar < -100 || scoreRelativeToPar > 500 ||
+          scoreRelativeToPar >= totalStrokes) {
         return res.status(400).json({ error: 'Invalid input' });
       }
 
       // Sanitize player name (max 20 chars, alphanumeric + spaces)
-      const sanitizedName = playerName.slice(0, 20).replace(/[^a-zA-Z0-9 ]/g, '');
+      const sanitizedName = playerName.replace(/[^a-zA-Z0-9 ]/g, '').trim().slice(0, 20);
+      if (!sanitizedName) {
+        return res.status(400).json({ error: 'Invalid input' });
+      }
 
       // Get current leaderboard
       const leaderboard = await kv.get('golf-leaderboard') || [];
 
       // Add new entry
-      leaderboard.push({
+      const newEntry = {
         playerName: sanitizedName,
         scoreRelativeToPar,
         totalStrokes,
         completedAt: Date.now()
-      });
+      };
+      leaderboard.push(newEntry);
 
       // Sort by score (lowest first), then by strokes, then by date
       leaderboard.sort((a, b) => {
@@ -57,10 +74,7 @@ export default async function handler(req, res) {
       await kv.set('golf-leaderboard', top10);
 
       // Find the rank of the new entry (if it made the top 10)
-      const newEntryRank = top10.findIndex(e =>
-        e.playerName === sanitizedName &&
-        e.completedAt === top10[top10.length - 1]?.completedAt
-      );
+      const newEntryRank = top10.indexOf(newEntry);
 
       return res.status(200).json({
         success: true,
