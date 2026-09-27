@@ -21195,7 +21195,11 @@
         if (this.canvas) {
           this.ctx = this.canvas.getContext('2d');
           this.resizeCanvas();
-          window.addEventListener('resize', () => this.resizeCanvas());
+          // init() runs at every career tournament start - only attach the resize listener once
+          if (!this.resizeListenerAdded) {
+            window.addEventListener('resize', () => this.resizeCanvas());
+            this.resizeListenerAdded = true;
+          }
         }
       },
 
@@ -22022,6 +22026,9 @@
           // Generate wind for the mini-game
           WindSystem.generateWind(1);
 
+          // Clear any streaker/UFO left over from a previous round
+          RandomEventManager.reset();
+
           // Start the game engine if not already running
           window.gameEngine.start();
         }
@@ -22057,7 +22064,7 @@
           // Position ball 150 yards from the generated hole
           const holeX = hole.holePosition.x;
           const holeY = hole.holePosition.y;
-          const ballX = Math.max(50, holeX - (150 * YARDS_TO_PIXELS));
+          const ballX = Math.max(50, holeX - ScreenScale.yardsToPixels(150));
           const ballY = holeY + (Math.random() - 0.5) * 50;
 
           const ball = window.gameEngine.gameState.ball;
@@ -22066,6 +22073,11 @@
           ball.velocityX = 0;
           ball.velocityY = 0;
           ball.isMoving = false;
+          ball.isAirborne = false;
+          // Clear any flight state left from the previous attempt
+          ball.height = 0;
+          ball.lofted = false;
+          ball.hasLanded = true;
           ball.lastSafePosition = { x: ballX, y: ballY };
           ball.distanceFromHole = PhysicsEngine.distance(
             { x: ballX, y: ballY }, hole.holePosition
@@ -22077,9 +22089,9 @@
           delete ball.holeStartTime;
 
           // Update selected club for the distance
-          window.gameEngine.gameState.selectedClub = ClubSystem.getRecommendedClub(
-            ball, hole.holePosition
-          ) || 'iron7';
+          // Master caddie returns an object ({clubId, ...}); others return a club ID string or null
+          const rec = ClubSystem.getRecommendedClub(ball, hole.holePosition);
+          window.gameEngine.gameState.selectedClub = (typeof rec === 'object' && rec ? rec.clubId : rec) || 'iron7';
 
           this.showMessage('🎯 Closest to Pin', 'Get as close to the hole as you can!', 2000);
         }
@@ -22099,6 +22111,11 @@
           ball.velocityX = 0;
           ball.velocityY = 0;
           ball.isMoving = false;
+          ball.isAirborne = false;
+          // Clear any flight state left from the previous attempt
+          ball.height = 0;
+          ball.lofted = false;
+          ball.hasLanded = true;
           ball.lastSafePosition = { x: ballX, y: ballY };
           ball.distanceFromHole = PhysicsEngine.distance(
             { x: ballX, y: ballY }, hole.holePosition
@@ -22184,8 +22201,8 @@
           par: 1,
           greenPosition: { x: centerX, y: centerY },
           greenRadius: Math.max(canvasW, canvasH) * 2, // Cover way beyond screen
-          // No fairway path - pure green
-          fairwayPath: null,
+          // No fairway path - pure green (empty array, not null: PhysicsEngine.isInRough iterates it every frame)
+          fairwayPath: [],
           fairwayWidth: 0,
           obstacles: obstacles,
           bunkers: [],
@@ -22265,6 +22282,10 @@
           lastSafePosition: { x: teePos.x, y: teePos.y },
           waterPenalty: false,
           color: ballColor,
+          // Grounded, no flight state
+          height: 0,
+          lofted: false,
+          hasLanded: true,
           // Explicitly ensure hole state is clear - use undefined to skip fade check entirely
           inHole: false,
           holeProgress: undefined
@@ -22459,6 +22480,9 @@
         ball.velocityY = 0;
         ball.isMoving = false;
         ball.isAirborne = false;
+        ball.height = 0;
+        ball.lofted = false;
+        ball.hasLanded = true;
 
         // Reset hole state in case ball was heading into hole
         ball.inHole = false;
@@ -22467,6 +22491,8 @@
 
         // Clear hole completing flag to allow next shot
         window.gameEngine.holeCompleting = false;
+        // Don't let the engine treat this reset as a completed shot (would score/consume the attempt)
+        window.gameEngine.ballWasMoving = false;
 
         // Game-specific handling to give attempt back
         if (this.currentGame === 'longestDrive') {
@@ -22576,18 +22602,22 @@
           countdown--;
           if (countdownEl) countdownEl.textContent = countdown;
           if (countdown <= 0) {
-            clearInterval(countdownInterval);
             this.returnToLobby();
           }
         }, 1000);
 
         // Allow clicking anywhere on the overlay to return immediately
         const clickHandler = () => {
-          clearInterval(countdownInterval);
-          overlay.removeEventListener('click', clickHandler);
           this.returnToLobby();
         };
         overlay.addEventListener('click', clickHandler);
+
+        // Both exit paths (countdown or click) must remove the timer AND the overlay listener,
+        // otherwise the stale listener fires on the next use of the shared minigame overlay
+        this.resultCleanup = () => {
+          clearInterval(countdownInterval);
+          overlay.removeEventListener('click', clickHandler);
+        };
 
         // Add to mailbox
         MailboxManager.addNotification(
@@ -22625,6 +22655,8 @@
           window.gameEngine.gameState = null;
         }
         if (window.gameEngine) window.gameEngine.holeCompleting = false;
+        // executeSwing autosaves mini-game shots; drop it so the menu doesn't offer to "resume" a finished mini-game
+        StorageManager.clearGameState();
 
         // Show results popup
         const overlay = document.getElementById('minigame-overlay');
@@ -22641,15 +22673,22 @@
         document.getElementById('scoreboard').classList.remove('hidden');
 
         // Auto-return to career hub
+        // Whichever fires first (timeout or click) cancels the other so neither leaks
         const returnToHub = () => {
+          clearTimeout(hubTimeout);
+          overlay.removeEventListener('click', returnToHub);
           overlay.classList.add('hidden');
           CareerSystem.showCareerHub();
         };
-        setTimeout(returnToHub, 3000);
-        overlay.addEventListener('click', () => returnToHub(), { once: true });
+        const hubTimeout = setTimeout(returnToHub, 3000);
+        overlay.addEventListener('click', returnToHub);
       },
 
       returnToLobby() {
+        if (this.resultCleanup) {
+          this.resultCleanup();
+          this.resultCleanup = null;
+        }
         const overlay = document.getElementById('minigame-overlay');
         overlay.classList.add('hidden');
         this.currentGame = null;
@@ -22668,6 +22707,8 @@
           window.gameEngine.gameState = null;
         }
         if (window.gameEngine) window.gameEngine.holeCompleting = false;
+        // executeSwing autosaves mini-game shots; drop it so the menu doesn't offer to "resume" a finished mini-game
+        StorageManager.clearGameState();
       }
     };
 
@@ -22710,6 +22751,9 @@
       checkTrigger() {
         if (this.cooldownTimer > 0) return false;
         if (this.activeEvent) return false;
+        // No random events during mini-games (UFO would relocate the ball mid-challenge)
+        const gs = window.gameEngine && window.gameEngine.gameState;
+        if (gs && gs.isMiniGame) return false;
 
         if (Math.random() < this.triggerChance) {
           // Pick random event type
@@ -22794,6 +22838,7 @@
         if (!this.activeEvent || !this.activeEvent.started) return false;
         if (this.ballInteraction.active) return false;
         if (ball.isMoving) return false; // Only interact with stationary ball
+        if (ball.inHole) return false; // Don't abduct a ball that's dropping into the cup
         if (this.activeEvent.type !== 'ufo') return false;
 
         const e = this.activeEvent;
@@ -22832,6 +22877,16 @@
         if (!this.ballInteraction.active) return;
 
         const bi = this.ballInteraction;
+
+        // Abort if the player hit the ball mid-abduction or the hole changed (ball object replaced);
+        // otherwise we'd keep overwriting a moving ball's position or "relocate" a stale ball
+        const currentBall = window.gameEngine && window.gameEngine.gameState && window.gameEngine.gameState.ball;
+        if (bi.targetBall !== currentBall || bi.targetBall.isMoving) {
+          this.ballInteraction.active = false;
+          this.ballInteraction.phase = 'none';
+          return;
+        }
+
         bi.progress += deltaTime * 1.5; // Speed of animation
 
         if (bi.phase === 'lifting') {
@@ -22875,6 +22930,12 @@
             bi.targetBall.lastSafePosition = { x: bi.dropPosition.x, y: bi.dropPosition.y };
             bi.targetBall.velocityX = 0;
             bi.targetBall.velocityY = 0;
+            bi.targetBall.height = 0;
+            bi.targetBall.lofted = false;
+            bi.targetBall.hasLanded = true;
+            // Physics only refreshes distance while moving - update it so HUD/club advice aren't stale
+            bi.targetBall.distanceFromHole = PhysicsEngine.distance(bi.targetBall, bi.targetBall.holePosition);
+            if (window.gameEngine && window.gameEngine.gameState) window.gameEngine.updateClubSelector();
 
             this.ballInteraction.active = false;
             this.ballInteraction.phase = 'none';
@@ -23296,7 +23357,9 @@
         const ball = this.gameEngine.createBall(practiceHole, 'white');
 
         // Get recommended club for the tutorial hole distance
-        const recommendedClub = ClubSystem.getRecommendedClub(ball, practiceHole.holePosition);
+        const rec = ClubSystem.getRecommendedClub(ball, practiceHole.holePosition);
+        // Master caddie returns an object ({clubId, ...}); others return a club ID string or null
+        const recommendedClub = typeof rec === 'object' && rec ? rec.clubId : rec;
         // Default to driver if no caddie recommendation
         const defaultClub = recommendedClub || 'driver';
 
@@ -23326,6 +23389,9 @@
 
         // Generate wind for tutorial (moderate wind so it's noticeable)
         WindSystem.generateWind(3); // Use hole 3 params for moderate wind
+
+        // Clear any streaker/UFO left over from a previous round
+        RandomEventManager.reset();
 
         // Hide menu, show game
         document.getElementById('menu-overlay').classList.add('hidden');
@@ -23365,9 +23431,13 @@
 
         const step = this.steps[this.currentStep];
         if (step.action === actionType) {
-          // Action completed! Move to next step
+          // Stop listening now - holeComplete fires every frame while the ball sits in the cup,
+          // and each call would otherwise schedule another nextStep()
+          this.waitingForAction = false;
+          const expectedStep = this.currentStep;
+          // Action completed! Move to next step (unless skipped/advanced in the meantime)
           setTimeout(() => {
-            this.nextStep();
+            if (this.isActive && this.currentStep === expectedStep) this.nextStep();
           }, actionType === 'holeComplete' ? 1500 : 500);
         }
       },
