@@ -5942,7 +5942,7 @@
   <div id="ui-overlay">
     <div id="scoreboard">
       <div class="score-header">
-        <span class="hole-info">Hole <span id="hole-number">1</span></span>
+        <span class="hole-info"><span id="hole-label">Hole </span><span id="hole-number">1</span></span>
         <span class="par-info">Par <span id="hole-par">3</span></span>
         <button class="ingame-settings-btn" id="ingame-settings-btn" title="Settings">⚙️</button>
       </div>
@@ -6355,7 +6355,7 @@
       <button class="menu-icon-btn" id="settings-btn" title="Settings">⚙️</button>
     </div>
     <div id="menu-balance"><span id="menu-balance-amount">0</span> Golf Bucks</div>
-    <div id="version-footer">v1.0.15 | Built: 2026-02-07</div>
+    <div id="version-footer">v1.0.16 | Built: 2026-09-27</div>
   </div>
 
   <!-- Tournament Overlay -->
@@ -7456,9 +7456,20 @@
         // Soft vignette pulls the eye to the middle of the course
         const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
         vg.addColorStop(0, 'rgba(0, 0, 0, 0)');
-        vg.addColorStop(1, themeKey === 'snow' ? 'rgba(40, 60, 90, 0.22)' : 'rgba(0, 20, 0, 0.3)');
+        vg.addColorStop(1, themeKey === 'snow' || themeKey === 'aurora' ? 'rgba(40, 60, 90, 0.22)'
+          : themeKey === 'night' ? 'rgba(0, 5, 20, 0.6)' : 'rgba(0, 20, 0, 0.3)');
         ctx.fillStyle = vg;
         ctx.fillRect(0, 0, W, H);
+
+        if (themeKey === 'aurora') {
+          // Northern lights glow washing over the top of the course
+          const ag = ctx.createLinearGradient(0, 0, W, H * 0.5);
+          ag.addColorStop(0, 'rgba(100, 255, 200, 0.14)');
+          ag.addColorStop(0.5, 'rgba(160, 120, 255, 0.10)');
+          ag.addColorStop(1, 'rgba(100, 255, 200, 0)');
+          ctx.fillStyle = ag;
+          ctx.fillRect(0, 0, W, H * 0.6);
+        }
       },
 
       // Full-screen practice green for the putting mini-game
@@ -7569,9 +7580,25 @@
         const detailCount = Math.floor((W * H) / 9000);
         for (let i = 0; i < detailCount; i++) {
           const x = rand() * W, y = rand() * H;
-          if (themeKey === 'snow') {
+          if (themeKey === 'snow' || themeKey === 'aurora') {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
             ctx.fillRect(x, y, 1.5, 1.5);
+          } else if (themeKey === 'night') {
+            // Fireflies
+            ctx.fillStyle = 'rgba(220, 255, 140, 0.18)';
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(240, 255, 180, 0.9)';
+            ctx.fillRect(x - 0.75, y - 0.75, 1.5, 1.5);
+          } else if (themeKey === 'volcanic') {
+            ctx.fillStyle = rand() < 0.3 ? 'rgba(255, 110, 40, 0.8)' : 'rgba(20, 15, 14, 0.5)';
+            ctx.fillRect(x, y, 1.5, 1.5);
+          } else if (themeKey === 'links') {
+            ctx.fillStyle = rand() < 0.5 ? 'rgba(170, 110, 190, 0.7)' : 'rgba(250, 220, 90, 0.7)'; // Heather and gorse
+            ctx.beginPath();
+            ctx.arc(x, y, 1.4, 0, Math.PI * 2);
+            ctx.fill();
           } else if (themeKey === 'desert') {
             ctx.fillStyle = rand() < 0.5 ? 'rgba(120, 90, 50, 0.45)' : 'rgba(240, 220, 180, 0.5)';
             ctx.beginPath();
@@ -11400,7 +11427,13 @@
       },
 
       getSelectedTheme() {
-        // Tournament theme override takes priority
+        // A round-specific theme (career tournaments) takes priority
+        const override = window.gameEngine && window.gameEngine.gameState && window.gameEngine.gameState.themeOverride;
+        if (override) {
+          const id = override === 'winter' ? 'snow' : override;
+          if (CourseThemes.themes[id]) return CourseThemes.themes[id];
+        }
+        // Tournament theme override
         if (TournamentSystem.isInTournament()) {
           const tournamentTheme = TournamentSystem.getCourseTheme();
           return CourseThemes.themes[tournamentTheme] || CourseThemes.themes.classic;
@@ -11636,6 +11669,100 @@
             moss: 'rgba(50, 150, 100, 0.3)'
           },
           specialHazards: ['palmTree', 'tidalPool']
+        },
+
+        // === Career-exclusive courses (Pro/Legend tours) ===
+        links: {
+          name: 'Seaside Links',
+          rough: {
+            gradient: ['#8C8A4E', '#9C9A5A', '#7E7C44', '#6A6838'],
+            grassDark: 'rgba(95, 90, 45, 0.7)',
+            grassMed: 'rgba(130, 125, 70, 0.6)',
+            grassLight: 'rgba(170, 160, 100, 0.5)'
+          },
+          fairway: { main: '#8FB05A', fringe: '#7A9A4A', stripe: 'rgba(170, 200, 120, 0.3)' },
+          tee: { gradient: ['#86A854', '#6E8E40'], outline: '#55702E', markers: '#F5F5F5', markerOutline: '#9E9E9E' },
+          green: { main: '#6FA048', light: '#82B458', contour: 'rgba(60, 90, 30, 0.15)' },
+          water: { main: '#4E7F96', light: '#6FA0B8', dark: '#2F5566', highlight: 'rgba(255, 255, 255, 0.3)' },
+          sand: { main: '#E0CFA0', light: '#EFE2BC', dark: '#B8A270' },
+          physics: { frictionMod: 0.85, bounceMod: 1.15 }, // Firm, fast links turf
+          tree: {
+            type: 'oak',
+            trunk: { main: '#6D4C2F', dark: '#4E342E', outline: '#3E2723' },
+            foliage: { light: '#9AA85A', mid: '#7C8A44', dark: '#5E6B30', outline: '#434D20' }
+          },
+          rock: { type: 'standard', colors: { light: '#B0AFA8', mid: '#8A8980', dark: '#5C5B55', outline: '#3A3935' }, moss: 'rgba(150, 160, 90, 0.45)' },
+          specialHazards: []
+        },
+
+        night: {
+          name: 'Midnight Classic',
+          rough: {
+            gradient: ['#16302A', '#1C3A32', '#142A24', '#0E201B'],
+            grassDark: 'rgba(8, 25, 20, 0.7)',
+            grassMed: 'rgba(30, 60, 50, 0.6)',
+            grassLight: 'rgba(50, 90, 75, 0.45)'
+          },
+          fairway: { main: '#2E6B4E', fringe: '#255A41', stripe: 'rgba(90, 160, 130, 0.25)' },
+          tee: { gradient: ['#2F6E50', '#225A40'], outline: '#1A4A33', markers: '#80DEEA', markerOutline: '#26C6DA' },
+          green: { main: '#2F7A55', light: '#3C9068', contour: 'rgba(10, 40, 25, 0.2)' },
+          water: { main: '#1E3A5C', light: '#3A6690', dark: '#0E1E33', highlight: 'rgba(200, 225, 255, 0.35)' },
+          sand: { main: '#A8A38C', light: '#C4BFA6', dark: '#7E7A66' },
+          physics: { frictionMod: 1.0, bounceMod: 1.0 },
+          tree: {
+            type: 'oak',
+            trunk: { main: '#3E2C22', dark: '#2A1E17', outline: '#1A120E' },
+            foliage: { light: '#3F7A5E', mid: '#2C5E47', dark: '#1B4232', outline: '#0F2A1F' }
+          },
+          rock: { type: 'standard', colors: { light: '#6E7A86', mid: '#4E5862', dark: '#323A42', outline: '#1C2227' }, moss: 'rgba(40, 90, 70, 0.4)' },
+          specialHazards: []
+        },
+
+        volcanic: {
+          name: 'Volcano Ridge',
+          rough: {
+            gradient: ['#3A3230', '#453B37', '#302826', '#231C1B'],
+            grassDark: 'rgba(20, 15, 14, 0.7)',
+            grassMed: 'rgba(70, 60, 55, 0.5)',
+            grassLight: 'rgba(110, 90, 80, 0.4)'
+          },
+          fairway: { main: '#5E8A3A', fringe: '#4C7230', stripe: 'rgba(140, 180, 90, 0.3)' },
+          tee: { gradient: ['#5A8438', '#46692C'], outline: '#355220', markers: '#FF7043', markerOutline: '#D84315' },
+          green: { main: '#4E8C3A', light: '#62A248', contour: 'rgba(30, 60, 20, 0.18)' },
+          water: { main: '#D84315', light: '#FF8A50', dark: '#8C1D04', highlight: 'rgba(255, 220, 120, 0.45)' }, // Lava pools
+          sand: { main: '#5A5452', light: '#716B68', dark: '#3E3937' }, // Black volcanic sand
+          physics: { frictionMod: 1.0, bounceMod: 1.2 },
+          tree: {
+            type: 'palm',
+            trunk: { main: '#5D4037', dark: '#3E2723', outline: '#2A1B17' },
+            foliage: { light: '#7CB342', mid: '#558B2F', dark: '#33691E', outline: '#1B3A10' }
+          },
+          rock: { type: 'volcanic', colors: { light: '#4A4442', mid: '#332E2C', dark: '#1E1A19', outline: '#000000' }, lava: '#FF5722', lavaGlow: 'rgba(255, 87, 34, 0.35)' },
+          specialHazards: []
+        },
+
+        aurora: {
+          name: 'Aurora Peaks',
+          rough: {
+            gradient: ['#C8D8E8', '#B4C8DC', '#9CB4CC', '#86A0BC'],
+            grassDark: 'rgba(110, 135, 165, 0.5)',
+            grassMed: 'rgba(150, 175, 200, 0.4)',
+            grassLight: 'rgba(210, 225, 240, 0.35)'
+          },
+          fairway: { main: '#7FB8A4', fringe: '#6AA08E', stripe: 'rgba(180, 230, 210, 0.35)' },
+          tee: { gradient: ['#78B09C', '#5E9884'], outline: '#487A68', markers: '#B388FF', markerOutline: '#7C4DFF' },
+          green: { main: '#5FAE92', light: '#76C4A8', contour: 'rgba(40, 90, 80, 0.15)' },
+          water: { main: '#5FB8D8', light: '#9EDCF0', dark: '#2E7A9A', highlight: 'rgba(255, 255, 255, 0.5)' },
+          sand: { main: '#EEF2F8', light: '#FFFFFF', dark: '#C4CEDC' },
+          physics: { frictionMod: 0.75, bounceMod: 0.85 },
+          tree: {
+            type: 'pine',
+            trunk: { main: '#5D4037', dark: '#3E2723', outline: '#2A1B17' },
+            foliage: { light: '#4DB6AC', mid: '#26867A', dark: '#1B5E56', outline: '#0E3B36' },
+            snow: true
+          },
+          rock: { type: 'icy', colors: { light: '#E8F4FA', mid: '#B8CCDA', dark: '#7F98AC', outline: '#557088' }, moss: 'rgba(230, 245, 250, 0.6)' },
+          specialHazards: []
         }
       },
 
@@ -23621,6 +23748,8 @@
       async startNewRound(seed = null, playerName = 'Player', ballColor = 'white', themeOverride = null) {
         const usedSeed = seed || Date.now();
         CourseGenerator.init(usedSeed);
+        // Placeholder so ShopSystem.getSelectedTheme() sees this round's theme while hole 1 is generated
+        this.gameState = { themeOverride: themeOverride };
 
         const canvasRect = this.canvas.getBoundingClientRect();
         const hole = CourseGenerator.generateHole(1, canvasRect.width, canvasRect.height, { centered: true });
@@ -23690,6 +23819,7 @@
           }
 
           CourseGenerator.init(savedState.seed);
+          this.gameState = { themeOverride: savedState.themeOverride || null };
 
           const canvasRect = this.canvas.getBoundingClientRect();
           const hole = CourseGenerator.generateHole(
@@ -23766,7 +23896,10 @@
         const round = this.gameState.round;
         const hole = this.gameState.currentHole;
 
-        document.getElementById('hole-number').textContent = round.currentHoleNumber;
+        // The tutorial's practice hole is round hole 0 - label it "Practice Hole", not "Hole 0"
+        const isPractice = !!this.gameState.isTutorial;
+        document.getElementById('hole-label').textContent = isPractice ? 'Practice Hole' : 'Hole ';
+        document.getElementById('hole-number').textContent = isPractice ? '' : round.currentHoleNumber;
         document.getElementById('hole-par').textContent = hole.par;
         document.getElementById('stroke-count').textContent = round.currentStrokeCount;
         document.getElementById('total-score').textContent = ScoreKeeper.getScoreDisplay(round.scoreRelativeToPar);
@@ -24019,7 +24152,7 @@
         }
 
         // Only save if ball is not in hole (prevents corrupted state on reload)
-        if (!this.gameState.ball.inHole && !this.holeCompleting && !this.gameState.isTutorial) {
+        if (!this.gameState.ball.inHole && !this.holeCompleting && !this.gameState.isTutorial && !this.gameState.isMiniGame) {
           StorageManager.saveGameState(this.gameState);
         }
       }
@@ -24452,6 +24585,9 @@
 
         // Generate new wind for this hole
         WindSystem.generateWind(round.currentHoleNumber);
+
+        // A streaker/UFO shouldn't follow the player onto the next tee
+        RandomEventManager.reset();
 
         // Power-ups disabled
         // PowerUpManager.reset();
