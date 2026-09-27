@@ -1136,47 +1136,54 @@
     }
 
     /* Daily Challenges */
+    /* Compact toast along the bottom so it never covers the hole-complete card */
     .daily-challenge-popup {
       position: fixed;
-      top: 50%;
+      bottom: max(24px, env(safe-area-inset-bottom));
       left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
+      transform: translate(-50%, 30px);
       z-index: 10000;
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
       pointer-events: none;
+      max-width: calc(100vw - 32px);
     }
     .daily-challenge-popup.show {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, 0);
     }
     .daily-challenge-popup-content {
       background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border: 3px solid #FFD700;
-      border-radius: 20px;
-      padding: 30px 40px;
-      text-align: center;
-      box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+      border: 2px solid #FFD700;
+      border-radius: 16px;
+      padding: 12px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto auto;
+      column-gap: 14px;
+      align-items: center;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 215, 0, 0.3);
     }
     .daily-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
+      font-size: 34px;
+      grid-row: 1 / span 3;
     }
     .daily-text {
       color: #FFD700;
-      font-size: 16px;
+      font-size: 11px;
       font-weight: bold;
-      margin-bottom: 5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
     .daily-name {
       color: #fff;
-      font-size: 22px;
+      font-size: 17px;
       font-weight: bold;
-      margin-bottom: 10px;
     }
     .daily-reward {
-      color: #4CAF50;
-      font-size: 24px;
+      color: #66BB6A;
+      font-size: 14px;
       font-weight: bold;
     }
     #daily-challenges-panel {
@@ -24156,7 +24163,8 @@
 
         this.updateRoundProgress();
 
-        const scoreName = ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
+        const scoreName = holeScore.strokes === 1 ? 'Hole in One!' : ScoreKeeper.getScoreName(holeScore.scoreRelativeToPar);
+        ScoreKeeper.updateUI(round); // Round total in the HUD reflects the finished hole
 
         // Notify achievement system
         AchievementManager.onHoleComplete(
