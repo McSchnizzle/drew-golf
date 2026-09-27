@@ -15313,6 +15313,11 @@
         this.saveCareerSlots();
       },
 
+      // Escape player-entered text before inserting into innerHTML
+      escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      },
+
       deleteCareer(careerSlotId) {
         this.careerSlots = this.careerSlots.filter(s => s.careerSlotId !== careerSlotId);
         this.saveCareerSlots();
@@ -15327,7 +15332,7 @@
           lastPlayedAt: Date.now(),
           character: {
             gender: character.gender || 'boy',
-            skinTone: character.skinTone || 2,
+            skinTone: character.skinTone ?? 2,
             skinHex: character.skinHex || null,
             hairstyle: character.hairstyle || 0,
             hairColor: character.hairColor || null,
@@ -15413,6 +15418,8 @@
 
         document.getElementById('hub-back-btn')?.addEventListener('click', () => {
           this.saveActiveCareer();
+          // Leave career mode so Quick Play doesn't use career golfer/sponsor/hub routing
+          this.activeCareer = null;
           document.getElementById('career-hub-overlay').classList.add('hidden');
           document.getElementById('game-mode-overlay').classList.remove('hidden');
         });
@@ -15555,7 +15562,7 @@
           slot.innerHTML = `
             <canvas class="career-slot-avatar" width="50" height="65"></canvas>
             <div class="career-slot-info">
-              <div class="career-slot-name">${career.playerName}</div>
+              <div class="career-slot-name">${this.escapeHtml(career.playerName)}</div>
               <div class="career-slot-details">${this.tours[career.currentTour].name} • $${career.careerGolfBucks}</div>
             </div>
             <button class="career-slot-delete" title="Delete Career">✕</button>
@@ -16754,12 +16761,14 @@
             // Camo pattern
             ctx.globalAlpha = 0.6;
             const camoColors = ['#2E7D32', '#1B5E20', '#33691E', '#4E342E'];
+            // Deterministic pseudo-random so the pattern doesn't change on every redraw
+            const camoRand = (n) => { const v = Math.sin(n * 12.9898) * 43758.5453; return v - Math.floor(v); };
             for (let i = 0; i < 12; i++) {
               ctx.fillStyle = camoColors[i % camoColors.length];
-              const x = (Math.random() - 0.5) * 20 * scale;
-              const y = -20 * scale - Math.random() * 35 * scale;
+              const x = (camoRand(i * 5 + 1) - 0.5) * 20 * scale;
+              const y = -20 * scale - camoRand(i * 5 + 2) * 35 * scale;
               ctx.beginPath();
-              ctx.ellipse(x, y, 4 * scale + Math.random() * 3 * scale, 3 * scale + Math.random() * 2 * scale, Math.random() * Math.PI, 0, Math.PI * 2);
+              ctx.ellipse(x, y, 4 * scale + camoRand(i * 5 + 3) * 3 * scale, 3 * scale + camoRand(i * 5 + 4) * 2 * scale, camoRand(i * 5 + 5) * Math.PI, 0, Math.PI * 2);
               ctx.fill();
             }
             ctx.globalAlpha = 1;
@@ -16782,7 +16791,7 @@
             for (let i = -2; i <= 2; i++) {
               ctx.beginPath();
               ctx.moveTo(i * 4 * scale - 2 * scale, -12 * scale);
-              ctx.quadraticCurveTo(i * 4 * scale, -28 * scale - Math.random() * 8 * scale, i * 4 * scale + 2 * scale, -12 * scale);
+              ctx.quadraticCurveTo(i * 4 * scale, -28 * scale - [5, 2, 7, 3, 6][i + 2] * scale, i * 4 * scale + 2 * scale, -12 * scale);
               ctx.fill();
             }
             ctx.fillStyle = '#FFEB3B';
@@ -18285,15 +18294,18 @@
           </div>
         `;
 
-        document.getElementById('start-tournament-btn').addEventListener('click', () => {
-          this.startTournament(name, seed, tour.entryFee, prize);
+        const startBtn = document.getElementById('start-tournament-btn');
+        startBtn.addEventListener('click', () => {
+          if (startBtn.disabled) return;
+          startBtn.disabled = true; // Prevent double-tap charging the entry fee twice
+          if (!this.startTournament(name, seed, tour.entryFee, prize)) startBtn.disabled = false;
         });
       },
 
       startTournament(name, seed, entryFee, prize) {
         if (this.activeCareer.careerGolfBucks < entryFee) {
           alert('Not enough Golf Bucks!');
-          return;
+          return false;
         }
 
         this.activeCareer.careerGolfBucks -= entryFee;
@@ -18311,6 +18323,7 @@
 
         // Show pre-tournament interview for all tournaments
         this.showPreTournamentInterview();
+        return true;
       },
 
       // Debut interview questions (only for first ever tournament)
@@ -18730,6 +18743,17 @@
           if (i < text.length) {
             const char = text[i];
             if (char === '<') isTag = true;
+            if (char === '&' && !isTag) {
+              // Emit HTML entities (e.g. &amp;) in one step so they never render half-typed
+              const end = text.indexOf(';', i);
+              if (end > i && end - i < 10) {
+                currentHTML += text.slice(i, end + 1);
+                element.innerHTML = currentHTML + '<span class="typewriter-cursor"></span>';
+                i = end + 1;
+                this.typewriterTimeout = setTimeout(type, speed);
+                return;
+              }
+            }
             if (isTag) {
               currentHTML += char;
               if (char === '>') isTag = false;
@@ -18912,7 +18936,7 @@
 
       // Build a context-aware reporter intro based on career stats
       getReporterIntro(career) {
-        const name = career.playerName;
+        const name = this.escapeHtml(career.playerName);
         const tournament = this.activeTournament.name;
         const tour = this.tours[career.currentTour];
 
@@ -19004,9 +19028,10 @@
           speakerEl.textContent = 'Sarah Collins';
           dialogueBox.classList.add('speaker-reporter');
           dialogueBox.classList.remove('speaker-player');
+          const safeName = this.escapeHtml(career.playerName);
           const closingText = this.isDebutInterview
-            ? `What a moment! ${career.playerName}'s professional career starts RIGHT NOW. Good luck out there, rookie - we'll all be watching!`
-            : `Thank you ${career.playerName}! Best of luck out there today. Back to you in the booth.`;
+            ? `What a moment! ${safeName}'s professional career starts RIGHT NOW. Good luck out there, rookie - we'll all be watching!`
+            : `Thank you ${safeName}! Best of luck out there today. Back to you in the booth.`;
           this.typewriterText(textEl, closingText, 25);
           continueBtn.textContent = this.isDebutInterview ? 'Make Your Debut!' : 'Start Tournament';
           continueBtn.classList.remove('hidden');
@@ -19023,6 +19048,9 @@
         const q = this.currentInterviewQuestions[this.interviewStep - 1];
         const response = q.responses[index];
         const scaledFans = this.scaleFanGain(response.fans);
+
+        // Hide skip so it can't race the pending player-response step
+        document.getElementById('interview-skip-btn').classList.add('hidden');
 
         // Mark selected
         document.querySelectorAll('.interview-response-btn').forEach(btn => {
@@ -19066,6 +19094,8 @@
       },
 
       advanceInterview() {
+        // Ignore extra taps after the interview has already closed
+        if (document.getElementById('interview-overlay').classList.contains('hidden')) return;
         this.interviewStep++;
         if (this.interviewStep > this.currentInterviewQuestions.length + 1) {
           // Stop animation loop
@@ -19091,13 +19121,14 @@
           // Delay tournament start if milestone was reached
           const delay = milestones.length > 0 ? 4500 : 500;
 
-          // Announce on tee after interview
+          // Rival encounter (if due) before teeing off; actuallyStartTournament announces the player
           setTimeout(() => {
-            Announcer.announceOnTee(career.playerName);
-          }, delay);
-
-          setTimeout(() => {
-            this.actuallyStartTournament();
+            const rivalType = this.isDebutInterview ? false : this.shouldShowRival();
+            if (rivalType) {
+              this.showRivalEncounter(rivalType);
+            } else {
+              this.actuallyStartTournament();
+            }
           }, delay + 500);
         } else {
           this.showInterviewDialogue();
@@ -19421,6 +19452,8 @@
       },
 
       continueDialogue() {
+        // Ignore extra taps once the dialogue has closed (would start the round twice)
+        if (document.getElementById('career-dialogue-overlay').classList.contains('hidden')) return;
         if (this.dialogueQueue.length > 0) {
           this.showNextDialogueLine();
         } else {
@@ -19818,8 +19851,8 @@
                 <div class="sponsor-progress-fill" style="width: ${progress}%"></div>
               </div>
               <div class="sponsor-bonuses">
-                <span class="sponsor-bonus">+${currentTier.coinsPerRound} 🪙/round</span>
-                ${currentTier.exclusiveOutfit ? `<span class="sponsor-bonus">Exclusive Outfit</span>` : ''}
+                ${currentTier.reward ? `<span class="sponsor-bonus">${currentTier.reward.name}</span>` : ''}
+                ${nextTier?.reward ? `<span class="sponsor-bonus">Next: ${nextTier.reward.name}</span>` : ''}
               </div>
             </div>
           `;
@@ -19947,7 +19980,7 @@
         career.tourRanking = Math.max(1, Math.min(100, oldRanking - Math.floor(points / 10)));
 
         // Update best score
-        if (!career.stats.bestScore || scoreRelativeToPar < career.stats.bestScore) {
+        if (career.stats.bestScore === null || career.stats.bestScore === undefined || scoreRelativeToPar < career.stats.bestScore) {
           career.stats.bestScore = scoreRelativeToPar;
         }
 
@@ -19958,12 +19991,18 @@
           this.promoteTour();
         }
 
-        // Advance week
-        career.seasonWeek++;
-        if (career.seasonWeek > tour.tournamentCount) {
+        // Advance week (a promotion starts the new tour's schedule at tournament 1)
+        if (promoted) {
           career.seasonWeek = 1;
-          career.currentSeason++;
+        } else {
+          career.seasonWeek++;
+          if (career.seasonWeek > tour.tournamentCount) {
+            career.seasonWeek = 1;
+            career.currentSeason++;
+          }
         }
+        // New tournament week - practice range is available again (week numbers repeat each season)
+        career.lastPracticeWeek = null;
 
         this.saveActiveCareer();
         this.isInCareerTournament = false;
@@ -19985,12 +20024,12 @@
           const oldTour = this.activeCareer.currentTour;
           this.activeCareer.currentTour = tourOrder[currentIndex + 1];
           this.activeCareer.tourCoins += 50; // Bonus for promotion
-          this.activeCareer.tourRanking = 50; // Reset ranking in new tour
           this.activeCareer.tourHistory.push({
             tour: oldTour,
             season: this.activeCareer.currentSeason,
             finalRanking: this.activeCareer.tourRanking
           });
+          this.activeCareer.tourRanking = 50; // Reset ranking in new tour
 
           // Show promotion celebration after a delay (tournament results show first)
           const newTour = this.tours[this.activeCareer.currentTour];
