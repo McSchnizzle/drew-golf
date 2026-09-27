@@ -7337,7 +7337,11 @@
         this.cache.height = Math.max(1, Math.round(height * dpr));
         const ctx = this.cache.getContext('2d');
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        this.paintCourse(ctx, hole, theme, width, height, dpr);
+        if (hole.isMinigamePuttingGreen) {
+          this.paintPuttingGreen(ctx, hole, theme, width, height);
+        } else {
+          this.paintCourse(ctx, hole, theme, width, height, dpr);
+        }
         this.cachedHole = hole;
         this.cacheKey = key;
         return this.cache;
@@ -7374,6 +7378,57 @@
         const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
         vg.addColorStop(0, 'rgba(0, 0, 0, 0)');
         vg.addColorStop(1, themeKey === 'snow' ? 'rgba(40, 60, 90, 0.22)' : 'rgba(0, 20, 0, 0.3)');
+        ctx.fillStyle = vg;
+        ctx.fillRect(0, 0, W, H);
+      },
+
+      // Full-screen practice green for the putting mini-game
+      paintPuttingGreen(ctx, hole, theme, W, H) {
+        const rand = this.rng(Math.floor(hole.holePosition.x * 7 + hole.holePosition.y));
+        const base = ctx.createRadialGradient(W * 0.35, H * 0.3, 0, W / 2, H / 2, Math.max(W, H) * 0.8);
+        base.addColorStop(0, '#4FB35A');
+        base.addColorStop(0.6, '#3E9E48');
+        base.addColorStop(1, '#2E7D32');
+        ctx.fillStyle = base;
+        ctx.fillRect(0, 0, W, H);
+
+        // Checkerboard mowing pattern
+        const cell = 44;
+        for (let x = 0, i = 0; x < W; x += cell, i++) {
+          ctx.fillStyle = i % 2 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 30, 0, 0.04)';
+          ctx.fillRect(x, 0, cell, H);
+        }
+        for (let y = 0, j = 0; y < H; y += cell, j++) {
+          ctx.fillStyle = j % 2 ? 'rgba(255, 255, 255, 0.035)' : 'rgba(0, 30, 0, 0.03)';
+          ctx.fillRect(0, y, W, cell);
+        }
+
+        // Grain
+        const grain = new Path2D();
+        for (let i = 0; i < (W * H) / 60; i++) grain.rect(rand() * W, rand() * H, 1, 1);
+        ctx.fillStyle = 'rgba(0, 40, 0, 0.12)';
+        ctx.fill(grain);
+
+        // Collar and rough around the edge of the screen
+        ctx.lineWidth = 26;
+        ctx.strokeStyle = '#2B6E2F';
+        ctx.strokeRect(0, 0, W, H);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.strokeRect(14, 14, W - 28, H - 28);
+
+        for (const o of hole.obstacles || []) {
+          if (o.type === 'water') this.paintWater(ctx, o, theme, this.themeKey(theme));
+          else if (o.type === 'sand') this.paintBunker(ctx, o, theme);
+        }
+        for (const o of hole.obstacles || []) if (o.type === 'rock') this.paintRock(ctx, o, theme);
+        for (const o of hole.obstacles || []) if (o.type === 'tree') this.paintTree(ctx, o, theme);
+
+        this.paintCup(ctx, hole.holePosition, { green: { main: '#3E9E48' } }, 22 / 15);
+
+        const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.4, W / 2, H / 2, Math.max(W, H) * 0.75);
+        vg.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        vg.addColorStop(1, 'rgba(0, 20, 0, 0.3)');
         ctx.fillStyle = vg;
         ctx.fillRect(0, 0, W, H);
       },
@@ -8042,8 +8097,12 @@
         }
       },
 
-      paintCup(ctx, pos, theme) {
+      paintCup(ctx, pos, theme, scale = 1) {
         const hx = pos.x, hy = pos.y;
+        ctx.save();
+        ctx.translate(hx, hy);
+        ctx.scale(scale, scale);
+        ctx.translate(-hx, -hy);
         // Slightly worn ring of darker grass around the cup
         ctx.fillStyle = this.shade(theme.green.main, -0.12, 0.35);
         ctx.beginPath();
@@ -8062,6 +8121,7 @@
         ctx.beginPath();
         ctx.ellipse(hx, hy + 0.5, 13.5, 10.8, 0, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
       }
     };
 
@@ -8103,8 +8163,8 @@
         if (gameState.currentHole && gameState.ball) {
           this.drawCourse(gameState.currentHole, animationTime);
           // Crowd disabled for now - this.drawCrowd(gameState.currentHole);
-          // Static obstacles are baked into the course cache (the putting green draws its own)
-          if (gameState.currentHole.obstacles && !gameState.currentHole.isMinigamePuttingGreen) {
+          // Static obstacles are baked into the course cache; only moving ones are drawn per frame
+          if (gameState.currentHole.obstacles) {
             this.drawDynamicObstacles(gameState.currentHole.obstacles);
           }
 
@@ -8172,70 +8232,27 @@
 
       drawCourse(hole, animationTime = 0) {
         const ctx = this.ctx;
-        const canvasW = this.canvas.width;
-        const canvasH = this.canvas.height;
 
         // Get current theme colors
         const theme = ShopSystem.getSelectedTheme();
 
-        // Special rendering for putting mini-game - pure green surface
-        if (hole.isMinigamePuttingGreen) {
-          // Fill entire canvas with green
-          const greenGradient = ctx.createRadialGradient(
-            canvasW / 2, canvasH / 2, 0,
-            canvasW / 2, canvasH / 2, Math.max(canvasW, canvasH)
-          );
-          greenGradient.addColorStop(0, '#2E7D32');
-          greenGradient.addColorStop(0.5, '#388E3C');
-          greenGradient.addColorStop(1, '#1B5E20');
-          ctx.fillStyle = greenGradient;
-          ctx.fillRect(0, 0, canvasW, canvasH);
-
-          // Draw mow lines (alternating stripes like a real putting green)
-          const stripeWidth = 30;
-          for (let i = 0; i < Math.ceil(canvasW / stripeWidth); i++) {
-            if (i % 2 === 0) {
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-            } else {
-              ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-            }
-            ctx.fillRect(i * stripeWidth, 0, stripeWidth, canvasH);
-          }
-
-          // Draw subtle putting green texture (grain dots)
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
-          for (let i = 0; i < 300; i++) {
-            const x = (i * 137) % canvasW;
-            const y = (i * 173) % canvasH;
-            ctx.beginPath();
-            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          // Draw fringe/rough border around edges
-          ctx.strokeStyle = '#1B5E20';
-          ctx.lineWidth = 8;
-          ctx.strokeRect(4, 4, canvasW - 8, canvasH - 8);
-          ctx.strokeStyle = '#2E7D32';
-          ctx.lineWidth = 3;
-          ctx.strokeRect(8, 8, canvasW - 16, canvasH - 16);
-
-          // Draw the hole
-          this.drawHole(hole.holePosition, animationTime, hole);
-
-          // Draw obstacles
-          if (hole.obstacles) {
-            this.drawObstacles(hole.obstacles);
-          }
-
-          return; // Skip normal course rendering
-        }
-
-        // === Normal course: static layer from the cache, animated details on top ===
         const size = this.getCssSize();
         const cache = CourseArt.ensureCache(hole, theme, size.width, size.height, window.devicePixelRatio || 1);
         ctx.drawImage(cache, 0, 0, size.width, size.height);
 
+        // Putting mini-game: pulsing target ring around the (larger) cup
+        if (hole.isMinigamePuttingGreen) {
+          const hp = hole.holePosition;
+          ctx.strokeStyle = `rgba(255, 215, 0, ${0.25 + Math.sin(animationTime * 4) * 0.15})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.ellipse(hp.x, hp.y, 38, 31, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          this.drawFlag(hp, animationTime, hole);
+          return;
+        }
+
+        // === Normal course: animated details on top of the cached layer ===
         this.drawWaterShimmer(hole, theme, animationTime);
         this.drawCloudShadows(size.width, size.height, animationTime);
         this.drawFlag(hole.holePosition, animationTime, hole);
