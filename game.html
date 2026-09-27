@@ -24307,14 +24307,7 @@
               ShopSystem.addBucks(roundReward, 'Round Complete');
             }
 
-            // Add sponsor income if player has a sponsor (from fanbase)
-            if (typeof CareerSystem !== 'undefined' && CareerSystem.activeCareer) {
-              const sponsorIncome = CareerSystem.getSponsorIncome();
-              if (sponsorIncome > 0) {
-                const sponsor = CareerSystem.getCurrentSponsor();
-                ShopSystem.addBucks(sponsorIncome, `${sponsor.logo} ${sponsor.name} Sponsor`);
-              }
-            }
+            // Career sponsor income is paid into career money by CareerSystem.completeTournament
 
             this.showRoundSummary();
           } else {
@@ -24527,10 +24520,9 @@
           const result = CareerSystem.completeTournament(summary.scoreRelativeToPar);
           if (result) {
             // Generate position text
-            const positionText = result.position === 1 ? '1st' :
-                                 result.position === 2 ? '2nd' :
-                                 result.position === 3 ? '3rd' :
-                                 result.position + 'th';
+            const pos = result.position;
+            const teen = pos % 100 >= 11 && pos % 100 <= 13;
+            const positionText = pos + (teen ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[pos % 10] || 'th'));
 
             // Format scores for display
             const playerScoreText = summary.scoreRelativeToPar === 0 ? 'E' :
@@ -24917,6 +24909,11 @@
 
         // Hide name entry modal
         nameEntryOverlay.classList.add('hidden');
+
+        // A non-career round: drop any abandoned career tournament so this score isn't booked to it
+        CareerSystem.isInCareerTournament = false;
+        CareerSystem.activeTournament = null;
+        CareerSystem.activeCareer = null;
 
         try {
           await gameEngine.startNewRound(null, playerName, selectedBallColor);
