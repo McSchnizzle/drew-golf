@@ -9722,8 +9722,15 @@
 
       load() {
         const data = localStorage.getItem('golf-shop-data');
+        let parsed = null;
         if (data) {
-          const parsed = JSON.parse(data);
+          try {
+            parsed = JSON.parse(data);
+          } catch (e) {
+            console.error('Failed to load shop data:', e);
+          }
+        }
+        if (parsed) {
           this.golfBucks = parsed.golfBucks || 0;
           this.ownedClubs = parsed.ownedClubs || {};
           // Load owned ball skins, default to free colors
@@ -9771,12 +9778,12 @@
         return this.golfBucks;
       },
 
-      addBucks(amount, reason = '') {
-        // Apply 25% bonus for Pro swing mode
+      addBucks(amount, reason = '', applyProBonus = true) {
+        // Apply 25% bonus for Pro swing mode (not for refunds)
         const settings = StorageManager.loadSettings();
         let finalAmount = amount;
         let bonusText = '';
-        if (settings.swingMode === 'pro') {
+        if (applyProBonus && settings.swingMode === 'pro') {
           const bonus = Math.floor(amount * 0.25);
           finalAmount = amount + bonus;
           bonusText = ' (+25% Pro)';
@@ -9992,7 +9999,7 @@
       },
 
       selectClubSkin(skinId) {
-        if (this.ownsClubSkin(skinId)) {
+        if (this.ownsClubSkin(skinId) || this.isFanbaseUnlocked('club', skinId)) {
           this.selectedClubSkin = skinId;
           this.save();
           this.renderShop();
@@ -10949,7 +10956,7 @@
       },
 
       // Available course themes for random selection
-      courseThemes: ['classic', 'desert', 'winter', 'tropical'],
+      courseThemes: ['classic', 'desert', 'snow', 'tropical'],
 
       // Current tournament state
       activeTournament: null,
@@ -11191,7 +11198,7 @@
       leaveQueue() {
         // Refund entry fee if leaving queue before tournament starts
         if (this.activeTournament && !this.activeTournament.started && this.activeTournament.entryFee > 0) {
-          ShopSystem.addBucks(this.activeTournament.entryFee, 'Tournament queue refund');
+          ShopSystem.addBucks(this.activeTournament.entryFee, 'Tournament queue refund', false);
         }
         this.activeTournament = null;
         if (this.queueTimer) {
@@ -11576,9 +11583,9 @@
           }
         }
 
-        // If we've passed all positions, use the last one
+        // Before the first sample, hold at the first recorded position
         if (!pos && positions.length > 0) {
-          pos = positions[positions.length - 1];
+          pos = positions[0];
         }
 
         this.currentGhostPosition = pos;
@@ -12018,6 +12025,11 @@
         }
 
         this.savePersistentStats();
+      },
+
+      // Alias used by CaddieSystem.purchase()
+      onShopPurchase(amount) {
+        this.onPurchase(amount);
       }
     };
 
@@ -23661,6 +23673,7 @@
       Announcer.init();
       AchievementManager.init();
       ShopSystem.init();
+      GhostSystem.init();
       DailyChallengeSystem.init();
       DailyChallengeSystem.updateUI();
       TournamentSystem.init();
@@ -23750,7 +23763,11 @@
       // Function to dynamically render ball color options based on owned skins
       function renderBallColorPicker() {
         ballColorOptions.innerHTML = '';
-        const ownedSkins = ShopSystem.ownedBallSkins;
+        // Include fanbase-exclusive balls unlocked via career fanbase (shown as UNLOCKED in shop)
+        const ownedSkins = [
+          ...ShopSystem.ownedBallSkins,
+          ...Object.keys(ShopSystem.fanbaseExclusiveBalls).filter(id => ShopSystem.isFanbaseUnlocked('ball', id))
+        ];
 
         // If selected color is not owned, reset to white
         if (!ownedSkins.includes(selectedBallColor)) {
@@ -24160,27 +24177,33 @@
       }
 
       // === Shop Tab Switching ===
-      const shopTabs = document.querySelectorAll('.shop-tab');
-      shopTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          // Remove active from all tabs and content
-          shopTabs.forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.shop-tab-content').forEach(c => c.classList.remove('active'));
+      // Scoped to the Pro Shop only: the career Tour Coins shop also uses .shop-tab buttons.
+      // Handled in the capture phase and stopped so the career shop's per-tab listeners
+      // (bound to every .shop-tab) don't also run for Pro Shop tabs.
+      const shopTabsContainer = document.getElementById('shop-tabs');
+      const shopTabs = shopTabsContainer.querySelectorAll('.shop-tab');
+      shopTabsContainer.addEventListener('click', (e) => {
+        const tab = e.target.closest('.shop-tab');
+        if (!tab) return;
+        e.stopPropagation();
 
-          // Activate clicked tab and its content
-          tab.classList.add('active');
-          const tabId = tab.dataset.tab;
-          const content = document.getElementById('shop-tab-' + tabId);
-          if (content) content.classList.add('active');
+        // Remove active from all tabs and content
+        shopTabs.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('#shop-content .shop-tab-content').forEach(c => c.classList.remove('active'));
 
-          // Render caddie tab content when switching to it
-          if (tabId === 'caddie') {
-            document.getElementById('caddie-shop-content').innerHTML = CaddieSystem.renderShopTab();
-          }
+        // Activate clicked tab and its content
+        tab.classList.add('active');
+        const tabId = tab.dataset.tab;
+        const content = document.getElementById('shop-tab-' + tabId);
+        if (content) content.classList.add('active');
 
-          AudioManager.playClickSound();
-        });
-      });
+        // Render caddie tab content when switching to it
+        if (tabId === 'caddie') {
+          document.getElementById('caddie-shop-content').innerHTML = CaddieSystem.renderShopTab();
+        }
+
+        AudioManager.playClickSound();
+      }, true);
 
       // Caddie shop buy button handler
       document.getElementById('caddie-shop-content').addEventListener('click', (e) => {
